@@ -150,6 +150,10 @@ template <class Abel> struct BIT {
     }
 };
 
+
+
+
+/* AOJ 2667 Tree */
 int main() {
     int N, Q; cin >> N >> Q;
     Graph G(N);
@@ -164,14 +168,14 @@ int main() {
         int type, a, b; scanf("%d %d %d", &type, &a, &b);
         if (type == 0) {
             long long res = 0;
-
-			// ����¼���
+            
+            // ∂Ë¥÷œ¬ºË∆¿
             hld.foreach_edges(a, b, [&](int l, int r){ res += bit.sum(l, r+1); });
             cout << res << endl;
         }
         else {
-
-		    // ��ʬ�ڤΤʤ���֤� b ��û�
+            
+            // …Ù ¨Ã⁄§Œ§ §π∂Ë¥÷§À b §Ú≤√ªª
             bit.add(hld.vid[a]+1, hld.vid[a]+hld.subsize[a], b);
         }
     }
