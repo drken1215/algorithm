@@ -2,7 +2,7 @@
 // Randomized Binary Search Tree (merge-split based)
 //
 // verified:
-//   yukicoder No.649 Ç±Ç±Ç≈ÇøÇÂÇ¡Ç∆QKÅI
+//   yukicoder No.649 „Åì„Åì„Åß„Å°„Çá„Å£„Å® QK
 //
 
 #include <iostream>
