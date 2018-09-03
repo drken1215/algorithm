@@ -1,5 +1,5 @@
 //
-// Projction and Reflection
+// Union-Find tree
 //
 // verified:
 //   AtCoder Typical Contest 001 B - Union Find
