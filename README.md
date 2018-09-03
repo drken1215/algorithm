@@ -19,6 +19,8 @@
 # DP
 定型的な動的計画法やその他の処理です
 
+- [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
+
 
 
 # Geometry
