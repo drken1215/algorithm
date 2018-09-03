@@ -34,6 +34,7 @@
 # GraphNetworkFlow
 グラフネットワークフロー関連のアルゴリズムです
 
+- [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
 
 
 # GraphTheory
@@ -43,7 +44,6 @@
 
 # MathAlgebra
 行列計算など代数的計算に関するアルゴリズムです
-
 
 
 # MathNumberTheory
