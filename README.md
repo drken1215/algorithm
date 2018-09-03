@@ -7,7 +7,7 @@
 
 - [union-find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree.cpp)
 - [重みつき union-find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
-- [BIT (Binary Indexed Tree)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
+- [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
 - [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
 - [平衡二分探索木 RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
 
