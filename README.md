@@ -40,6 +40,7 @@
 # GraphTheory
 グラフ理論全般のアルゴリズムです
 
+- [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 
 
 # MathAlgebra
