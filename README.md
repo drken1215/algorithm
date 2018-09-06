@@ -5,11 +5,17 @@
 # DataStructure
 各種データ構造の実装です
 
-- [union-find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree.cpp)
-- [重みつき union-find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
-- [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
-- [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
-- [平衡二分探索木 RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
+- union-find 木
+  - [union-find 木 (基本)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_simple.cpp)
+  - [union-find 木 (rank つき)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree.cpp)
+  - [重みつき union-find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
+- BIT (Binary Indexed Tree)
+  - [BIT (基本)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
+  - [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
+  - [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_RAQ.cpp)
+  - [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D.cpp)
+- 平衡二分探索木
+  - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
 
 
 # DataStructureOnTree
@@ -22,7 +28,7 @@
 定型的な動的計画法やその他の処理です
 
 - [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
-
+- [転倒数](https://github.com/drken1215/algorithm/blob/master/DP/inversion_number.cpp)
 
 
 # Geometry
