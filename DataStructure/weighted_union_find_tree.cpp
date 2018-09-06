@@ -82,21 +82,21 @@ template<class Abel> ostream& operator << (ostream& s, UnionFind<Abel> uf) {
 
 
 int main() {
-	int N, M;
-	cin >> N >> M;
+    int N, M;
+    cin >> N >> M;
     UnionFind<long long> uf(N);
-	for (int i = 0; i < M; ++i) {
-		int l, r, d; cin >> l >> r >> d; --l, --r;
-		if (uf.issame(l, r)) {
-			long long diff = uf.diff(l, r);
-			if (diff != d) {
-				puts("No");
-				return 0;
-			}
-		}
-		else {
-			uf.merge(l, r, d);
-		}
-	}
-	puts("Yes");
+    for (int i = 0; i < M; ++i) {
+        int l, r, d; cin >> l >> r >> d; --l, --r;
+        if (uf.issame(l, r)) {
+            long long diff = uf.diff(l, r);
+            if (diff != d) {
+                puts("No");
+                return 0;
+            }
+        }
+        else {
+            uf.merge(l, r, d);
+        }
+    }
+    puts("Yes");
 }

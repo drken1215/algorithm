@@ -1,54 +1,41 @@
 //
-// Union-Find tree
+// imos-algorithm
 //
-// verified:
-//   AOJ Course DSL_1_A Set - Disjoint Set: Union Find Tree
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_1_A&lang=jp
+// c.f.
+//   https://imoz.jp/algorithms/imos_method.html
 //
-
-// root(x): root node of x
-// size(x): the size of the group of x
+// verified
+//   AOJ Course DSL_5_A Cumulative Sum - The Maximum Number of Customers
+//
+//
 
 
 #include <iostream>
 #include <vector>
-#include <map>
 using namespace std;
 
-struct UnionFind {
-    vector<int> par;
-    
-    UnionFind(int n) : par(n) { for (int i = 0; i < n; ++i) par[i] = i;  }
-    void init(int n) { par.resize(n); for (int i = 0; i < n; ++i) par[i] = i; }
-    
-    int root(int x) {
-        if (par[x] == x) return x;
-        else return par[x] = root(par[x]);
-    }
-    
-    bool issame(int x, int y) {
-        return root(x) == root(y);
-    }
-    
-    bool merge(int x, int y) {
-        x = root(x); y = root(y);
-        if (x == y) return false;
-        par[x] = y;
-        return true;
-    }
-};
+typedef pair<int,int> Interval; // means the interval [first, second)
 
+
+// T: max value of intervals
+int imos(const vector<Interval> &intervals, int T) {
+    vector<int> nums(T+1, 0);
+    for (auto interval : intervals) {
+        nums[interval.first]++;
+        nums[interval.second]--;
+    }
+    for (int t = 0; t < T; ++t) {
+        nums[t+1] += nums[t];
+    }
+    int res = 0;
+    for (int t = 0; t <= T; ++t) res = max(res, nums[t]);
+    return res;
+}
 
 
 int main() {
-    int N, Q; cin >> N >> Q;
-    UnionFind uf(N);
-    for (int q = 0; q < Q; ++q) {
-        int com, x, y; cin >> com >> x >> y;
-        if (com == 0) uf.merge(x, y);
-        else {
-            if (uf.issame(x, y)) cout << 1 << endl;
-            else cout << 0 << endl;
-        }
-    }
+    int N, T; cin >> N >> T;
+    vector<Interval> intervals(N);
+    for (int i = 0; i < N; ++i) cin >> intervals[i].first >> intervals[i].second;
+    cout << imos(intervals, T) << endl;
 }
