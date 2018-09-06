@@ -1,11 +1,11 @@
 //
-// BIT ¾åÆóÊ¬Ãµº÷ (°Ê²¼¤Î¥¯¥¨¥ê¤ËÅú¤¨¤é¤ì¤ë¡¢¤¿¤À¤· v <= N ¤È¤·¤Æ O(N) ¤Î¥á¥â¥ê¤¬É¬Í×¡¢»þ´Ö·×»»ÎÌ¤Ï O(log N))
-//   ½¸¹ç S ¤ËÍ×ÁÇ v ¤òÄÉ²Ã¤¹¤ë
-//   ½¸¹ç S ¤«¤éÍ×ÁÇ v ¤ò½ü¤¯
-//   ½¸¹ç S ¤Î k ÈÖÌÜ¤ËÂç¤­¤¤Í×ÁÇ¤òÅú¤¨¤ë
+// BIT ä¸ŠäºŒåˆ†æŽ¢ç´¢ (ä»¥ä¸‹ã®ã‚¯ã‚¨ãƒªã«ç­”ãˆã‚‰ã‚Œã‚‹ã€ãŸã ã— v <= N ã¨ã—ã¦ O(N) ã®ãƒ¡ãƒ¢ãƒªãŒå¿…è¦ã€æ™‚é–“è¨ˆç®—é‡ã¯ O(log N))
+//   é›†åˆ S ã«è¦ç´  v ã‚’è¿½åŠ ã™ã‚‹
+//   é›†åˆ S ã‹ã‚‰è¦ç´  v ã‚’é™¤ã
+//   é›†åˆ S ã® k ç•ªç›®ã«å¤§ãã„è¦ç´ ã‚’ç­”ãˆã‚‹
 //
 // verified:
-//   ARC 033 C - ¥Ç¡¼¥¿¹½Â¤
+//   ARC 033 C - ãƒ‡ãƒ¼ã‚¿æ§‹é€ 
 //     https://beta.atcoder.jp/contests/arc033/tasks/arc033_3
 //
 
@@ -17,8 +17,8 @@ using namespace std;
 
 // get(k): binary search on BIT
 template <class Abel> struct BIT {
+    const Abel UNITY_SUM = 0;						// to be set
     vector<Abel> dat;
-    Abel UNITY_SUM = 0;						// to be set
     
     /* [1, n] */
     BIT(int n) : dat(n + 1, UNITY_SUM) { }

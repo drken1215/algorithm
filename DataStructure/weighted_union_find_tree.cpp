@@ -6,6 +6,7 @@
 //     https://beta.atcoder.jp/contests/abc087/tasks/arc090_b
 //
 
+
 #include <iostream>
 #include <vector>
 using namespace std;

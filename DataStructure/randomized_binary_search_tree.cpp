@@ -5,6 +5,7 @@
 //   yukicoder No.649 ここでちょっと QK
 //
 
+
 #include <iostream>
 using namespace std;
 

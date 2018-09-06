@@ -3,6 +3,7 @@
 //
 // verified:
 //   AOJ 2667 Tree
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2667
 //
 
 #include <iostream>

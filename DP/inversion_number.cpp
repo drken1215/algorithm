@@ -1,16 +1,17 @@
 //
-// Binary Indexed Tree
+// Inversion Number of array a
+//   a_i > a_j となる (i < j) の組の個数を数えます
 //
-// verified:
-//   AOJ Course DSL_2_B Range Query - Range Sum Query (RSQ)
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=jp
+// verified
+//   AOJ Course ALDS1_5_D Recursion / Divide and Conquer - The Number of Inversions
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=jp
 //
 
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
-
 
 template <class Abel> struct BIT {
     const Abel UNITY_SUM = 0;                       // to be set
@@ -46,14 +47,27 @@ template <class Abel> struct BIT {
     }
 };
 
+template<class T> long long inversion_number(const vector<T> &a) {
+    int n = (int)a.size();
+    vector<T> b = a;
+    sort(b.begin(), b.end());
+    b.erase(unique(b.begin(), b.end()), b.end());
+    
+    long long res = 0;
+    BIT<int> bit(n);
+    for (int i = 0; i < n; ++i) {
+        int order = lower_bound(b.begin(), b.end(), a[i]) - b.begin();
+        ++order;
+        res += bit.sum(order+1, n+1);
+        bit.add(order, 1);
+    }
+    return res;
+}
+
 
 
 int main() {
-    int N, Q; cin >> N >> Q;
-    BIT<int> bit(N);
-    for (int query = 0; query < Q; ++query) {
-        int com, x, y; cin >> com >> x >> y;
-        if (com == 0) bit.add(x, y);
-        else cout << bit.sum(x, y+1) << endl;
-    }
+    int n; cin >> n;
+    vector<int> a(n); for (int i = 0; i < n; ++i) cin >> a[i];
+    cout << inversion_number(a) << endl;
 }

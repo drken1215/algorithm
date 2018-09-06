@@ -1,5 +1,5 @@
 //
-// Union-Find tree
+// Union-Find tree (with rank)
 //
 // verified:
 //   AtCoder Typical Contest 001 B - Union Find
@@ -7,6 +7,7 @@
 
 // root(x): root node of x
 // size(x): the size of the group of x
+
 
 #include <iostream>
 #include <vector>

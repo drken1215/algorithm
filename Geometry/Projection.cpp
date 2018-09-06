@@ -6,6 +6,7 @@
 //   AOJ Course CGL_1_B: Reflection
 //
 
+
 #include <iostream>
 #include <vector>
 #include <cmath>
