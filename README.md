@@ -12,7 +12,7 @@
 #### セグメント木
 - [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_delay.cpp))
-- [Starry Sky 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp))
+- [Starry Sky 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
 #### BIT
 - [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
 - [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
@@ -90,7 +90,7 @@
 # String
 文字列アルゴリズムです
 
-- [suffix array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
+- [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 
 
 # Others
