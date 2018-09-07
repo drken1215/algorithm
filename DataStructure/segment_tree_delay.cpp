@@ -10,8 +10,8 @@
 /*
     セグメントツリーは「作用つきモノイド」上で定義される
       FM(a, b): 2 つのモノイド間に定義される演算
-      FA(a, d): モノイドへの作用, 作用後の値を返す
-      FL(d, e): 作用素と作用素のマージ
+      FA(a, d): モノイド元 a への作用素 d による作用
+      FL(d, e): 作用素 d への作用素 e による作用
       UNITY_MONOID: モノイドの単位元
       UNITY_LAZY: 作用素の単位元
 
@@ -19,6 +19,10 @@
     // Construction
     SegTree(n, fm, fa, fl, unity_monoid, unity_lazy)
       ex: starry sky tree (区間加算、区間min取得)
+        auto fm = [](long long a, long long b) { return min(a, b); };
+        auto fa = [](long long &a, long long d) { a += d; };
+        auto fl = [](long long &d, long long e) { d += e; };
+        SegTree<long long, long long> seg(N, fm, fa, fl, (1LL<<60), 0);
 
 
     // Initialization
@@ -28,7 +32,7 @@
     
 
     // Queries
-    update(a, b, v): a 番目の値を v に更新する, O(log n)
+    update(a, b, v): 区間 [a, b) を作用素 v を用いて更新する, O(log n)
     get(a, b): 区間 [a, b) についての演算結果を返す, O(log n)
 */
 

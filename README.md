@@ -11,7 +11,7 @@
 - [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
 #### セグメント木
 - [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
-- [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_delay.cpp))
+- [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_delay.cpp)
 - [Starry Sky 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
 #### BIT
 - [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)

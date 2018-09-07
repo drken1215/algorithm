@@ -60,14 +60,14 @@ template<class Monoid> struct SegTree {
             dat[k] = F(dat[k*2], dat[k*2+1]);
     }
     
-    /* update, a is 0-indexed */
+    /* update a, a is 0-indexed */
     void update(int a, const Monoid &v) {
         int k = a + SIZE_R;
         dat[k] = v;
         while (k >>= 1) dat[k] = F(dat[k*2], dat[k*2+1]);
     }
     
-    /* get {min-value, min-index}, a and b are 0-indexed */
+    /* get [a, b), a and b are 0-indexed */
     Monoid get(int a, int b) {
         Monoid vleft = UNITY, vright = UNITY;
         for (int left = a + SIZE_R, right = b + SIZE_R; left < right; left >>= 1, right >>= 1) {
