@@ -1,10 +1,20 @@
 //
 // RMQ (by sparse table)
 //
-// verified:
+// verified (suffix array の lcp を sparse table で求める):
 //   ARC 060 F - 最良表現
 //     https://beta.atcoder.jp/contests/arc060/tasks/arc060_d
 //
+
+
+/*
+  動的更新はできないが、最初に静的に構築してしまえば、範囲最小値を O(1) でとり出せる
+    交叉半束 (meet-semi-lattice) 上で動作
+    半群 (semi-group) 上で動作する上位互換バージョン (disjoint sparse table) もある
+
+  init(vec): 配列を vec で初期化構築, O(n logn)
+  get(a, b): [a, b) の最小値を取得
+*/
 
 
 #include <iostream>
@@ -14,7 +24,6 @@
 using namespace std;
 
 
-
 // Sparse Table
 template<class MeetSemiLattice> struct SparseTable {
     const MeetSemiLattice INF = 1<<30;
@@ -22,8 +31,8 @@ template<class MeetSemiLattice> struct SparseTable {
     vector<int> height;
     
     SparseTable() { }
-    SparseTable(const vector<int> &vec) { init(vec); }
-    void init(const vector<int> &vec) {
+    SparseTable(const vector<MeetSemiLattice> &vec) { init(vec); }
+    void init(const vector<MeetSemiLattice> &vec) {
         int n = (int)vec.size(), h = 0;
         while ((1<<h) < n) ++h;
         dat.assign(h, vector<MeetSemiLattice>(1<<h));
