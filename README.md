@@ -19,6 +19,7 @@
   - [RMQ (セグメントツリー)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
   - [RMQ (sparse table)](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 - セグメントツリー
+  - [セグメントツリーテンプレ](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
 - 平衡二分探索木
   - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
 
