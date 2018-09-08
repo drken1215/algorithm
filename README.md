@@ -69,13 +69,36 @@
 # GraphNetworkFlow
 グラフネットワークフロー関連のアルゴリズムです
 
+#### 最大流
+
 - [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
+
+#### 最小費用流
+
+- 最小費用流 (Primal-Dual 法)
+- 最小費用循環流 (Cost-Scaling)
+
+#### マッチング
+
+- 二部マッチング (Hopcroft-Karp 法)
+- 重みつき二部マッチング (Hungarian 法)
+- 一般グラフの最大マッチング (Edmonds 法)
+- 一般グラフの最大マッチング (行列補間)
 
 
 
 # GraphTheory
 グラフ理論全般のアルゴリズムです
+
+#### 連結成分分解
+
+- 連結成分分解
+- 強連結成分分解
+- 二重辺連結成分分解
+- 二重点連結成分分解
+
+#### その他
 
 - [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 
@@ -84,17 +107,42 @@
 # MathAlgebra
 行列計算など代数的計算に関するアルゴリズムです
 
+#### 行列
+
 - [行列 (基本演算)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix.cpp)
+
+#### 多項式, 方程式
+
+- 二次方程式
+- 多項式 (実数係数)
+- 多項式 (mod. p 係数)
+
+#### FFT
+
+- FFT (高速フーリエ変換)
+- NTT (高速剰余変換)
 
 
 
 # MathNumberTheory
 整数論的アルゴリズムたちです、mod 演算も含みます
 
-- [mod 演算 (逆元、累乗、二項係数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod.cpp)
+#### mod, 二項係数
+
+- [mod 演算 (逆元, 累乗, 二項係数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod.cpp)
+
+#### 約数, 倍数
+
 - [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
 - [最小公倍数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/LCM.cpp)
 - [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
+
+#### 素数
+
+
+
+#### その他
+
 
 
 
