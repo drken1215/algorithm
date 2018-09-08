@@ -32,11 +32,8 @@
 ツリー上のクエリ処理のためのデータ構造たちの実装です
 
 - [LCA (ダブリング)]()
-- [LCA (Euler Tour)]()
-- [LCA (HL 分解)]()
 - [Euler Tour](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour.cpp)
 - [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
-- [重心分解]()
 
 
 # DP
@@ -59,10 +56,6 @@
 
 - [最大流 (Ford-Fulkerson 法)]()
 - [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
-- [最小費用流 (Primal-Dual)]()
-- [最小費用循環流 (Cost-Scaling)]()
-- [二部マッチング (Hopcroft-Karp 法)]()
-- [重みつき二部マッチング (Hungarian 法)]()
 
 
 # GraphTheory
@@ -75,16 +68,15 @@
 行列計算など代数的計算に関するアルゴリズムです
 
 - [行列]()
-- [行列累乗]()
-- [連立一次方程式 (実数)]()
-- [連立一次方程式 (mod. p)]()
-- [連立一次方程式 (bitset)]()
 
 
 # MathNumberTheory
 整数論的アルゴリズムたちです、mod 演算も含みます
 
 - [mod 演算 (逆元、累乗、二項係数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod.cpp)
+- [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
+- [最小公倍数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/LCM.cpp)
+- [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
 
 
 # String

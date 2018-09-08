@@ -1,5 +1,5 @@
 //
-// RMQ (by sparse table)
+// Disjoint Sparse Table
 //
 // c.f.
 //   http://noshi91.hatenablog.com/entry/2018/05/08/183946
