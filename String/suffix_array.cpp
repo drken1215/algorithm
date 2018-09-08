@@ -1,7 +1,7 @@
 //
 // RMQ (by sparse table)
 //
-// verified:
+// verified (suffix array の lcp を sparse table で求める):
 //   ARC 060 F - 最良表現
 //     https://beta.atcoder.jp/contests/arc060/tasks/arc060_d
 //
@@ -14,10 +14,8 @@
 using namespace std;
 
 
-
 // Sparse Table
 template<class MeetSemiLattice> struct SparseTable {
-    const MeetSemiLattice INF = 1<<30;
     vector<vector<MeetSemiLattice> > dat;
     vector<int> height;
     
@@ -36,7 +34,6 @@ template<class MeetSemiLattice> struct SparseTable {
     }
     
     MeetSemiLattice get(int a, int b) {
-        if (a >= b) return INF;
         return min(dat[height[b-a]][a], dat[height[b-a]][b-(1<<height[b-a])]);
     }
 };
@@ -83,8 +80,6 @@ struct SuffixArray {
             for (int i = 0; i <= n; ++i) rank_sa[i] = tmp_rank_sa[i];
         }
     }
-    
-    // build LCP
     vector<int> rsa;
     SparseTable<int> st;
     void calcLCP() {
@@ -104,6 +99,8 @@ struct SuffixArray {
         }
         st.init(lcp);
     }
+    
+    // calc lcp
     int getLCP(int a, int b) {          // lcp of str.sutstr(a) and str.substr(b)
         return st.get(min(rsa[a], rsa[b]), max(rsa[a], rsa[b]));
     }
