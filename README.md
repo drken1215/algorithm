@@ -15,7 +15,7 @@
 
 - [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_delay.cpp)
-- [Starry Sky 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
+- [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
 
 #### BIT
 
@@ -53,6 +53,7 @@
 定型的な動的計画法やその他の処理です
 
 - [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
+- [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp))
 - [転倒数](https://github.com/drken1215/algorithm/blob/master/DP/inversion_number.cpp)
 
 
