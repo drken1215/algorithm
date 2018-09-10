@@ -31,7 +31,6 @@
 - [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
 - [RMQ (Sparse Table)](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 
-
 #### 平衡二分探索木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
@@ -40,11 +39,14 @@
 
 - 永続配列
 - 完全永続 Union-Find 木
-- 
+- 永続セグメント木
+- 永続赤黒木
 
 #### その他
 
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
+
+
 
 
 
@@ -57,12 +59,16 @@
 
 
 
+
+
 # DP
 定型的な動的計画法やその他の処理です
 
 - [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
-- [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp))
+- [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp)
 - [転倒数](https://github.com/drken1215/algorithm/blob/master/DP/inversion_number.cpp)
+
+
 
 
 
@@ -72,6 +78,8 @@
 - [全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
 - [基本要素 (点, 線分, 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/BasicElements.cpp)
 - [射影](https://github.com/drken1215/algorithm/blob/master/Geometry/Projection.cpp)
+
+
 
 
 
@@ -97,6 +105,8 @@
 
 
 
+
+
 # GraphTheory
 グラフ理論全般のアルゴリズムです
 
@@ -110,6 +120,8 @@
 #### その他
 
 - [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
+
+
 
 
 
@@ -133,6 +145,8 @@
 
 
 
+
+
 # MathNumberTheory
 整数論的アルゴリズムたちです、mod 演算も含みます
 
@@ -148,7 +162,10 @@
 
 #### 素数
 
-
+- 素数判定
+- 素因数分解
+- エラトステネスの篩
+- エラトステネスの区間篩
 
 #### その他
 
@@ -159,6 +176,8 @@
 文字列アルゴリズムです
 
 - [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
+
+
 
 
 

@@ -1,5 +1,5 @@
 //
-// max-flow (Dinic's algorithm)
+// min-cost flow (primal-dual)
 //
 // verified
 //   AOJ Course GRL_6_B Network Flow - Minimum Cost Flow

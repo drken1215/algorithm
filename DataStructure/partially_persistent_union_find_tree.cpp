@@ -2,8 +2,8 @@
 // Partially Persistent Union-Find tree
 //
 // verified:
-//   CODE THANKS FESTIVAL 2017 H - Union Sets
-//     https://beta.atcoder.jp/contests/code-thanks-festival-2017-open/tasks/code_thanks_festival_2017_h
+//   AGC 002 D - Stamp Rally
+//     https://beta.atcoder.jp/contests/agc002/tasks/agc002_d
 //
 
 /*
@@ -44,7 +44,7 @@ struct PartiallyPersistentUnionFind {
     bool issame(int t, int x, int y) {
         return root(t, x) == root(t, y);
     }
-
+    
     bool merge(int t, int x, int y) {
         x = root(t, x); y = root(t, y);
         if (x == y) return false;
@@ -63,25 +63,26 @@ struct PartiallyPersistentUnionFind {
 };
 
 
+
 int main() {
-    int N, M, Q; scanf("%d %d", &N, &M);
-    PartiallyPersistentUnionFind ppuf(N);
+    int N, M, Q; cin >> N >> M;
+    PartiallyPersistentUnionFind uf(N);
     for (int t = 0; t < M; ++t) {
-        int a, b; scanf("%d %d", &a, &b); --a, --b;
-        ppuf.merge(t+1, a, b);
+        int a, b; cin >> a >> b; --a, --b;
+        uf.merge(t+1, a, b);
     }
-    scanf("%d", &Q);
+    cin >> Q;
     for (int q = 0; q < Q; ++q) {
-        int x, y; scanf("%d %d", &x, &y); --x, --y;
-        if (!ppuf.issame(M+10, x, y)) cout << -1 << endl;
-        else {
-            int low = 0, high = M+10;
-            while (high - low > 1) {
-                int mid = (low + high) / 2;
-                if (ppuf.issame(mid, x, y)) high = mid;
-                else low = mid;
-            }
-            cout << high << endl;
+        int x, y, z; cin >> x >> y >> z; --x, --y;
+        int low = 0, high = M + 10;
+        while (high - low > 1) {
+            int mid = (low + high) / 2;
+            int num = 0;
+            if (uf.issame(mid, x, y)) num = uf.size(mid, x);
+            else num = uf.size(mid, x) + uf.size(mid, y);
+            if (num >= z) high = mid;
+            else low = mid;
         }
+        cout << high << endl;
     }
 }
