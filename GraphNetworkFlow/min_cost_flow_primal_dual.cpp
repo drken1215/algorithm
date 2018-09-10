@@ -2,8 +2,8 @@
 // max-flow (Dinic's algorithm)
 //
 // verified
-//   AOJ Course GRL_6_A Network Flow - Maximum Flow
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_A&lang=jp
+//   AOJ Course GRL_6_B Network Flow - Minimum Cost Flow
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_B&lang=jp
 //
 
 
@@ -11,6 +11,7 @@
 #include <vector>
 #include <queue>
 using namespace std;
+
 
 // edge class (for network-flow)
 template<class FLOWTYPE, class COSTTYPE> struct Edge {
@@ -49,7 +50,7 @@ template<class FLOWTYPE, class COSTTYPE> struct Graph {
         list[to].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[from].size() - 1, to, from, cap, cost));
     }
 
-    /* 
+    /*
     // debug
     friend ostream& operator << (ostream& s, const Graph& G) {
         s << endl; for (int i = 0; i < G.V; ++i) { s << i << " : " << G.list[i] << endl; }return s;
@@ -57,70 +58,58 @@ template<class FLOWTYPE, class COSTTYPE> struct Graph {
     */
 };
 
-template<class FLOWTYPE, class COSTTYPE> struct MinCostFlow {
-    const FLOWTYPE INF = 1<<30; // to be set
-    vector<int> level, iter;
-
-    Dinic() { }
-    void dibfs(Graph<FLOWTYPE> &G, int s) {
-        level.assign((int)G.size(), -1);
-        level[s] = 0;
-        queue<int> que;
-        que.push(s);
-        while (!que.empty()) {
-            int v = que.front();
+template<class FLOWTYPE, class COSTTYPE> COSTTYPE MinCostFlow(Graph<FLOWTYPE, COSTTYPE> &G, int s, int t, FLOWTYPE f) {
+    int n = (int)G.size();
+    vector<COSTTYPE> pot(n, 0), dist(n, -1);
+    vector<int> prevv(n), preve(n);
+    COSTTYPE res = 0;
+    while (f > 0) {
+        priority_queue<pair<COSTTYPE,int>, vector<pair<COSTTYPE,int> >, greater<pair<COSTTYPE,int> > > que;
+        dist.assign(n, -1);
+        dist[s] = 0;
+        que.push(make_pair(0,s));
+        while(!que.empty()) {
+            pair<COSTTYPE,int> p = que.top();
             que.pop();
+            int v = p.second;
+            if (dist[v] < p.first) continue;
             for (int i = 0; i < G[v].size(); ++i) {
-                Edge<FLOWTYPE> &e = G[v][i];
-                if (level[e.to] < 0 && e.cap > 0) {
-                    level[e.to] = level[v] + 1;
-                    que.push(e.to);
+                auto e = G[v][i];
+                if (e.cap > 0 && (dist[e.to] < 0 || dist[e.to] > dist[v] + e.cost + pot[v] - pot[e.to])) {
+                    dist[e.to] = dist[v] + e.cost + pot[v] - pot[e.to];
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    que.push(make_pair(dist[e.to], e.to));
                 }
             }
         }
-    }
-    
-    FLOWTYPE didfs(Graph<FLOWTYPE> &G, int v, int t, FLOWTYPE f) {
-        if (v == t) return f;
-        for (int &i = iter[v]; i < G[v].size(); ++i) {
-            Edge<FLOWTYPE> &e = G[v][i], &re = G.redge(e);
-            if (level[v] < level[e.to] && e.cap > 0) {
-                FLOWTYPE d = didfs(G, e.to, t, min(f, e.cap));
-                if (d > 0) {
-                    e.cap -= d;
-                    re.cap += d;
-                    return d;
-                }
-            }
+        if (dist[t] < 0) return -1;
+        for (int v = 0; v < n; ++v) pot[v] += dist[v];
+        FLOWTYPE d = f;
+        for (int v = t; v != s; v = prevv[v]) {
+            d = min(d, G[prevv[v]][preve[v]].cap);
         }
-        return 0;
-    }
-    
-    FLOWTYPE solve(Graph<FLOWTYPE> &G, int s, int t) {
-        level.assign((int)G.size(), -1); iter.assign((int)G.size(), 0);
-        FLOWTYPE res = 0;
-        while (true) {
-            dibfs(G, s);
-            if (level[t] < 0) return res;
-            for (int i = 0; i < (int)iter.size(); ++i) iter[i] = 0;
-            FLOWTYPE flow = 0;
-            while ((flow = didfs(G, s, t, INF)) > 0) {
-                res += flow;
-            }
+        f -= d;
+        res += pot[t] * d;
+        for (int v = t; v != s; v = prevv[v]) {
+            Edge<FLOWTYPE,COSTTYPE> &e = G[prevv[v]][preve[v]];
+            Edge<FLOWTYPE,COSTTYPE> &re = G.redge(e);
+            e.cap -= d;
+            re.cap += d;
         }
     }
-};
+    return res;
+}
 
 
 
 int main() {
-    int V, E; cin >> V >> E;
-    Graph<int> G(V);
+    int V, E, F; cin >> V >> E >> F;
+    Graph<int,int> G(V);
     for (int i = 0; i < E; ++i) {
-        int u, v, c; cin >> u >> v >> c;
-        G.addedge(u, v, c);
+        int u, v, cap, cost; cin >> u >> v >> cap >> cost;
+        G.addedge(u, v, cap, cost);
     }
-    Dinic<int> di;
     int s = 0, t = V-1;
-    cout << di.solve(G, s, t) << endl;
+    cout << MinCostFlow(G, s, t, F) << endl;
 }  

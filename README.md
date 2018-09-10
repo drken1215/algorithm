@@ -10,6 +10,7 @@
 - [Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_simple.cpp)
 - [Union-Find 木 (rank つき)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree.cpp)
 - [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
+- [部分永続 Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find_tree.cpp)
 
 #### セグメント木
 
@@ -30,9 +31,16 @@
 - [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
 - [RMQ (Sparse Table)](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 
+
 #### 平衡二分探索木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
+
+#### 永続データ構造
+
+- 永続配列
+- 完全永続 Union-Find 木
+- 
 
 #### その他
 
@@ -77,7 +85,7 @@
 
 #### 最小費用流
 
-- 最小費用流 (Primal-Dual 法)
+- [最小費用流 (Primal-Dual 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
 - 最小費用循環流 (Cost-Scaling)
 
 #### マッチング
