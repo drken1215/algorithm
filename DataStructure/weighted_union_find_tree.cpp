@@ -1,32 +1,38 @@
 //
 // Weighted Union Find Tree
 //
+// c.f.
+//   https://qiita.com/drken/items/cce6fc5c579051e64fab
+//
 // verified:
 //   ABC 087 D - People on a Line
 //     https://beta.atcoder.jp/contests/abc087/tasks/arc090_b
 //
 
 
+/*
+ ・併合時の工夫: union by size
+    par[x]: x が根のときは x を含むグループのサイズ (の -1 倍)、そうでないときは親ノード
+ 
+*/
+
+
 #include <iostream>
 #include <vector>
+#include <map>
 using namespace std;
 
 
 template<class Abel> struct UnionFind {
     const Abel UNITY_SUM = 0;      // to be set
-    vector<int> par, rank;
+    vector<int> par;
     vector<Abel> diff_weight;
     
-    UnionFind(int n) : par(n), rank(n, 0), diff_weight(n, UNITY_SUM) {
-        for (int i = 0; i < n; ++i) par[i] = i;
-    }
-    void init(int n) {
-        par.resize(n); rank.resize(n); diff_weight.resize(n);
-        for (int i = 0; i < n; ++i) par[i] = i, rank[i] = 0, diff_weight[i] = UNITY_SUM;
-    }
+    UnionFind(int n) : par(n, -1), diff_weight(n, UNITY_SUM) {}
+    void init(int n) { par.assign(n, -1), diff_weight.assign(n, UNITY_SUM); }
     
     int root(int x) {
-        if (par[x] == x) return x;
+        if (par[x] < 0) return x;
         else {
             int r = root(par[x]);
             diff_weight[x] += diff_weight[par[x]];
@@ -47,8 +53,8 @@ template<class Abel> struct UnionFind {
         w += calc_weight(x); w -= calc_weight(y);
         x = root(x); y = root(y);
         if (x == y) return false;
-        if (rank[x] < rank[y]) swap(x, y), w = -w;
-        if (rank[x] == rank[y]) ++rank[x];
+        if (par[x] > par[y]) swap(x, y), w = -w; // merge technique
+        par[x] += par[y];
         par[y] = x;
         diff_weight[y] = w;
         return true;
@@ -56,6 +62,10 @@ template<class Abel> struct UnionFind {
     
     Abel diff(int x, int y) {
         return calc_weight(y) - calc_weight(x);
+    }
+    
+    int size(int x) {
+        return -par[root(x)];
     }
 };
 
@@ -77,7 +87,6 @@ template<class Abel> ostream& operator << (ostream& s, UnionFind<Abel> uf) {
     return s << endl;
 }
 */
-
 
 
 int main() {

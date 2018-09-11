@@ -7,7 +7,7 @@
 
 #### Union-Find 木
 
-- [Union-Find 木 (union by size](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_size.cpp)
+- [Union-Find 木 (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_size.cpp)
 - [Union-Find 木 (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_rank.cpp)
 - [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
 - [部分永続 Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find_tree.cpp)
