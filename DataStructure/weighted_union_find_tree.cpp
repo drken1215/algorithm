@@ -80,7 +80,6 @@ template<class Abel> ostream& operator << (ostream& s, UnionFind<Abel> uf) {
 
 
 
-
 int main() {
     int N, M;
     cin >> N >> M;
