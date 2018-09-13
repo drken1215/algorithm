@@ -272,8 +272,6 @@
 - マトロイド上の Greedy 法
 - マトロイド交差
 
-#### その他
-
 
 
 
@@ -289,7 +287,7 @@
 
 #### 素数
 
-- 素数判定
+- [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
 - 素因数分解
 - 確率的素数判定
 - 確率的素因数分解
