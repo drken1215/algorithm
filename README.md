@@ -254,15 +254,16 @@
 
 #### mod, 二項係数
 
-- [mod 演算 (逆元, 累乗, 二項係数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
+- [mod 演算 (全部乗せ)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
+- [mod 演算 (累乗)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
+                  
 
 #### 様々な数
 
 - カタラン数
 - 分割数
 - スターリング数
-- ベル数
-
+- ベル
 #### ソート
 
 - Radix ソート
