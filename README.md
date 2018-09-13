@@ -256,7 +256,6 @@
 
 - [mod 演算 (全部乗せ)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
 - [mod 演算 (累乗)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
-                  
 
 #### 様々な数
 
@@ -298,7 +297,7 @@
 
 #### 方程式
 
-- 中国剰余定理
+-  [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
 - 中国剰余定理 (Garner 法)
 - 連立一次合同方程式
 - ペル方程式
