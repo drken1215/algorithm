@@ -290,7 +290,7 @@
 - [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
 - [素因数分解](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/prime_factorization.cpp)
 - [確率的素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
-- [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratostenes.cpp)
+- [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - エラトステネスの区間篩
 - アトキンの篩
 
