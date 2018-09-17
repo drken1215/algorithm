@@ -1,6 +1,17 @@
+//
+// 与えられた多角形が凸かどうか, O(n)
+//
+// verified:
+//   AOJ Course CGL_3_B Polygon - Is-Convex
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_A&lang=jp
+//
+
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
 
 
@@ -57,6 +68,30 @@ struct Circle : Point {
 };
 
 
+///////////////////////
+// 凸性判定
+///////////////////////
+
+int ccw_for_isconvex(const Point &a, const Point &b, const Point &c) {
+    if (cross(b-a, c-a) > EPS) return 1;
+    if (cross(b-a, c-a) < -EPS) return -1;
+    return 0;
+}
+
+bool isConvex(vector<Point> &ps) {
+    int n = (int)ps.size();
+    for (int i = 0; i < n; ++i) {
+        if (ccw_for_isconvex(ps[i], ps[(i+1)%n], ps[(i+2)%n]) == -1) return false;
+    }
+    return true;
+}
+
+
+
 int main() {
-    
+    int n; cin >> n;
+    vector<Point> ps(n);
+    for (int i = 0; i < n; ++i) cin >> ps[i].x >> ps[i].y;
+    if (isConvex(ps)) cout << 1 << endl;
+    else cout << 0 << endl;
 }

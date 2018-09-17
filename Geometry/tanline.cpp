@@ -1,6 +1,17 @@
+//
+// 円の接線 (円外の 1 点から円へ)
+//
+// verified:
+//   AOJ Course CGL_7_F Circles - Tangent to a Circle
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_F&lang=jp
+//
+
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
 
 
@@ -57,6 +68,69 @@ struct Circle : Point {
 };
 
 
+
+///////////////////////
+// 接線
+///////////////////////
+
+// 点と円
+vector<Point> tanline(const Point &p, const Circle &c) {
+    vector<Point> res;
+    DD d = norm(p - c);
+    DD l = d - c.r * c.r;
+    if (l < -EPS) return res;
+    if (l <= 0.0) l = 0.0;
+    Point cq = (p - c) * (c.r * c.r / d);
+    Point qs = rot90((p - c) * (c.r * sqrt(l) / d));
+    Point s1 = c + cq + qs, s2 = c + cq - qs;
+    res.push_back(s1);
+    res.push_back(s2);
+    return res;
+}
+
+// 円と円の共通接線
+vector<Line> comtanline(Circle a, Circle b) {
+    vector<Line> res;
+    if (abs(a - b) > abs(a.r - b.r) + EPS) {
+        if (abs(a.r - b.r) < EPS) {
+            Point dir = b - a;
+            dir = rot90(dir * (a.r / abs(dir)));
+            res.push_back(Line(a + dir, b + dir));
+            res.push_back(Line(a - dir, b - dir));
+        }
+        else {
+            Point p = a * -b.r + b * a.r;
+            p = p * (1.0 / (a.r - b.r));
+            vector<Point> bs = tanline(p, a);
+            vector<Point> as = tanline(p, b);
+            for (int i = 0; i < min(as.size(), bs.size()); ++i) {
+                res.push_back(Line(bs[i], as[i]));
+            }
+        }
+    }
+    if (abs(a - b) > a.r + b.r + EPS) {
+        Point p = a * b.r + b * a.r;
+        p = p * (1.0 / (a.r + b.r));
+        vector<Point> bs = tanline(p, a);
+        vector<Point> as = tanline(p, b);
+        for (int i = 0; i < min(as.size(), bs.size()); ++i) {
+            res.push_back(Line(bs[i], as[i]));
+        }
+    }
+    return res;
+}
+
+
+
 int main() {
-    
+    Point p; Circle c;
+    cin >> p.x >> p.y >> c.x >> c.y >> c.r;
+    auto res = tanline(p, c);
+    cout << fixed << setprecision(10);
+    if (make_pair(res[0].x, res[0].y) < make_pair(res[1].x, res[1].y)) {
+        cout << res[0].x << " " << res[0].y << " " << res[1].x << " " << res[1].y << endl;
+    }
+    else {
+        cout << res[1].x << " " << res[1].y << " " << res[0].x << " " << res[0].y << endl;
+    }
 }

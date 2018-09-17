@@ -1,10 +1,19 @@
+//
+// 幾何ライブラリ (二次元)
+//
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
 
 
-/* Point */
+////////////////////////////
+// 基本要素 (点, 線分, 円)
+////////////////////////////
+
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
 const DD EPS = 1e-10;        // to be set appropriately
@@ -12,12 +21,12 @@ const DD PI = acos(-1.0);
 DD torad(int deg) {return (DD)(deg) * PI / 180;}
 DD todeg(DD ang) {return ang * 180 / PI;}
 
+/* Point */
 struct Point {
     DD x, y;
     Point(DD x = 0.0, DD y = 0.0) : x(x), y(y) {}
     friend ostream& operator << (ostream &s, const Point &p) {return s << '(' << p.x << ", " << p.y << ')';}
 };
-
 inline Point operator + (const Point &p, const Point &q) {return Point(p.x + q.x, p.y + q.y);}
 inline Point operator - (const Point &p, const Point &q) {return Point(p.x - q.x, p.y - q.y);}
 inline Point operator * (const Point &p, DD a) {return Point(p.x * a, p.y * a);}
@@ -91,15 +100,6 @@ bool is_contain(const Point &p, const Point &a, const Point &b, const Point &c) 
 ////////////////////////////
 // 特殊な直線, 円を求める
 ////////////////////////////
-
-// AOJ 2385
-// 2点の垂直二等分線（点pを左側に見る向き）
-Line bisector(const Point &p, const Point &q) {
-    Point c = (p + q) / 2.0L;
-    Point v = (q - p) * Point(0.0L, 1.0L);
-    v = v / abs(v);
-    return Line(c - v, c + v);
-}
 
 // AOJ 1039
 // 2点の比率a:bのアポロニウスの円
@@ -239,6 +239,38 @@ DD CalcArea(const vector<Point> &pol) {
     return res/2.0L;
 }
 
+
+// 点と多角形の包含関係
+// 2: in, 1: on, 0: out
+int is_contain(const vector<Point> &pol, const Point &p) {
+    int n = (int)pol.size();
+    int isin = 0;
+    for (int i = 0; i < n; ++i) {
+        Point a = pol[i] - p, b = pol[(i+1)%n] - p;
+        if (a.y > b.y) swap(a, b);
+        if (a.y <= 0 && b.y > 0) if (cross(a, b) < 0) isin = 1-isin;
+        if (cross(a, b) == 0 && dot(a, b) <= 0) return 1;
+    }
+    if (isin) return 2;
+    else return 0;
+}
+
+
+// 凸性判定
+int ccw_for_isconvex(const Point &a, const Point &b, const Point &c) {
+    if (cross(b-a, c-a) > EPS) return 1;
+    if (cross(b-a, c-a) < -EPS) return -1;
+    return 0;
+}
+bool isConvex(vector<Point> &ps) {
+    int n = (int)ps.size();
+    for (int i = 0; i < n; ++i) {
+        if (ccw_for_isconvex(ps[i], ps[(i+1)%n], ps[(i+2)%n]) == -1) return false;
+    }
+    return true;
+}
+
+
 // 凸包 (一直線上の3点を含めない)
 vector<Point> ConvexHull(vector<Point> &ps) {
     int n = (int)ps.size();
@@ -296,6 +328,148 @@ vector<Point> ConvexHullCollinearOK(vector<Point> &ps) {
     res.resize(k-1);
     return res;
 }
+
+
+// convex cut
+int ccw_for_convexcut(const Point &a, const Point &b, const Point &c) {
+    if (cross(b-a, c-a) > EPS) return 1;
+    if (cross(b-a, c-a) < -EPS) return -1;
+    if (dot(b-a, c-a) < 0) return 2;
+    if (norm(b-a) < norm(c-a)) return -2;
+    return 0;
+}
+vector<Point> crosspoint_for_convexcut(const Line &l, const Line &m) {
+    vector<Point> res;
+    DD d = cross(m[1] - m[0], l[1] - l[0]);
+    if (abs(d) < EPS) return vector<Point>();
+    res.push_back(l[0] + (l[1] - l[0]) * cross(m[1] - m[0], m[1] - l[0]) / d);
+    return res;
+}
+vector<Point> ConvexCut(const vector<Point> &pol, const Line &l) {
+    vector<Point> res;
+    for (int i = 0; i < pol.size(); ++i) {
+        Point p = pol[i], q = pol[(i+1)%pol.size()];
+        if (ccw_for_convexcut(l[0], l[1], p) != -1) {
+            if (res.size() == 0) res.push_back(p);
+            else if (!eq(p, res[res.size()-1])) res.push_back(p);
+        }
+        if (ccw_for_convexcut(l[0], l[1], p) * ccw_for_convexcut(l[0], l[1], q) < 0) {
+            vector<Point> temp = crosspoint_for_convexcut(Line(p, q), l);
+            if (temp.size() == 0) continue;
+            else if (res.size() == 0) res.push_back(temp[0]);
+            else if (!eq(temp[0], res[res.size()-1])) res.push_back(temp[0]);
+        }
+    }
+    return res;
+}
+
+// Voronoi-diagram (O(n^2))
+Line bisector(const Point &p, const Point &q) {
+    Point c = (p + q) / 2.0L;
+    Point v = (q - p) * Point(0.0L, 1.0L);
+    v = v / abs(v);
+    return Line(c - v, c + v);
+}
+vector<Point> Voronoi(vector<Point> pol, const vector<Point> &ps, int ind) {
+    for (int i = 0; i < ps.size(); ++i) {
+        if (i == ind) continue;
+        Line l = bisector(ps[ind], ps[i]);
+        pol = ConvexCut(pol, l);
+    }
+    return pol;
+}
+
+
+
+///////////////////////
+// 接線
+///////////////////////
+
+// 点と円
+vector<Point> tanline(const Point &p, const Circle &c) {
+    vector<Point> res;
+    DD d = norm(p - c);
+    DD l = d - c.r * c.r;
+    if (l < -EPS) return res;
+    if (l <= 0.0) l = 0.0;
+    Point cq = (p - c) * (c.r * c.r / d);
+    Point qs = rot90((p - c) * (c.r * sqrt(l) / d));
+    Point s1 = c + cq + qs, s2 = c + cq - qs;
+    res.push_back(s1);
+    res.push_back(s2);
+    return res;
+}
+
+// 円と円の共通接線
+vector<Line> comtanline(Circle a, Circle b) {
+    vector<Line> res;
+    if (abs(a - b) > abs(a.r - b.r) + EPS) {
+        if (abs(a.r - b.r) < EPS) {
+            Point dir = b - a;
+            dir = rot90(dir * (a.r / abs(dir)));
+            res.push_back(Line(a + dir, b + dir));
+            res.push_back(Line(a - dir, b - dir));
+        }
+        else {
+            Point p = a * -b.r + b * a.r;
+            p = p * (1.0 / (a.r - b.r));
+            vector<Point> bs = tanline(p, a);
+            vector<Point> as = tanline(p, b);
+            for (int i = 0; i < min(as.size(), bs.size()); ++i) {
+                res.push_back(Line(bs[i], as[i]));
+            }
+        }
+    }
+    if (abs(a - b) > a.r + b.r + EPS) {
+        Point p = a * b.r + b * a.r;
+        p = p * (1.0 / (a.r + b.r));
+        vector<Point> bs = tanline(p, a);
+        vector<Point> as = tanline(p, b);
+        for (int i = 0; i < min(as.size(), bs.size()); ++i) {
+            res.push_back(Line(bs[i], as[i]));
+        }
+    }
+    return res;
+}
+
+
+
+
+///////////////////////
+// その他
+///////////////////////
+
+// 最近点対
+bool compare_y(Point a, Point b) { return a.y < b.y; }
+DD DivideAndConqur(vector<Point>::iterator it, int n) {
+    if (n <= 1) return INF;
+    int m = n/2;
+    DD x = it[m].x;
+    DD d = min(DivideAndConqur(it, m), DivideAndConqur(it+m, n-m));
+    inplace_merge(it, it+m, it+n, compare_y);
+    
+    vector<Point> vec;
+    for (int i = 0; i < n; ++i) {
+        if (fabs(it[i].x - x) >= d) continue;
+        for (int j = 0; j < vec.size(); ++j) {
+            DD dx = it[i].x - vec[vec.size()-j-1].x;
+            DD dy = it[i].y - vec[vec.size()-j-1].y;
+            if (dy >= d) break;
+            d = min(d, sqrt(dx*dx+dy*dy));
+        }
+        vec.push_back(it[i]);
+    }
+    return d;
+}
+DD Closet(vector<Point> ps) {
+    int n = (int)ps.size();
+    sort(ps.begin(), ps.end());
+    return DivideAndConqur(ps.begin(), n);
+}
+
+
+// 最近円対
+
 
 
 

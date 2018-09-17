@@ -1,6 +1,17 @@
+//
+// 点が多角形 (凸とは限らない) に含まれるかどうか, O(n)
+//
+// verified:
+//   AOJ Course CGL_3_C Polygon - Polygon-Point Containment
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_3_C&lang=jp
+//
+
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
 
 
@@ -57,6 +68,33 @@ struct Circle : Point {
 };
 
 
+///////////////////////
+// 点と多角形の包含
+///////////////////////
+
+// 2: in, 1: on, 0: out
+int is_contain(const vector<Point> &pol, const Point &p) {
+    int n = (int)pol.size();
+    int isin = 0;
+    for (int i = 0; i < n; ++i) {
+        Point a = pol[i] - p, b = pol[(i+1)%n] - p;
+        if (a.y > b.y) swap(a, b);
+        if (a.y <= 0 && b.y > 0) if (cross(a, b) < 0) isin = 1-isin;
+        if (cross(a, b) == 0 && dot(a, b) <= 0) return 1;
+    }
+    if (isin) return 2;
+    else return 0;
+}
+
+
+
 int main() {
-    
+    int n; cin >> n;
+    vector<Point> pol(n);
+    for (int i = 0; i < n; ++i) cin >> pol[i].x >> pol[i].y;
+    int Q; cin >> Q;
+    for (int _ = 0; _ < Q; ++_) {
+        Point p; cin >> p.x >> p.y;
+        cout << is_contain(pol, p) << endl;
+    }
 }

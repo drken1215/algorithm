@@ -14,7 +14,10 @@
 using namespace std;
 
 
-/* Point */
+////////////////////////////
+// 基本要素 (点, 線分)
+////////////////////////////
+
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
 const DD EPS = 1e-10;        // to be set appropriately
@@ -22,12 +25,12 @@ const DD PI = acos(-1.0);
 DD torad(int deg) {return (DD)(deg) * PI / 180;}
 DD todeg(DD ang) {return ang * 180 / PI;}
 
+/* Point */
 struct Point {
     DD x, y;
     Point(DD x = 0.0, DD y = 0.0) : x(x), y(y) {}
     friend ostream& operator << (ostream &s, const Point &p) {return s << '(' << p.x << ", " << p.y << ')';}
 };
-
 inline Point operator + (const Point &p, const Point &q) {return Point(p.x + q.x, p.y + q.y);}
 inline Point operator - (const Point &p, const Point &q) {return Point(p.x - q.x, p.y - q.y);}
 inline Point operator * (const Point &p, DD a) {return Point(p.x * a, p.y * a);}

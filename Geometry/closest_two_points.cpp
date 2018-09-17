@@ -1,6 +1,17 @@
+//
+// 最近点対
+//
+// verified:
+//   AOJ Course CGL_5_A Point Set - Closest Pair
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_5_A&lang=jp
+//
+
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
 
 
@@ -57,6 +68,38 @@ struct Circle : Point {
 };
 
 
-int main() {
+// 最近点対
+bool compare_y(Point a, Point b) { return a.y < b.y; }
+DD DivideAndConqur(vector<Point>::iterator it, int n) {
+    if (n <= 1) return INF;
+    int m = n/2;
+    DD x = it[m].x;
+    DD d = min(DivideAndConqur(it, m), DivideAndConqur(it+m, n-m));
+    inplace_merge(it, it+m, it+n, compare_y);
     
+    vector<Point> vec;
+    for (int i = 0; i < n; ++i) {
+        if (fabs(it[i].x - x) >= d) continue;
+        for (int j = 0; j < vec.size(); ++j) {
+            DD dx = it[i].x - vec[vec.size()-j-1].x;
+            DD dy = it[i].y - vec[vec.size()-j-1].y;
+            if (dy >= d) break;
+            d = min(d, sqrt(dx*dx+dy*dy));
+        }
+        vec.push_back(it[i]);
+    }
+    return d;
+}
+DD Closet(vector<Point> ps) {
+    int n = (int)ps.size();
+    sort(ps.begin(), ps.end());
+    return DivideAndConqur(ps.begin(), n);
+}
+
+
+int main() {
+    int N; cin >> N;
+    vector<Point> ps(N);
+    for (int i = 0; i < N; ++i) cin >> ps[i].x >> ps[i].y;
+    cout << fixed << setprecision(10) << Closet(ps) << endl;
 }

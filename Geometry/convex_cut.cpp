@@ -1,11 +1,21 @@
 //
-// 円と直線の交点
+// 凸多角形の切断, O(n)
 //
 // verified:
-//   AOJ Course CGL_7_D Circles - Cross Points of a Circle and a Line
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_D&lang=jp
+//   AOJ Course CGL_4_C Convex Polygon - Convex Cut
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_C&lang=jp
 //
 
+/*
+    問題例
+    ・AOJ 2385
+    ・AOJ 2160
+*/
+
+
+////////////////////////////
+// 基本要素 (点, 線分, 円)
+////////////////////////////
 
 #include <iostream>
 #include <vector>
@@ -14,10 +24,6 @@
 #include <algorithm>
 using namespace std;
 
-
-////////////////////////////
-// 基本要素 (点, 線分, 円)
-////////////////////////////
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -68,66 +74,79 @@ struct Circle : Point {
 };
 
 
-////////////////////////////
-// 円や直線の交点
-////////////////////////////
+///////////////////////
+// 多角形
+///////////////////////
 
-Point proj_for_crosspoint(const Point &p, const Line &l) {
-    DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
-    return l[0] + (l[1] - l[0]) * t;
+// 多角形の面積
+DD Area(const vector<Point> &pol) {
+    DD res = 0.0;
+    for (int i = 0; i < pol.size(); ++i) {
+        res += cross(pol[i], pol[(i+1)%pol.size()]);
+    }
+    return res/2.0L;
 }
-vector<Point> crosspoint(const Line &l, const Line &m) {
+
+// convex cut
+int ccw_for_convexcut(const Point &a, const Point &b, const Point &c) {
+    if (cross(b-a, c-a) > EPS) return 1;
+    if (cross(b-a, c-a) < -EPS) return -1;
+    if (dot(b-a, c-a) < 0) return 2;
+    if (norm(b-a) < norm(c-a)) return -2;
+    return 0;
+}
+vector<Point> crosspoint_for_convexcut(const Line &l, const Line &m) {
     vector<Point> res;
     DD d = cross(m[1] - m[0], l[1] - l[0]);
     if (abs(d) < EPS) return vector<Point>();
     res.push_back(l[0] + (l[1] - l[0]) * cross(m[1] - m[0], m[1] - l[0]) / d);
     return res;
 }
-vector<Point> crosspoint(const Circle &e, const Circle &f) {
+vector<Point> ConvexCut(const vector<Point> &pol, const Line &l) {
     vector<Point> res;
-    DD d = abs(e - f);
-    if (d < EPS) return vector<Point>();
-    if (d > e.r + f.r + EPS) return vector<Point>();
-    if (d < abs(e.r - f.r) - EPS) return vector<Point>();
-    DD rcos = (d * d + e.r * e.r - f.r * f.r) / (2.0 * d), rsin;
-    if (e.r - abs(rcos) < EPS) rsin = 0;
-    else rsin = sqrt(e.r * e.r - rcos * rcos);
-    Point dir = (f - e) / d;
-    Point p1 = e + dir * Point(rcos, rsin);
-    Point p2 = e + dir * Point(rcos, -rsin);
-    res.push_back(p1);
-    if (!eq(p1, p2)) res.push_back(p2);
-    return res;
-}
-vector<Point> crosspoint(const Circle &e, const Line &l) {
-    vector<Point> res;
-    Point p = proj_for_crosspoint(e, l);
-    DD rcos = abs(e - p), rsin;
-    if (rcos > e.r + EPS) return vector<Point>();
-    else if (e.r - rcos < EPS) rsin = 0;
-    else rsin = sqrt(e.r * e.r - rcos * rcos);
-    Point dir = (l[1] - l[0]) / abs(l[1] - l[0]);
-    Point p1 = p + dir * rsin;
-    Point p2 = p - dir * rsin;
-    res.push_back(p1);
-    if (!eq(p1, p2)) res.push_back(p2);
+    for (int i = 0; i < pol.size(); ++i) {
+        Point p = pol[i], q = pol[(i+1)%pol.size()];
+        if (ccw_for_convexcut(l[0], l[1], p) != -1) {
+            if (res.size() == 0) res.push_back(p);
+            else if (!eq(p, res[res.size()-1])) res.push_back(p);
+        }
+        if (ccw_for_convexcut(l[0], l[1], p) * ccw_for_convexcut(l[0], l[1], q) < 0) {
+            vector<Point> temp = crosspoint_for_convexcut(Line(p, q), l);
+            if (temp.size() == 0) continue;
+            else if (res.size() == 0) res.push_back(temp[0]);
+            else if (!eq(temp[0], res[res.size()-1])) res.push_back(temp[0]);
+        }
+    }
     return res;
 }
 
+// Voronoi-diagram (今回は使わない)
+Line bisector(const Point &p, const Point &q) {
+    Point c = (p + q) / 2.0L;
+    Point v = (q - p) * Point(0.0L, 1.0L);
+    v = v / abs(v);
+    return Line(c - v, c + v);
+}
+vector<Point> Voronoi(vector<Point> pol, const vector<Point> &ps, int ind) {
+    for (int i = 0; i < ps.size(); ++i) {
+        if (i == ind) continue;
+        Line l = bisector(ps[ind], ps[i]);
+        pol = ConvexCut(pol, l);
+    }
+    return pol;
+}
 
 
-bool cmp(const Point &a, const Point &b) { return make_pair(a.x, a.y) < make_pair(b.x, b.y); }
+
 int main() {
-    Circle c; cin >> c.x >> c.y >> c.r;
+    int n; cin >> n;
+    vector<Point> pol(n);
+    for (int i = 0; i < n; ++i) cin >> pol[i].x >> pol[i].y;
     int Q; cin >> Q;
     for (int _ = 0; _ < Q; ++_) {
-        Point x, y;
-        cin >> x.x >> x.y >> y.x >> y.y;
+        Point x, y; cin >> x.x >> x.y >> y.x >> y.y;
         Line l(x, y);
-        vector<Point> cp = crosspoint(c, l);
-        if (cp.size() == 1) cp.push_back(cp[0]);
-        sort(cp.begin(), cp.end(), cmp);
-        cout << fixed << setprecision(10)
-            << cp[0].x << " " << cp[0].y << " " << cp[1].x << " " << cp[1].y << endl;
+        auto cutted = ConvexCut(pol, l);
+        cout << fixed << setprecision(10) << Area(cutted) << endl;
     }
 }
