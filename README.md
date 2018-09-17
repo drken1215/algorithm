@@ -37,6 +37,7 @@
 #### 平衡二分探索木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
+- Treap 木
 - Splay 木
 - 赤黒木
 
@@ -53,6 +54,7 @@
 - 並列二分探索
 - Skew Heap
 - Wavelet 木
+- binaryTrie 木
 
 
 
@@ -144,6 +146,7 @@
 - [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
 - 凸多角形の直径
 - ボロノイ図 (単純ver, O(n^2))
+- 円と円の共通部分の面積
 - 円と多角形との共通部分の面積
 
 #### 接線
@@ -159,7 +162,11 @@
 
 - [最近点対](https://github.com/drken1215/algorithm/blob/master/Geometry/closest_two_points.cpp)
 - 最近円対
+- 線分併合
 - 線分アレンジメント
+- 3 点を通る円
+- アポロニウスの円
+- 最小包含円
 - 双対変換
 - kd 木
 
@@ -181,6 +188,12 @@
 - 最小費用最大流 (Primal-Dual 法, 正辺のみ)
 - 最小費用最大流 (Primal-Dual 法, 負辺対応)
 - 最小費用循環流 (Cost-Scaling, 負閉路OK)
+
+#### カット
+
+- 最小カット (= 最大流)
+- 全域最小カット（Stonr-Wanger）
+- 全点対最小カット（Nagamochi-Ibaraki）
 
 #### マッチング
 
@@ -218,9 +231,14 @@
 
 #### その他
 
-- 最小全域木問題 (Kruskal 法)
+- 最小全域木 (Kruskal 法)
+- 最小有向全域木
+- 最小平均長閉路
 - Euler 路
+- Euler 閉路
 - [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
+- 最大クリーク列挙（O(1.443^n)）
+- 最小シュタイナー木
 
 
 
@@ -272,8 +290,10 @@
 
 #### mod, 二項係数
 
-- [mod 演算 (全部乗せ)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
-- [mod 演算 (累乗)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
+- [mod 演算 (累乗, 逆元, 二項係数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
+- mod の値が大きいとき
+- 二項係数 (nCr mod m, n: 巨大, r: 小さい)
+- 二項係数 (nCr mod m, m: 小さい, n: 巨大, r: 巨大)
 
 #### 様々な数
 
@@ -283,7 +303,13 @@
 - ベル
 #### ソート
 
+- クイックソート
+- マージソート
+- ヒープソート
+- コムソート
 - Radix ソート
+- 挿入ソート
+- その他のソート達
 
 #### マトロイド
 
@@ -356,6 +382,7 @@
 
 - Trie 木
 - [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
+- Suffix Array (SA-IS)
 - Z 法
 - Mo 法
 - Manacher 法
