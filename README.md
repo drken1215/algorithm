@@ -13,6 +13,8 @@
 - [Union-Find 木 (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_rank.cpp)
 - [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
 - [部分永続 Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find_tree.cpp)
+- Quick Find
+- Dynamic Connectivity
 
 #### セグメント木
 
@@ -38,6 +40,7 @@
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
 - Treap 木
+- AVL 木
 - Splay 木
 - 赤黒木
 
@@ -53,8 +56,9 @@
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - 並列二分探索
 - Skew Heap
+- Radix Heap
 - Wavelet 木
-- binaryTrie 木
+- BinaryTrie 木
 
 
 
@@ -75,6 +79,12 @@
 - 重心分解
 - [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
 - Link-Cut 木
+- マージテク (俗称)
+
+#### その他の問題
+
+- Level Ancester
+
 
 
 
@@ -83,11 +93,15 @@
 # DP
 定型的な動的計画法やその他の処理です
 
-#### いもす法 (俗称)
+#### 典型処理
 
+- 累積和
+- 二次元累積和
 - [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
 - [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp)
 - 三次元いもす法 (俗称)
+- 座標圧縮
+- スライド最小値
 
 #### 典型的 DP
 
@@ -95,8 +109,16 @@
 - LIS
 - LCS
 - 編集距離
+- 重みつき区間スケジューリング問題
 - ヒストグラム長方形面積最大化
 - 最適二分探索木
+
+#### DP パターン例
+
+- 桁 DP
+- 部分文字列 DP
+- 木 DP
+- ダブリング DP
 
 #### DP 高速化テクニック
 
@@ -192,8 +214,8 @@
 #### カット
 
 - 最小カット (= 最大流)
-- 全域最小カット（Stonr-Wanger）
-- 全点対最小カット（Nagamochi-Ibaraki）
+- 全域最小カット（Stonr-Wanger 法）
+- 全頂点対間最小カット（Nagamochi-Ibaraki 法）
 
 #### マッチング
 
@@ -209,12 +231,27 @@
 # GraphTheory
 グラフ理論全般のアルゴリズムです
 
+#### BFS
+
+- BFS (重みなしグラフの最短路)
+- 0-1 BFS (重みが 0,1 のみのグラフの最短路)
+- トポロジカルソート (BFS)
+
+#### DFS
+
+- DFS (連結成分を数える)
+- トポロジカルソート (DFS)
+- サイクル検出 (DFS)
+- サイクル検出 (Union-Find)
+- 二部グラフ判定 (DFS)
+- 二部グラフ判定 (Union-Find)
+
 #### 連結成分分解
 
-- 連結成分分解
 - 強連結成分分解
 - 二重辺連結成分分解
 - 二重点連結成分分解
+- 2-SAT
 
 #### ツリー
 
@@ -225,7 +262,7 @@
 
 - 単一始点最短路 (Dijkstra 法, 正辺のみ)
 - 単一始点最短路 (Bellman-Ford 法, 負辺対応)
-- 全頂点間最短路 (Floyd-Warshall 法)
+- 全頂点対間最短路 (Floyd-Warshall 法)
 - k-最短路
 - SPFA
 
@@ -342,6 +379,15 @@
 - エラトステネスの区間篩
 - アトキンの篩
 
+#### 素因数分解を基にしたアルゴリズム
+
+- 高速素因数分解 (ロー法)
+- Euler のファイ関数
+- メビウス関数
+- 高速素因数分解 (エラトステネスの篩風)
+- 高速ファイ関数 (エラトスネテスの篩風)
+- 高速メビウス関数 (エラトスネテスの篩風)
+
 #### 方程式
 
 -  [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
@@ -370,6 +416,7 @@
 #### 文字列検索
 
 - ローリングハッシュ
+- 二次元ローリングハッシュ
 - 単一パターン検索 (KMP 法)
 - 単一パターン検索 (Boyer-Moore 法)
 - 複数パターン検索 (Aho-Corasick 法)
@@ -386,6 +433,7 @@
 - Z 法
 - Mo 法
 - Manacher 法
+- Palindromic 木 (AOJ 2292)
 
 
 
@@ -394,12 +442,33 @@
 # Others
 その他のアルゴリズムです
 
-- サイコロ
-- 曜日
+#### グリッド
+
+- グリッドの 4 近傍
+- グリッドの 8 近傍
+- ハニカムの 6 近傍
+
+#### ビット
+
+- XorShift
+- next_combination
+- 部分集合の部分集合
+- bit 演算テクニック集
+
+#### 探索法
+
 - α-β 探索
+- 焼き鈍し法
 - A*
 - IDA*
-- 2-SAT
+
+#### その他
+
+- タイマー
+- サイコロ
+- 曜日
+- 四面体 (AOJ 2060)
+
 
 
 
