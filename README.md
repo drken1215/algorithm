@@ -100,8 +100,12 @@
 
 - 累積和
 - スライド最小値
-- Convex Hull Trick
+- インライン DP
+- [Convex Hull Trick (傾き単調、クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
+- [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
+- [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
 - Monotone Minima
+- Divide and Conquer
 - Monge
 
 
@@ -144,7 +148,7 @@
 
 #### 接線
 
-- [接線 (円外の 1 点から)](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
+- [接線](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
 - [共通接線 (2 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/common_tanline.cpp)
 
 #### 三次元幾何
