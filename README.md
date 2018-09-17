@@ -112,6 +112,9 @@
 - 重みつき区間スケジューリング問題
 - ヒストグラム長方形面積最大化
 - 最適二分探索木
+- Set Cover
+- k-Cover (O(n 2^n))
+- k-partition (O(n^3 2^n))
 
 #### DP パターン例
 
@@ -214,8 +217,9 @@
 #### カット
 
 - 最小カット (= 最大流)
-- 全域最小カット（Stonr-Wanger 法）
-- 全頂点対間最小カット（Nagamochi-Ibaraki 法）
+- 全域最小カット（Stoer-Wanger 法）
+- 全頂点対間最小カット (Nagamochi-Ibaraki 法)
+- Gomory-Hu 木
 
 #### マッチング
 
@@ -263,19 +267,20 @@
 - 単一始点最短路 (Dijkstra 法, 正辺のみ)
 - 単一始点最短路 (Bellman-Ford 法, 負辺対応)
 - 全頂点対間最短路 (Floyd-Warshall 法)
+- 全頂点対間最短路 (Johnson 法)
 - k-最短路
 - SPFA
 
 #### その他
 
 - 最小全域木 (Kruskal 法)
-- 最小有向全域木
-- 最小平均長閉路
-- Euler 路
-- Euler 閉路
+- 最小有向全域木 (Chu-Liu/Edmonds 法)
+- 有向 Euler 路
+- 無向 Euler 路
+- 彩色数 (O(n2^n))
 - [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 - 最大クリーク列挙（O(1.443^n)）
-- 最小シュタイナー木
+- 最小シュタイナー木 (O(n 3^t + n^2 2^t + n^3))
 
 
 
@@ -293,7 +298,9 @@
 - 連立一次方程式 (実数)
 - 連立一次方程式 (mod. p)
 - 連立一次方程式 (binary)
-- Toeplitz 行列
+- Toeplitz 行列 (乗算, 連立方程式が O(n^2))
+- 巡回行列 (乗算が O(n^2))
+- 三重対角行列 (連立方程式が O(n))
 
 #### 多項式, 方程式
 
@@ -302,6 +309,7 @@
 - 多項式 (mod. p 係数)
 - きたまさ法 (俗称)
 - きたまさ法 with FFT (俗称)
+- 多項式補間
 
 #### 畳み込み計算
 
@@ -315,8 +323,10 @@
 #### 最適化
 
 - 三分探索法
+- 黄金探索法
 - Newton 法
 - 単体法
+- 分枝限定法
 
 
 
@@ -337,7 +347,9 @@
 - カタラン数
 - 分割数
 - スターリング数
-- ベル
+- ベル数
+- ベルヌーイ数
+
 #### ソート
 
 - クイックソート
@@ -356,6 +368,7 @@
 #### その他
 
 - Nim
+- LIS and LDS
 
 
 
@@ -390,7 +403,7 @@
 
 #### 方程式
 
--  [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
+- [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
 - 中国剰余定理 (Garner 法)
 - 連立一次合同方程式
 - ペル方程式
@@ -435,6 +448,12 @@
 - Manacher 法
 - Palindromic 木 (AOJ 2292)
 
+#### その他
+
+- split 関数
+- 二次元盤面に番兵追加
+- 二次元盤面を 90 度回転
+
 
 
 
@@ -465,6 +484,7 @@
 #### その他
 
 - タイマー
+- ランダムシャッフル
 - サイコロ
 - 曜日
 - 四面体 (AOJ 2060)
