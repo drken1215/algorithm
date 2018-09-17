@@ -114,18 +114,28 @@
 - [全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
 - [基本要素 (点, 線分, 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/BasicElements.cpp)
 
-#### 射影, 距離, 交差判定
+#### 点, 線分, 三角形などの位置関係
+
+- [点と線分の位置関係 (ccw)](https://github.com/drken1215/algorithm/blob/master/Geometry/ccw.cpp)
+- [点と三角形の包含関係](https://github.com/drken1215/algorithm/blob/master/Geometry/is_contain_in_the_triangle.cpp)
+
+#### 射影, 交差判定, 距離
 
 - [射影](https://github.com/drken1215/algorithm/blob/master/Geometry/Projection.cpp)
-- 距離
-- 交点
-- 線分アレンジメント
+- [線分と線分の交差判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_intersect_two_segments.cpp)
+- [線分と線分との距離](https://github.com/drken1215/algorithm/blob/master/Geometry/distance_two_segments.cpp))
+
+#### 直線や円の交点
+
+- [直線と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_lines.cpp)
+- [円と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_line_circle.cpp)
+- [円と円の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_circles.cpp)
 
 #### 多角形
 
-- 多角形の面積
+- [多角形の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_polygon.cpp)
 - 点と多角形の包含判定
-- 凸包
+- [凸包]()
 - 凸多角形の切断
 - 凸多角形の直径
 - ボロノイ図 (単純ver, O(n^2))
@@ -142,6 +152,7 @@
 
 - 最近点対
 - 最近円対
+- 線分アレンジメント
 - 双対変換
 - kd 木
 
@@ -271,6 +282,10 @@
 
 - マトロイド上の Greedy 法
 - マトロイド交差
+
+#### その他
+
+- Nim
 
 
 

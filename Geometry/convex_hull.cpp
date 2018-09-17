@@ -1,7 +1,19 @@
+//
+// 凸包
+//
+// verified:
+//   AOJ Course CGL_4_A Convex Polygon - Convex Hull
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_A&lang=jp
+//
+
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
+
 
 /* Point */
 using DD = double;
@@ -52,6 +64,87 @@ struct Circle : Point {
     friend ostream& operator << (ostream &s, const Circle &c) {return s << '(' << c.x << ", " << c.y << ", " << c.r << ')';}
 };
 
+
+///////////////////////
+// 多角形アルゴリズム
+///////////////////////
+
+// 一直線上の3点を含めない
+vector<Point> ConvexHull(vector<Point> &ps) {
+    int n = (int)ps.size();
+    vector<Point> res(2*n);
+    sort(ps.begin(), ps.end());
+    int k = 0;
+    for (int i = 0; i < n; ++i) {
+        if (k >= 2) {
+            while (cross(res[k-1] - res[k-2], ps[i] - res[k-2]) < EPS) {
+                --k;
+                if (k < 2) break;
+            }
+        }
+        res[k] = ps[i]; ++k;
+    }
+    int t = k+1;
+    for (int i = n-2; i >= 0; --i) {
+        if (k >= t) {
+            while (cross(res[k-1] - res[k-2], ps[i] - res[k-2]) < EPS) {
+                --k;
+                if (k < t) break;
+            }
+        }
+        res[k] = ps[i]; ++k;
+    }
+    res.resize(k-1);
+    return res;
+}
+
+// 一直線上の3点を含める
+vector<Point> ConvexHullCollinearOK(vector<Point> &ps) {
+    int n = (int)ps.size();
+    vector<Point> res(2*n);
+    sort(ps.begin(), ps.end());
+    int k = 0;
+    for (int i = 0; i < n; ++i) {
+        if (k >= 2) {
+            while (cross(res[k-1] - res[k-2], ps[i] - res[k-2]) < -EPS) {
+                --k;
+                if (k < 2) break;
+            }
+        }
+        res[k] = ps[i]; ++k;
+    }
+    int t = k+1;
+    for (int i = n-2; i >= 0; --i) {
+        if (k >= t) {
+            while (cross(res[k-1] - res[k-2], ps[i] - res[k-2]) < -EPS) {
+                --k;
+                if (k < t) break;
+            }
+        }
+        res[k] = ps[i]; ++k;
+    }
+    res.resize(k-1);
+    return res;
+}
+
+
+
 int main() {
-    
+    int n; cin >> n;
+    vector<Point> ps(n);
+    for (int i = 0; i < n; ++i) cin >> ps[i].x >> ps[i].y;
+    auto pol = ConvexHullCollinearOK(ps);
+    pair<double,double> minv = {11000, 11000};
+    int minp = -1;
+    for (int i = 0; i < (int)pol.size(); ++i) {
+        if (minv > make_pair(pol[i].y, pol[i].x)) {
+            minv = make_pair(pol[i].y, pol[i].x);
+            minp = i;
+        }
+    }
+    cout << pol.size() << endl;
+    for (int i = 0; i < (int)pol.size(); ++i) {
+        int j = (i + minp) % pol.size();
+        cout << fixed << setprecision(0) << pol[j].x << " " << pol[j].y << endl;
+    }
 }
