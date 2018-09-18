@@ -1,6 +1,8 @@
-# 様々なアルゴリズム
+# 様々なアルゴリズムの実装例
 データ構造や数論的アルゴリズムまで、様々な分野のアルゴリズムたちを C++14 で実装しています。  
-プログラミングコンテストなどにおいて「実装例」または「ライブラリ」として使用することを念頭に置いています。
+アルゴリズム系の研究開発において計算機実験が必要になる場面や、
+プログラミングコンテストに参加する場面などを想定して、
+「実装例」または「ライブラリ」として使用することを念頭に置いています。
 
   
 
@@ -21,6 +23,7 @@
 - [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_delay.cpp)
 - [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
+- マージソート過程保存木
 - 二次元セグメント木
 
 #### BIT
@@ -118,6 +121,7 @@
 
 #### DP パターン例
 
+- bitDP
 - 桁 DP
 - 部分文字列 DP
 - ダブリング DP
@@ -135,6 +139,8 @@
 - Monotone Minima
 - Divide and Conquer
 - Monge
+- Alien DP
+- 戻す DP (俗称)
 
 
 
@@ -195,6 +201,7 @@
 - 最小包含円
 - 双対変換
 - kd 木
+
 
 
 
@@ -370,7 +377,7 @@
 #### その他
 
 - Nim
-- LIS and LDS
+- [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
 
 
 
@@ -480,6 +487,7 @@
 - 焼き鈍し法
 - A*
 - IDA*
+- Baby-Step Giant-Step 法
 
 #### その他
 
