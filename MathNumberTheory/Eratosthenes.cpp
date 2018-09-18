@@ -1,8 +1,9 @@
 //
 // エラトステネスの篩
 //
-// 参考:
-//   https://mathtrain.jp/eratosthenes
+// cf.
+//   高校数学の美しい物語: エラトスネテスの篩
+//     https://mathtrain.jp/eratosthenes
 //
 // verified
 //   AOJ 0009 素数

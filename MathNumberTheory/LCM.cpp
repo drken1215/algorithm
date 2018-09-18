@@ -1,6 +1,10 @@
 //
 // LCM (最小公倍数)
 //
+// cf.
+//   拡張ユークリッドの互除法 〜 一次不定方程式 ax + by = c の解き方 〜
+//     https://qiita.com/drken/items/b97ff231e43bce50199a
+//
 // verified
 //   ABC 070 C - Multiple Clocks
 //     https://beta.atcoder.jp/contests/abc070/tasks/abc070_c

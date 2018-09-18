@@ -1,6 +1,10 @@
 //
 // maximum stable set O(1.381^{n})
 //
+// cf.
+//   wata: 指数時間アルゴリズム入門
+//     https://www.slideshare.net/wata_orz/ss-12131479
+//
 // verified:
 //   CODE THANKS FESTIVAL 2017 G - Mixture Drug
 //     https://code-thanks-festival-2017-open.contest.atcoder.jp/tasks/code_thanks_festival_2017_g

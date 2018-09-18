@@ -1,7 +1,7 @@
 //
 // imos-algorithm
 //
-// c.f.
+// cf.
 //   https://imoz.jp/algorithms/imos_method.html
 //
 // verified

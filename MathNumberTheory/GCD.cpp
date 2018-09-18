@@ -1,8 +1,9 @@
 //
 // GCD (Euclid's algorithm)
 //
-// c.f.
-//   https://qiita.com/drken/items/b97ff231e43bce50199a
+// cf.
+//   拡張ユークリッドの互除法 〜 一次不定方程式 ax + by = c の解き方 〜
+//     https://qiita.com/drken/items/b97ff231e43bce50199a
 //
 // verified
 //   ABC 109 C - Skip

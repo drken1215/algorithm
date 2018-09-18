@@ -1,7 +1,7 @@
 //
 // Weighted Union Find Tree
 //
-// c.f.
+// cf.
 //   https://qiita.com/drken/items/cce6fc5c579051e64fab
 //
 // verified:

@@ -1,9 +1,11 @@
 //
 // Modular Arithmetics
 //
-// c.f.
-//   https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
+// cf.
+//   drken: 「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜
+//     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
+
 
 #include <iostream>
 using namespace std;

@@ -1,8 +1,9 @@
 //
 // 中国剰余定理
 //
-// 参考:
-//   https://qiita.com/drken/items/ae02240cd1f8edfc86fd
+// cf.
+//   中国剰余定理 (CRT) の解説と、それを用いる問題のまとめ
+//     https://qiita.com/drken/items/ae02240cd1f8edfc86fd
 //
 // verified
 //   AOJ 2659 箸

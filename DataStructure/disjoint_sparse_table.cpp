@@ -1,8 +1,9 @@
 //
 // Disjoint Sparse Table
 //
-// c.f.
-//   http://noshi91.hatenablog.com/entry/2018/05/08/183946
+// cf.
+//   noshi: Disjoint Sparse Table と セグ木に関するポエム
+//     http://noshi91.hatenablog.com/entry/2018/05/08/183946
 //
 // verified
 //   Codechef Product on the segment by modulo

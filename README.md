@@ -120,8 +120,9 @@
 
 - 桁 DP
 - 部分文字列 DP
-- 木 DP
 - ダブリング DP
+- 木 DP
+- 全方位木 DP
 
 #### DP 高速化テクニック
 
@@ -322,6 +323,7 @@
 
 #### 最適化
 
+- 二分探索法 (方程式の解を 1 つ求める)
 - 三分探索法
 - 黄金探索法
 - Newton 法
@@ -463,16 +465,14 @@
 
 #### グリッド
 
-- グリッドの 4 近傍
-- グリッドの 8 近傍
-- ハニカムの 6 近傍
+- [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
+- [ハニカムの 6 近傍](https://github.com/drken1215/algorithm/blob/master/Others/honeycomb_neighbors.cpp)
 
-#### ビット
+#### ビット演算テクニック
 
-- XorShift
-- next_combination
-- 部分集合の部分集合
-- bit 演算テクニック集
+- [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
+- [next_combination](https://github.com/drken1215/algorithm/blob/master/Others/next_combination.cpp)
+- [部分集合の部分集合](https://github.com/drken1215/algorithm/blob/master/Others/subset_enumeration.cpp)
 
 #### 探索法
 
@@ -484,7 +484,6 @@
 #### その他
 
 - タイマー
-- ランダムシャッフル
 - サイコロ
 - 曜日
 - 四面体 (AOJ 2060)
