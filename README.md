@@ -491,6 +491,7 @@
 
 #### その他
 
+- [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
 - タイマー
 - サイコロ
 - 曜日
