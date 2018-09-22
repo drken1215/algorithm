@@ -459,6 +459,7 @@
 
 #### その他
 
+- [ある index 以降で最初に特定の文字が登場する index を前処理する関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
 - split 関数
 - 二次元盤面に番兵追加
 - 二次元盤面を 90 度回転
