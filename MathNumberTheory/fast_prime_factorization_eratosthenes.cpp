@@ -1,8 +1,8 @@
 //
-// ¥¨¥é¥È¥¹¥Í¥Æ¥¹¤ÎäÁ¤òÍÑ¤¤¤¿¹âÂ®ÁÇ°ø¿ôÊ¬²ò
+// ã‚¨ãƒ©ãƒˆã‚¹ãƒãƒ†ã‚¹ã®ç¯©ã‚’ç”¨ã„ãŸé«˜é€Ÿç´ å› æ•°åˆ†è§£
 //
-// cf. 
-//   ¹âÂ®ÁÇ°ø¿ôÊ¬²ò
+// cf.
+//   é«˜é€Ÿç´ å› æ•°åˆ†è§£
 //     http://www.osak.jp/diary/diary_201310.html#20131017
 //
 // verified
@@ -12,7 +12,8 @@
 
 
 /*
-    min_factor[i] := i ¤ÎºÇ¾®¤ÎÁÇ°ø»Ò¡¢¥¨¥é¥È¥¹¥Í¥Æ¥¹¤ÎäÁ¤òÍÑ¤¤¤ë
+    min_factor[i] := i ã®æœ€å°ã®ç´ å› å­
+    ã“ã‚Œã‚’ã‚¨ãƒ©ãƒˆã‚¹ãƒãƒ†ã‚¹ã®ç¯©ã‚’ç”¨ã„ã‚‹
 */
 
 
@@ -27,18 +28,17 @@ int MinFactor[MAX];
 vector<int> preprocess(int n = MAX) {
     vector<int> res;
     for (int i = 0; i < n; ++i) IsPrime[i] = true, MinFactor[i] = -1;
-	IsPrime[0] = false; IsPrime[1] = false; 
-    MinFactor[0] = 0; MinFactor[1] = 1;
-	for (int i = 2; i < n; ++i) {
-		if (IsPrime[i]) {
+    IsPrime[0] = false; IsPrime[1] = false; MinFactor[0] = 0; MinFactor[1] = 1;
+    for (int i = 2; i < n; ++i) {
+        if (IsPrime[i]) {
             MinFactor[i] = i;
             res.push_back(i);
-			for (int j = i*2; j < n; j += i) {
+            for (int j = i*2; j < n; j += i) {
                 IsPrime[j] = false;
                 if (MinFactor[j] == -1) MinFactor[j] = i;
             }
-		}
-	}
+        }
+    }
     return res;
 }
 
@@ -57,22 +57,22 @@ vector<pair<int,int> > prime_factor(int n) {
 }
 
 
-// ºÇÂç¸øÌó¿ô
+// æœ€å¤§å…¬ç´„æ•°
 int GCD(int x, int y) { return y ? GCD(y, x%y) : x; }
 
 
 int main() {
-    // ÆşÎÏ
+    // å…¥åŠ›
     int n; scanf("%d", &n);
     vector<int> a(n);
     for (int i = 0; i < n; ++i) scanf("%d", &a[i]);
 
-    // ºÇÂç¸øÌó¿ô¤Ç³ä¤Ã¤Æ¤ª¤¯
+    // æœ€å¤§å…¬ç´„æ•°ã§å‰²ã£ã¦ãŠã
     int g = 0;
     for (int i = 0; i < n; ++i) g = GCD(g, a[i]);
     for (int i = 0; i < n; ++i) a[i] /= g;
 
-    // ³ÆÁÇ°ø»Ò¤´¤È¤Ë a ¤Ë²¿¸Ä¤¢¤ë¤«¤ò¥«¥¦¥ó¥È
+    // å„ç´ å› å­ã”ã¨ã« a ã«ä½•å€‹ã‚ã‚‹ã‹ã‚’ã‚«ã‚¦ãƒ³ãƒˆ
     preprocess();
     vector<int> count(MAX, 0);
     for (int i = 0; i < n; ++i) {
