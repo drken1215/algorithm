@@ -24,9 +24,10 @@
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_delay.cpp)
 - [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
 - マージソート過程保存木
+- 等差数列区間加算木
 - 二次元セグメント木
 
-#### BIT
+#### Binary Indexed 木
 
 - [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
 - [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
@@ -54,14 +55,26 @@
 - 永続セグメント木
 - 永続赤黒木
 
+#### ハッシュ
+
+- ローリングハッシュ
+- Zobrist hash
+- 木に対する hash
+
+#### ヒープ
+
+- Skew Heap (マージ可能)
+- Paring Heap (マージ可能)
+- Radix Heap
+- Fibonacci Heap
+
 #### その他
 
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - 並列二分探索
-- Skew Heap
-- Radix Heap
 - Wavelet 木
 - BinaryTrie 木
+- Cartesian 木
 
 
 
@@ -83,6 +96,7 @@
 - [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
 - Link-Cut 木
 - マージテク (俗称)
+- DSU on Tree
 
 #### その他の問題
 
@@ -121,9 +135,11 @@
 
 #### DP パターン例
 
+- ナップサック DP
+- 区間分割型ナップサック DP
 - bitDP
 - 桁 DP
-- 部分文字列 DP
+- 部分列 DP
 - ダブリング DP
 - 木 DP
 - 全方位木 DP (俗称)
@@ -133,7 +149,7 @@
 
 - 累積和
 - スライド最小値
-- インライン DP
+- インライン DP (俗称)
 - [Convex Hull Trick (傾き単調、クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
 - [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
 - [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
@@ -169,6 +185,9 @@
 - [直線と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_lines.cpp)
 - [円と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_line_circle.cpp)
 - [円と円の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_circles.cpp)
+- 直線と線分の交点
+- 直線と多角形の交点
+- 円と線分の交点
 
 #### 多角形
 
@@ -177,8 +196,8 @@
 - [凸性判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_convex.cpp)
 - [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
 - [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
-- 凸多角形の直径
 - ボロノイ図 (単純ver, O(n^2))
+- 凸多角形の直径
 - 円と円の共通部分の面積
 - 円と多角形との共通部分の面積
 
@@ -309,7 +328,9 @@
 - 連立一次方程式 (binary)
 - Toeplitz 行列 (乗算, 連立方程式が O(n^2))
 - 巡回行列 (乗算が O(n^2))
+- コンパニオン行列
 - 三重対角行列 (連立方程式が O(n))
+- Black Box Linear Algebra
 
 #### 多項式, 方程式
 
@@ -324,7 +345,7 @@
 
 - FFT (高速フーリエ変換)
 - NTT (高速剰余変換)
-- 高速アダマール変換
+- 高速アダマール変換 (SRM 518 div1 hard)
 - 高速ゼータ変換
 - 高速メビウス変換
 - Karatsuba 法
@@ -441,6 +462,10 @@
 # String
 文字列アルゴリズムです
 
+#### 構文解析
+
+- LL(1) 再帰降下パーサ
+
 #### 文字列検索
 
 - ローリングハッシュ
@@ -449,18 +474,17 @@
 - 単一パターン検索 (Boyer-Moore 法)
 - 複数パターン検索 (Aho-Corasick 法)
 
-#### 構文解析
+#### 文字列系アルゴリズム
 
-- LL(1) 再帰降下パーサ
+- Z 法
+- Mo 法
+- Manacher 法
 
 #### 文字列系データ構造
 
 - Trie 木
 - [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - Suffix Array (SA-IS)
-- Z 法
-- Mo 法
-- Manacher 法
 - Palindromic 木 (AOJ 2292)
 
 #### その他
@@ -495,6 +519,7 @@
 - A*
 - IDA*
 - Baby-Step Giant-Step 法
+- 平面走査法
 
 #### その他
 
