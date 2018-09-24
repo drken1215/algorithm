@@ -282,7 +282,7 @@
 
 - 強連結成分分解
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
-- 二重辺連結成分分解
+- [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
 - 二重点連結成分分解
 - 2-SAT
 

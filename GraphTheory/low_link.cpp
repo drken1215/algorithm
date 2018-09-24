@@ -9,7 +9,7 @@
 //   AOJ Course GRL_3_B Connected Components - Bridges
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_3_B&lang=jp
 //
-//   Connected Components - Articulation Points
+//   AOJ Course GRL_3_A Connected Components - Articulation Points
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_3_A&lang=jp
 //
 //
