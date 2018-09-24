@@ -126,7 +126,8 @@
 - 部分文字列 DP
 - ダブリング DP
 - 木 DP
-- 全方位木 DP
+- 全方位木 DP (俗称)
+- 二乗の木 DP (俗称)
 
 #### DP 高速化テクニック
 
@@ -346,13 +347,18 @@
 
 #### mod, 二項係数
 
-- [mod 演算 (累乗, 逆元, 二項係数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
+- [mod 演算 (全部乗せ)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
+- 累乗
+- 逆元
+- 二項係数 (nCr mod p, n<=10^7, r<=10^7, p<=10^9)
+- 二項係数 (nCr mod p, n<=10^9, r<=10^7, p<=10^9)
+- 二項係数 (nCr mod p, n<=10^9, r<=10^9, p<=10^7)
 - mod の値が大きいとき
-- 二項係数 (nCr mod m, n: 巨大, r: 小さい)
-- 二項係数 (nCr mod m, m: 小さい, n: 巨大, r: 巨大)
 
 #### 様々な数
 
+
+- [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
 - カタラン数
 - 分割数
 - スターリング数
@@ -459,7 +465,7 @@
 
 #### その他
 
-- [ある index 以降で最初に特定の文字が登場する index を前処理する関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
+- [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
 - split 関数
 - 二次元盤面に番兵追加
 - 二次元盤面を 90 度回転
