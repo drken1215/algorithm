@@ -433,7 +433,7 @@
 - 高速素因数分解 (ロー法)
 - Euler のファイ関数
 - メビウス関数
-- 高速素因数分解 (エラトステネスの篩風)
+- [高速素因数分解 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
 - 高速ファイ関数 (エラトスネテスの篩風)
 - 高速メビウス関数 (エラトスネテスの篩風)
 
