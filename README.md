@@ -283,7 +283,7 @@
 - 強連結成分分解
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
-- 二重点連結成分分解
+- 二重頂点連結成分分解
 - 2-SAT
 
 #### ツリー
@@ -370,15 +370,14 @@
 #### mod, 二項係数
 
 - [mod 演算 (全部乗せ)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
-- 累乗
-- 逆元
-- 二項係数 (nCr mod p, n<=10^7, r<=10^7, p<=10^9)
-- 二項係数 (nCr mod p, n<=10^9, r<=10^7, p<=10^9)
-- 二項係数 (nCr mod p, n<=10^9, r<=10^9, p<=10^7)
-- mod の値が大きいとき
+- [累乗](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
+- [逆元](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_inverse.cpp)
+- [二項係数 (オーソドックス、n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
+- [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
+- [二項係数 (漸化式計算, n<=10^9, r<=10^9, p<=10^7)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
+- [mod の値が大きいとき](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/big_mod.cpp)
 
 #### 様々な数
-
 
 - [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
 - カタラン数
