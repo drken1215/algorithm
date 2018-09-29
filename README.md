@@ -263,19 +263,17 @@
 # GraphTheory
 グラフ理論全般のアルゴリズムです
 
-#### BFS
-
-- BFS (重みなしグラフの最短路)
-- 0-1 BFS (重みが 0,1 のみのグラフの最短路)
-- トポロジカルソート (BFS)
-
-#### DFS
+#### DFS・BFS
 
 - DFS (連結成分を数える)
+- BFS (重みなしグラフの最短路)
 - トポロジカルソート (DFS)
+- トポロジカルソート (BFS)
 - サイクル検出 (DFS)
+- サイクル検出 (BFS)
 - サイクル検出 (Union-Find)
-- 二部グラフ判定 (DFS)
+- [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_dfs.cpp)
+- 二部グラフ判定 (BFS)
 - 二部グラフ判定 (Union-Find)
 
 #### 連結成分分解
@@ -293,6 +291,8 @@
 
 #### 最短路
 
+- 重みなしグラフの最短路 (BFS)
+- 重みが 0, 1 のみのグラフの最短路 (0-1 BFS)
 - 単一始点最短路 (Dijkstra 法, 正辺のみ)
 - 単一始点最短路 (Bellman-Ford 法, 負辺対応)
 - 全頂点対間最短路 (Floyd-Warshall 法)
