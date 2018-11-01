@@ -3,7 +3,7 @@
 //
 // verified
 //   ABC 112 D - Partition
-//     http://codeforces.com/contest/1034/problem/A
+//     https://beta.atcoder.jp/contests/abc112/tasks/abc112_d
 //
 
 
