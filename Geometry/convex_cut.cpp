@@ -91,8 +91,8 @@ DD Area(const vector<Point> &pol) {
 int ccw_for_convexcut(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
     if (cross(b-a, c-a) < -EPS) return -1;
-    if (dot(b-a, c-a) < 0) return 2;
-    if (norm(b-a) < norm(c-a)) return -2;
+    if (dot(b-a, c-a) < -EPS) return 2;
+    if (norm(b-a) < norm(c-a) - EPS) return -2;
     return 0;
 }
 vector<Point> crosspoint_for_convexcut(const Line &l, const Line &m) {

@@ -1,5 +1,5 @@
 //
-// ³‚Ì®” n ‚Ì–ñ”‚ğ—ñ‹“‚·‚é, O(ãn)
+// æ­£ã®æ•´æ•° n ã®ç´„æ•°ã‚’åˆ—æŒ™ã™ã‚‹, O(âˆšn)
 //
 // verified
 //   ABC 112 D - Partition
@@ -8,8 +8,8 @@
 
 
 /*
-	n ‚Ì–ñ”‚ğ•Ô‚·
-*/
+	n ã®ç´„æ•°ã‚’è¿”ã™
+ */
 
 
 #include <iostream>
@@ -19,29 +19,29 @@ using namespace std;
 
 
 vector<long long> calc_divisor(long long n) {
-	vector<long long> res;
-	for (long long i = 1LL; i*i <= n; ++i) {
-		if (n % i == 0) {
-			res.push_back(i);
-			long long j = n / i;
-			if (j != i) res.push_back(j);
-		}
-	}
-	sort(res.begin(), res.end());
-	return res;
+    vector<long long> res;
+    for (long long i = 1LL; i*i <= n; ++i) {
+        if (n % i == 0) {
+            res.push_back(i);
+            long long j = n / i;
+            if (j != i) res.push_back(j);
+        }
+    }
+    sort(res.begin(), res.end());
+    return res;
 }
 
 
 int main() {
-	long long N, M;
-	cin >> N >> M;
-	vector<long long> div = calc_divisor(M);
-	
-	// M ‚Ì–ñ” d ‚Å‚ ‚Á‚ÄAd * N <= M ‚Æ‚È‚éÅ‘å‚Ì d ‚ğ‹‚ß‚é
-	long long res = 1;
-	for (auto d : div) {
-		if (d * N <= M) res = max(res, d);
-	}
-
-	cout << res << endl;
+    long long N, M;
+    cin >> N >> M;
+    vector<long long> div = calc_divisor(M);
+    
+    // M ã®ç´„æ•° d ã§ã‚ã£ã¦ã€d * N <= M ã¨ãªã‚‹æœ€å¤§ã® d ã‚’æ±‚ã‚ã‚‹
+    long long res = 1;
+    for (auto d : div) {
+        if (d * N <= M) res = max(res, d);
+    }
+    
+    cout << res << endl;
 }

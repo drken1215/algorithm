@@ -65,8 +65,8 @@ int simple_ccw(const Point &a, const Point &b, const Point &c) {
 int ccw(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
     if (cross(b-a, c-a) < -EPS) return -1;
-    if (dot(b-a, c-a) < 0) return 2;
-    if (norm(b-a) < norm(c-a)) return -2;
+    if (dot(b-a, c-a) < -EPS) return 2;
+    if (norm(b-a) < norm(c-a) - EPS) return -2;
     return 0;
 }
 
