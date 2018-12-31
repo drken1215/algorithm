@@ -1,5 +1,5 @@
 //
-// FFT
+// FFT (Fast Fourier Transform)
 //
 // cf.
 //
@@ -15,6 +15,8 @@
 #include <algorithm>
 using namespace std;
 
+
+// complex number
 struct ComplexNumber {
     double real, imag;
     inline ComplexNumber& operator = (const ComplexNumber &c) {real = c.real; imag = c.imag; return *this;}
@@ -36,25 +38,28 @@ inline ComplexNumber operator / (const ComplexNumber &x, double a) {
     return {x.real / a, x.imag / a};
 }
 
+// fft
 namespace FFT {
     void trans(vector<ComplexNumber> &v, bool inv = false) {
-        for (int t = (int)v.size(); t >= 2; t >>= 1) {
+        int n = (int)v.size();
+        for (int i = 0, j = 1; j < n-1; j++) {
+            for (int k = n>>1; k > (i ^= k); k >>= 1);
+            if (i > j) swap(v[i], v[j]);
+        }
+        for (int t = 2; t <= n; t <<= 1) {
             double ang = acos(-1.0) * 2 / t;
-            for (int i = 0; i < t/2; ++i) {
-                ComplexNumber w = {cos(ang * i), sin(ang * i)};
-                if (inv) w.imag = -w.imag;
-                for (int j = i; j < (int)v.size(); j += t) {
-                    ComplexNumber tmp1 = v[j] + v[j + t/2];
-                    ComplexNumber tmp2 = (v[j] - v[j + t/2]) * w;
-                    v[j] = tmp1;
-                    v[j + t/2] = tmp2;
+            if (inv) ang = -ang;
+            for (int i = 0; i < n; i += t) {
+                for (int j = 0; j < t/2; ++j) {
+                    ComplexNumber w = {cos(ang * j), sin(ang * j)};
+                    int j1 = i + j, j2 = i + j + t/2;
+                    ComplexNumber c1 = v[j1], c2 = v[j2] * w;
+                    v[j1] = c1 + c2;
+                    v[j2] = c1 - c2;
                 }
             }
         }
-        for (int i = 1, j = 0; i < (int)v.size(); i++) {
-            for (int k = (int)v.size() >> 1; k > (j ^= k); k >>= 1);
-            if (i < j) swap(v[i], v[j]);
-        }
+        if (inv) for (int i = 0; i < n; ++i) v[i] = v[i]/n;
     }
     
     // C is A*B
@@ -68,7 +73,7 @@ namespace FFT {
         for (int i = 0; i < B.size(); ++i) cB[i] = {(double)B[i], 0};
         
         trans(cA); trans(cB);
-        for (int i = 0; i < size_fft; ++i) cC[i] = cA[i] * cB[i] / size_fft;
+        for (int i = 0; i < size_fft; ++i) cC[i] = cA[i] * cB[i];
         trans(cC, true);
         
         vector<long long> res((int)A.size() + (int)B.size() - 1);
@@ -76,6 +81,8 @@ namespace FFT {
         return res;
     }
 };
+
+
 
 int main() {
     int n; cin >> n;
