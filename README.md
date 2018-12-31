@@ -343,7 +343,7 @@
 #### 畳み込み計算
 
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
-- NTT (高速剰余変換)
+- [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
 - 高速アダマール変換 (SRM 518 div1 hard)
 - 高速ゼータ変換
 - 高速メビウス変換
