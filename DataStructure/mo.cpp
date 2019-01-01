@@ -6,7 +6,7 @@
 //     https://ei1333.hateblo.jp/entry/2017/09/11/211011
 //
 //
-// verified (suffix array の lcp を sparse table で求める):
+// verified
 //   SPOJ FREQUENT - Frequent values
 //     https://www.spoj.com/problems/FREQUENT/
 //
@@ -18,10 +18,10 @@
  ・区間の左端や右端を 1 個ずたしたものに対する値を高速に求められる (区間に a[idx] の要素を加えたり除いたり)
  
  ここでは
- cnt[i] := i が何個あるか
- hist[c] := 区間内に c 個ある値が何種類あるか
- num_kind := 区間内に何種類の数があるか
- mode := 最頻値の出現回数
+    cnt[i] := i が何個あるか
+    hist[c] := 区間内に c 個ある値が何種類あるか
+    num_kind := 区間内に何種類の数があるか
+    mode := 最頻値の出現回数
  */
 
 
@@ -48,10 +48,11 @@ struct Mo {
     void build() {
         index.resize(left.size());
         iota(index.begin(), index.end(), 0);
+        
         sort(begin(index), end(index), [&](int a, int b)
              {
-                 if (left[a] / window != left[b] / window) return left[a] < left[b];
-                 return bool((right[a] < right[b]) ^ (left[a] / window % 2));
+                 if(left[a] / window != left[b] / window) return left[a] < left[b];
+                 return right[a] < right[b];
              });
     }
     
