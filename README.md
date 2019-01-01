@@ -40,6 +40,10 @@
 - [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
 - [RMQ (Sparse Table)](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 
+#### 平方分割
+
+- [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
+
 #### 平衡二分探索木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
@@ -476,7 +480,6 @@
 #### 文字列系アルゴリズム
 
 - Z 法
-- Mo 法
 - Manacher 法
 
 #### 文字列系データ構造
