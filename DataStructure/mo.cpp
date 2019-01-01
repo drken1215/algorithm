@@ -7,8 +7,8 @@
 //
 //
 // verified (suffix array の lcp を sparse table で求める):
-//   Yandex.Algorithm 2011 Round 2 D - Powerful array
-//     http://codeforces.com/contest/86/problem/D
+//   SPOJ FREQUENT - Frequent values
+//     https://www.spoj.com/problems/FREQUENT/
 //
 
 
@@ -17,7 +17,11 @@
  ・クエリ先読みができる、区間更新はなし
  ・区間の左端や右端を 1 個ずたしたものに対する値を高速に求められる (区間に a[idx] の要素を加えたり除いたり)
  
- ここでは、区間に含まれる数列の種類数を求める
+ ここでは
+ cnt[i] := i が何個あるか
+ hist[c] := 区間内に c 個ある値が何種類あるか
+ num_kind := 区間内に何種類の数があるか
+ mode := 最頻値の出現回数
  */
 
 
@@ -26,6 +30,7 @@
 #include <numeric>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 using namespace std;
 
 struct Mo {
@@ -48,11 +53,6 @@ struct Mo {
                  if (left[a] / window != left[b] / window) return left[a] < left[b];
                  return bool((right[a] < right[b]) ^ (left[a] / window % 2));
              });
-        
-        //        sort(index.begin(), index.end(), [&](int a, int b) {
-        //            if (left[a] / window != right[b] / window) return left[a] < left[b];
-        //            else return right[a] < right[b];
-        //        });
     }
     
     /* extend-shorten */
@@ -79,35 +79,49 @@ struct Mo {
 };
 
 
-
+const int GETA = 100000;
 int N, Q;
-int A[300001];
-int res[200001];
-int cnt[1000001];
-int num_kind = 0;
+int A[100100], res[100100];
+int cnt[200100], hist[100100];
+int num_kind = 0, mode = 0;
 
 void Mo::insert(int id) {
     int val = A[id];
     if (cnt[val] == 0) ++num_kind;
+    --hist[cnt[val]];
     ++cnt[val];
+    ++hist[cnt[val]];
+    mode = max(mode, cnt[val]);
 }
 
 void Mo::erase(int id) {
     int val = A[id];
+    --hist[cnt[val]];
+    if(cnt[val] == mode && hist[cnt[val]] == 0) --mode;
     --cnt[val];
+    ++hist[cnt[val]];
     if (cnt[val] == 0) --num_kind;
 }
 
 int main() {
-    scanf("%d", &N);
-    for(int i = 0; i < N; i++) scanf("%d", &A[i]);
-    scanf("%d", &Q);
-    Mo mo(N);
-    for(int i = 0; i < Q; i++) {
-        int l, r; scanf("%d %d", &l, &r);
-        mo.push(--l, r);
+    while (scanf("%d", &N), N) {
+        memset(cnt, 0, sizeof(cnt));
+        memset(hist, 0, sizeof(hist));
+        mode = 0;
+        
+        scanf("%d", &Q);
+        for(int i = 0; i < N; i++) {
+            scanf("%d", &A[i]);
+            A[i] += GETA;
+        }
+        Mo mo(N);
+        for(int i = 0; i < Q; i++) {
+            int x, y;
+            scanf("%d %d", &x, &y);
+            mo.push(--x, y);
+        }
+        mo.build();
+        for(int i = 0; i < Q; i++) res[mo.next()] = mode;
+        for(int i = 0; i < Q; i++) printf("%d\n", res[i]);
     }
-    mo.build();
-    for(int i = 0; i < Q; i++) res[mo.next()] = num_kind;
-    for(int i = 0; i < Q; i++) printf("%d\n", res[i]);
 }
