@@ -293,7 +293,7 @@
 - 重みが 0, 1 のみのグラフの最短路 (0-1 BFS)
 - 単一始点最短路 (Dijkstra 法, 正辺のみ)
 - 単一始点最短路 (Bellman-Ford 法, 負辺対応)
-- 全頂点対間最短路 (Floyd-Warshall 法)
+- [全頂点対間最短路 (Floyd-Warshall 法)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/floyd_warshall.cpp)
 - 全頂点対間最短路 (Johnson 法)
 - k-最短路
 - SPFA
