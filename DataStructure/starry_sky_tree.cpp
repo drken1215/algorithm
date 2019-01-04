@@ -31,14 +31,14 @@
 using namespace std;
 
 
-template<class Monoid, class Lazy> struct StarrySky {
+template<class Monoid, class Action> struct StarrySky {
     const Monoid INF;
-    const Lazy ZERO;
+    const Action ZERO;
     int SIZE;
     vector<pair<Monoid, int> > dat;
-    vector<Lazy> lazy;
+    vector<Action> lazy;
     
-    StarrySky(int n, const Monoid &inf, const Lazy &zero) : INF(inf), ZERO(zero) {
+    StarrySky(int n, const Monoid &inf, const Action &zero) : INF(inf), ZERO(zero) {
         init(n);
     }
     void init(int n) {
@@ -62,7 +62,7 @@ template<class Monoid, class Lazy> struct StarrySky {
         dat[k].first += lazy[k];
         lazy[k] = ZERO;
     }
-    inline void update(int a, int b, const Monoid &v, int k, int l, int r) {
+    inline void update(int a, int b, const Action &v, int k, int l, int r) {
         evaluate(k);
         if (a <= l && r <= b) lazy[k] += v, evaluate(k);
         else if (a < r && l < b) {
@@ -70,7 +70,7 @@ template<class Monoid, class Lazy> struct StarrySky {
             dat[k] = min(dat[k*2], dat[k*2+1]);
         }
     }
-    inline void update(int a, int b, const Monoid &v) { update(a, b, v, 1, 0, SIZE); }
+    inline void update(int a, int b, const Action &v) { update(a, b, v, 1, 0, SIZE); }
     
     /* get [a, b) */
     inline pair<Monoid,int> get(int a, int b, int k, int l, int r) {

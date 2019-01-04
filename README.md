@@ -96,7 +96,7 @@
 #### テクニック
 
 - [Euler Tour (頂点上)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_nodes.cpp)
-- Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_edges.cpp)
+- [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_edges.cpp)
 - [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
 - 重心分解
 - Link-Cut 木
