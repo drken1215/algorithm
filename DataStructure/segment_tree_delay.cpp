@@ -43,25 +43,33 @@
 using namespace std;
 
 
-template<class Monoid, class Lazy> struct SegTree {
+// Segment Tree
+template<class Monoid, class Action> struct SegTree {
     using FuncMonoid = function< Monoid(Monoid, Monoid) >;
-    using FuncAction = function< void(Monoid&, Lazy) >;
-    using FuncLazy = function< void(Lazy&, Lazy) >;
-    const FuncMonoid FM;
-    const FuncAction FA;
-    const FuncLazy FL;
-    const Monoid UNITY_MONOID;
-    const Lazy UNITY_LAZY;
+    using FuncAction = function< void(Monoid&, Action) >;
+    using FuncLazy = function< void(Action&, Action) >;
+    FuncMonoid FM;
+    FuncAction FA;
+    FuncLazy FL;
+    Monoid UNITY_MONOID;
+    Action UNITY_LAZY;
     int SIZE, HEIGHT;
     vector<Monoid> dat;
-    vector<Lazy> lazy;
+    vector<Action> lazy;
     
+    SegTree() { }
     SegTree(int n, const FuncMonoid fm, const FuncAction fa, const FuncLazy fl,
-            const Monoid &unity_monoid, const Lazy &unity_lazy)
-        : FM(fm), FA(fa), FL(fl), UNITY_MONOID(unity_monoid), UNITY_LAZY(unity_lazy) {
-        init(n);
+            const Monoid &unity_monoid, const Action &unity_lazy)
+    : FM(fm), FA(fa), FL(fl), UNITY_MONOID(unity_monoid), UNITY_LAZY(unity_lazy) {
+        SIZE = 1; HEIGHT = 0;
+        while (SIZE < n) SIZE <<= 1, ++HEIGHT;
+        dat.assign(SIZE * 2, UNITY_MONOID);
+        lazy.assign(SIZE * 2, UNITY_LAZY);
     }
-    void init(int n) {
+    void init(int n, const FuncMonoid fm, const FuncAction fa, const FuncLazy fl,
+              const Monoid &unity_monoid, const Action &unity_lazy) {
+        FM = fm; FA = fa; FL = fl;
+        UNITY_MONOID = unity_monoid; UNITY_LAZY = unity_lazy;
         SIZE = 1; HEIGHT = 0;
         while (SIZE < n) SIZE <<= 1, ++HEIGHT;
         dat.assign(SIZE * 2, UNITY_MONOID);
@@ -82,7 +90,7 @@ template<class Monoid, class Lazy> struct SegTree {
         FA(dat[k], lazy[k]);
         lazy[k] = UNITY_LAZY;
     }
-    inline void update(int a, int b, const Monoid &v, int k, int l, int r) {
+    inline void update(int a, int b, const Action &v, int k, int l, int r) {
         evaluate(k);
         if (a <= l && r <= b)  FL(lazy[k], v), evaluate(k);
         else if (a < r && l < b) {
@@ -90,7 +98,7 @@ template<class Monoid, class Lazy> struct SegTree {
             dat[k] = FM(dat[k*2], dat[k*2+1]);
         }
     }
-    inline void update(int a, int b, const Monoid &v) { update(a, b, v, 1, 0, SIZE); }
+    inline void update(int a, int b, const Action &v) { update(a, b, v, 1, 0, SIZE); }
     
     /* get [a, b) */
     inline Monoid get(int a, int b, int k, int l, int r) {
@@ -111,7 +119,6 @@ template<class Monoid, class Lazy> struct SegTree {
         cout << endl;
     }
 };
-
 
 
 int main() {
