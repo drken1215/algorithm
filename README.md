@@ -123,7 +123,7 @@
 - [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp)
 - 三次元いもす法 (俗称)
 - 座標圧縮
-- スライド最小値
+- [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DP/sliding_minimum.cpp)
 
 #### 典型的 DP
 
