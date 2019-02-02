@@ -75,7 +75,7 @@
 #### その他
 
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
-- 並列二分探索
+- [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 - Wavelet 木
 - BinaryTrie 木
 - Cartesian 木
