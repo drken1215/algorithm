@@ -324,12 +324,9 @@
 #### 行列
 
 - [行列 (基本演算)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix.cpp)
-- 行列累乗 (実数)
-- 行列累乗 (mod. p)
-- 行列累乗 (binary)
-- 連立一次方程式 (実数)
-- 連立一次方程式 (mod. p)
-- 連立一次方程式 (binary)
+- 行列累乗, ランク, 連立一次方程式 (実数)
+- 行列累乗, ランク, 連立一次方程式 (mod. p)
+- [行列累乗, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - Toeplitz 行列 (乗算, 連立方程式が O(n^2))
 - 巡回行列 (乗算が O(n^2))
 - コンパニオン行列
