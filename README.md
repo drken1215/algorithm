@@ -470,7 +470,7 @@
 
 #### 文字列検索
 
-- ローリングハッシュ
+- [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - 二次元ローリングハッシュ
 - 単一パターン検索 (KMP 法)
 - 単一パターン検索 (Boyer-Moore 法)
