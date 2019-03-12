@@ -17,10 +17,14 @@ using namespace std;
 struct RollingHash {
     const int base = 9973;
     const vector<int> mod = {999999937LL, 1000000007LL};
-    string S_;
+    string S;
     vector<long long> hash[2], power[2];
+
+    // construct
     RollingHash(){}
-    RollingHash(const string &S) : S_(S) {
+    RollingHash(const string &cs) { init(cs); }
+    void init(const string &cs) {
+        S = cs;
         int n = (int)S.size();
         for (int iter = 0; iter < 2; ++iter) {
             hash[iter].assign(n+1, 0);
@@ -39,7 +43,7 @@ struct RollingHash {
     }
     // get lcp of S[a:] and S[b:]
     inline int getLCP(int a, int b) const {
-        int len = min((int)S_.size()-a, (int)S_.size()-b);
+        int len = min((int)S.size()-a, (int)S.size()-b);
         int low = -1, high = len + 1;
         while (high - low > 1) {
             int mid = (low + high) / 2;
@@ -51,7 +55,7 @@ struct RollingHash {
     }
     // get lcp of S[a:] and T[b:]
     inline int getLCP(const RollingHash &t, int a, int b) const {
-        int len = min((int)S_.size()-a, (int)S_.size()-b);
+        int len = min((int)S.size()-a, (int)S.size()-b);
         int low = -1, high = len + 1;
         while (high - low > 1) {
             int mid = (low + high) / 2;
