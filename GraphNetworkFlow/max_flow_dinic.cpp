@@ -51,7 +51,7 @@ template<class FLOWTYPE> struct Graph {
     /* 
     // debug
     friend ostream& operator << (ostream& s, const Graph& G) {
-        s << endl; for (int i = 0; i < G.V; ++i) { s << i << " : " << G.list[i] << endl; }return s;
+        s << endl; for (int i = 0; i < G.size(); ++i) { s << i << " : " << G.list[i] << endl; }return s;
     }
     */
 };

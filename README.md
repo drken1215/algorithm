@@ -478,8 +478,8 @@
 
 #### 文字列系アルゴリズム
 
-- Z 法
-- Manacher 法
+- [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
+- [Manacher 法]https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
 
 #### 文字列系データ構造
 
