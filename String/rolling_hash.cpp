@@ -55,8 +55,8 @@ struct RollingHash {
         int low = -1, high = len + 1;
         while (high - low > 1) {
             int mid = (low + high) / 2;
-            if (get(a, a+mid, 0) != get(b, b+mid, 0)) high = mid;
-            else if (get(a, a+mid, 1) != get(b, b+mid, 1)) high = mid;
+            if (get(a, a+mid, 0) != t.get(b, b+mid, 0)) high = mid;
+            else if (get(a, a+mid, 1) != t.get(b, b+mid, 1)) high = mid;
             else low = mid;
         }
         return low;
