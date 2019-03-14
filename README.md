@@ -472,7 +472,7 @@
 
 - [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - 二次元ローリングハッシュ
-- [単一パターン検索 (KMP 法)]((https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
+- [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
 - 単一パターン検索 (Boyer-Moore 法)
 - 複数パターン検索 (Aho-Corasick 法)
 
