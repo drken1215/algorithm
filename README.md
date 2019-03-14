@@ -472,14 +472,14 @@
 
 - [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - 二次元ローリングハッシュ
-- 単一パターン検索 (KMP 法)
+- [単一パターン検索 (KMP 法)]((https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
 - 単一パターン検索 (Boyer-Moore 法)
 - 複数パターン検索 (Aho-Corasick 法)
 
 #### 文字列系アルゴリズム
 
 - [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
-- [Manacher 法]https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
+- [Manacher 法](https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
 
 #### 文字列系データ構造
 
