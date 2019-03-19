@@ -62,8 +62,8 @@ template<class T> Matrix<T> pow(Matrix<T> A, long long n) {
 
 template<class T> int GaussJordan(Matrix<T> &A) {
     int rank = 0;
-	for (int col = 0; col < A[0].size(); ++col) {
-		int pivot = -1;
+    for (int col = 0; col < A[0].size(); ++col) {
+        int pivot = -1;
         T ma = EPS;
         for (int row = rank; row < A.size(); ++row) {
             if (abs(A[row][col]) > ma) {
@@ -71,21 +71,21 @@ template<class T> int GaussJordan(Matrix<T> &A) {
                 pivot = row;
             }
         }
-		if (pivot != -1) {
-			swap(A[pivot], A[rank]);
+        if (pivot != -1) {
+            swap(A[pivot], A[rank]);
             auto fac = A[rank][col];
             for (int col2 = 0; col2 < A[0].size(); ++col2) A[rank][col2] /= fac;
-			for (int row = 0; row < A.size(); ++row) {
-				if (row != rank && abs(A[row][col]) > EPS) {
+            for (int row = 0; row < A.size(); ++row) {
+                if (row != rank && abs(A[row][col]) > EPS) {
                     auto fac = A[row][col];
-					for (int col2 = 0; col2 < A[0].size(); ++col2) {
+                    for (int col2 = 0; col2 < A[0].size(); ++col2) {
                         A[row][col2] -= A[rank][col2] * fac;
                     }
-				}
-			}
-			++rank;
+                }
+            }
+            ++rank;
         }
-	}
+    }
     return rank;
 }
 
