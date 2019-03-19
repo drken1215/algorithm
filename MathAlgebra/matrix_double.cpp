@@ -17,6 +17,9 @@ using namespace std;
 #define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
 
 
+using D = double;
+const D EPS = 1e-10;
+
 template<class T> struct Matrix {
     vector<vector<T> > val;
     Matrix(int n, int m, T x = 0) : val(n, vector<T>(m, x)) {}
@@ -91,10 +94,21 @@ template<class T> vector<T> linear_equation(Matrix<T> A, vector<T> b) {
         M[i][(int)A[0].size()] = b[i];
     }
     int rank = GaussJordan(M);
+
+    // check if it has no solution
+    vector<T> res;
+    if (rank > 0) {
+        bool exist = false;
+        for (int col = 0; col < A[0].size(); ++col)
+            if (abs(M[rank-1][col]) > EPS) exist = true;
+        if (!exist) return res;
+    }
     for (int row = rank; row < A.size(); ++row)
-        if (abs(b[row]) > EPS)
-            return vector<T>();
-    vector<T> res(A[0].size(), 0);
+        if (abs(M[row][A[0].size()]) > EPS)
+            return res;
+
+    // answer
+    res.assign(A[0].size(), 0);
     for (int i = 0; i < rank; ++i) res[i] = M[i][A[0].size()];
     return res;
 }
