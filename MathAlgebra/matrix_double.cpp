@@ -17,10 +17,6 @@ using namespace std;
 #define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
 
 
-using D = double;
-const D EPS = 1e-10;
-
-// matrix
 template<class T> struct Matrix {
     vector<vector<T> > val;
     Matrix(int n, int m, T x = 0) : val(n, vector<T>(m, x)) {}
@@ -71,20 +67,19 @@ template<class T> int GaussJordan(Matrix<T> &A) {
                 pivot = row;
             }
         }
-        if (pivot != -1) {
-            swap(A[pivot], A[rank]);
-            auto fac = A[rank][col];
-            for (int col2 = 0; col2 < A[0].size(); ++col2) A[rank][col2] /= fac;
-            for (int row = 0; row < A.size(); ++row) {
-                if (row != rank && abs(A[row][col]) > EPS) {
-                    auto fac = A[row][col];
-                    for (int col2 = 0; col2 < A[0].size(); ++col2) {
-                        A[row][col2] -= A[rank][col2] * fac;
-                    }
+        if (pivot == -1) continue;
+        swap(A[pivot], A[rank]);
+        auto fac = A[rank][col];
+        for (int col2 = 0; col2 < A[0].size(); ++col2) A[rank][col2] /= fac;
+        for (int row = 0; row < A.size(); ++row) {
+            if (row != rank && abs(A[row][col]) > EPS) {
+                auto fac = A[row][col];
+                for (int col2 = 0; col2 < A[0].size(); ++col2) {
+                    A[row][col2] -= A[rank][col2] * fac;
                 }
             }
-            ++rank;
         }
+        ++rank;
     }
     return rank;
 }
@@ -99,8 +94,8 @@ template<class T> vector<T> linear_equation(Matrix<T> A, vector<T> b) {
     for (int row = rank; row < A.size(); ++row)
         if (abs(b[row]) > EPS)
             return vector<T>();
-    vector<T> res(A[0].size());
-    for (int i = 0; i < A.size(); ++i) res[i] = M[i][A[0].size()];
+    vector<T> res(A[0].size(), 0);
+    for (int i = 0; i < rank; ++i) res[i] = M[i][A[0].size()];
     return res;
 }
 
