@@ -67,14 +67,16 @@ template<int MOD> Matrix<MOD> pow(Matrix<MOD> A, long long n) {
     return R;
 }
 
-template<int MOD> int GaussJordan(Matrix<MOD> &A) {
-    for (int row = 0; row < A.size(); ++row)
-        for (int col = 0; col < A[0].size(); ++col)
+template<int MOD> int GaussJordan(Matrix<MOD> &A, bool is_extended = false) {
+    int m = A.size(), n = A[0].size();
+    for (int row = 0; row < m; ++row)
+        for (int col = 0; col < n; ++col)
             A[row][col] = (A[row][col] % MOD + MOD) % MOD;
     int rank = 0;
-	for (int col = 0; col < A[0].size(); ++col) {
+	for (int col = 0; col < n; ++col) {
+        if (is_extended && col == n-1) break;
 		int pivot = -1;
-        for (int row = rank; row < A.size(); ++row) {
+        for (int row = rank; row < m; ++row) {
             if (A[row][col] != 0) {
                 pivot = row;
                 break;
@@ -83,12 +85,12 @@ template<int MOD> int GaussJordan(Matrix<MOD> &A) {
 		if (pivot == -1) continue;
         swap(A[pivot], A[rank]);
         auto inv = modinv(A[rank][col], MOD);
-        for (int col2 = 0; col2 < A[0].size(); ++col2)
+        for (int col2 = 0; col2 < n; ++col2)
             A[rank][col2] = A[rank][col2] * inv % MOD;
-        for (int row = 0; row < A.size(); ++row) {
+        for (int row = 0; row < m; ++row) {
             if (row != rank && A[row][col]) {
                 auto fac = A[row][col];
-                for (int col2 = 0; col2 < A[0].size(); ++col2) {
+                for (int col2 = 0; col2 < n; ++col2) {
                     A[row][col2] -= A[rank][col2] * fac % MOD;
                     if (A[row][col2] < 0) A[row][col2] += MOD;
                 }
@@ -100,24 +102,20 @@ template<int MOD> int GaussJordan(Matrix<MOD> &A) {
 }
 
 template<int MOD> int linear_equation(Matrix<MOD> A, vector<long long> b, vector<long long> &res) {
-    Matrix<MOD> M(A.size(), A[0].size() + 1);
-    for (int i = 0; i < A.size(); ++i) {
-        for (int j = 0; j < A[0].size(); ++j) M[i][j] = A[i][j];
-        M[i][A[0].size()] = b[i];
+    int m = A.size(), n = A[0].size();
+    Matrix<MOD> M(m, n + 1);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) M[i][j] = A[i][j];
+        M[i][n] = b[i];
     }
-    int rank = GaussJordan(M);
+    int rank = GaussJordan(M, true);
 
     // check if it has no solution
-    if (rank > 0) {
-        bool exist = false;
-        for (int col = 0; col < A[0].size(); ++col) if (M[rank-1][col]) exist = true;
-        if (!exist) return -1;
-    }
-    for (int row = rank; row < A.size(); ++row) if (M[row][A[0].size()]) return -1;
+    for (int row = rank; row < m; ++row) if (M[row][n]) return -1;
 
     // answer
-    res.assign(A[0].size(), 0);
-    for (int i = 0; i < rank; ++i) res[i] = M[i][A[0].size()];
+    res.assign(n, 0);
+    for (int i = 0; i < rank; ++i) res[i] = M[i][n];
     return rank;
 }
 
