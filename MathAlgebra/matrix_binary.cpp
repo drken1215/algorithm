@@ -22,7 +22,7 @@ struct BitMatrix {
     inline bitset<MAX_COL>& operator [] (int i) {return val[i];}
 };
 
-template<int MOD> ostream& operator << (ostream& s, BitMatrix A) {
+ostream& operator << (ostream& s, BitMatrix A) {
     s << endl; 
     for (int i = 0; i < A.H; ++i) {
         for (int j = 0; j < A.W; ++j) {
@@ -55,6 +55,7 @@ inline BitMatrix pow(BitMatrix A, long long n) {
 int GaussJordan(BitMatrix &A, bool is_extended = false) {
     int rank = 0;
     for (int col = 0; col < A.W; ++col) {
+        if (is_extended && col == A.W - 1) break;
         int pivot = -1;
         for (int row = rank; row < A.H; ++row) {
             if (A[row][col]) {
