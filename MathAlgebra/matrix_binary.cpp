@@ -4,6 +4,8 @@
 // verified:
 //   みんなのプロコン 2019 E - Odd Subrectangles
 //     https://atcoder.jp/contests/yahoo-procon2019-qual/tasks/yahoo_procon2019_qual_e
+//   AOJ 1308 Awkward Lights (ICPC アジア 2010 D)
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1308
 // 
 
 
@@ -89,7 +91,7 @@ int linear_equation(BitMatrix A, vector<int> b, vector<int> &res) {
     res.assign(n, 0);
     for (int i = 0; i < rank; ++i) res[i] = M[i][n];
     return rank;
-};
+}
 
 
 const int MOD = 998244353;
