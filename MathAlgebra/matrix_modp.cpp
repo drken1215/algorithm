@@ -72,7 +72,6 @@ template<int MOD> int GaussJordan(Matrix<MOD> &A, bool is_extended = false) {
     for (int row = 0; row < m; ++row)
         for (int col = 0; col < n; ++col)
             A[row][col] = (A[row][col] % MOD + MOD) % MOD;
-    
     int rank = 0;
     for (int col = 0; col < n; ++col) {
         if (is_extended && col == n-1) break;

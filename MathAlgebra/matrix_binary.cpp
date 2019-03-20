@@ -13,34 +13,37 @@
 using namespace std;
 
 
-const int MAX_ROW = 510; // to be set
-const int MAX_COL = 510; // to be set
+const int MAX_ROW = 510; // to be set appropriately
+const int MAX_COL = 510; // to be set appropriately
 struct BitMatrix {
-    int n, m;
+    int H, W;
     bitset<MAX_COL> val[MAX_ROW];
-    BitMatrix(int n_ = 1, int m_ = 1) {n = n_; m = m_;}
+    BitMatrix(int m = 1, int n = 1) : H(m), W(n) {}
     inline bitset<MAX_COL>& operator [] (int i) {return val[i];}
-    inline friend ostream& operator << (ostream& s, BitMatrix M) {
-        s << endl; 
-        for (int i = 0; i < M.n; ++i) {
-            for (int j = 0; j < M.m; ++j) s << M.val[i][j];
-            s << endl;
-        }
-        return s;
-    }
 };
 
+template<int MOD> ostream& operator << (ostream& s, BitMatrix A) {
+    s << endl; 
+    for (int i = 0; i < A.H; ++i) {
+        for (int j = 0; j < A.W; ++j) {
+            s << A[i][j] << ", ";
+        }
+        s << endl;
+    }
+    return s;
+}
+
 inline BitMatrix operator * (BitMatrix A, BitMatrix B) {
-    BitMatrix R(A.n, B.m);
-    BitMatrix tB(B.m, B.n);
-    for (int i = 0; i < tB.n; ++i) for (int j = 0; j < tB.m; ++j) tB[i][j] = B[j][i];
-    for (int i = 0; i < R.n; ++i) for (int j = 0; j < R.m; ++j) R[i][j] = (A[i] & tB[j]).any();
+    BitMatrix R(A.H, B.W);
+    BitMatrix tB(B.W, B.H);
+    for (int i = 0; i < tB.H; ++i) for (int j = 0; j < tB.W; ++j) tB[i][j] = B[j][i];
+    for (int i = 0; i < R.H; ++i) for (int j = 0; j < R.W; ++j) R[i][j] = (A[i] & tB[j]).any();
     return R;
 }
 
 inline BitMatrix pow(BitMatrix A, long long n) {
-    BitMatrix R(A.n, A.n);
-    for (int i = 0; i < A.n; ++i) R[i][i] = 1;
+    BitMatrix R(A.H, A.H);
+    for (int i = 0; i < A.H; ++i) R[i][i] = 1;
     while (n > 0) {
         if (n & 1) R = R * A;
         A = A * A;
@@ -49,63 +52,42 @@ inline BitMatrix pow(BitMatrix A, long long n) {
     return R;
 }
 
-int calc_rank(BitMatrix &A) {
-    int r = 0;
-	for (int i = 0; i < A.m; ++i) {
-		int pivot = -1;
-		for (int j = r; j < A.n; ++j) {
-			if (A[j][i]) {
-				pivot = j;
-				break;
-			}
-		}
-		if (pivot != -1) {
-			swap(A[pivot], A[r]);
-			for (int j = 0; j < A.n; ++j) if (j != r && A[j][i]) A[j] ^= A[r];
-			++r;
-		}
-	}
-    return r;
+int GaussJordan(BitMatrix &A, bool is_extended = false) {
+    int rank = 0;
+    for (int col = 0; col < A.W; ++col) {
+        int pivot = -1;
+        for (int row = rank; row < A.H; ++row) {
+            if (A[row][col]) {
+                pivot = row;
+                break;
+            }
+        }
+        if (pivot == -1) continue;
+        swap(A[pivot], A[rank]);
+        for (int row = 0; row < A.H; ++row) {
+            if (row != rank && A[row][col]) A[row] ^= A[rank];
+        }
+        ++rank;
+    }
+    return rank;
 }
 
-vector<vector<int> > linear_equation(BitMatrix A, vector<int> b) {
-	int rank = 0;
-    for (int i = 0; i < A.n; ++i) { A[i][A.m] = b[i]; }
-    
-    vector<int> core, rem;
-	for (int i = 0; i < A.m; ++i) {
-		int pivot = -1;
-		for (int j = rank; j < A.n; ++j) {
-			if (A[j][i]) {
-				pivot = j;
-				break;
-			}
-		}
-		if (pivot != -1) {
-            core.push_back(i);
-			swap(A[pivot], A[rank]);
-			for (int j = 0; j < A.n; ++j) if (j != rank && A[j][i]) A[j] ^= A[rank];
-			++rank;
-		}
-        else rem.push_back(i);
-	}
-    
-    vector<vector<int> > res;
-    for (int i = rank; i < A.n; ++i) 
-        if (A[i][A.m]) return res;     // return -1;
-    
-    vector<int> sol(A.m, 0);
-    for (int i = 0; i < core.size(); ++i) sol[core[i]] = A[i][A.m];
-    res.push_back(sol);
-    
-    for (int i = 0; i < rem.size(); ++i) {
-        vector<int> temp(A.m, 0);
-        temp[rem[i]] = 1;
-        for (int j = 0; j < core.size(); ++j) temp[core[j]] = A[j][rem[i]];
-        res.push_back(temp);
+int linear_equation(BitMatrix A, vector<int> b, vector<int> &res) {
+    int m = A.H, n = A.W;
+    BitMatrix M(m, n + 1);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) M[i][j] = A[i][j];
+        M[i][n] = b[i];
     }
-    
-    return res;     // return A[0].size()-rank;
+    int rank = GaussJordan(M, true);
+
+    // check if it has no solution
+    for (int row = rank; row < m; ++row) if (M[row][n]) return -1;
+
+    // answer
+    res.assign(n, 0);
+    for (int i = 0; i < rank; ++i) res[i] = M[i][n];
+    return rank;
 };
 
 
@@ -123,10 +105,13 @@ long long modpow(long long a, long long n, long long mod) {
 int main() { 
     int N, M; cin >> N >> M;
     BitMatrix A(N, M);
-    for (int i = 0; i < N; ++i) for (int j = 0; j < M; ++j) {
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < M; ++j) {
             int a; cin >> a;
             if (a) A[i][j] = 1;
         }
-    int r = calc_rank(A);  
+    }
+    vector<int> res;
+    int r = GaussJordan(A);  
     cout << (modpow(2LL, N+M-1, MOD) - modpow(2LL, N+M-r-1, MOD) + MOD) % MOD << endl;
 }
