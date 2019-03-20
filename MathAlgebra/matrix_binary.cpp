@@ -4,9 +4,13 @@
 // verified:
 //   みんなのプロコン 2019 E - Odd Subrectangles
 //     https://atcoder.jp/contests/yahoo-procon2019-qual/tasks/yahoo_procon2019_qual_e
+//
 //   AOJ 1308 Awkward Lights (ICPC アジア 2010 D)
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1308
-// 
+//
+//   AOJ 2624 Graph Automata Player
+//     judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2624
+//
 
 
 #include <iostream>
@@ -39,7 +43,7 @@ inline BitMatrix operator * (BitMatrix A, BitMatrix B) {
     BitMatrix R(A.H, B.W);
     BitMatrix tB(B.W, B.H);
     for (int i = 0; i < tB.H; ++i) for (int j = 0; j < tB.W; ++j) tB[i][j] = B[j][i];
-    for (int i = 0; i < R.H; ++i) for (int j = 0; j < R.W; ++j) R[i][j] = (A[i] & tB[j]).any();
+    for (int i = 0; i < R.H; ++i) for (int j = 0; j < R.W; ++j) R[i][j] = ((A[i] & tB[j]).count() & 1);
     return R;
 }
 
