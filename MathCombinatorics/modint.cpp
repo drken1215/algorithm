@@ -5,7 +5,7 @@
 //   noshi91: modint 構造体を使ってみませんか？ (C++)
 //     http://noshi91.hatenablog.com/entry/2019/03/31/174006
 //
-//   drken: 「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜
+//   drken: 「1000000007 で割ったあまり」の求め方を総特集！ ~ 逆元から離散対数まで ~
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
 // verified:
@@ -20,9 +20,9 @@ using namespace std;
 
 
 template<int MODULO> struct Fp {
-	long long val;
+    long long val;
 
-	constexpr Fp(long long v = 0) noexcept : val(v % MODULO) {
+    constexpr Fp(long long v = 0) noexcept : val(v % MODULO) {
         if (val < 0) v += MODULO;
     }
 	constexpr Fp operator - () const noexcept {
@@ -76,11 +76,11 @@ template<int MODULO> constexpr istream& operator >>
 
 template<int MODULO> constexpr Fp<MODULO> modpow
 (const Fp<MODULO> &a, long long n) noexcept {
-	if (n == 0) return 1;
+    if (n == 0) return 1;
     auto t = modpow(a, n / 2);
-	t = t * t;
+    t = t * t;
     if (n & 1) t = t * a;
-	return t;
+    return t;
 }
 
 
@@ -100,7 +100,7 @@ template<int MODULO> struct BiCoef {
 };
 
 
-const int MAX = 1100;
+const int MAX = 201010;
 const int MOD = 998244353;
 using mint = Fp<MOD>;
 

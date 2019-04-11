@@ -369,7 +369,7 @@
 
 #### mod, 二項係数
 
-- [modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_int.cpp)
+- [modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint.cpp)
 - [累乗](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
 - [逆元](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_inverse.cpp)
 - [二項係数 (オーソドックス、n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
