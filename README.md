@@ -128,7 +128,7 @@
 #### 典型的 DP
 
 - [転倒数](https://github.com/drken1215/algorithm/blob/master/DP/inversion_number.cpp)
-- LIS
+- [LIS](https://github.com/drken1215/algorithm/blob/master/DP/longest_increasing_sequence.cpp)
 - LCS
 - 編集距離
 - 重みつき区間スケジューリング問題
