@@ -1,14 +1,3 @@
-//
-// Í­Íý¿ô
-//
-// verified:
-//   RUPC 2019 day2-J Rings
-//     https://onlinejudge.u-aizu.ac.jp/beta/room.html#RitsCamp19Day2/problems/J
-//   AOJ 1131 Unit Fraction Partition
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1131&lang=jp
-//
-
-
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -36,7 +25,7 @@ struct frac {
     using D = long double;
     inline frac normalize() {
         if (second < 0) {first = -first; second = -second;}
-        long long d = calc_gcd(first, second);
+        long long d = calc_gcd(abs(first), abs(second));
         if (d == 0) {first = 0; second = 1;}
         else {first /= d; second /= d;}
         return *this;
