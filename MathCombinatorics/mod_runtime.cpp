@@ -1,5 +1,5 @@
 //
-// Modular Arithmetics
+// 実行時に法が決まる Modular Arithmetics
 //
 // cf.
 //   noshi91: modint 構造体を使ってみませんか？ (C++)
@@ -9,20 +9,26 @@
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
 // verified:
-//   MUJIN 2018 F - チーム分け
-//     https://atcoder.jp/contests/mujin-pc-2018/tasks/mujin_pc_2018_f  
-// 
+//   ARC 096 E - Everything on It
+//     https://atcoder.jp/contests/arc096/tasks/arc096_c  
+//
 
 
 #include <iostream>
 #include <vector>
+#include <cmath>
+#include <algorithm>
 using namespace std;
 
 
-template<int MOD> struct Fp {
+// modint
+vector<int> MODS = { 1000000007 }; // 実行時に決まる
+template<int IND = 0> struct Fp {
     long long val;
-    constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
-        if (val < 0) v += MOD;
+    
+    int MOD = MODS[IND];
+    constexpr Fp(long long v = 0) noexcept : val(v % MODS[IND]) {
+        if (val < 0) val += MOD;
     }
     constexpr int getmod() { return MOD; }
     constexpr Fp operator - () const noexcept {
@@ -63,13 +69,13 @@ template<int MOD> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD>& x) noexcept {
+    friend constexpr ostream& operator << (ostream &os, const Fp<IND>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD>& x) noexcept {
+    friend constexpr istream& operator >> (istream &is, Fp<IND>& x) noexcept {
         return is >> x.val;
     }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD> &a, long long n) noexcept {
+    friend constexpr Fp<IND> modpow(const Fp<IND> &a, long long n) noexcept {
         if (n == 0) return 1;
         auto t = modpow(a, n / 2);
         t = t * t;
@@ -77,7 +83,6 @@ template<int MOD> struct Fp {
         return t;
     }
 };
-
 
 
 // 二項係数ライブラリ
@@ -129,35 +134,36 @@ template<class T> struct Stirling {
 
 
 
-const int MAX = 201010;
-const int MOD = 998244353;
-using mint = Fp<MOD>;
+const int MAX = 3100;
+int main() {
+    // 入力
+    long long N;
+    cin >> N >> MODS[0];
+    using mint = Fp<>;
+    
+    // 前計算
+    BiCoef<mint> bc(MAX); // 二項係数計算の前処理
+    Stirling<mint> sl(MAX); // スターリング数の前処理
 
-int main() {     
-    BiCoef<mint> bc(MAX);
-    int N; cin >> N;
-    vector<int> a(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-
-    // nums[v] := v 人以上 OK な人数
-    vector<long long> nums(N+2, 0);
-    for (int i = 0; i < N; ++i) nums[a[i]]++;
-    for (int i = N; i >= 0; --i) nums[i] += nums[i+1];
-
-    // DP
-    vector<vector<mint> > dp(N+2, vector<mint>(N+1, 0));
-    dp[N+1][0] = 1;
-    for (long long x = N; x >= 1; --x) {
-        for (long long y = 0; y <= nums[x]; ++y) {
-            for (long long k = 0; k <= N; ++k) {
-                long long y2 = y - x * k;
-                if (y2 < 0) break;
-                if (y2 > nums[x+1]) continue;
-                mint choose = bc.com(nums[x] - y2, x * k);
-                mint fact = bc.fact(x*k) / modpow(bc.fact(x), k) * bc.finv(k);
-                dp[x][y] += dp[x+1][y2] * choose * fact;
-            }
+    // 2^n や 2^2^n の前計算、2^2^(n+1) = (2^2^n)^2
+    vector<mint> two(MAX*MAX, 0), dtwo(MAX, 0);
+    two[0] = 1, dtwo[0] = 2;
+    for (int i = 1; i < MAX; ++i) dtwo[i] = dtwo[i-1] * dtwo[i-1];
+    for (int i = 1; i < MAX*MAX; ++i) two[i] = two[i-1] * 2;
+    
+    // 求める
+    mint res = 0;
+    for (int n = 0; n <= N; ++n) {
+        mint add = 0;
+        for (int k = 0; k <= n; ++k) {
+            mint jiyudo = two[(N-n)*k] * dtwo[N-n];
+            mint core = sl.get(n, k) + sl.get(n, k+1) * (k+1);
+            add += core * jiyudo;
         }
+        mint choose = bc.com(N, n);
+        add *= choose;
+        if (n % 2 == 0) res += add;
+        else res -= add;
     }
-    cout << dp[1][N] << endl;
+    cout << res << endl;
 }
