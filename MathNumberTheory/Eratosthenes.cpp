@@ -23,16 +23,16 @@
 using namespace std;
 
 
-const int MAX = 10001000;      // 素数判定する最大の数
-bool IsPrime[MAX];
-vector<int> Era(int n = MAX) {
+vector<bool> isprime;
+vector<int> Era(int n) {
+    isprime.resize(n, true);
     vector<int> res;
-    IsPrime[0] = false; IsPrime[1] = false;
-    for (int i = 2; i < n; ++i) IsPrime[i] = true;
+    isprime[0] = false; isprime[1] = false;
+    for (int i = 2; i < n; ++i) isprime[i] = true;
     for (int i = 2; i < n; ++i) {
-        if (IsPrime[i]) {
+        if (isprime[i]) {
             res.push_back(i);
-            for (int j = i*2; j < n; j += i) IsPrime[j] = false;
+            for (int j = i*2; j < n; j += i) isprime[j] = false;
         }
     }
     return res;
@@ -40,7 +40,7 @@ vector<int> Era(int n = MAX) {
 
 
 int main() {
-    vector<int> primes = Era(); // MAX 以下の素数を列挙しておく
+    vector<int> primes = Era(1000000);
     int n;
     while (cin >> n) {
         int num = upper_bound(primes.begin(), primes.end(), n) - primes.begin(); // n 以下が何個か
