@@ -289,7 +289,7 @@
 
 #### ツリー
 
-- ツリーの直径
+- [ツリーの直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
 - ツリーの重心
 
 #### 最短路
