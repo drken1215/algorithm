@@ -525,6 +525,7 @@
 #### その他
 
 - [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
+- [px + r (x >= 0) で表せる整数のうち、x 以上となる最小の整数](https://github.com/drken1215/algorithm/blob/master/Others/amari_lower_bound.cpp))
 - タイマー
 - サイコロ
 - 曜日
