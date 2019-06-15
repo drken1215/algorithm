@@ -9,8 +9,8 @@
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
 // verified:
-//   MUJIN 2018 F - チーム分け
-//     https://atcoder.jp/contests/mujin-pc-2018/tasks/mujin_pc_2018_f  
+//   ABC 127 E - Cell Distance
+//     https://atcoder.jp/contests/abc127/tasks/abc127_e 
 // 
 
 
@@ -19,6 +19,12 @@
 using namespace std;
 
 
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+// modint: mod 計算を int を扱うように扱える構造体
 template<int MOD> struct Fp {
     long long val;
     constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
@@ -78,12 +84,15 @@ template<int MOD> struct Fp {
     }
 };
 
-
-
 // 二項係数ライブラリ
 template<class T> struct BiCoef {
     vector<T> fact_, inv_, finv_;
+    constexpr BiCoef() {}
     constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
+        init(n);
+    }
+    constexpr void init(int n) noexcept {
+        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
         int MOD = fact_[0].getmod();
         for(int i = 2; i < n; i++){
             fact_[i] = fact_[i-1] * i;
@@ -109,55 +118,21 @@ template<class T> struct BiCoef {
     }
 };
 
-
-// スターリング数 (n 個を k グループにわける、n >= k)
-template<class T> struct Stirling {
-    vector<vector<T> > S;
-    constexpr Stirling(int MAX) noexcept : S(MAX, vector<T>(MAX, 0)) {
-        S[0][0] = 1;
-        for (int n = 1; n < MAX; ++n) {
-            for (int k = 1; k <= n; ++k) {
-                S[n][k] = S[n-1][k-1] + S[n-1][k] * k;
-            }
-        }
-    }
-    constexpr T get(int n, int k) {
-        if (n < 0 || k < 0 || n < k) return 0;
-        return S[n][k];
-    }
-};
-
-
-
-const int MAX = 201010;
-const int MOD = 998244353;
+const int MOD = 1000000007;
 using mint = Fp<MOD>;
+BiCoef<mint> bc;
 
-int main() {     
-    BiCoef<mint> bc(MAX);
-    int N; cin >> N;
-    vector<int> a(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
 
-    // nums[v] := v 人以上 OK な人数
-    vector<long long> nums(N+2, 0);
-    for (int i = 0; i < N; ++i) nums[a[i]]++;
-    for (int i = N; i >= 0; --i) nums[i] += nums[i+1];
-
-    // DP
-    vector<vector<mint> > dp(N+2, vector<mint>(N+1, 0));
-    dp[N+1][0] = 1;
-    for (long long x = N; x >= 1; --x) {
-        for (long long y = 0; y <= nums[x]; ++y) {
-            for (long long k = 0; k <= N; ++k) {
-                long long y2 = y - x * k;
-                if (y2 < 0) break;
-                if (y2 > nums[x+1]) continue;
-                mint choose = bc.com(nums[x] - y2, x * k);
-                mint fact = bc.fact(x*k) / modpow(bc.fact(x), k) * bc.finv(k);
-                dp[x][y] += dp[x+1][y2] * choose * fact;
-            }
+int main() {
+    long long N, M, K; cin >> N >> M >> K;
+    bc.init(510000);
+    mint sum = 0;
+    for (int i = 0; i <= N-1; ++i) {
+        for (int j = 0; j <= M-1; ++j) {
+            mint tmp = mint(N - i) * mint(M - j) * mint(i + j);
+            if (i != 0 && j != 0) tmp *= 2;
+            sum += tmp;
         }
     }
-    cout << dp[1][N] << endl;
+    cout << sum * bc.com(N*M-2, K-2) << endl;
 }
