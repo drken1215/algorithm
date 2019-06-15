@@ -13,8 +13,8 @@ using namespace std;
 
 
 
-// px + r (x >= 0) で表せる整数のうち、x 以上となる最小の整数
-long long lower_amari(long long p, long long r, long long x) {
+// pn + r (n は非負整数) で表せる整数のうち、x 以上となる最小の整数
+long long amari_lower_bound(long long p, long long r, long long x) {
     if (r >= x) return r;
     return (x - r + p-1) / p * p + r;
 }
@@ -98,8 +98,8 @@ long long solve(long long L, long long A, long long B, long long M) {
         high = min(high, C);
         if (high < A || C < low) continue;
 
-        long long low_kou = lower_amari(B, A, low);
-        long long up_kou = lower_amari(B, A, high + 1);
+        long long low_kou = amari_lower_bound(B, A, low);
+        long long up_kou = amari_lower_bound(B, A, high + 1);
         long long num = (up_kou - low_kou) / B;
 
         // それを使って計算
