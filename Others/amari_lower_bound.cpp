@@ -1,5 +1,5 @@
 //
-// px + r (x >= 0) で表せる整数のうち、x 以上となる最小の整数
+// pn + r (n は非負整数) で表せる整数のうち、x 以上となる最小の整数
 //
 // verified:
 //   ABC 129 F - Takahashi's Basics in Education and Learning

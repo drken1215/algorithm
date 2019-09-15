@@ -2,8 +2,8 @@
 // ローリングハッシュ
 //
 // verified:
-//   ARC 060 F - 最良表現
-//     https://atcoder.jp/contests/arc060/tasks/arc060_d
+//   ABC 141 E - Who Says a Pun?
+//     https://atcoder.jp/contests/abc141/tasks/abc141_e
 //
 
 
@@ -14,53 +14,43 @@
 using namespace std;
 
 
+// ローリングハッシュ
 struct RollingHash {
-    const int base = 9973;
-    const vector<int> mod = {999999937LL, 1000000007LL};
-    string S;
-    vector<long long> hash[2], power[2];
+    static const int base1 = 1007, base2 = 2009;
+    static const int mod1 = 1000000007, mod2 = 1000000009;
+    vector<long long> hash1, hash2, power1, power2;
 
     // construct
-    RollingHash(){}
-    RollingHash(const string &cs) { init(cs); }
-    void init(const string &cs) {
-        S = cs;
+    RollingHash(const string &S) {
         int n = (int)S.size();
-        for (int iter = 0; iter < 2; ++iter) {
-            hash[iter].assign(n+1, 0);
-            power[iter].assign(n+1, 1);
-            for (int i = 0; i < n; ++i) {
-                hash[iter][i+1] = (hash[iter][i] * base + S[i]) % mod[iter];
-                power[iter][i+1] = power[iter][i] * base % mod[iter];
-            }
+        hash1.assign(n+1, 0);
+        hash2.assign(n+1, 0);
+        power1.assign(n+1, 1);
+        power2.assign(n+1, 1);
+        for (int i = 0; i < n; ++i) {
+            hash1[i+1] = (hash1[i] * base1 + S[i]) % mod1;
+            hash2[i+1] = (hash2[i] * base2 + S[i]) % mod2;
+            power1[i+1] = (power1[i] * base1) % mod1;
+            power2[i+1] = (power2[i] * base2) % mod2;
         }
     }
+    
     // get hash of S[left:right]
-    inline long long get(int l, int r, int id = 0) const {
-        long long res = hash[id][r] - hash[id][l] * power[id][r-l] % mod[id];
-        if (res < 0) res += mod[id];
-        return res;
+    inline pair<long long, long long> get(int l, int r) const {
+        long long res1 = hash1[r] - hash1[l] * power1[r-l] % mod1;
+        if (res1 < 0) res1 += mod1;
+        long long res2 = hash2[r] - hash2[l] * power2[r-l] % mod2;
+        if (res2 < 0) res2 += mod2;
+        return {res1, res2};
     }
-    // get lcp of S[a:] and S[b:]
-    inline int getLCP(int a, int b) const {
-        int len = min((int)S.size()-a, (int)S.size()-b);
-        int low = -1, high = len + 1;
-        while (high - low > 1) {
-            int mid = (low + high) / 2;
-            if (get(a, a+mid, 0) != get(b, b+mid, 0)) high = mid;
-            else if (get(a, a+mid, 1) != get(b, b+mid, 1)) high = mid;
-            else low = mid;
-        }
-        return low;
-    }
+
     // get lcp of S[a:] and T[b:]
-    inline int getLCP(const RollingHash &t, int a, int b) const {
-        int len = min((int)S.size()-a, (int)S.size()-b);
-        int low = -1, high = len + 1;
+    inline int getLCP(int a, int b) const {
+        int len = min((int)hash1.size()-a, (int)hash1.size()-b);
+        int low = 0, high = len;
         while (high - low > 1) {
-            int mid = (low + high) / 2;
-            if (get(a, a+mid, 0) != t.get(b, b+mid, 0)) high = mid;
-            else if (get(a, a+mid, 1) != t.get(b, b+mid, 1)) high = mid;
+            int mid = (low + high) >> 1;
+            if (get(a, a+mid) != get(b, b+mid)) high = mid;
             else low = mid;
         }
         return low;
@@ -68,49 +58,23 @@ struct RollingHash {
 };
 
 
-vector<long long> divisor(long long n) {
-    vector<long long> res;
-    for (long long i = 1LL; i*i <= n; ++i) {
-        if (n%i == 0LL) {
-            res.push_back(i);
-            long long temp = n/i;
-            if (i != temp) res.push_back(temp);
+int main() { 
+    int N;
+    string S;
+    cin >> N >> S;
+
+    // ロリハ
+    RollingHash rh(S);
+
+    // 求める
+    int res = 0;
+    for (int i = 0; i < N; ++i) {
+        for (int j = i+1; j < N; ++j) {
+            int lcp = rh.getLCP(i, j);
+            lcp = min(lcp, j-i);
+            res = max(res, lcp);
         }
-    }
-    sort(res.begin(), res.end());
-    return res;
-}
-    
-int main() {
-    string str; cin >> str;
-    int n = (int)str.size();
-    vector<long long> divs = divisor(n);
-    long long syuuki = n;
-    for (auto d : divs) {
-        bool ok = true;
-        for (int j = 0; j + d < n; ++j) {
-            if (str[j] != str[j+d]) ok = false;
-        }
-        if (ok) syuuki = min(syuuki, d);
-    }
-    if (syuuki == n) cout << 1 << endl << 1 << endl;
-    else if (syuuki == 1) cout << n << endl << 1 << endl;
-    else {
-        vector<int> cannot_cut(n*2, 0);
-        RollingHash rh(str);
-        for (int d = 1; d < n; ++d) {
-            if (cannot_cut[d]) continue;
-            for (int dd = d; dd < n; dd += d) {
-                if (rh.get(0, d) != rh.get(dd, dd+d)) break;
-                cannot_cut[dd + d] = true;
-            }
-            for (int dd = n-d*2; dd >= 0; dd -= d) {
-                if (rh.get(dd, dd+d) != rh.get(n-d, n)) break;
-                cannot_cut[dd] = true;
-            }
-        }
-        int con = 0;
-        for (int i = 1; i < n; ++i) if (!cannot_cut[i]) ++con;
-        cout << 2 << endl << con << endl;
-    }
+    }   
+        
+    cout << res << endl;
 }
