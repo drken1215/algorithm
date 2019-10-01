@@ -349,6 +349,7 @@
 - 高速アダマール変換 (SRM 518 div1 hard)
 - 高速ゼータ変換
 - 高速メビウス変換
+- [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
 - Karatsuba 法
 
 #### 最適化
