@@ -438,7 +438,7 @@
 - Euler のファイ関数
 - メビウス関数
 - [高速素因数分解 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
-- [高速メビウス関数 (エラトスネテスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mebius_eratosthenes.cpp)
+- [メビウス関数テーブル作成 (エラトスネテスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mebius_eratosthenes.cpp)
 
 #### 方程式
 

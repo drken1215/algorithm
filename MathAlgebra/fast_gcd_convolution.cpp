@@ -1,16 +1,18 @@
 //
 // Åº»ú GCD ¾ö¤ß¹þ¤ß
-/*
-
-f(k) = sum_{GCD(i, j) = k} g(i)h(j)
-F(k) = sum_{k | i} f(i)
-
- */
 //
 // verified:
 //   yukicoder No.886 Direct
 //     https://yukicoder.me/problems/no/886
 // 
+
+
+/*
+
+  f(k) = sum_{GCD(i, j) = k} g(i)h(j)
+  F(k) = sum_{k | i} f(i)
+
+*/
 
 
 #include <iostream>
@@ -81,11 +83,11 @@ template<int MOD> struct Fp {
 
 // f(k) = sum_{GCD(i, j) = k} g(i)h(j)
 // F(k) = sum_{k | i} f(i)
-template<class T> struct FastZeta {
+template<class T> struct FastGCDConvolution {
     int N;
     vector<bool> is_prime;
 
-    FastZeta(int N) : N(N), is_prime(N, true) {
+    FastGCDConvolution(int N) : N(N), is_prime(N, true) {
         is_prime[0] = is_prime[1] = false;
         for (int p = 2; p < N; ++p) {
             if (!is_prime[p]) continue;
@@ -110,7 +112,7 @@ template<class T> struct FastZeta {
         }
     }
 
-    vector<T> mult(vector<T> a, vector<T> b) {
+    vector<T> mult(vector<T> &a, vector<T> &b) {
         vector<T> c(N);
         zeta(a); zeta(b); 
         for (int i = 1; i < N; ++i) c[i] = a[i] * b[i];
@@ -131,7 +133,7 @@ int main() {
     for (int i = 1; i < H; ++i) h[i] = H - i;
     for (int i = 1; i < W; ++i) w[i] = W - i;
     
-    FastZeta<mint> fz(N);
+    FastGCDConvolution<mint> fz(N);
     f = fz.mult(h, w);
     res += f[1] * 2;
     cout << res << endl;
