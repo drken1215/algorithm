@@ -4,6 +4,153 @@
 プログラミングコンテストに参加する場面などを想定して、
 「実装例」または「ライブラリ」として使用することを念頭に置いています。
 
+
+　
+
+
+# MathNumberTheory
+整数論的アルゴリズムたちです
+
+#### 約数, 倍数
+
+- [約数列挙](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/divisor.cpp)
+- [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
+- [最小公倍数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/LCM.cpp)
+- [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
+
+#### 素数
+
+- [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
+- [素因数分解](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/prime_factorization.cpp)
+- [確率的素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
+- [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
+- エラトステネスの区間篩
+- アトキンの篩
+
+#### 素因数分解を基にしたアルゴリズム
+
+- 高速素因数分解 (ロー法)
+- Euler のファイ関数
+- メビウス関数
+- [高速素因数分解 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
+- [メビウス関数テーブル作成 (エラトスネテスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mebius_eratosthenes.cpp)
+
+#### 方程式
+
+- [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
+- [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
+- 連立一次合同方程式
+- ペル方程式
+- 離散対数
+- 平方剰余
+
+#### 有理数
+
+- [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
+- Stern-Brocot 木
+
+#### その他
+
+- [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
+- 多倍長整数
+
+
+　
+
+
+# MathCombinatorics
+組合せ論的アルゴリズムたちです
+
+#### mod, 二項係数
+
+- [modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
+- [実行時に法が決まる modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_runtime.cpp)
+- [累乗](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
+- [逆元](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_inverse.cpp)
+- [二項係数 (オーソドックス、n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
+- [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
+- [二項係数 (漸化式計算, n<=10^9, r<=10^9, p<=10^7)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
+- [二項係数 (任意 mod, n<=10^7, r<=10^7, m<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_any_mod.cpp)
+- [mod の値が大きいとき](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/big_mod.cpp)
+
+#### 様々な数
+
+- [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
+- カタラン数
+- 分割数
+- スターリング数
+- ベル数
+- ベルヌーイ数
+
+#### ソート
+
+- クイックソート
+- マージソート
+- ヒープソート
+- コムソート
+- Radix ソート
+- 挿入ソート
+- その他のソート達
+
+#### マトロイド
+
+- マトロイド上の Greedy 法
+- マトロイド交差
+
+#### その他
+
+- Nim
+- [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
+
+
+　
+
+
+# MathAlgebra
+行列計算など代数的計算に関するアルゴリズムです
+
+#### 行列
+
+- [行列 (基本演算)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix.cpp)
+- [行列累乗, ランク, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
+- [行列累乗, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
+- [行列累乗, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
+- Toeplitz 行列 (乗算, 連立方程式が O(n^2))
+- 巡回行列 (乗算が O(n^2))
+- コンパニオン行列
+- 三重対角行列 (連立方程式が O(n))
+- Black Box Linear Algebra
+
+#### 多項式, 方程式
+
+- 二次方程式
+- 多項式 (実数係数)
+- 多項式 (mod. p 係数)
+- きたまさ法 (俗称)
+- きたまさ法 with FFT (俗称)
+- 多項式補間
+
+#### 畳み込み計算
+
+- [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
+- [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
+- 高速アダマール変換 (SRM 518 div1 hard)
+- 高速ゼータ変換
+- 高速メビウス変換
+- [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
+- Karatsuba 法
+
+#### 最適化
+
+- 二分探索法 (方程式の解を 1 つ求める)
+- 三分探索法
+- 黄金探索法
+- Newton 法
+- 単体法
+- 分枝限定法
+
+
+　
   
 
 # DataStructure
@@ -81,7 +228,7 @@
 - Cartesian 木
 
 
-
+　
 
   
 # DataStructureOnTree
@@ -108,8 +255,96 @@
 - Level Ancester
 
 
+　
 
 
+# GraphTheory
+グラフ理論全般のアルゴリズムです
+
+#### DFS・BFS
+
+- DFS (連結成分を数える)
+- BFS (重みなしグラフの最短路)
+- トポロジカルソート (DFS)
+- トポロジカルソート (BFS)
+- サイクル検出 (DFS)
+- サイクル検出 (BFS)
+- サイクル検出 (Union-Find)
+- [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_dfs.cpp)
+- 二部グラフ判定 (BFS)
+- 二部グラフ判定 (Union-Find)
+
+#### 連結成分分解
+
+- 強連結成分分解
+- [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
+- [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
+- 二重頂点連結成分分解
+- 2-SAT
+
+#### ツリー
+
+- [ツリーの直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
+- ツリーの重心
+
+#### 最短路
+
+- 重みなしグラフの最短路 (BFS)
+- 重みが 0, 1 のみのグラフの最短路 (0-1 BFS)
+- 単一始点最短路 (Dijkstra 法, 正辺のみ)
+- 単一始点最短路 (Bellman-Ford 法, 負辺対応)
+- [全頂点対間最短路 (Floyd-Warshall 法)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/floyd_warshall.cpp)
+- 全頂点対間最短路 (Johnson 法)
+- k-最短路
+- SPFA
+
+#### その他
+
+- 最小全域木 (Kruskal 法)
+- 最小有向全域木 (Chu-Liu/Edmonds 法)
+- 有向 Euler 路
+- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
+- 彩色数 (O(n2^n))
+- [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
+- 最大クリーク列挙（O(1.443^n)）
+- 最小シュタイナー木 (O(n 3^t + n^2 2^t + n^3))
+
+
+　
+
+
+# GraphNetworkFlow
+グラフネットワークフロー関連のアルゴリズムです
+
+#### 最大流
+
+- [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
+- [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
+
+#### 最小費用流
+
+- [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
+- [最小費用流 (Primal-Dual 法, 負辺対応)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
+- 最小費用最大流 (Primal-Dual 法, 正辺のみ)
+- 最小費用最大流 (Primal-Dual 法, 負辺対応)
+- 最小費用循環流 (Cost-Scaling, 負閉路OK)
+
+#### カット
+
+- 最小カット (= 最大流)
+- 全域最小カット（Stoer-Wanger 法）
+- 全頂点対間最小カット (Nagamochi-Ibaraki 法)
+- Gomory-Hu 木
+
+#### マッチング
+
+- [二部マッチング (Hopcroft-Karp 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
+- 重みつき二部マッチング (Hungarian 法)
+- 一般グラフの最大マッチング (Edmonds 法)
+- 一般グラフの最大マッチング (行列補間)
+
+
+　
 
   
 # DP
@@ -165,7 +400,7 @@
 - 戻す DP (俗称)
 
 
-
+　
 
   
 # Geometry
@@ -226,242 +461,9 @@
 - kd 木
 
 
+　
 
 
-  
-# GraphNetworkFlow
-グラフネットワークフロー関連のアルゴリズムです
-
-#### 最大流
-
-- [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
-- [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
-
-#### 最小費用流
-
-- [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
-- [最小費用流 (Primal-Dual 法, 負辺対応)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
-- 最小費用最大流 (Primal-Dual 法, 正辺のみ)
-- 最小費用最大流 (Primal-Dual 法, 負辺対応)
-- 最小費用循環流 (Cost-Scaling, 負閉路OK)
-
-#### カット
-
-- 最小カット (= 最大流)
-- 全域最小カット（Stoer-Wanger 法）
-- 全頂点対間最小カット (Nagamochi-Ibaraki 法)
-- Gomory-Hu 木
-
-#### マッチング
-
-- [二部マッチング (Hopcroft-Karp 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
-- 重みつき二部マッチング (Hungarian 法)
-- 一般グラフの最大マッチング (Edmonds 法)
-- 一般グラフの最大マッチング (行列補間)
-
-
-
-
-  
-# GraphTheory
-グラフ理論全般のアルゴリズムです
-
-#### DFS・BFS
-
-- DFS (連結成分を数える)
-- BFS (重みなしグラフの最短路)
-- トポロジカルソート (DFS)
-- トポロジカルソート (BFS)
-- サイクル検出 (DFS)
-- サイクル検出 (BFS)
-- サイクル検出 (Union-Find)
-- [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_dfs.cpp)
-- 二部グラフ判定 (BFS)
-- 二部グラフ判定 (Union-Find)
-
-#### 連結成分分解
-
-- 強連結成分分解
-- [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
-- [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
-- 二重頂点連結成分分解
-- 2-SAT
-
-#### ツリー
-
-- [ツリーの直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
-- ツリーの重心
-
-#### 最短路
-
-- 重みなしグラフの最短路 (BFS)
-- 重みが 0, 1 のみのグラフの最短路 (0-1 BFS)
-- 単一始点最短路 (Dijkstra 法, 正辺のみ)
-- 単一始点最短路 (Bellman-Ford 法, 負辺対応)
-- [全頂点対間最短路 (Floyd-Warshall 法)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/floyd_warshall.cpp)
-- 全頂点対間最短路 (Johnson 法)
-- k-最短路
-- SPFA
-
-#### その他
-
-- 最小全域木 (Kruskal 法)
-- 最小有向全域木 (Chu-Liu/Edmonds 法)
-- 有向 Euler 路
-- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
-- 彩色数 (O(n2^n))
-- [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
-- 最大クリーク列挙（O(1.443^n)）
-- 最小シュタイナー木 (O(n 3^t + n^2 2^t + n^3))
-
-
-
-
-  
-# MathAlgebra
-行列計算など代数的計算に関するアルゴリズムです
-
-#### 行列
-
-- [行列 (基本演算)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix.cpp)
-- [行列累乗, ランク, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
-- [行列累乗, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
-- [行列累乗, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
-- Toeplitz 行列 (乗算, 連立方程式が O(n^2))
-- 巡回行列 (乗算が O(n^2))
-- コンパニオン行列
-- 三重対角行列 (連立方程式が O(n))
-- Black Box Linear Algebra
-
-#### 多項式, 方程式
-
-- 二次方程式
-- 多項式 (実数係数)
-- 多項式 (mod. p 係数)
-- きたまさ法 (俗称)
-- きたまさ法 with FFT (俗称)
-- 多項式補間
-
-#### 畳み込み計算
-
-- [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
-- [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
-- 高速アダマール変換 (SRM 518 div1 hard)
-- 高速ゼータ変換
-- 高速メビウス変換
-- [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
-- Karatsuba 法
-
-#### 最適化
-
-- 二分探索法 (方程式の解を 1 つ求める)
-- 三分探索法
-- 黄金探索法
-- Newton 法
-- 単体法
-- 分枝限定法
-
-
-
-
-  
-# MathCombinatorics
-組合せ論的アルゴリズムたちです
-
-#### mod, 二項係数
-
-- [modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp)
-- [実行時に法が決まる modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_runtime.cpp)
-- [累乗](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
-- [逆元](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_inverse.cpp)
-- [二項係数 (オーソドックス、n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
-- [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
-- [二項係数 (漸化式計算, n<=10^9, r<=10^9, p<=10^7)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
-- [二項係数 (任意 mod, n<=10^7, r<=10^7, m<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_any_mod.cpp)
-- [mod の値が大きいとき](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/big_mod.cpp)
-
-#### 様々な数
-
-- [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
-- カタラン数
-- 分割数
-- スターリング数
-- ベル数
-- ベルヌーイ数
-
-#### ソート
-
-- クイックソート
-- マージソート
-- ヒープソート
-- コムソート
-- Radix ソート
-- 挿入ソート
-- その他のソート達
-
-#### マトロイド
-
-- マトロイド上の Greedy 法
-- マトロイド交差
-
-#### その他
-
-- Nim
-- [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
-
-
-
-
-  
-# MathNumberTheory
-整数論的アルゴリズムたちです
-
-#### 約数, 倍数
-
-- [約数列挙](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/divisor.cpp)
-- [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
-- [最小公倍数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/LCM.cpp)
-- [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
-
-#### 素数
-
-- [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
-- [素因数分解](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/prime_factorization.cpp)
-- [確率的素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
-- [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
-- エラトステネスの区間篩
-- アトキンの篩
-
-#### 素因数分解を基にしたアルゴリズム
-
-- 高速素因数分解 (ロー法)
-- Euler のファイ関数
-- メビウス関数
-- [高速素因数分解 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
-- [メビウス関数テーブル作成 (エラトスネテスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mebius_eratosthenes.cpp)
-
-#### 方程式
-
-- [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
-- [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
-- 連立一次合同方程式
-- ペル方程式
-- 離散対数
-- 平方剰余
-
-#### 有理数
-
-- [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
-- Stern-Brocot 木
-
-#### その他
-  
-- 多倍長整数
-
-
-
-
-  
 # String
 文字列アルゴリズムです
 
@@ -497,7 +499,7 @@
 - 二次元盤面を 90 度回転
 
 
-
+　
 
   
 # Others
