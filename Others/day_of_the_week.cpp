@@ -1,11 +1,3 @@
-//
-// pn + r (n は非負整数) で表せる整数のうち、x 以上となる最小の整数
-//
-// verified:
-//   Codeforces 304 DIV2 183 - B
-//
-
-
 #include <iostream>
 using namespace std;
 

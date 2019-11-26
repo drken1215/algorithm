@@ -1,5 +1,5 @@
 //
-// サイコロ
+// Dice
 //
 // verified:
 //   AOJ 0502 Dice
