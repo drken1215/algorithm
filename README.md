@@ -208,7 +208,6 @@
 
 #### ハッシュ
 
-- ローリングハッシュ
 - Zobrist hash
 - 木に対する hash
 
@@ -529,9 +528,9 @@
 
 - [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
 - [pn + r (n は非負整数) で表せる整数のうち、x 以上となる最小の整数](https://github.com/drken1215/algorithm/blob/master/Others/amari_lower_bound.cpp)
-- タイマー
-- サイコロ
-- 曜日
+- [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
+- [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
+- [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
 - 四面体 (AOJ 2060)
 
 
