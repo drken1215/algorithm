@@ -19,11 +19,6 @@
 using namespace std;
 
 
-#include <iostream>
-#include <vector>
-using namespace std;
-
-
 // modint: mod 計算を int を扱うように扱える構造体
 template<int MOD> struct Fp {
     long long val;
