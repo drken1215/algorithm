@@ -54,8 +54,7 @@ template<class T> struct CHT {
         if (p->line.get(mid) > l.get(mid)) swap(p->line , l);
         if (p->line.get(low) >= l.get(low)) p->left = insert(p->left, low, mid, l);
         else p->right = insert(p->right, mid, high, l);
-        return p;
-        
+        return p;      
     }
     void insert(T a, T b){
         Line l(a, b);
