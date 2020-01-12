@@ -24,7 +24,7 @@ using namespace std;
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
 const DD EPS = 1e-10;        // to be set appropriately
-const DD PI = acos(-1.0);
+const DD PI = acosl(-1.0);
 DD torad(int deg) {return (DD)(deg) * PI / 180;}
 DD todeg(DD ang) {return ang * 180 / PI;}
 
