@@ -44,13 +44,25 @@ struct RollingHash {
         return {res1, res2};
     }
 
-    // get lcp of S[a:] and T[b:]
+    // get lcp of S[a:] and S[b:]
     inline int getLCP(int a, int b) const {
         int len = min((int)hash1.size()-a, (int)hash1.size()-b);
         int low = 0, high = len;
         while (high - low > 1) {
             int mid = (low + high) >> 1;
             if (get(a, a+mid) != get(b, b+mid)) high = mid;
+            else low = mid;
+        }
+        return low;
+    }
+
+    // get lcp of S[a:] and T[b:]
+    inline int getLCP(const RollingHash &T, int a, int b) const {
+        int len = min((int)hash1.size()-a, (int)hash1.size()-b);
+        int low = 0, high = len;
+        while (high - low > 1) {
+            int mid = (low + high) >> 1;
+            if (get(a, a+mid) != T.get(b, b+mid)) high = mid;
             else low = mid;
         }
         return low;
