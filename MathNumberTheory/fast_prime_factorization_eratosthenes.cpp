@@ -1,86 +1,141 @@
 //
-// エラトスネテスの篩を用いた高速素因数分解
+// エラトスネテスの篩を用いた各種アルゴリズム
+//　・高速素因数分解
+//　・約数列挙
+//　・メビウス関数
 //
 // cf.
 //   高速素因数分解
 //     http://www.osak.jp/diary/diary_201310.html#20131017
 //
 // verified
-//   Codeforces 511 DIV1 A Enlarge GCD
-//     http://codeforces.com/contest/1034/problem/A
+//   Codeforces 613 DIV2 F. Classical?
+//     https://codeforces.com/contest/1285/problem/F
 //
-
-
-/*
-    min_factor[i] := i の最小の素因子
-    これをエラトスネテスの篩を用いる
-*/
 
 
 #include <iostream>
 #include <vector>
+#include <stack>
 using namespace std;
 
 
-const int MAX = 15001000;
-bool IsPrime[MAX];
-int MinFactor[MAX];
-vector<int> preprocess(int n = MAX) {
-    vector<int> res;
-    for (int i = 0; i < n; ++i) IsPrime[i] = true, MinFactor[i] = -1;
-    IsPrime[0] = false; IsPrime[1] = false; MinFactor[0] = 0; MinFactor[1] = 1;
-    for (int i = 2; i < n; ++i) {
-        if (IsPrime[i]) {
-            MinFactor[i] = i;
-            res.push_back(i);
-            for (int j = i*2; j < n; j += i) {
-                IsPrime[j] = false;
-                if (MinFactor[j] == -1) MinFactor[j] = i;
+// isprime[n] := is n prime?
+// mebius[n] := mebius value of n
+// min_factor[n] := the min prime-factor of n
+
+struct Eratos {
+    vector<int> primes;
+    vector<bool> isprime;
+    vector<int> mebius;
+    vector<int> min_factor;
+
+    Eratos(int MAX) : primes(),
+                      isprime(MAX+1, true),
+                      mebius(MAX+1, 1),
+                      min_factor(MAX+1, -1) {
+        isprime[0] = isprime[1] = false;
+        min_factor[0] = 0, min_factor[1] = 1;
+        for (int i = 2; i <= MAX; ++i) {
+            if (!isprime[i]) continue;
+            primes.push_back(i);
+            mebius[i] = -1;
+            min_factor[i] = i;
+            for (int j = i*2; j <= MAX; j += i) {
+                isprime[j] = false;
+                if ((j / i) % i == 0) mebius[j] = 0;
+                else mebius[j] = -mebius[j];
+                if (min_factor[j] == -1) min_factor[j] = i;
             }
         }
     }
-    return res;
-}
 
-vector<pair<int,int> > prime_factor(int n) {
-    vector<pair<int,int> > res;
-    while (n != 1) {
-        int prime = MinFactor[n];
-        int exp = 0;
-        while (MinFactor[n] == prime) {
-            ++exp;
-            n /= prime;
+    // prime factorization
+    vector<pair<int,int>> prime_factors(int n) {
+        vector<pair<int,int> > res;
+        while (n != 1) {
+            int prime = min_factor[n];
+            int exp = 0;
+            while (min_factor[n] == prime) {
+                ++exp;
+                n /= prime;
+            }
+            res.push_back(make_pair(prime, exp));
         }
-        res.push_back(make_pair(prime, exp));
+        return res;
     }
-    return res;
+
+    // enumerate divisors
+    vector<int> divisors(int n) {
+        vector<int> res({1});
+        auto pf = prime_factors(n);
+        for (auto p : pf) {
+            int n = (int)res.size();
+            for (int i = 0; i < n; ++i) {
+                int v = 1;
+                for (int j = 0; j < p.second; ++j) {
+                    v *= p.first;
+                    res.push_back(res[i] * v);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+
+
+long long GCD(long long x, long long y) {
+    if (y == 0) return x;
+    return GCD(y, x % y);
 }
 
-
-// 最大公約数
-int GCD(int x, int y) { return y ? GCD(y, x%y) : x; }
-
+const int MAX = 110000;
 
 int main() {
-    // 入力
-    int n; scanf("%d", &n);
-    vector<int> a(n);
-    for (int i = 0; i < n; ++i) scanf("%d", &a[i]);
+    Eratos er(MAX);
+    vector<vector<int>> divs(MAX);
+    for (int n = 1; n < MAX; ++n) divs[n] = er.divisors(n);
 
-    // 最大公約数で割っておく
-    int g = 0;
-    for (int i = 0; i < n; ++i) g = GCD(g, a[i]);
-    for (int i = 0; i < n; ++i) a[i] /= g;
+    stack<int> st;
+    vector<int> counter(MAX, 0);
+    auto push = [&](int x) {
+        st.push(x);
+        for (auto d : divs[x]) ++counter[d];
+    };
+    auto pop = [&]() {
+        int x = st.top();
+        st.pop();
+        for (auto d : divs[x]) --counter[d];
+    };
+    auto count = [&](int x) {
+        int res = 0;
+        for (auto d : divs[x]) res += er.mebius[d] * counter[d];
+        return res;
+    };
 
-    // 各素因子ごとに a に何個あるかをカウント
-    preprocess();
-    vector<int> count(MAX, 0);
-    for (int i = 0; i < n; ++i) {
-        auto pf = prime_factor(a[i]);
-        for (auto p : pf) count[p.first]++;
+    int N;
+    cin >> N;
+    vector<long long> a(N);
+    vector<bool> isin(MAX+1, false);
+    long long res = 0;
+    for (int i = 0; i < N; ++i) {
+        cin >> a[i];
+        res = max(res, a[i]);
+        isin[a[i]] = true;
     }
-    int res = 0;
-    for (int i = 0; i < MAX; ++i) res = max(res, count[i]);
-    if (res == 0) cout << -1 << endl;
-    else cout << n-res << endl;
+
+    for (int g = 1; g < MAX; ++g) {
+        for (int v = (MAX/g)*g; v >= g; v -= g) {
+            if (!isin[v]) continue;
+            while (count(v/g)) {
+                long long t = st.top() * g;
+                res = max(res, t / GCD(v, t) * v);
+                pop();
+            }
+            push(v/g);
+        }
+        while (!st.empty()) pop();
+    }
+    cout << res << endl;
 }
