@@ -15,12 +15,15 @@ using namespace std;
 
 // edge class (for network-flow)
 template<class FLOWTYPE, class COSTTYPE> struct Edge {
-    int rev, from, to;
+    int rev, from, to, id;
     FLOWTYPE cap, icap;
     COSTTYPE cost;
-    Edge(int r, int f, int t, FLOWTYPE ca, COSTTYPE co) : rev(r), from(f), to(t), cap(ca), icap(ca), cost(co) {}
+    Edge(int r, int f, int t, FLOWTYPE ca, COSTTYPE co, int id = -1) :
+        rev(r), from(f), to(t), cap(ca), icap(ca), cost(co), id(id) {}
     friend ostream& operator << (ostream& s, const Edge& E) {
-        if (E.cap > 0) return s << E.from << "->" << E.to << '(' << E.cap << ',' << E.cost << ')';
+        if (E.cap > 0)
+            return s << E.from << "->" << E.to <<
+                '(' << E.cap << ',' << E.cost << ')';
         else return s;
     }
 };
@@ -40,24 +43,28 @@ template<class FLOWTYPE, class COSTTYPE> struct Graph {
         else return list[e.to][e.rev + 1];
     }
     
-    void addedge(int from, int to, FLOWTYPE cap, COSTTYPE cost) {
-        list[from].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[to].size(), from, to, cap, cost));
+    void addedge(int from, int to, FLOWTYPE cap, COSTTYPE cost, int id = -1) {
+        list[from].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[to].size(), from, to, cap, cost, id));
         list[to].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[from].size() - 1, to, from, 0, -cost));
     }
     
-    void add_undirected_edge(int from, int to, FLOWTYPE cap, COSTTYPE cost) {
-        list[from].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[to].size(), from, to, cap, cost));
-        list[to].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[from].size() - 1, to, from, cap, cost));
+    void add_undirected_edge(int from, int to, FLOWTYPE cap, COSTTYPE cost, int id = -1) {
+        list[from].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[to].size(), from, to, cap, cost, id));
+        list[to].push_back(Edge<FLOWTYPE, COSTTYPE>((int)list[from].size() - 1, to, from, cap, cost, id));
     }
 
-    /*
-    // debug
     friend ostream& operator << (ostream& s, const Graph& G) {
-        s << endl; for (int i = 0; i < G.V; ++i) { s << i << " : " << G.list[i] << endl; }return s;
-    }
-    */
+        s << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            s << i << ":";
+            for (auto e : G.list[i]) s << " " << e;
+            s << endl;
+        }
+        return s;
+    }   
 };
 
+// min-cost flow (by primal-dual)
 template<class FLOWTYPE, class COSTTYPE> COSTTYPE MinCostFlow(Graph<FLOWTYPE, COSTTYPE> &G, int s, int t, FLOWTYPE f) {
     int n = (int)G.size();
     vector<COSTTYPE> dist(n, -1);
