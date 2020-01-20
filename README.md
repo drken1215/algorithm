@@ -66,7 +66,7 @@
 - [実行時に法が決まる modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_runtime.cpp)
 - [累乗](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_power.cpp)
 - [逆元](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_inverse.cpp)
-- [二項係数 (オーソドックス、n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
+- [二項係数 (オーソドックス, n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
 - [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
 - [二項係数 (漸化式計算, n<=10^9, r<=10^9, p<=10^7)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
 - [二項係数 (任意 mod, n<=10^7, r<=10^7, m<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_any_mod.cpp)
@@ -232,6 +232,10 @@
 # DataStructureOnTree
 ツリー上のクエリ処理のためのデータ構造たちの実装です
 
+#### 木全般
+
+- [部分木サイズ, LCA など](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
+
 #### LCA
 
 - [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/LCA_doubling.cpp)
@@ -388,7 +392,7 @@
 - 累積和
 - スライド最小値
 - インライン DP (俗称)
-- [Convex Hull Trick (傾き単調、クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
+- [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
 - [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
 - [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
 - Monotone Minima
@@ -526,7 +530,7 @@
 #### その他
 
 - [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
-- [pn + r (n は非負整数) で表せる整数のうち、x 以上となる最小の整数](https://github.com/drken1215/algorithm/blob/master/Others/amari_lower_bound.cpp)
+- [pn + r (n は非負整数) で表せる整数のうち, x 以上となる最小の整数](https://github.com/drken1215/algorithm/blob/master/Others/amari_lower_bound.cpp)
 - [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
