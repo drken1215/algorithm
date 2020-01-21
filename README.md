@@ -51,7 +51,7 @@
 #### その他
 
 - [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
-- 多倍長整数
+- [多倍長整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
 
 
 　
