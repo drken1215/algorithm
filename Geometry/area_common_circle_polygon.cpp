@@ -69,10 +69,9 @@ struct Circle : Point {
 
 
 //////////////////////////////
-// 円と多角形の共通部分の面積
+// 円と線分の交点
 //////////////////////////////
 
-// 円と線分の交点
 int ccw_for_crosspoint_cs(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
     if (cross(b-a, c-a) < -EPS) return -1;
@@ -102,27 +101,35 @@ vector<Point> crosspoint_CS(const Circle &e, const Line &s) {
     return res;
 }
 
+
+//////////////////////////////
+// 円と多角形の共通部分の面積
+//////////////////////////////
+
+// 原点, 点 x, 点 y とで囲まれる領域の面積 (三角形 ver と扇型 ver)
+DD calc_element(const Point &x, const Point &y, DD r, bool triangle) {
+    if (triangle) return cross(x, y) / 2;
+    else {
+        Point tmp = y * Point(x.x, -x.y);
+        DD ang = atan2(tmp.y, tmp.x);
+        return r * r * ang / 2;
+    }
+}
+
 // 円 C と、三角形 ((0, 0), ia, ib) との共通部分の面積
 DD calc_common_area(const Circle &c, const Point &ia, const Point &ib) {
     Point a = ia - c, b = ib - c;
     if (abs(a - b) < EPS) return 0;
-    auto sub = [&](const Point &x, const Point &y, bool triangle) {
-        if (triangle) return cross(x, y) / 2;
-        else {
-            Point tmp = y * Point(x.x, -x.y);
-            DD ang = atan2(tmp.y, tmp.x);
-            return c.r * c.r * ang / 2;
-        }
-    };
     bool isin_a = (abs(a) < c.r + EPS);
     bool isin_b = (abs(b) < c.r + EPS);
-    if (isin_a && isin_b) return sub(a, b, true);
+    if (isin_a && isin_b) return calc_element(a, b, c.r, true);
     Circle oc(Point(0, 0), c.r);
     Line seg(a, b);
     auto cr = crosspoint_CS(oc, seg);
-    if (cr.empty()) return sub(a, b, false);
+    if (cr.empty()) return calc_element(a, b, c.r, false);
     auto s = cr[0], t = cr.back();
-    return sub(a, s, isin_a) + sub(s, t, true) + sub(t, b, isin_b);
+    return calc_element(s, t, c.r, true)
+        + calc_element(a, s, c.r, isin_a) + calc_element(t, b, c.r, isin_b);
 }
 
 // 円 c と多角形 pol の共通部分の面積
@@ -134,6 +141,7 @@ DD calc_common_area(const Circle &c, const vector<Point> &pol) {
     }
     return res;
 }
+
 
 
 int main() {
