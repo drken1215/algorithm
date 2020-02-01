@@ -134,10 +134,43 @@ vector<Point> crosspoint_CS(const Circle &e, const Line &s) {
     else if (e.r - rcos < EPS) rsin = 0;
     else rsin = sqrt(e.r * e.r - rcos * rcos);
     Point dir = (s[1] - s[0]) / abs(s[1] - s[0]);
-    Point p1 = p + dir * rsin;
-    Point p2 = p - dir * rsin;
+    Point p1 = p - dir * rsin;
+    Point p2 = p + dir * rsin;
     if (isinterPS_crosspoint_cs(p1, s)) res.push_back(p1);
     if (isinterPS_crosspoint_cs(p2, s) && !eq(p1, p2)) res.push_back(p2);
+    return res;
+}
+
+
+// 円 C と、三角形 ((0, 0), ia, ib) との共通部分の面積
+DD calc_common_area(const Circle &c, const Point &ia, const Point &ib) {
+    Point a = ia - c, b = ib - c;
+    if (abs(a - b) < EPS) return 0;
+    auto sub = [&](const Point &x, const Point &y, bool triangle) {
+        if (triangle) return cross(x, y) / 2;
+        else {
+            Point tmp = y * Point(x.x, -x.y);
+            DD ang = atan2(tmp.y, tmp.x);
+            return c.r * c.r * ang / 2;
+        }
+    };
+    bool isin_a = (abs(a) < c.r + EPS);
+    bool isin_b = (abs(b) < c.r + EPS);
+    if (isin_a && isin_b) return sub(a, b, true);
+    Circle oc(Point(0, 0), c.r);
+    Line seg(a, b);
+    auto cr = crosspoint_CS(oc, seg);
+    if (cr.empty()) return sub(a, b, false);
+    auto s = cr[0], t = cr.back();
+    return sub(a, s, isin_a) + sub(s, t, true) + sub(t, b, isin_b);
+}
+
+DD calc_common_area(const Circle &c, const vector<Point> &pol) {
+    DD res = 0;
+    int N = pol.size();
+    for (int i = 0; i < N; ++i) {
+        res += calc_common_area(c, pol[i], pol[(i+1)%N]);
+    }
     return res;
 }
 
