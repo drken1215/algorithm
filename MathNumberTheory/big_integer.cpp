@@ -21,13 +21,15 @@ struct bint : vector<long long> {
     int sign;
 
     // constructor
-    bint(long long num) : vector<long long>(DEFAULT_SIZE, 0), sign(1) {
+    bint(long long num = 0) : vector<long long>(DEFAULT_SIZE, 0), sign(1) {
         if (num < 0) sign = -1, num = -num;
         (*this)[0] = num; 
         this->normalize();
     }
+    bint(int size, long long num) : vector<long long>(size, num), sign(1) {}
     bint& normalize() {
         long long c = 0;
+        bool exist = false;
         for (int i = 0;; ++i) {
             if (i >= this->size()) this->push_back(0);
             if ((*this)[i] < 0 && i+1 >= this->size()) this->push_back(0);
@@ -37,9 +39,11 @@ struct bint : vector<long long> {
             }
             long long a = (*this)[i] + c;
             (*this)[i] = a % BASE;
+            if ((*this)[i]) exist = true;
             c = a / BASE;
             if (c == 0 && i == this->size()-1) break;
         }
+        if (!exist) sign = 1;
         return (*this);
     }
     friend bint abs(const bint &x) {
@@ -150,6 +154,7 @@ struct bint : vector<long long> {
 
     // divide
     bint& operator /= (long long r) {
+        if (r < 0) sign *= -1, r = -r;
         long long c = 0, t = 0;
         for (int i = (int)size()-1; i >= 0; --i) {
             t = bint::BASE * c + (*this)[i];
@@ -160,6 +165,7 @@ struct bint : vector<long long> {
         return (*this);
     }
     long long operator %= (long long r) {
+        if (r < 0) sign *= -1, r = -r;
         long long c = 0, t = 0;
         for (int i = (int)size()-1; i >= 0; --i) {
             t = bint::BASE * c + (*this)[i];
@@ -194,6 +200,8 @@ struct bint : vector<long long> {
             }
             s[i] = lo;
         }
+        if (a.sign == r.sign) s.sign = 1, t.sign = 1;
+        else s.sign = -1, t.sign = 1;
         return make_pair(s.normalize(), t.normalize());
     }
     bint operator / (const bint& r) const {
@@ -243,12 +251,17 @@ struct bint : vector<long long> {
     friend bool operator != (const bint& x, const bint& y) { return !(x == y); }
 };
 
-bint toBint(const string &s) {
-    bint res = 0;
-    for (int i = 0; i < s.size(); ++i) {
-        res += (long long)(s[i] - '0');
-        if (i != s.size()-1) res *= 10;
+bint toBint(const string &is) {
+    string s = is;
+    if (s[0] == '-') s = s.substr(1);
+    while (s.size() % 8 != 0) s = "0" + s;
+    int N = (int)s.size();
+    bint res(N/8, 0);
+    for (int i = 0; i < (int)s.size(); ++i) {
+        res[(N-i-1)/8] *= 10;
+        res[(N-i-1)/8] += s[i] - '0';
     }
+    if (is[0] == '-') res.sign = -1;
     return res;
 }
 
