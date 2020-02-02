@@ -51,19 +51,6 @@ struct bint : vector<long long> {
         if (z.sign == -1) z.sign = 1;
         return z;
     }
-    friend ostream &operator << (ostream &os, const bint &x) {
-        if (x.sign == -1) os << '-';
-        int d = x.size()-1; 
-        for (d = x.size()-1; d >= 0; --d) if (x[d] > 0) break;
-        if (d == -1) os << 0;
-        else os << x[d];
-        for (int i = d-1; i >= 0; --i) {
-            os.width(bint::BASE_DIGIT);
-            os.fill('0');
-            os << x[i];
-        }
-        return os;
-    }
 
     // operation
     bint operator - () const {
@@ -278,6 +265,26 @@ string toStr(const bint &r) {
         ss << r[i];
     }
     return ss.str();
+}
+
+istream &operator >> (istream &is, bint &x) {
+    string s; is >> s;
+    x = toBint(s);
+    return is;
+}
+
+ostream &operator << (ostream &os, const bint &x) {
+    if (x.sign == -1) os << '-';
+    int d = x.size()-1; 
+    for (d = x.size()-1; d >= 0; --d) if (x[d] > 0) break;
+    if (d == -1) os << 0;
+    else os << x[d];
+    for (int i = d-1; i >= 0; --i) {
+        os.width(bint::BASE_DIGIT);
+        os.fill('0');
+        os << x[i];
+    }
+    return os;
 }
 
 
