@@ -160,7 +160,7 @@
 - [Union-Find 木 (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_size.cpp)
 - [Union-Find 木 (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_rank.cpp)
 - [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
-- [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree_F2.cpp)
+- [重みつき Union-Find 木 (F2 体)](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree_F2.cpp)
 - [部分永続 Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find_tree.cpp)
 - Quick Find
 - Dynamic Connectivity
