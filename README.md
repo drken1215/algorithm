@@ -5,6 +5,24 @@
 「実装例」または「ライブラリ」として使用することを念頭に置いています。
 
 
+## 目次
+
+|分類|内容|具体例|
+|---|---|---|
+|MathNumberTheory|整数論的アルゴリズム|素因数分解、最大公約数など| 
+|MathCombinatorics|組合せ論的アルゴリズム|modint、Nim など|
+|MathAlgebra|代数的アルゴリズ|行列計算など|
+|DataStructure|データ構造|Union-Find、セグメント木など|
+|DataStructureOnTree|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
+|GraphTheory|グラフアルゴリズム|強連結成分分解、木の直径など|
+|GraphNetworkFloe|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
+|DP|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
+|Geometry|計算幾何|円の交点など|
+|String|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
+|Others|その他|xorshift、サイコロなど|
+
+
+
 　
 
 
@@ -155,13 +173,13 @@
 # DataStructure
 各種データ構造の実装です
 
-#### Union-Find 木
+#### Union-Find
 
-- [Union-Find 木 (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_size.cpp)
-- [Union-Find 木 (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_rank.cpp)
-- [重みつき Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
-- [重みつき Union-Find 木 (F2 体)](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree_F2.cpp)
-- [部分永続 Union-Find 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find_tree.cpp)
+- [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_size.cpp)
+- [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_tree_rank.cpp)
+- [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree.cpp)
+- [重みつき Union-Find (F2 体)](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_tree_F2.cpp)
+- [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find_tree.cpp)
 - Quick Find
 - Dynamic Connectivity
 
