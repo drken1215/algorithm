@@ -12,7 +12,7 @@
 |---|---|---|
 |**MathNumberTheory**|整数論的アルゴリズム|素因数分解、最大公約数など| 
 |**MathCombinatorics**|組合せ論的アルゴリズム|modint、Nim など|
-|**MathAlgebra**|代数的アルゴリズ|行列計算など|
+|**MathAlgebra**|代数的アルゴリズム|行列計算など|
 |**DataStructure**|データ構造|Union-Find、セグメント木など|
 |**DataStructureOnTree**|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
 |**GraphTheory**|グラフアルゴリズム|強連結成分分解、木の直径など|
@@ -560,10 +560,12 @@
 
 
 
+　
 
 
 
-
-
+# License
+These codes are licensed under CC0.
+[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png "CC0")](http://creativecommons.org/publicdomain/zero/1.0/deed.ja)
 
 
