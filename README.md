@@ -5,21 +5,22 @@
 「実装例」または「ライブラリ」として使用することを念頭に置いています。
 
 
-## 目次
+　
+
 
 |分類|内容|具体例|
 |---|---|---|
-|MathNumberTheory|整数論的アルゴリズム|素因数分解、最大公約数など| 
-|MathCombinatorics|組合せ論的アルゴリズム|modint、Nim など|
-|MathAlgebra|代数的アルゴリズ|行列計算など|
-|DataStructure|データ構造|Union-Find、セグメント木など|
-|DataStructureOnTree|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
-|GraphTheory|グラフアルゴリズム|強連結成分分解、木の直径など|
-|GraphNetworkFloe|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
-|DP|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
-|Geometry|計算幾何|円の交点など|
-|String|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
-|Others|その他|xorshift、サイコロなど|
+|**MathNumberTheory**|整数論的アルゴリズム|素因数分解、最大公約数など| 
+|**MathCombinatorics**|組合せ論的アルゴリズム|modint、Nim など|
+|**MathAlgebra**|代数的アルゴリズ|行列計算など|
+|**DataStructure**|データ構造|Union-Find、セグメント木など|
+|**DataStructureOnTree**|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
+|**GraphTheory**|グラフアルゴリズム|強連結成分分解、木の直径など|
+|**GraphNetworkFlow**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
+|**DP**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
+|**Geometry**|計算幾何|円の交点など|
+|**String**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
+|**Others**|その他|xorshift、サイコロなど|
 
 
 
