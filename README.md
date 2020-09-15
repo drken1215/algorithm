@@ -10,7 +10,7 @@
 
 |分類|内容|具体例|
 |---|---|---|
-|**MathNumberTheory**|整数論的アルゴリズム|素因数分解、最大公約数など| 
+|**MathNumberTheory**|整数論的アルゴリズム|素因数分解、最大公約数など|
 |**MathCombinatorics**|組合せ論的アルゴリズム|modint、Nim など|
 |**MathAlgebra**|代数的アルゴリズム|行列計算など|
 |**DataStructure**|データ構造|Union-Find、セグメント木など|
@@ -169,7 +169,7 @@
 
 
 　
-  
+
 
 # DataStructure
 各種データ構造の実装です
@@ -249,7 +249,7 @@
 
 　
 
-  
+
 # DataStructureOnTree
 ツリー上のクエリ処理のためのデータ構造たちの実装です
 
@@ -299,7 +299,7 @@
 
 #### 連結成分分解
 
-- 強連結成分分解
+- [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/strongly_connected_components.cpp)
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
 - 二重頂点連結成分分解
@@ -369,7 +369,7 @@
 
 　
 
-  
+
 # DP
 定型的な動的計画法やその他の処理です
 
@@ -425,7 +425,7 @@
 
 　
 
-  
+
 # Geometry
 幾何ライブラリです
 
@@ -524,7 +524,7 @@
 
 　
 
-  
+
 # Others
 その他のアルゴリズムです
 
