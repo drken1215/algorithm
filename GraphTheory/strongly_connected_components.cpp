@@ -1,5 +1,5 @@
 //
-// ¶¯Ï¢·ëÀ®Ê¬Ê¬²ò
+// å¼·é€£çµæˆåˆ†åˆ†è§£
 //
 // verified:
 //   AOJ Course GRL_3_C: Strongly Connected Components
