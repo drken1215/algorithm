@@ -1,5 +1,5 @@
 //
-// NTT (Number Theoretic Transform)
+// NTT (Number-Theoretic Transform)
 //
 // verified:
 //   Yosupo Judge Convolution (mod 1,000,000,007)
@@ -174,6 +174,17 @@ namespace NTT {
         }
     }
 
+    // for garner
+    static constexpr int MOD0 = 754974721;
+    static constexpr int MOD1 = 167772161;
+    static constexpr int MOD2 = 469762049;
+    using mint0 = Fp<MOD0>;
+    using mint1 = Fp<MOD1>;
+    using mint2 = Fp<MOD2>;
+    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
+    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
+    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+
     // small case (T = mint, long long)
     template<class T> vector<T> naive_mul 
     (const vector<T> &A, const vector<T> &B) {
@@ -186,42 +197,25 @@ namespace NTT {
         return res;
     }
 
-    // case of good mod (typically, mod 998244353)
+    // mint
     template<class mint> vector<mint> operator * 
     (const vector<mint> &A, const vector<mint> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
         if (min(N, M) < 30) return naive_mul(A, B);
+        int MOD = A[0].getmod();
         int size_fft = get_fft_size(N, M);
-        vector<mint> a(size_fft), b(size_fft), c(size_fft);
-        for (int i = 0; i < N; ++i) a[i] = A[i];
-        for (int i = 0; i < M; ++i) b[i] = B[i];
-        vector<mint> res(size_fft);
-        trans(a), trans(b);
-        for (int i = 0; i < size_fft; ++i) res[i] = a[i] * b[i];
-        trans(res, true);
-        res.resize(N + M - 1);
-        return res;
-    }
-
-    // cgeneral case (mint, long long)
-    static constexpr int MOD0 = 754974721;
-    static constexpr int MOD1 = 167772161;
-    static constexpr int MOD2 = 469762049;
-    using mint0 = Fp<MOD0>;
-    using mint1 = Fp<MOD1>;
-    using mint2 = Fp<MOD2>;
-    static const mint1 imod0 = modinv(MOD0, MOD1);
-    static const mint2 imod1 = modinv(MOD1, MOD2);
-    static const mint2 imod01 = imod1 / MOD0;
-    
-    // mint (typically, mod 1000000007)
-    template<class mint> vector<mint> mul
-    (const vector<mint> &A, const vector<mint> &B) {
-        if (A.empty() || B.empty()) return {};
-        int N = (int)A.size(), M = (int)B.size();
-        if (min(N, M) < 30) return naive_mul(A, B);
-        int size_fft = get_fft_size(N, M);
+        if (MOD == 998244353) {
+            vector<mint> a(size_fft), b(size_fft), c(size_fft);
+            for (int i = 0; i < N; ++i) a[i] = A[i];
+            for (int i = 0; i < M; ++i) b[i] = B[i];
+            trans(a), trans(b);
+            vector<mint> res(size_fft);
+            for (int i = 0; i < size_fft; ++i) res[i] = a[i] * b[i];
+            trans(res, true);
+            res.resize(N + M - 1);
+            return res;
+        }
         vector<mint0> a0(size_fft, 0), b0(size_fft, 0), c0(size_fft, 0);
         vector<mint1> a1(size_fft, 0), b1(size_fft, 0), c1(size_fft, 0);
         vector<mint2> a2(size_fft, 0), b2(size_fft, 0), c2(size_fft, 0);
@@ -248,7 +242,7 @@ namespace NTT {
     }
 
     // long long
-    vector<long long> mul_ll
+    vector<long long> mul
     (const vector<long long> &A, const vector<long long> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
@@ -290,7 +284,7 @@ int main() {
     vector<mint> a(N), b(M);
     for (int i = 0; i < N; ++i) cin >> a[i];
     for (int i = 0; i < M; ++i) cin >> b[i];
-    auto c = mul(a, b);
+    auto c = a * b;
     for (int i = 0; i < N + M - 1; ++i) {
         if (i) cout << " ";
         cout << c[i];
