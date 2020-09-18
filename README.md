@@ -10,23 +10,23 @@
 
 |分類|内容|具体例|
 |---|---|---|
-|**MathNumberTheory**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**MathCombinatorics**|組合せ論的アルゴリズム|modint、Nim など|
-|**MathAlgebra**|代数的アルゴリズム|行列計算など|
-|**DataStructure**|データ構造|Union-Find、セグメント木など|
-|**DataStructureOnTree**|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
-|**GraphTheory**|グラフアルゴリズム|強連結成分分解、木の直径など|
-|**GraphNetworkFlow**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
-|**DP**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
-|**Geometry**|計算幾何|円の交点など|
-|**String**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
-|**Others**|その他|xorshift、サイコロなど|
+|**[MathNumberTheory](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
+|**[MathCombinatorics](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
+|**[MathAlgebra](#ma)**|代数的アルゴリズム|行列計算など|
+|**[DataStructure](#ds)**|データ構造|Union-Find、セグメント木など|
+|**[DataStructureOnTree](#dst)**|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
+|**[GraphTheory](#gt)**|グラフアルゴリズム|強連結成分分解、木の直径など|
+|**[GraphNetworkFlow](#gnf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
+|**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
+|**[Geometry](#ge)**|計算幾何|円の交点など|
+|**[String](#st)**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
+|**[Others](#ot)**|その他|xorshift、サイコロなど|
 
 
 
 　
 
-
+<a name="mmt"></a>
 # MathNumberTheory
 整数論的アルゴリズムたちです
 
@@ -73,9 +73,10 @@
 - [多倍長整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
 
 
+
 　
 
-
+<a name="mc"></a>
 # MathCombinatorics
 組合せ論的アルゴリズムたちです
 
@@ -124,6 +125,7 @@
 　
 
 
+<a name="ma"></a>
 # MathAlgebra
 行列計算など代数的計算に関するアルゴリズムです
 
@@ -171,6 +173,7 @@
 　
 
 
+<a name="ds"></a>
 # DataStructure
 各種データ構造の実装です
 
@@ -250,6 +253,7 @@
 　
 
 
+<a name="dst"></a>
 # DataStructureOnTree
 ツリー上のクエリ処理のためのデータ構造たちの実装です
 
@@ -281,6 +285,7 @@
 　
 
 
+<a name="gt"></a>
 # GraphTheory
 グラフ理論全般のアルゴリズムです
 
@@ -336,6 +341,7 @@
 　
 
 
+<a name="gnf"></a>
 # GraphNetworkFlow
 グラフネットワークフロー関連のアルゴリズムです
 
@@ -370,6 +376,7 @@
 　
 
 
+<a name="dp"></a>
 # DP
 定型的な動的計画法やその他の処理です
 
@@ -426,6 +433,7 @@
 　
 
 
+<a name="ge"></a>
 # Geometry
 幾何ライブラリです
 
@@ -487,6 +495,7 @@
 　
 
 
+<a name="st"></a>
 # String
 文字列アルゴリズムです
 
@@ -525,6 +534,7 @@
 　
 
 
+<a name="ot"></a>
 # Others
 その他のアルゴリズムです
 
