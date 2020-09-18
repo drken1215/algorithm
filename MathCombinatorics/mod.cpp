@@ -19,13 +19,13 @@
 using namespace std;
 
 
-// modint: mod 計算を int を扱うように扱える構造体
+// modint
 template<int MOD> struct Fp {
     long long val;
     constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
         if (val < 0) val += MOD;
     }
-    constexpr int getmod() { return MOD; }
+    constexpr int getmod() const { return MOD; }
     constexpr Fp operator - () const noexcept {
         return val ? MOD - val : 0;
     }
@@ -64,6 +64,12 @@ template<int MOD> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD>& x) noexcept {
+        is >> x.val;
+        x.val %= MOD;
+        if (x.val < 0) x.val += MOD;
+        return is;
+    }
     friend constexpr ostream& operator << (ostream &os, const Fp<MOD>& x) noexcept {
         return os << x.val;
     }
@@ -76,7 +82,10 @@ template<int MOD> struct Fp {
     }
 };
 
-// 二項係数ライブラリ
+const int MOD = 1000000007;
+using mint = Fp<MOD>;
+
+// Binomial coefficient
 template<class T> struct BiCoef {
     vector<T> fact_, inv_, finv_;
     constexpr BiCoef() {}
@@ -110,10 +119,7 @@ template<class T> struct BiCoef {
     }
 };
 
-const int MOD = 1000000007;
-using mint = Fp<MOD>;
 BiCoef<mint> bc;
-
 
 int main() {
     long long N, M, K; cin >> N >> M >> K;
