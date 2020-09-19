@@ -198,7 +198,7 @@ namespace NTT {
     }
 
     // mint
-    template<class mint> vector<mint> operator * 
+    template<class mint> vector<mint> mul
     (const vector<mint> &A, const vector<mint> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
@@ -242,7 +242,7 @@ namespace NTT {
     }
 
     // long long
-    vector<long long> mul
+    vector<long long> mul_ll
     (const vector<long long> &A, const vector<long long> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
@@ -284,7 +284,7 @@ int main() {
     vector<mint> a(N), b(M);
     for (int i = 0; i < N; ++i) cin >> a[i];
     for (int i = 0; i < M; ++i) cin >> b[i];
-    auto c = a * b;
+    auto c = mul(a, b);
     for (int i = 0; i < N + M - 1; ++i) {
         if (i) cout << " ";
         cout << c[i];
