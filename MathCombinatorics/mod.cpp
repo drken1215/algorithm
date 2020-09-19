@@ -51,8 +51,8 @@ template<int MOD> struct Fp {
         long long a = r.val, b = MOD, u = 1, v = 0;
         while (b) {
             long long t = a / b;
-            a -= t * b; swap(a, b);
-            u -= t * v; swap(u, v);
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
         }
         val = val * u % MOD;
         if (val < 0) val += MOD;

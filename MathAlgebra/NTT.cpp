@@ -44,8 +44,8 @@ template<int MOD> struct Fp {
         long long a = r.val, b = MOD, u = 1, v = 0;
         while (b) {
             long long t = a / b;
-            a -= t * b; swap(a, b);
-            u -= t * v; swap(u, v);
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
         }
         val = val * u % MOD;
         if (val < 0) val += MOD;
@@ -76,7 +76,7 @@ template<int MOD> struct Fp {
 };
 
 namespace NTT {
-    constexpr long long modpow(long long a, long long n, int mod) {
+    long long modpow(long long a, long long n, int mod) {
         long long res = 1;
         while (n > 0) {
             if (n & 1) res = res * a % mod;
@@ -86,7 +86,7 @@ namespace NTT {
         return res;
     }
 
-    constexpr long long modinv(long long a, int mod) {
+    long long modinv(long long a, int mod) {
         long long b = mod, u = 1, v = 0;
         while (b) {
             long long t = a / b;
@@ -98,7 +98,7 @@ namespace NTT {
         return u;
     }
 
-    constexpr int calc_primitive_root(int mod) {
+    int calc_primitive_root(int mod) {
         if (mod == 2) return 1;
         if (mod == 167772161) return 3;
         if (mod == 469762049) return 3;
@@ -128,7 +128,7 @@ namespace NTT {
         }
     }
 
-    constexpr int get_fft_size(int N, int M) {
+    int get_fft_size(int N, int M) {
         int size_a = 1, size_b = 1;
         while (size_a < N) size_a <<= 1;
         while (size_b < M) size_b <<= 1;
