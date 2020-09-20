@@ -160,6 +160,12 @@
 - [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
 - Karatsuba 法
 
+#### 形式的冪級数
+
+- [全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_all.cpp)
+- [形式的冪級数の逆数](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_inv.cpp)
+
+
 #### 最適化
 
 - 二分探索法 (方程式の解を 1 つ求める)
