@@ -162,9 +162,7 @@
 
 #### 形式的冪級数
 
-- [全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_all.cpp)
-- [形式的冪級数の逆数](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_inv.cpp)
-
+- [形式的冪級数](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
 
 #### 最適化
 

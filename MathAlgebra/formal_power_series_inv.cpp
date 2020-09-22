@@ -12,8 +12,7 @@
 using namespace std;
 
 
-// modint
-template<int MOD> struct Fp {
+// modinttemplate<int MOD> struct Fp {
     long long val;
     constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
         if (val < 0) val += MOD;
@@ -308,49 +307,83 @@ template<class T> struct BiCoef {
     }
 };
 
-// formal power series
-template<class mint> struct FPS {
-    using Poly = vector<mint>;
-    BiCoef<mint> bc;
+// Formal Power Series
+template <typename mint> struct FPS : vector<mint> {
+    using vector<mint>::vector;
 
-    FPS(int n) : bc(n) {}
+    // constructor
+    FPS(long long v) : vector<mint>(1, mint(v)) {}
+    FPS(mint v) : vector<mint>(1, v) {}
+    FPS(int siz, mint v) : vector<mint>(siz, v) {}
+    FPS(const vector<mint> &r) : vector<mint>(r) {}
 
-    Poly resize(const Poly &a, int deg) {
-        return Poly(a.begin(), a.begin() + min((int)a.size(), deg));
+    // core operator
+    FPS pre(int siz) const noexcept {
+        return FPS(begin(*this), begin(*this) + min((int)this->size(), siz));
     }
-
-    Poly add(const Poly &a, const Poly &b) {
-        Poly res(max(a.size(), b.size()), 0);
-        for (int i = 0; i < a.size(); ++i) res[i] += a[i];
-        for (int i = 0; i < b.size(); ++i) res[i] += b[i];
-        return res;
+    FPS rev() const noexcept {
+        reverse(begin(*this), end(*this));
+        return *this;
     }
-
-    Poly sub(const Poly &a, const Poly &b) {
-        Poly res(max(a.size(), b.size()), 0);
-        for (int i = 0; i < a.size(); ++i) res[i] += a[i];
-        for (int i = 0; i < b.size(); ++i) res[i] -= b[i];
-        return res;
+    FPS& normalize() noexcept {
+        while (!this->empty() && this->back() == 0) this->pop_back();
+        return *this;
     }
-
-    Poly mul(const Poly &a, const Poly &b) {
-        return NTT::mul(a, b);
-    }
-
-    Poly mul(const Poly &a, mint k) {
-        Poly res(a.size());
-        for (int i = 0; i < a.size(); ++i) res[i] = a[i] * k;
-        return res;
-    }
-
-    // 1/a
-    Poly inv(const Poly &a, int deg) {
-        Poly res({mint(1) / a[0]});
-        for(int i = 1; i < deg; i <<= 1) {
-            res = resize(sub(add(res, res), 
-                         mul(mul(res, res), resize(a, i << 1))), i << 1);
+    FPS inv(int deg) const noexcept {
+        assert((*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        FPS res({mint(1) / (*this)[0]});
+        for (int i = 1; i < deg; i <<= 1) {
+            res = (res + res - res * res * this->pre(i << 1)).pre(i << 1);
         }
-        return res;
+        return res.pre(deg);
+    }
+
+    // each operator
+    FPS operator - () const noexcept {
+        for (int i = 0; i < (int)this->size(); ++i)
+            (*this)[i] = -(*this)[i];
+        return *this;
+    }
+    FPS operator + (const FPS& r) const noexcept { return FPS(*this) += r; }
+    FPS operator - (const FPS& r) const noexcept { return FPS(*this) -= r; }
+    FPS operator * (mint v) const noexcept { return FPS(*this) *= v; }
+    FPS operator * (const FPS& r) const noexcept { return FPS(*this) *= r; }
+    FPS operator / (mint v) const noexcept { return FPS(*this) /= v; }
+    FPS operator / (const FPS& r) const noexcept { return FPS(*this) /= r; }
+    FPS operator % (mint v) const noexcept { return FPS(*this) %= v; }
+    FPS operator % (const FPS& r) const noexcept { return FPS(*this) %= r; }
+    FPS& operator += (const FPS &r) {
+        if (r.size() > this->size()) this->resize(r.size());
+        for (int i = 0; i < (int)r.size(); ++i) (*this)[i] += r[i];
+        return this->normalize();
+    }
+    FPS& operator -= (const FPS &r) {
+        if (r.size() > this->size()) this->resize(r.size());
+        for (int i = 0; i < (int)r.size(); ++i) (*this)[i] -= r[i];
+        return this->normalize();
+    }
+    FPS& operator *= (const mint &v) {
+        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= v;
+        return *this;
+    }
+    FPS& operator *= (const FPS &r) {
+        return *this = NTT::mul((*this), r);
+    }
+    FPS& operator /= (const mint &v) {
+        assert(v != 0);
+        mint iv = v.inv();
+        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
+        return *this;
+    }
+    FPS& operator /= (const FPS &r) {
+        if (this->size() < r.size()) {
+            this->clear();
+            return *this;
+        }
+        int need = (int)this->size() - (int)r.size() + 1;
+        *this = ((*this).rev().pre(need) * r.rev().inv(need)).pre(need).rev();
+        return *this;
     }
 };
 
@@ -361,7 +394,7 @@ using namespace NTT;
 int main() {
     int N;
     cin >> N;
-    vector<mint> a(N);
+    FPS a(N, 0);
     for (int i = 0; i < N; ++i) cin >> a[i];
 
     FPS<mint> fps(1100000);

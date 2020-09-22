@@ -8,11 +8,13 @@
 // verified
 //   AOJ 2659 箸
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2659
+//   ACL Contest 1 B - Sum is Multiple
+//     https://atcoder.jp/contests/acl1/tasks/acl1_b
 //
 
 
 /*
-    x ≡ b[i] (mod. m[i]) の解を x ≡ B (mod. M) として {B, M} を求める
+    x ≡ r[i] (mod. m[i]) の解を x ≡ R (mod. M) として {R, M} を求める
     解なしのときは {0, -1}
 */
 
@@ -21,31 +23,33 @@
 #include <vector>
 using namespace std;
 
-inline long long mod(long long a, long long m) {
-    return (a % m + m) % m;
-}
 
 long long extGcd(long long a, long long b, long long &p, long long &q) {
-    if (b == 0) { p = 1; q = 0; return a; }
-    long long d = extGcd(b, a%b, q, p);
-    q -= a/b * p;
+    if (b == 0) { 
+        p = 1, q = 0; 
+        return a; 
+    }
+    long long d = extGcd(b, a % b, q, p);
+    q -= a / b * p;
     return d;
 }
 
-pair<long long, long long> ChineseRem(const vector<long long> &b, const vector<long long> &m) {
-    long long r = 0, M = 1;
-    for (int i = 0; i < (int)b.size(); ++i) {
-        long long p, q;
-        long long d = extGcd(M, m[i], p, q); // p is inv of M/d (mod. m[i]/d)
-        if ((b[i] - r) % d != 0) return make_pair(0, -1);
-        long long tmp = (b[i] - r) / d * p % (m[i]/d);
-        r += M * tmp;
-        M *= m[i]/d;
+pair<long long, long long> ChineseRem(const vector<long long> &vr, const vector<long long> &vm) {
+    if (vr.empty() || vm.empty()) return make_pair(0, 1);
+    long long R = vr[0], M = vm[0];
+    for (int i = 1; i < (int)vr.size(); ++i) {
+        long long p, q, r = vr[i], m = vm[i];
+        if (M < m) swap(M, m), swap(R, r); // prevent overflow
+        long long d = extGcd(M, m, p, q); // p is inv of M/d (mod. m/d)
+        if ((r - R) % d != 0) return make_pair(0, -1);
+        long long md = m / d;
+        long long tmp = (r - R) / d % md * p % md;
+        R += M * tmp, M *= md;
     }
-    return make_pair(mod(r, M), M);
+    R %= M;
+    if (R < 0) R += M;
+    return make_pair(R, M);
 }
-
-
 
 int main() {
     long long N;
