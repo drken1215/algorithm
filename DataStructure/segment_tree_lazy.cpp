@@ -1,5 +1,5 @@
 //
-// segment tree (with delay)
+// segment tree (with lazy)
 //
 // verified:
 //   AOJ Course Range Query - RMQ and RAQ
