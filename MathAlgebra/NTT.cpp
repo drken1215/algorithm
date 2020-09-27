@@ -5,12 +5,13 @@
 //   Yosupo Judge Convolution (mod 1,000,000,007)
 //     https://judge.yosupo.jp/problem/convolution_mod_1000000007
 //
+//   ACL Beginner Contest F - Heights and Pairs
+//     https://atcoder.jp/contests/abl/tasks/abl_f
+//
 
 
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
-
 
 // modint
 template<int MOD> struct Fp {
@@ -57,6 +58,9 @@ template<int MOD> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
+    constexpr bool operator < (const Fp& r) const noexcept {
+        return this->val < r.val;
+    }
     friend constexpr istream& operator >> (istream &is, Fp<MOD>& x) noexcept {
         is >> x.val;
         x.val %= MOD;
@@ -75,6 +79,7 @@ template<int MOD> struct Fp {
     }
 };
 
+// NTT
 namespace NTT {
     long long modpow(long long a, long long n, int mod) {
         long long res = 1;
@@ -274,20 +279,76 @@ namespace NTT {
     }
 };
 
-const int MOD = 1000000007;
+// Binomial coefficient
+template<class T> struct BiCoef {
+    vector<T> fact_, inv_, finv_;
+    constexpr BiCoef() {}
+    constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
+        init(n);
+    }
+    constexpr void init(int n) noexcept {
+        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
+        int MOD = fact_[0].getmod();
+        for(int i = 2; i < n; i++){
+            fact_[i] = fact_[i-1] * i;
+            inv_[i] = -inv_[MOD%i] * (MOD/i);
+            finv_[i] = finv_[i-1] * inv_[i];
+        }
+    }
+    constexpr T com(int n, int k) const noexcept {
+        if (n < k || n < 0 || k < 0) return 0;
+        return fact_[n] * finv_[k] * finv_[n-k];
+    }
+    constexpr T fact(int n) const noexcept {
+        if (n < 0) return 0;
+        return fact_[n];
+    }
+    constexpr T inv(int n) const noexcept {
+        if (n < 0) return 0;
+        return inv_[n];
+    }
+    constexpr T finv(int n) const noexcept {
+        if (n < 0) return 0;
+        return finv_[n];
+    }
+};
+
+const int MOD = 998244353;
 using mint = Fp<MOD>;
-using namespace NTT;
 
 int main() {
-    int N, M;
-    cin >> N >> M;
-    vector<mint> a(N), b(M);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-    for (int i = 0; i < M; ++i) cin >> b[i];
-    auto c = mul(a, b);
-    for (int i = 0; i < N + M - 1; ++i) {
-        if (i) cout << " ";
-        cout << c[i];
+    int N;
+    cin >> N;
+    map<int,long long> ma;
+    for (int i = 0; i < N*2; ++i) {
+        int h;
+        cin >> h;
+        ma[h]++;
     }
-    cout << endl;
+    BiCoef<mint> bc(N*2+1);
+
+    priority_queue<pair<int,vector<mint>>, vector<pair<int,vector<mint>>>, greater<pair<int,vector<mint>>>> que;
+    for (auto it : ma) {
+        int n = it.second;
+        vector<mint> pol(n/2+1, 1);
+        for (int i = 0; i <= n/2; ++i) {
+            pol[i] = bc.fact(n) * bc.finv(n - i*2) * bc.finv(i) / modpow(mint(2), i);
+        }
+        que.push({pol.size(), pol});
+    }
+    while (que.size() >= 2) {
+        auto f = que.top().second; que.pop();
+        auto g = que.top().second; que.pop();
+        auto h = NTT::mul(f, g);
+        que.push({h.size(), h});
+    }
+    auto func = que.top().second;
+
+    mint res = 0;
+    for (int k = 0; k < func.size(); ++k) {
+        mint fac = bc.fact(N*2 - k*2) * bc.finv(N-k) / modpow(mint(2), N-k);
+        if (k % 2 == 0) res += func[k] * fac;
+        else res -= func[k] * fac;
+    }
+    cout << res << endl;
 }
