@@ -21,18 +21,16 @@
 using namespace std;
 
 
-// modint
-vector<int> MODS = { 1000000007 }; // 実行時に決まる
+// modint (replace MODS[0] on runtime)
+vector<int> MODS = { 1000000007 };
 template<int IND = 0> struct Fp {
     long long val;
-    
-    int MOD = MODS[IND];
     constexpr Fp(long long v = 0) noexcept : val(v % MODS[IND]) {
-        if (val < 0) val += MOD;
+        if (val < 0) val += MODS[IND];
     }
-    constexpr int getmod() { return MOD; }
+    constexpr int getmod() { return MODS[IND]; }
     constexpr Fp operator - () const noexcept {
-        return val ? MOD - val : 0;
+        return val ? MODS[IND] - val : 0;
     }
     constexpr Fp operator + (const Fp& r) const noexcept { return Fp(*this) += r; }
     constexpr Fp operator - (const Fp& r) const noexcept { return Fp(*this) -= r; }
@@ -40,27 +38,27 @@ template<int IND = 0> struct Fp {
     constexpr Fp operator / (const Fp& r) const noexcept { return Fp(*this) /= r; }
     constexpr Fp& operator += (const Fp& r) noexcept {
         val += r.val;
-        if (val >= MOD) val -= MOD;
+        if (val >= MODS[IND]) val -= MODS[IND];
         return *this;
     }
     constexpr Fp& operator -= (const Fp& r) noexcept {
         val -= r.val;
-        if (val < 0) val += MOD;
+        if (val < 0) val += MODS[IND];
         return *this;
     }
     constexpr Fp& operator *= (const Fp& r) noexcept {
-        val = val * r.val % MOD;
+        val = val * r.val % MODS[IND];
         return *this;
     }
     constexpr Fp& operator /= (const Fp& r) noexcept {
-        long long a = r.val, b = MOD, u = 1, v = 0;
+        long long a = r.val, b = MODS[IND], u = 1, v = 0;
         while (b) {
             long long t = a / b;
             a -= t * b; swap(a, b);
             u -= t * v; swap(u, v);
         }
-        val = val * u % MOD;
-        if (val < 0) val += MOD;
+        val = val * u % MODS[IND];
+        if (val < 0) val += MODS[IND];
         return *this;
     }
     constexpr bool operator == (const Fp& r) const noexcept {
@@ -69,13 +67,16 @@ template<int IND = 0> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<IND>& x) noexcept {
+    friend constexpr istream& operator >> (istream& is, Fp<IND>& x) noexcept {
+        is >> x.val;
+        x.val %= MODS[IND];
+        if (x.val < 0) x.val += MODS[IND];
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream& os, const Fp<IND>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<IND>& x) noexcept {
-        return is >> x.val;
-    }
-    friend constexpr Fp<IND> modpow(const Fp<IND> &a, long long n) noexcept {
+    friend constexpr Fp<IND> modpow(const Fp<IND>& a, long long n) noexcept {
         if (n == 0) return 1;
         auto t = modpow(a, n / 2);
         t = t * t;
@@ -131,7 +132,6 @@ template<class T> struct Stirling {
         return S[n][k];
     }
 };
-
 
 
 const int MAX = 3100;

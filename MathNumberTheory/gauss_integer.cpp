@@ -1,5 +1,5 @@
 //
-// Modular Arithmetics
+// Gauss Integer
 //
 // cf.
 //   https://qiita.com/drken/items/336ef288b451e86c15cb
@@ -23,7 +23,7 @@ struct gint {
     constexpr gint() : x(0), y(0) { }
     constexpr gint(long long x) : x(x), y(0) { }
     constexpr gint(long long x, long long y) : x(x), y(y) { }
-    friend constexpr long long abs(const gint &r) noexcept {
+    friend constexpr long long abs(const gint& r) noexcept {
         return r.x * r.x + r.y * r.y;
     }
     constexpr gint operator - () const noexcept {
@@ -77,7 +77,7 @@ struct gint {
     constexpr bool operator != (const gint& r) const noexcept {
         return x != r.x || y != r.y;
     }
-    friend ostream& operator << (ostream &os, const gint& r) noexcept {
+    friend ostream& operator << (ostream& os, const gint& r) noexcept {
         if (r.x == 0 && r.y == 0) return os << "0";
         else if (r.x == 0) return os << r.y << "i";
         else os << r.x;
@@ -85,7 +85,7 @@ struct gint {
         else if (r.y > 0) return os << " + " << r.y << "i";
         else return os << " - " << (-r.y) << "i";
     }
-    friend gint gcd(const gint&x, const gint&y) {
+    friend gint gcd(const gint& x, const gint& y) {
         if (y == 0) return x;
         else return gcd(y, x % y);
     }
