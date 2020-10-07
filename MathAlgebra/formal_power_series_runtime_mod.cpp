@@ -1,9 +1,12 @@
 //
-// Formal Power Series
+// Formal Power Series (on runtime mod)
 //
 // verified:
 //   Yosupo Judge
 //     https://judge.yosupo.jp/problem/inv_of_formal_power_series
+//
+//   AOJ 2213 The Number of Solutions for a Polynomial
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2213
 //
 
 
@@ -23,15 +26,16 @@ template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
 { for(auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s << endl; }
 
 
-// modint
-template<int MOD> struct Fp {
+// modint (replace MODS[0] on runtime)
+vector<int> MODS = { 1000000007, 754974721, 167772161, 469762049 };
+template<int IND = 0> struct Fp {
     long long val;
-    constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
-        if (val < 0) val += MOD;
+    constexpr Fp(long long v = 0) noexcept : val(v % MODS[IND]) {
+        if (val < 0) val += MODS[IND];
     }
-    constexpr int getmod() const { return MOD; }
+    constexpr int getmod() const { return MODS[IND]; }
     constexpr Fp operator - () const noexcept {
-        return val ? MOD - val : 0;
+        return val ? MODS[IND] - val : 0;
     }
     constexpr Fp operator + (const Fp& r) const noexcept { return Fp(*this) += r; }
     constexpr Fp operator - (const Fp& r) const noexcept { return Fp(*this) -= r; }
@@ -39,27 +43,27 @@ template<int MOD> struct Fp {
     constexpr Fp operator / (const Fp& r) const noexcept { return Fp(*this) /= r; }
     constexpr Fp& operator += (const Fp& r) noexcept {
         val += r.val;
-        if (val >= MOD) val -= MOD;
+        if (val >= MODS[IND]) val -= MODS[IND];
         return *this;
     }
     constexpr Fp& operator -= (const Fp& r) noexcept {
         val -= r.val;
-        if (val < 0) val += MOD;
+        if (val < 0) val += MODS[IND];
         return *this;
     }
     constexpr Fp& operator *= (const Fp& r) noexcept {
-        val = val * r.val % MOD;
+        val = val * r.val % MODS[IND];
         return *this;
     }
     constexpr Fp& operator /= (const Fp& r) noexcept {
-        long long a = r.val, b = MOD, u = 1, v = 0;
+        long long a = r.val, b = MODS[IND], u = 1, v = 0;
         while (b) {
             long long t = a / b;
-            a -= t * b, swap(a, b);
-            u -= t * v, swap(u, v);
+            a -= t * b; swap(a, b);
+            u -= t * v; swap(u, v);
         }
-        val = val * u % MOD;
-        if (val < 0) val += MOD;
+        val = val * u % MODS[IND];
+        if (val < 0) val += MODS[IND];
         return *this;
     }
     constexpr bool operator == (const Fp& r) const noexcept {
@@ -68,34 +72,34 @@ template<int MOD> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
-    friend constexpr istream& operator >> (istream& is, Fp<MOD>& x) noexcept {
+    friend constexpr istream& operator >> (istream& is, Fp<IND>& x) noexcept {
         is >> x.val;
-        x.val %= MOD;
-        if (x.val < 0) x.val += MOD;
+        x.val %= MODS[IND];
+        if (x.val < 0) x.val += MODS[IND];
         return is;
     }
-    friend constexpr ostream& operator << (ostream& os, const Fp<MOD>& x) noexcept {
+    friend constexpr ostream& operator << (ostream& os, const Fp<IND>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD>& r, long long n) noexcept {
+    friend constexpr Fp<IND> modpow(const Fp<IND>& r, long long n) noexcept {
         if (n == 0) return 1;
         auto t = modpow(r, n / 2);
         t = t * t;
         if (n & 1) t = t * r;
         return t;
     }
-    friend constexpr Fp<MOD> modinv(const Fp<MOD>& r) noexcept {
-        long long a = r.val, b = MOD, u = 1, v = 0;
+    friend constexpr Fp<IND> modinv(const Fp<IND>& r) noexcept {
+        long long a = r.val, b = MODS[IND], u = 1, v = 0;
         while (b) {
             long long t = a / b;
             a -= t * b, swap(a, b);
             u -= t * v, swap(u, v);
         }
-        return Fp<MOD>(u);
+        return Fp<IND>(u);
     }
 };
 
-namespace NTT {
+namespace NTT {    
     long long modpow(long long a, long long n, int mod) {
         long long res = 1;
         while (n > 0) {
@@ -156,15 +160,15 @@ namespace NTT {
     }
 
     // number-theoretic transform
+    set<int> setmod;
     template<class mint> void trans(vector<mint>& v, bool inv = false) {
         if (v.empty()) return;
         int N = (int)v.size();
         int MOD = v[0].getmod();
         int PR = calc_primitive_root(MOD);
-        static bool first = true;
         static vector<long long> vbw(30), vibw(30);
-        if (first) {
-            first = false;
+        if (!setmod.count(MOD)) {
+            setmod.insert(MOD);
             for (int k = 0; k < 30; ++k) {
                 vbw[k] = modpow(PR, (MOD - 1) >> (k + 1), MOD);
                 vibw[k] = modinv(vbw[k], MOD);
@@ -195,15 +199,15 @@ namespace NTT {
     }
 
     // for garner
-    static constexpr int MOD0 = 754974721;
-    static constexpr int MOD1 = 167772161;
-    static constexpr int MOD2 = 469762049;
-    using mint0 = Fp<MOD0>;
-    using mint1 = Fp<MOD1>;
-    using mint2 = Fp<MOD2>;
-    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
-    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
-    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+    static constexpr int IND1 = 1; //754974721;
+    static constexpr int IND2 = 2; //167772161;
+    static constexpr int IND3 = 3; //469762049;
+    using mint1 = Fp<IND1>;
+    using mint2 = Fp<IND2>;
+    using mint3 = Fp<IND3>;
+    static const mint2 imod1 = 95869806; // modinv(MOD1, MOD2);
+    static const mint3 imod2 = 104391568; // modinv(MOD2, MOD3);
+    static const mint3 imod12 = 187290749; // imod2 / MOD1;
 
     // small case (T = mint, long long)
     template<class T> vector<T> naive_mul 
@@ -222,7 +226,7 @@ namespace NTT {
     (const vector<mint>& A, const vector<mint>& B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
-        if (min(N, M) < 30) return naive_mul(A, B);
+        if (min(N, M) < 80) return naive_mul(A, B);
         int MOD = A[0].getmod();
         int size_fft = get_fft_size(N, M);
         if (MOD == 998244353) {
@@ -236,59 +240,27 @@ namespace NTT {
             res.resize(N + M - 1);
             return res;
         }
-        vector<mint0> a0(size_fft, 0), b0(size_fft, 0), c0(size_fft, 0);
         vector<mint1> a1(size_fft, 0), b1(size_fft, 0), c1(size_fft, 0);
         vector<mint2> a2(size_fft, 0), b2(size_fft, 0), c2(size_fft, 0);
+        vector<mint3> a3(size_fft, 0), b3(size_fft, 0), c3(size_fft, 0);
         for (int i = 0; i < N; ++i)
-            a0[i] = A[i].val, a1[i] = A[i].val, a2[i] = A[i].val;
+            a1[i] = A[i].val, a2[i] = A[i].val, a3[i] = A[i].val;
         for (int i = 0; i < M; ++i)
-            b0[i] = B[i].val, b1[i] = B[i].val, b2[i] = B[i].val;
-        trans(a0), trans(a1), trans(a2), trans(b0), trans(b1), trans(b2);
+            b1[i] = B[i].val, b2[i] = B[i].val, b3[i] = B[i].val;
+        trans(a1), trans(a2), trans(a3), trans(b1), trans(b2), trans(b3);
         for (int i = 0; i < size_fft; ++i) {
-            c0[i] = a0[i] * b0[i];
             c1[i] = a1[i] * b1[i];
             c2[i] = a2[i] * b2[i];
+            c3[i] = a3[i] * b3[i];
         }
-        trans(c0, true), trans(c1, true), trans(c2, true);
-        static const mint mod0 = MOD0, mod01 = mod0 * MOD1;
+        trans(c1, true), trans(c2, true), trans(c3, true);
+        mint mod1 = MODS[IND1], mod12 = mod1 * MODS[IND2];
         vector<mint> res(N + M - 1);
         for (int i = 0; i < N + M - 1; ++i) {
-            int y0 = c0[i].val;
-            int y1 = (imod0 * (c1[i] - y0)).val;
-            int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-            res[i] = mod01 * y2 + mod0 * y1 + y0;
-        }
-        return res;
-    }
-
-    // long long
-    vector<long long> mul_ll
-    (const vector<long long>& A, const vector<long long>& B) {
-        if (A.empty() || B.empty()) return {};
-        int N = (int)A.size(), M = (int)B.size();
-        if (min(N, M) < 30) return naive_mul(A, B);
-        int size_fft = get_fft_size(N, M);
-        vector<mint0> a0(size_fft, 0), b0(size_fft, 0), c0(size_fft, 0);
-        vector<mint1> a1(size_fft, 0), b1(size_fft, 0), c1(size_fft, 0);
-        vector<mint2> a2(size_fft, 0), b2(size_fft, 0), c2(size_fft, 0);
-        for (int i = 0; i < N; ++i)
-            a0[i] = A[i], a1[i] = A[i], a2[i] = A[i];
-        for (int i = 0; i < M; ++i)
-            b0[i] = B[i], b1[i] = B[i], b2[i] = B[i];
-        trans(a0), trans(a1), trans(a2), trans(b0), trans(b1), trans(b2);
-        for (int i = 0; i < size_fft; ++i) {
-            c0[i] = a0[i] * b0[i];
-            c1[i] = a1[i] * b1[i];
-            c2[i] = a2[i] * b2[i];
-        }
-        trans(c0, true), trans(c1, true), trans(c2, true);
-        static const long long mod0 = MOD0, mod01 = mod0 * MOD1;
-        vector<long long> res(N + M - 1);
-        for (int i = 0; i < N + M - 1; ++i) {
-            int y0 = c0[i].val;
-            int y1 = (imod0 * (c1[i] - y0)).val;
-            int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-            res[i] = mod01 * y2 + mod0 * y1 + y0;
+            int y1 = c1[i].val;
+            int y2 = (imod1 * (c2[i] - y1)).val;
+            int y3 = (imod12 * (c3[i] - y1) - imod2 * y2).val;
+            res[i] = mod12 * y3 + mod1 * y2 + y1;
         }
         return res;
     }
@@ -405,7 +377,8 @@ template <typename mint> struct FPS : vector<mint> {
             return *this;
         }
         int need = (int)this->size() - (int)r.size() + 1;
-        *this = ((*this).rev().pre(need) * inv(r.rev(), need)).pre(need).rev();
+        *this = (this->rev() * inv(r.rev(), need)).pre(need).rev();
+        //*this = (this->rev().pre(need) * inv(r.rev(), need)).pre(need).rev();
         return *this;
     }
     inline FPS& operator %= (const FPS &r) {
@@ -429,6 +402,10 @@ template <typename mint> struct FPS : vector<mint> {
             res += (*this)[i];
         }
         return res;
+    }
+    inline friend FPS gcd(const FPS& f, const FPS& g) {
+        if (g.empty()) return f;
+        return gcd(g, f % g);
     }
 
     // advanced operation
@@ -522,20 +499,36 @@ template <typename mint> struct FPS : vector<mint> {
         return sqrt(f, f.size());
     }
 };
+using mint = Fp<>;
 
-const int MOD = 998244353;
-using mint = Fp<MOD>;
+FPS<mint> modpow(const FPS<mint> &f, long long n, const FPS<mint> &m) {
+    if (n == 0) return FPS<mint>(1, 1);
+    auto t = modpow(f, n / 2, m);
+    t = (t * t) % m;
+    if (n & 1) t = (t * f) % m;
+    auto q = t / m;
+    auto r = t % m;
+    return t;
+}
 
 int main() {
-    int N;
-    cin >> N;
-    FPS<mint> a(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-
-    auto res = exp(a); // pow(a, M), exp(a), log(a), inv(a)
-    for (int i = 0; i < res.size(); ++i) {
-        if (i) cout << " ";
-        cout << res[i];
+    long long N, P;
+    while (cin >> N >> P) {
+        if (N == 0) break;
+        MODS[0] = P;
+		
+        FPS<mint> f(N+1);
+        for (int i = 0; i < N+1; ++i) cin >> f[i];
+        f.normalize();
+        if (f.empty()) { 
+            cout << P << endl;
+            continue; 
+        }
+        
+        FPS<mint> x(2, 0);
+        x[1] = 1; // ¿�༰ x
+        FPS<mint> g = modpow(x, P, f) - x;
+        FPS<mint> res = gcd(f, g);
+        cout << (int)res.size() - 1 << endl;
     }
-    cout << endl;
 }
