@@ -13,6 +13,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // modint
 template<int MOD> struct Fp {
     long long val;
@@ -61,16 +62,16 @@ template<int MOD> struct Fp {
     constexpr bool operator < (const Fp& r) const noexcept {
         return this->val < r.val;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD>& x) noexcept {
+    friend constexpr istream& operator >> (istream& is, Fp<MOD>& x) noexcept {
         is >> x.val;
         x.val %= MOD;
         if (x.val < 0) x.val += MOD;
         return is;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD>& x) noexcept {
+    friend constexpr ostream& operator << (ostream& os, const Fp<MOD>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD> &a, long long n) noexcept {
+    friend constexpr Fp<MOD> modpow(const Fp<MOD>& a, long long n) noexcept {
         if (n == 0) return 1;
         auto t = modpow(a, n / 2);
         t = t * t;

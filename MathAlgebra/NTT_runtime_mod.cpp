@@ -2,7 +2,8 @@
 // NTT (Number-Theoretic Transform)
 //
 // verified:
-//   ¤Ê¤·
+//   ACL Beginner Contest F - Heights and Pairs
+//     https://atcoder.jp/contests/abl/tasks/abl_f
 //
 
 
@@ -14,14 +15,12 @@ using namespace std;
 vector<int> MODS = { 1000000007, 754974721, 167772161, 469762049 };
 template<int IND = 0> struct Fp {
     long long val;
-    
-    int MOD = MODS[IND];
     constexpr Fp(long long v = 0) noexcept : val(v % MODS[IND]) {
-        if (val < 0) val += MOD;
+        if (val < 0) val += MODS[IND];
     }
-    constexpr int getmod() const { return MOD; }
+    constexpr int getmod() const { return MODS[IND]; }
     constexpr Fp operator - () const noexcept {
-        return val ? MOD - val : 0;
+        return val ? MODS[IND] - val : 0;
     }
     constexpr Fp operator + (const Fp& r) const noexcept { return Fp(*this) += r; }
     constexpr Fp operator - (const Fp& r) const noexcept { return Fp(*this) -= r; }
@@ -29,27 +28,27 @@ template<int IND = 0> struct Fp {
     constexpr Fp operator / (const Fp& r) const noexcept { return Fp(*this) /= r; }
     constexpr Fp& operator += (const Fp& r) noexcept {
         val += r.val;
-        if (val >= MOD) val -= MOD;
+        if (val >= MODS[IND]) val -= MODS[IND];
         return *this;
     }
     constexpr Fp& operator -= (const Fp& r) noexcept {
         val -= r.val;
-        if (val < 0) val += MOD;
+        if (val < 0) val += MODS[IND];
         return *this;
     }
     constexpr Fp& operator *= (const Fp& r) noexcept {
-        val = val * r.val % MOD;
+        val = val * r.val % MODS[IND];
         return *this;
     }
     constexpr Fp& operator /= (const Fp& r) noexcept {
-        long long a = r.val, b = MOD, u = 1, v = 0;
+        long long a = r.val, b = MODS[IND], u = 1, v = 0;
         while (b) {
             long long t = a / b;
             a -= t * b; swap(a, b);
             u -= t * v; swap(u, v);
         }
-        val = val * u % MOD;
-        if (val < 0) val += MOD;
+        val = val * u % MODS[IND];
+        if (val < 0) val += MODS[IND];
         return *this;
     }
     constexpr bool operator == (const Fp& r) const noexcept {
@@ -58,13 +57,19 @@ template<int IND = 0> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<IND>& x) noexcept {
+    constexpr bool operator < (const Fp& r) const noexcept {
+        return this->val < r.val;
+    }
+    friend constexpr istream& operator >> (istream& is, Fp<IND>& x) noexcept {
+        is >> x.val;
+        x.val %= MODS[IND];
+        if (x.val < 0) x.val += MODS[IND];
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream& os, const Fp<IND>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<IND>& x) noexcept {
-        return is >> x.val;
-    }
-    friend constexpr Fp<IND> modpow(const Fp<IND> &a, long long n) noexcept {
+    friend constexpr Fp<IND> modpow(const Fp<IND>& a, long long n) noexcept {
         if (n == 0) return 1;
         auto t = modpow(a, n / 2);
         t = t * t;
@@ -273,24 +278,70 @@ namespace NTT {
     }
 };
 
+// Binomial coefficient
+template<class T> struct BiCoef {
+    vector<T> fact_, inv_, finv_;
+    constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
+        int MOD = fact_[0].getmod();
+        for(int i = 2; i < n; i++){
+            fact_[i] = fact_[i-1] * i;
+            inv_[i] = -inv_[MOD%i] * (MOD/i);
+            finv_[i] = finv_[i-1] * inv_[i];
+        }
+    }
+    constexpr T com(int n, int k) const noexcept {
+        if (n < k || n < 0 || k < 0) return 0;
+        return fact_[n] * finv_[k] * finv_[n-k];
+    }
+    constexpr T fact(int n) const noexcept {
+        if (n < 0) return 0;
+        return fact_[n];
+    }
+    constexpr T inv(int n) const noexcept {
+        if (n < 0) return 0;
+        return inv_[n];
+    }
+    constexpr T finv(int n) const noexcept {
+        if (n < 0) return 0;
+        return finv_[n];
+    }
+};
+
 using mint = Fp<>;
 int main() {
-    int N, K;
-    cin >> N >> K >> MODS[0];
-    vector<vector<mint>> dp(N+1);
-    dp[0] = {1};
-    for (int i = 1; i < N; ++i) {
-        vector<mint> f(i*K+1, 0);
-        for (int j = 0; j <= K; ++j) f[i*j] = 1;
-        dp[i] = NTT::mul(dp[i-1], f);
+    MODS[0] = 998244353;
+    int N;
+    cin >> N;
+    map<int,long long> ma;
+    for (int i = 0; i < N*2; ++i) {
+        int h;
+        cin >> h;
+        ma[h]++;
     }
+    BiCoef<mint> bc(N*2+1);
 
-    for (int x = 1; x <= N; ++x) {
-        mint res = 0;
-        for (int s = 0; s < min(dp[x-1].size(), dp[N-x].size()); ++s) {
-            res += dp[x-1][s] * dp[N-x][s];
+    priority_queue<pair<int,vector<mint>>, vector<pair<int,vector<mint>>>, greater<pair<int,vector<mint>>>> que;
+    for (auto it : ma) {
+        int n = it.second;
+        vector<mint> pol(n/2+1, 1);
+        for (int i = 0; i <= n/2; ++i) {
+            pol[i] = bc.fact(n) * bc.finv(n - i*2) * bc.finv(i) / modpow(mint(2), i);
         }
-        res *= K+1;
-        cout << res-1 << endl;
+        que.push({pol.size(), pol});
     }
+    while (que.size() >= 2) {
+        auto f = que.top().second; que.pop();
+        auto g = que.top().second; que.pop();
+        auto h = NTT::mul(f, g);
+        que.push({h.size(), h});
+    }
+    auto func = que.top().second;
+
+    mint res = 0;
+    for (int k = 0; k < func.size(); ++k) {
+        mint fac = bc.fact(N*2 - k*2) * bc.finv(N-k) / modpow(mint(2), N-k);
+        if (k % 2 == 0) res += func[k] * fac;
+        else res -= func[k] * fac;
+    }
+    cout << res << endl;
 }

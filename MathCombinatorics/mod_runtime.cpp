@@ -28,7 +28,7 @@ template<int IND = 0> struct Fp {
     constexpr Fp(long long v = 0) noexcept : val(v % MODS[IND]) {
         if (val < 0) val += MODS[IND];
     }
-    constexpr int getmod() { return MODS[IND]; }
+    constexpr int getmod() const { return MODS[IND]; }
     constexpr Fp operator - () const noexcept {
         return val ? MODS[IND] - val : 0;
     }

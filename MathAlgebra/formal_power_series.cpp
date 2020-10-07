@@ -1,6 +1,5 @@
 //
 // Formal Power Series
-//   inv
 //
 // verified:
 //   Yosupo Judge
@@ -10,6 +9,21 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+
+
+
+#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, vector<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, set<T> P)
+{ for(auto it : P) { s << "<" << it << "> "; } return s << endl; }
+template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
+{ for(auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s << endl; }
+
 
 
 // modint
@@ -57,21 +71,30 @@ template<int MOD> struct Fp {
     constexpr bool operator != (const Fp& r) const noexcept {
         return this->val != r.val;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD>& x) noexcept {
+    friend constexpr istream& operator >> (istream& is, Fp<MOD>& x) noexcept {
         is >> x.val;
         x.val %= MOD;
         if (x.val < 0) x.val += MOD;
         return is;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD>& x) noexcept {
+    friend constexpr ostream& operator << (ostream& os, const Fp<MOD>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD> &a, long long n) noexcept {
+    friend constexpr Fp<MOD> modpow(const Fp<MOD>& r, long long n) noexcept {
         if (n == 0) return 1;
-        auto t = modpow(a, n / 2);
+        auto t = modpow(r, n / 2);
         t = t * t;
-        if (n & 1) t = t * a;
+        if (n & 1) t = t * r;
         return t;
+    }
+    friend constexpr Fp<MOD> modinv(const Fp<MOD>& r) noexcept {
+        long long a = r.val, b = MOD, u = 1, v = 0;
+        while (b) {
+            long long t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        return Fp<MOD>(u);
     }
 };
 
@@ -136,7 +159,7 @@ namespace NTT {
     }
 
     // number-theoretic transform
-    template<class mint> void trans(vector<mint> &v, bool inv = false) {
+    template<class mint> void trans(vector<mint>& v, bool inv = false) {
         if (v.empty()) return;
         int N = (int)v.size();
         int MOD = v[0].getmod();
@@ -187,7 +210,7 @@ namespace NTT {
 
     // small case (T = mint, long long)
     template<class T> vector<T> naive_mul 
-    (const vector<T> &A, const vector<T> &B) {
+    (const vector<T>& A, const vector<T>& B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
         vector<T> res(N + M - 1);
@@ -199,7 +222,7 @@ namespace NTT {
 
     // mint
     template<class mint> vector<mint> mul
-    (const vector<mint> &A, const vector<mint> &B) {
+    (const vector<mint>& A, const vector<mint>& B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
         if (min(N, M) < 30) return naive_mul(A, B);
@@ -243,7 +266,7 @@ namespace NTT {
 
     // long long
     vector<long long> mul_ll
-    (const vector<long long> &A, const vector<long long> &B) {
+    (const vector<long long>& A, const vector<long long>& B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
         if (min(N, M) < 30) return naive_mul(A, B);
@@ -274,7 +297,7 @@ namespace NTT {
     }
 };
 
-// Binomial coefficient
+// Binomial Coefficient
 template<class T> struct BiCoef {
     vector<T> fact_, inv_, finv_;
     constexpr BiCoef() {}
@@ -308,69 +331,214 @@ template<class T> struct BiCoef {
     }
 };
 
-// formal power series
-template<class mint> struct FPS {
-    using Poly = vector<mint>;
-    BiCoef<mint> bc;
-
-    FPS(int n) : bc(n) {}
-
-    Poly resize(const Poly &a, int deg) {
-        return Poly(a.begin(), a.begin() + min((int)a.size(), deg));
+// Formal Power Series
+template <typename mint> struct FPS : vector<mint> {
+    using vector<mint>::vector;
+ 
+    // constructor
+    FPS(const vector<mint>& r) : vector<mint>(r) {}
+ 
+    // core operator
+    inline FPS pre(int siz) const {
+        return FPS(begin(*this), begin(*this) + min((int)this->size(), siz));
     }
-
-    Poly add(const Poly &a, const Poly &b) {
-        Poly res(max(a.size(), b.size()), 0);
-        for (int i = 0; i < a.size(); ++i) res[i] += a[i];
-        for (int i = 0; i < b.size(); ++i) res[i] += b[i];
+    inline FPS rev() const {
+        FPS res = *this;
+        reverse(begin(res), end(res));
         return res;
     }
-
-    Poly sub(const Poly &a, const Poly &b) {
-        Poly res(max(a.size(), b.size()), 0);
-        for (int i = 0; i < a.size(); ++i) res[i] += a[i];
-        for (int i = 0; i < b.size(); ++i) res[i] -= b[i];
+    inline FPS& normalize() {
+        while (!this->empty() && this->back() == 0) this->pop_back();
+        return *this;
+    }
+ 
+    // basic operator
+    inline FPS operator - () const noexcept {
+        FPS res = (*this);
+        for (int i = 0; i < (int)res.size(); ++i) res[i] = -res[i];
         return res;
     }
-
-    Poly mul(const Poly &a, const Poly &b) {
-        return NTT::mul(a, b);
+    inline FPS operator + (const mint& v) const { return FPS(*this) += v; }
+    inline FPS operator + (const FPS& r) const { return FPS(*this) += r; }
+    inline FPS operator - (const mint& v) const { return FPS(*this) -= v; }
+    inline FPS operator - (const FPS& r) const { return FPS(*this) -= r; }
+    inline FPS operator * (const mint& v) const { return FPS(*this) *= v; }
+    inline FPS operator * (const FPS& r) const { return FPS(*this) *= r; }
+    inline FPS operator / (const mint& v) const { return FPS(*this) /= v; }
+    inline FPS operator / (const FPS& r) const { return FPS(*this) /= r; }
+    inline FPS operator % (const FPS& r) const { return FPS(*this) %= r; }
+    inline FPS operator << (int x) const { return FPS(*this) <<= x; }
+    inline FPS operator >> (int x) const { return FPS(*this) >>= x; }
+    inline FPS& operator += (const mint& v) {
+        if (this->empty()) this->resize(1);
+        (*this)[0] += v;
+        return *this;
     }
-
-    Poly mul(const Poly &a, mint k) {
-        Poly res(a.size());
-        for (int i = 0; i < a.size(); ++i) res[i] = a[i] * k;
-        return res;
+    inline FPS& operator += (const FPS& r) {
+        if (r.size() > this->size()) this->resize(r.size());
+        for (int i = 0; i < (int)r.size(); ++i) (*this)[i] += r[i];
+        return this->normalize();
     }
-
-    // 1/a
-    Poly inv(const Poly &a, int deg) {
-        Poly res({mint(1) / a[0]});
-        for(int i = 1; i < deg; i <<= 1) {
-            res = resize(sub(add(res, res), 
-                         mul(mul(res, res), resize(a, i << 1))), i << 1);
+    inline FPS& operator -= (const mint& v) {
+        if (this->empty()) this->resize(1);
+        (*this)[0] -= v;
+        return *this;
+    }
+    inline FPS& operator -= (const FPS& r) {
+        if (r.size() > this->size()) this->resize(r.size());
+        for (int i = 0; i < (int)r.size(); ++i) (*this)[i] -= r[i];
+        return this->normalize();
+    }
+    inline FPS& operator *= (const mint& v) {
+        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= v;
+        return *this;
+    }
+    inline FPS& operator *= (const FPS& r) {
+        return *this = NTT::mul((*this), r);
+    }
+    inline FPS& operator /= (const mint& v) {
+        assert(v != 0);
+        mint iv = modinv(v);
+        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
+        return *this;
+    }
+    inline FPS& operator /= (const FPS& r) {
+        if (this->size() < r.size()) {
+            this->clear();
+            return *this;
+        }
+        int need = (int)this->size() - (int)r.size() + 1;
+        *this = ((*this).rev().pre(need) * r.rev().inv(need)).pre(need).rev();
+        return *this;
+    }
+    inline FPS& operator %= (const FPS &r) {
+        FPS q = (*this) / r;
+        return *this -= q * r;
+    }
+    inline FPS& operator <<= (int x) {
+        FPS res(x, 0);
+        res.insert(res.end(), begin(*this), end(*this));
+        return *this = res;
+    }
+    inline FPS& operator >>= (int x) {
+        FPS res;
+        res.insert(res.end(), begin(*this) + x, end(*this));
+        return *this = res;
+    }
+    inline mint eval(const mint& v){
+        mint res = 0;
+        for (int i = (int)this->size()-1; i >= 0; --i) {
+            res *= v;
+            res += (*this)[i];
         }
         return res;
+    }
+
+    // advanced operation
+    // df/dx
+    inline friend FPS diff(const FPS& f) {
+        int n = (int)f.size();
+        FPS res(n-1);
+        for (int i = 1; i < n; ++i) res[i-1] = f[i] * i;
+        return res;
+    }
+
+    // \int f dx
+    inline friend FPS integral(const FPS& f) {
+        int n = (int)f.size();
+        FPS res(n+1, 0);
+        for (int i = 0; i < n; ++i) res[i+1] = f[i] / (i+1);
+        return res;
+    }
+
+    // inv(f), f[0] must not be 0
+    inline friend FPS inv(const FPS& f, int deg) {
+        assert(f[0] != 0);
+        if (deg < 0) deg = (int)f.size();
+        FPS res({mint(1) / f[0]});
+        for (int i = 1; i < deg; i <<= 1) {
+            res = (res + res - res * res * f.pre(i << 1)).pre(i << 1);
+        }
+        return res.pre(deg);
+    }
+    inline friend FPS inv(const FPS& f) {
+        return inv(f, f.size());
+    }
+
+    // log(f) = \int f'/f dx, f[0] must be 1
+    inline friend FPS log(const FPS& f, int deg) {
+        assert(f[0] == 1);
+        FPS res = integral(diff(f) * inv(f, deg));
+        res.resize(deg);
+        return res;
+    }
+    inline friend FPS log(const FPS& f) {
+        return log(f, f.size());
+    }
+
+    // exp(f), f[0] must be 0
+    inline friend FPS exp(const FPS& f, int deg) {
+        assert(f[0] == 0);
+        FPS res(1, 1);
+        for (int i = 1; i < deg; i <<= 1) {
+            res = res * (f.pre(i<<1) - log(res, i<<1) + 1).pre(i<<1);
+        }
+        res.resize(deg);
+        return res;
+    }
+    inline friend FPS exp(const FPS& f) {
+        return exp(f, f.size());
+    }
+
+    // pow(f) = exp(e * log f)
+    inline friend FPS pow(const FPS& f, long long e, int deg) {
+        long long i = 0;
+        while (i < (int)f.size() && f[i] == 0) ++i;
+        if (i == (int)f.size()) return FPS(deg, 0);
+        if (i * e >= deg) return FPS(deg, 0);
+        mint k = f[i];
+        FPS res = exp(log((f >> i) / k) * e) * modpow(k, e) << (e * i);
+        res.resize(deg);
+        return res;
+    }
+    inline friend FPS pow(const FPS& f, long long e) {
+        return pow(f, e, f.size());
+    }
+
+    // sqrt(f), f[0] must be 1
+    inline friend FPS sqrt(const FPS& f, int deg) {
+        assert(f[0] == 1);
+        int siz = 1;
+        mint inv2 = mint(1) / 2;
+        FPS res(1, 1);
+        while (siz < deg) {
+            siz <<= 1;
+            FPS tmp(min(siz, (int)f.size()));
+            for (int i = 0; i < (int)tmp.size(); ++i) tmp[i] = f[i];
+            res += tmp * inv(f, siz);
+            res.resize(siz);
+            for (mint& x : res) res *= inv2;
+        }
+        return res;
+    }
+    inline friend FPS sqrt(const FPS& f) {
+        return sqrt(f, f.size());
     }
 };
 
 const int MOD = 998244353;
 using mint = Fp<MOD>;
-using namespace NTT;
 
 int main() {
     int N;
     cin >> N;
-    vector<mint> a(N);
+    FPS<mint> a(N);
     for (int i = 0; i < N; ++i) cin >> a[i];
 
-    FPS<mint> fps(1100000);
-    auto ia = fps.inv(a, N);
-    for (int i = 0; i < N; ++i) {
+    auto res = exp(a); // pow(a, M), exp(a), log(a), inv(a)
+    for (int i = 0; i < res.size(); ++i) {
         if (i) cout << " ";
-        cout << ia[i];
+        cout << res[i];
     }
     cout << endl;
 }
-
-
