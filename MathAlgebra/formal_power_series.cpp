@@ -5,6 +5,9 @@
 //   Yosupo Judge
 //     https://judge.yosupo.jp/problem/inv_of_formal_power_series
 //
+//   HackerRank Array Restoring
+//     https://www.hackerrank.com/contests/happy-query-contest/challenges/array-restoring/problem
+//
 
 
 #include <bits/stdc++.h>
@@ -362,8 +365,6 @@ template <typename mint> struct FPS : vector<mint> {
     inline FPS operator * (const mint& v) const { return FPS(*this) *= v; }
     inline FPS operator * (const FPS& r) const { return FPS(*this) *= r; }
     inline FPS operator / (const mint& v) const { return FPS(*this) /= v; }
-    inline FPS operator / (const FPS& r) const { return FPS(*this) /= r; }
-    inline FPS operator % (const FPS& r) const { return FPS(*this) %= r; }
     inline FPS operator << (int x) const { return FPS(*this) <<= x; }
     inline FPS operator >> (int x) const { return FPS(*this) >>= x; }
     inline FPS& operator += (const mint& v) {
@@ -399,19 +400,6 @@ template <typename mint> struct FPS : vector<mint> {
         for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
         return *this;
     }
-    inline FPS& operator /= (const FPS& r) {
-        if (this->size() < r.size()) {
-            this->clear();
-            return *this;
-        }
-        int need = (int)this->size() - (int)r.size() + 1;
-        *this = ((*this).rev().pre(need) * inv(r.rev(), need)).pre(need).rev();
-        return *this;
-    }
-    inline FPS& operator %= (const FPS &r) {
-        FPS q = (*this) / r;
-        return *this -= q * r;
-    }
     inline FPS& operator <<= (int x) {
         FPS res(x, 0);
         res.insert(res.end(), begin(*this), end(*this));
@@ -429,6 +417,10 @@ template <typename mint> struct FPS : vector<mint> {
             res += (*this)[i];
         }
         return res;
+    }
+    inline friend FPS gcd(const FPS& f, const FPS& g) {
+        if (g.empty()) return f;
+        return gcd(g, f % g);
     }
 
     // advanced operation
@@ -461,6 +453,29 @@ template <typename mint> struct FPS : vector<mint> {
     inline friend FPS inv(const FPS& f) {
         return inv(f, f.size());
     }
+
+    // division, r must be normalized (r.back() must not be 0)
+    inline FPS& operator /= (const FPS& r) {
+        assert(!r.empty());
+        assert(r.back() != 0);
+        this->normalize();
+        if (this->size() < r.size()) {
+            this->clear();
+            return *this;
+        }
+        int need = (int)this->size() - (int)r.size() + 1;
+        *this = ((*this).rev().pre(need) * inv(r.rev(), need)).pre(need).rev();
+        return *this;
+    }
+    inline FPS& operator %= (const FPS &r) {
+        assert(!r.empty());
+        assert(r.back() != 0);
+        this->normalize();
+        FPS q = (*this) / r;
+        return *this -= q * r;
+    }
+    inline FPS operator / (const FPS& r) const { return FPS(*this) /= r; }
+    inline FPS operator % (const FPS& r) const { return FPS(*this) %= r; }
 
     // log(f) = \int f'/f dx, f[0] must be 1
     inline friend FPS log(const FPS& f, int deg) {
@@ -526,7 +541,13 @@ template <typename mint> struct FPS : vector<mint> {
 const int MOD = 998244353;
 using mint = Fp<MOD>;
 
-int main() {
+
+
+////////////////////////////////////////
+// solver
+////////////////////////////////////////
+
+void solveYosupoJudge() {
     int N;
     cin >> N;
     FPS<mint> a(N);
@@ -538,4 +559,32 @@ int main() {
         cout << res[i];
     }
     cout << endl;
+}
+
+void HackerRankArrayRestoring() {
+    int N, M, Q;
+    cin >> N >> M >> Q;
+    FPS<mint> f(N-M+1, 0);
+    for (int i = 0; i < Q; ++i) {
+        int l, r;
+        cin >> l >> r;
+        --l;
+        f[l] += 1;
+    }
+    f.normalize();
+
+    FPS<mint> A(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    auto B = A / f;
+    B.resize(M);
+    for (int i = 0; i < M; ++i) {
+        if (i) cout << " ";
+        cout << B[i];
+    }
+    cout << endl;
+}
+
+int main() {
+    // solveYosupoJudge();
+    HackerRankArrayRestoring();
 }
