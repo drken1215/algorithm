@@ -417,7 +417,8 @@ template <typename mint> struct FPS : vector<mint> {
         for (int i = 1; i < deg; i <<= 1) {
             res = (res + res - res * res * f.pre(i << 1)).pre(i << 1);
         }
-        return res.pre(deg);
+        res.resize(deg);
+        return res;
     }
     inline friend FPS inv(const FPS& f) {
         return inv(f, f.size());
@@ -487,23 +488,19 @@ template <typename mint> struct FPS : vector<mint> {
     }
 
     // sqrt(f), f[0] must be 1
-    inline friend FPS sqrt(const FPS& f, int deg) {
+    inline friend FPS sqrt_base(const FPS& f, int deg) {
         assert(f[0] == 1);
-        int siz = 1;
         mint inv2 = mint(1) / 2;
         FPS res(1, 1);
-        while (siz < deg) {
-            siz <<= 1;
-            FPS tmp(min(siz, (int)f.size()));
-            for (int i = 0; i < (int)tmp.size(); ++i) tmp[i] = f[i];
-            res += tmp * inv(f, siz);
-            res.resize(siz);
-            for (mint& x : res) res *= inv2;
+        for (int i = 1; i < deg; i <<= 1) {
+            res = (res + f.pre(i << 1) * inv(res, i << 1)).pre(i << 1);
+            for (mint& x : res) x *= inv2;
         }
+        res.resize(deg);
         return res;
     }
-    inline friend FPS sqrt(const FPS& f) {
-        return sqrt(f, f.size());
+    inline friend FPS sqrt_base(const FPS& f) {
+        return sqrt_base(f, f.size());
     }
 };
 
@@ -525,7 +522,7 @@ FPS<mint> modpow(const FPS<mint> &f, long long n, const FPS<mint> &m) {
     return t;
 }
 
-int main() {
+void AOJ2213() {
     long long N, P;
     while (cin >> N >> P) {
         if (N == 0) break;
@@ -545,4 +542,8 @@ int main() {
         FPS<mint> res = gcd(f, g);
         cout << (int)res.size() - 1 << endl;
     }
+}
+
+int main() {
+    AOJ2213();
 }

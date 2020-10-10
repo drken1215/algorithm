@@ -8,6 +8,9 @@
 //   HackerRank Array Restoring
 //     https://www.hackerrank.com/contests/happy-query-contest/challenges/array-restoring/problem
 //
+//   Codeforces 205 Div1 E. The Child and Binary TreeE
+//     https://codeforces.com/contest/438/problem/E
+//
 
 
 #include <bits/stdc++.h>
@@ -448,7 +451,8 @@ template <typename mint> struct FPS : vector<mint> {
         for (int i = 1; i < deg; i <<= 1) {
             res = (res + res - res * res * f.pre(i << 1)).pre(i << 1);
         }
-        return res.pre(deg);
+        res.resize(deg);
+        return res;
     }
     inline friend FPS inv(const FPS& f) {
         return inv(f, f.size());
@@ -518,23 +522,19 @@ template <typename mint> struct FPS : vector<mint> {
     }
 
     // sqrt(f), f[0] must be 1
-    inline friend FPS sqrt(const FPS& f, int deg) {
+    inline friend FPS sqrt_base(const FPS& f, int deg) {
         assert(f[0] == 1);
-        int siz = 1;
         mint inv2 = mint(1) / 2;
         FPS res(1, 1);
-        while (siz < deg) {
-            siz <<= 1;
-            FPS tmp(min(siz, (int)f.size()));
-            for (int i = 0; i < (int)tmp.size(); ++i) tmp[i] = f[i];
-            res += tmp * inv(f, siz);
-            res.resize(siz);
-            for (mint& x : res) res *= inv2;
+        for (int i = 1; i < deg; i <<= 1) {
+            res = (res + f.pre(i << 1) * inv(res, i << 1)).pre(i << 1);
+            for (mint& x : res) x *= inv2;
         }
+        res.resize(deg);
         return res;
     }
-    inline friend FPS sqrt(const FPS& f) {
-        return sqrt(f, f.size());
+    inline friend FPS sqrt_base(const FPS& f) {
+        return sqrt_base(f, f.size());
     }
 };
 
@@ -584,7 +584,22 @@ void HackerRankArrayRestoring() {
     cout << endl;
 }
 
+void Codeforces205Div1E() {
+    int N, M;
+    cin >> N >> M;
+    FPS<mint> C(M+1, 0);
+    for (int i = 0; i < N; ++i) {
+        int c;
+        cin >> c;
+        if (c > M) continue;
+        C[c] += 1;
+    }
+    FPS<mint> F = inv(sqrt_base(C * mint(-4) + 1) + 1) * 2;
+    for (int w = 1; w <= M; ++w) cout << F[w] << endl;
+}
+
 int main() {
     // solveYosupoJudge();
-    HackerRankArrayRestoring();
+    // HackerRankArrayRestoring();
+    Codeforces205Div1E();
 }
