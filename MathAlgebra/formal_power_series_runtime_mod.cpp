@@ -83,6 +83,7 @@ template<int IND = 0> struct Fp {
     }
     friend constexpr Fp<IND> modpow(const Fp<IND>& r, long long n) noexcept {
         if (n == 0) return 1;
+        if (n < 0) return modpow(modinv(r), -n);
         auto t = modpow(r, n / 2);
         t = t * t;
         if (n & 1) t = t * r;

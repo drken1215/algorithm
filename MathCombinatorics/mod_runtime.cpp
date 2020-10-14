@@ -76,12 +76,22 @@ template<int IND = 0> struct Fp {
     friend constexpr ostream& operator << (ostream& os, const Fp<IND>& x) noexcept {
         return os << x.val;
     }
-    friend constexpr Fp<IND> modpow(const Fp<IND>& a, long long n) noexcept {
+    friend constexpr Fp<IND> modpow(const Fp<IND>& r, long long n) noexcept {
         if (n == 0) return 1;
-        auto t = modpow(a, n / 2);
+        if (n < 0) return modpow(modinv(r), -n);
+        auto t = modpow(r, n / 2);
         t = t * t;
-        if (n & 1) t = t * a;
+        if (n & 1) t = t * r;
         return t;
+    }
+    friend constexpr Fp<IND> modinv(const Fp<IND>& r) noexcept {
+        long long a = r.val, b = MODS[IND], u = 1, v = 0;
+        while (b) {
+            long long t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        return Fp<IND>(u);
     }
 };
 
