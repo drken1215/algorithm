@@ -471,7 +471,7 @@
 - [凸性判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_convex.cpp)
 - [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
 - [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
-- ボロノイ図 (単純ver, O(n^2))
+- [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
 - 凸多角形の直径
 - [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
 - [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)

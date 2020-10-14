@@ -231,7 +231,7 @@ vector<Point> crosspoint(const Circle &e, const Line &l) {
 ///////////////////////
 
 // 多角形の符号付面積
-DD CalcArea(const vector<Point> &pol) {
+DD calc_area(const vector<Point> &pol) {
     DD res = 0.0;
     for (int i = 0; i < pol.size(); ++i) {
         res += cross(pol[i], pol[(i+1)%pol.size()]);
@@ -262,7 +262,7 @@ int ccw_for_isconvex(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) < -EPS) return -1;
     return 0;
 }
-bool isConvex(vector<Point> &ps) {
+bool is_convex(vector<Point> &ps) {
     int n = (int)ps.size();
     for (int i = 0; i < n; ++i) {
         if (ccw_for_isconvex(ps[i], ps[(i+1)%n], ps[(i+2)%n]) == -1) return false;
@@ -272,7 +272,7 @@ bool isConvex(vector<Point> &ps) {
 
 
 // 凸包 (一直線上の3点を含めない)
-vector<Point> ConvexHull(vector<Point> &ps) {
+vector<Point> convex_hull(vector<Point> &ps) {
     int n = (int)ps.size();
     vector<Point> res(2*n);
     sort(ps.begin(), ps.end());
@@ -301,7 +301,7 @@ vector<Point> ConvexHull(vector<Point> &ps) {
 }
 
 // 凸包 (一直線上の3点を含める)
-vector<Point> ConvexHullCollinearOK(vector<Point> &ps) {
+vector<Point> convex_hull_colinear(vector<Point> &ps) {
     int n = (int)ps.size();
     vector<Point> res(2*n);
     sort(ps.begin(), ps.end());
@@ -345,7 +345,7 @@ vector<Point> crosspoint_for_convexcut(const Line &l, const Line &m) {
     res.push_back(l[0] + (l[1] - l[0]) * cross(m[1] - m[0], m[1] - l[0]) / d);
     return res;
 }
-vector<Point> ConvexCut(const vector<Point> &pol, const Line &l) {
+vector<Point> convex_cut(const vector<Point> &pol, const Line &l) {
     vector<Point> res;
     for (int i = 0; i < pol.size(); ++i) {
         Point p = pol[i], q = pol[(i+1)%pol.size()];
@@ -363,20 +363,24 @@ vector<Point> ConvexCut(const vector<Point> &pol, const Line &l) {
     return res;
 }
 
-// Voronoi-diagram (O(n^2))
+// Voronoi-diagram
+// pol: outer polygon, ps: points
+// find the polygon nearest to ps[ind]
 Line bisector(const Point &p, const Point &q) {
     Point c = (p + q) / 2.0L;
     Point v = (q - p) * Point(0.0L, 1.0L);
     v = v / abs(v);
     return Line(c - v, c + v);
 }
-vector<Point> Voronoi(vector<Point> pol, const vector<Point> &ps, int ind) {
+
+vector<Point> voronoi(const vector<Point> &pol, const vector<Point> &ps, int ind) {
+    vector<Point> res = pol;
     for (int i = 0; i < ps.size(); ++i) {
         if (i == ind) continue;
         Line l = bisector(ps[ind], ps[i]);
-        pol = ConvexCut(pol, l);
+        res = convex_cut(res, l);
     }
-    return pol;
+    return res;
 }
 
 
