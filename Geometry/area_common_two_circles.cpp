@@ -2,6 +2,10 @@
 // 円と円の共通部分の面積
 //
 // verified:
+//
+//   AOJ Course CGL_7_I: Area of Intersection between Two Circles
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_I&lang=ja
+//
 //   Educational Codeforces Round 2 D. Area of Two Circles' Intersection
 //     https://codeforces.com/contest/600/problem/D
 //
@@ -67,20 +71,6 @@ struct Circle : Point {
 };
 
 
-
-///////////////////////
-// 面積アルゴリズム
-///////////////////////
-
-// 多角形の符号付面積
-DD CalcArea(const vector<Point> &pol) {
-    DD res = 0.0;
-    for (int i = 0; i < pol.size(); ++i) {
-        res += cross(pol[i], pol[(i+1)%pol.size()]);
-    }
-    return res/2.0L;
-}
-
 // 円と円の共通部分の面積
 DD calc(const Circle &p, const Circle &q) {
     DD d = abs(p - q);
@@ -96,6 +86,10 @@ DD calc(const Circle &p, const Circle &q) {
 }
 
 
+
+///////////////////////////////////////////////
+// solver
+///////////////////////////////////////////////
 
 int main() {
     Circle p, q;
