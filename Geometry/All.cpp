@@ -389,7 +389,7 @@ vector<Point> voronoi(const vector<Point> &pol, const vector<Point> &ps, int ind
 // 接線
 ///////////////////////
 
-// 点と円
+// tanline
 vector<Point> tanline(const Point &p, const Circle &c) {
     vector<Point> res;
     DD d = norm(p - c);
@@ -404,9 +404,11 @@ vector<Point> tanline(const Point &p, const Circle &c) {
     return res;
 }
 
-// 円と円の共通接線
+// common tanline, a and b must be different!
+// Line[0] is tangent point in a
 vector<Line> comtanline(Circle a, Circle b) {
     vector<Line> res;
+    // intersect
     if (abs(a - b) > abs(a.r - b.r) + EPS) {
         if (abs(a.r - b.r) < EPS) {
             Point dir = b - a;
@@ -424,6 +426,15 @@ vector<Line> comtanline(Circle a, Circle b) {
             }
         }
     }
+    // inscribed
+    else if (abs(abs(a - b) - abs(a.r - b.r)) <= EPS) {
+        Point dir = b - a;
+        if (a.r > b.r) dir = dir * (a.r / abs(dir));
+        else dir = dir * (-a.r / abs(dir));
+        Point p = a + dir;
+        res.push_back(Line(p, p + rot90(dir)));
+    }
+    // disjoint
     if (abs(a - b) > a.r + b.r + EPS) {
         Point p = a * b.r + b * a.r;
         p = p * (1.0 / (a.r + b.r));
@@ -433,9 +444,15 @@ vector<Line> comtanline(Circle a, Circle b) {
             res.push_back(Line(bs[i], as[i]));
         }
     }
+    // circumscribed
+    else if (abs(abs(a - b) - (a.r + b.r)) <= EPS) {
+        Point dir = b - a;
+        dir = dir * (a.r / abs(dir));
+        Point p = a + dir;
+        res.push_back(Line(p, p + rot90(dir)));
+    }
     return res;
 }
-
 
 
 

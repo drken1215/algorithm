@@ -2,6 +2,9 @@
 // 2 円の共通接線
 //
 // verified:
+//   AOJ Course CGL_7_G: Common Tangent
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_G&lang=ja
+//
 //   AOJ 2201 Immortal Jewels
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2201
 //
@@ -73,7 +76,7 @@ struct Circle : Point {
 // 接線
 ///////////////////////
 
-// 点と円
+// tanline
 vector<Point> tanline(const Point &p, const Circle &c) {
     vector<Point> res;
     DD d = norm(p - c);
@@ -88,9 +91,11 @@ vector<Point> tanline(const Point &p, const Circle &c) {
     return res;
 }
 
-// 円と円の共通接線
+// common tanline, a and b must be different!
+// Line[0] is tangent point in a
 vector<Line> comtanline(Circle a, Circle b) {
     vector<Line> res;
+    // intersect
     if (abs(a - b) > abs(a.r - b.r) + EPS) {
         if (abs(a.r - b.r) < EPS) {
             Point dir = b - a;
@@ -108,6 +113,15 @@ vector<Line> comtanline(Circle a, Circle b) {
             }
         }
     }
+    // inscribed
+    else if (abs(abs(a - b) - abs(a.r - b.r)) <= EPS) {
+        Point dir = b - a;
+        if (a.r > b.r) dir = dir * (a.r / abs(dir));
+        else dir = dir * (-a.r / abs(dir));
+        Point p = a + dir;
+        res.push_back(Line(p, p + rot90(dir)));
+    }
+    // disjoint
     if (abs(a - b) > a.r + b.r + EPS) {
         Point p = a * b.r + b * a.r;
         p = p * (1.0 / (a.r + b.r));
@@ -117,65 +131,35 @@ vector<Line> comtanline(Circle a, Circle b) {
             res.push_back(Line(bs[i], as[i]));
         }
     }
-    return res;
-}
-
-
-
-
-///////////////////////
-// ソルバー
-///////////////////////
-
-// 距離
-Point proj(const Point &p, const Line &l) {
-    DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
-    return l[0] + (l[1] - l[0]) * t;
-}
-DD distancePL(const Point &p, const Line &l) {
-    return abs(p - proj(p, l));
-}
-
-// カウント
-int count(Line l, vector<Circle> vec, vector<DD> d) {
-    int res = 0;
-    //cout << endl;
-    for (int i = 0; i < vec.size(); ++i) {
-        DD dis = distancePL(vec[i], l);
-        if (dis >= vec[i].r - EPS && dis <= vec[i].r + d[i] + EPS) ++res;
+    // circumscribed
+    else if (abs(abs(a - b) - (a.r + b.r)) <= EPS) {
+        Point dir = b - a;
+        dir = dir * (a.r / abs(dir));
+        Point p = a + dir;
+        res.push_back(Line(p, p + rot90(dir)));
     }
     return res;
+}
+
+
+
+///////////////////////////////////////
+// solver
+///////////////////////////////////////
+
+void AOJCourse() {
+    Circle p, q;
+    while (cin >> p.x >> p.y >> p.r >> q.x >> q.y >> q.r) {
+        auto l = comtanline(p, q);
+        vector<Point> res;
+        for (int i = 0; i < l.size(); ++i) res.push_back(l[i][0]);
+        sort(res.begin(), res.end());
+        for (int i = 0; i < res.size(); ++i) {
+            cout << fixed << setprecision(10) << res[i].x << " " << res[i].y << endl;
+        }
+    }
 }
 
 int main() {
-    int N;
-    while (cin >> N) {
-        if (N == 0) break;
-        
-        vector<Circle> vec(N);
-        vector<DD> d(N);
-        for (int i = 0; i < N; ++i) {
-            cin >> vec[i].x >> vec[i].y >> vec[i].r >> d[i];
-        }
-        if (N == 1) cout << 1 << endl;
-        else {
-            int res = 0;
-            for (int i = 0; i < N; ++i) {
-                for (int j = i+1; j < N; ++j) {
-                    vector<Circle> I(2, vec[i]); I[1].r += d[i];
-                    vector<Circle> J(2, vec[j]); J[1].r += d[j];
-                    for (int p = 0; p < 2; ++p) {
-                        for (int q = 0; q < 2; ++q) {
-                            vector<Line> L = comtanline(I[p], J[q]);
-                            for (int k = 0; k < L.size(); ++k) {
-                                int tmp = count(L[k], vec, d);
-                                res = max(res, tmp);
-                            }
-                        }
-                    }
-                }
-            }
-            cout << res << endl;
-        }
-    }
+    AOJCourse();
 }
