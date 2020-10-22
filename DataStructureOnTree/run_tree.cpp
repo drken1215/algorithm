@@ -1,5 +1,5 @@
 //
-// �ڤ˴ؤ�������켰
+// 木に関する各種クエリ処理
 //
 // verified:
 //   Codeforces Round #614 (Div. 1) C. Xenon's Attack on the Gangs
