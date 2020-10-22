@@ -22,6 +22,7 @@ struct RunTree {
     vector<vector<long long> > num;
 
     // constructor
+    RunTree() {}
     RunTree(const Graph &G, int root = 0) {
         init(G, root);
     }
