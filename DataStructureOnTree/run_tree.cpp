@@ -12,13 +12,19 @@
 #include <map>
 using namespace std;
 
-using Graph = vector<vector<int> >;
+
+using Graph = vector<vector<int>>;
 struct RunTree {
     // id[v][w] := the index of node w in G[v]
     vector<map<int,int> > id;
 
     // num[v][i] := the size of subtree of G[v][i] with parent v
     vector<vector<long long> > num;
+
+    // constructor
+    RunTree(const Graph &G, int root = 0) {
+        init(G, root);
+    }
 
     // size(u, v) := the size of subtree v with parent u
     long long size(int u, int v) {
@@ -84,17 +90,17 @@ struct RunTree {
     }
 
     // init
-    void init(const Graph &G) {
+    void init(const Graph &G, int root = 0) {
         int N = (int)G.size();
         id.assign(N, map<int,int>());
         num.assign(N, vector<long long>());
         for (int v = 0; v < N; ++v) num[v].assign((int)G[v].size(), 0);
-         int V = (int)G.size();
+        int V = (int)G.size();
         int h = 1;
         while ((1<<h) < N) ++h;
         parent.assign(h, vector<int>(N, -1));
         depth.assign(N, -1);
-        rec(G, 0);
+        rec(G, root);
         for (int i = 0; i+1 < (int)parent.size(); ++i)
             for (int v = 0; v < V; ++v)
                 if (parent[i][v] != -1)
@@ -103,6 +109,10 @@ struct RunTree {
 };
 
 
+
+/////////////////////////////////////////////
+// solver
+/////////////////////////////////////////////
 
 const long long INF = 1LL<<60;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
