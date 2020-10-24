@@ -241,12 +241,12 @@ struct bint : vector<long long> {
 bint toBint(const string &is) {
     string s = is;
     if (s[0] == '-') s = s.substr(1);
-    while (s.size() % 8 != 0) s = "0" + s;
+    while (s.size() % bint::BASE_DIGIT != 0) s = "0" + s;
     int N = (int)s.size();
-    bint res(N/8, 0);
+    bint res(N/bint::BASE_DIGIT, 0);
     for (int i = 0; i < (int)s.size(); ++i) {
-        res[(N-i-1)/8] *= 10;
-        res[(N-i-1)/8] += s[i] - '0';
+        res[(N-i-1)/bint::BASE_DIGIT] *= 10;
+        res[(N-i-1)/bint::BASE_DIGIT] += s[i] - '0';
     }
     if (is[0] == '-') res.sign = -1;
     return res;
@@ -288,6 +288,10 @@ ostream &operator << (ostream &os, const bint &x) {
 }
 
 
+
+/////////////////////////////////////////
+// solver
+/////////////////////////////////////////
 
 // 初項が syoko, 第二項を niko とすることが可能かどうか
 // S の先頭は niko の先頭から始まる
