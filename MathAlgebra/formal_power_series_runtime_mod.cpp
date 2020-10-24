@@ -480,7 +480,7 @@ template <typename mint> struct FPS : vector<mint> {
         if (i == (int)f.size()) return FPS(deg, 0);
         if (i * e >= deg) return FPS(deg, 0);
         mint k = f[i];
-        FPS res = exp(log((f >> i) / k) * e) * modpow(k, e) << (e * i);
+        FPS res = exp(log((f >> i) / k, deg) * e, deg) * modpow(k, e) << (e * i);
         res.resize(deg);
         return res;
     }
