@@ -25,7 +25,8 @@ using namespace std;
 
 struct UnionFind {
     vector<int> par;
-    
+
+    UnionFind() { }
     UnionFind(int n) : par(n, -1) { }
     void init(int n) { par.assign(n, -1); }
     

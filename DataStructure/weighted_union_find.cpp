@@ -27,7 +27,8 @@ template<class Abel> struct UnionFind {
     const Abel UNITY_SUM = 0;      // to be set
     vector<int> par;
     vector<Abel> diff_weight;
-    
+
+    UnionFind() { }
     UnionFind(int n) : par(n, -1), diff_weight(n, UNITY_SUM) {}
     void init(int n) { par.assign(n, -1), diff_weight.assign(n, UNITY_SUM); }
     

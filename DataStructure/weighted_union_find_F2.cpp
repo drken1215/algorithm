@@ -27,7 +27,8 @@ template<class Abel> struct UnionFind {
     vector<Abel> diff_weight;
     vector<Abel> val;
     vector<int> onum; // 根が 0 のときの 1 の個数
-    
+
+    UnionFind() { }
     UnionFind(int n) : par(n, -1), diff_weight(n, UNITY_SUM)
                      , val(n, -1), onum(n, 0) {}
     int root(int x) {

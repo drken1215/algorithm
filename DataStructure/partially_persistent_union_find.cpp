@@ -27,7 +27,8 @@ using pint = pair<int,int>;
 struct PartiallyPersistentUnionFind {
     vector<int> par, last;
     vector<vector<pint> > history;
-    
+
+    PartiallyPersistentUnionFind() { }
     PartiallyPersistentUnionFind(int n) : par(n, -1), last(n, -1), history(n) {
         for (auto &vec : history) vec.emplace_back(-1, -1);
     }
