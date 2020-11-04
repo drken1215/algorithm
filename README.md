@@ -337,7 +337,7 @@
 - 最小有向全域木 (Chu-Liu/Edmonds 法)
 - 有向 Euler 路
 - [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
-- 彩色数 (O(n2^n))
+- [彩色数 (O(n2^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
 - [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 - 最大クリーク列挙（O(1.443^n)）
 - 最小シュタイナー木 (O(n 3^t + n^2 2^t + n^3))
