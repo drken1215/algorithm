@@ -45,7 +45,8 @@ template<class Monoid> struct SegTree {
     const Monoid UNITY;
     int SIZE_R;
     vector<Monoid> dat;
-    
+
+    SegTree() {}
     SegTree(int n, const Func f, const Monoid &unity): F(f), UNITY(unity) { init(n); }
     void init(int n) {
         SIZE_R = 1;

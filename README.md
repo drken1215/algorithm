@@ -391,7 +391,6 @@
 - [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum_2D.cpp)
 - [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
 - [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp)
-- 座標圧縮
 - [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DP/sliding_minimum.cpp)
 
 #### 典型的 DP

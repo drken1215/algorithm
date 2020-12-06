@@ -26,7 +26,8 @@ template<class Monoid> struct RMQ {
     const Monoid INF;
     int SIZE_R;
     vector<pair<Monoid,int> > dat;
-    
+
+    RMQ() {}
     RMQ(int n, const Monoid &inf): INF(inf) { init(n); }
     void init(int n) {
         SIZE_R = 1;
