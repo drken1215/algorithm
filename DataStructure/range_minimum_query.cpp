@@ -23,13 +23,16 @@ using namespace std;
 
 
 template<class Monoid> struct RMQ {
-    const Monoid INF;
+    Monoid INF;
     int SIZE_R;
     vector<pair<Monoid,int> > dat;
-
+    
     RMQ() {}
-    RMQ(int n, const Monoid &inf): INF(inf) { init(n); }
-    void init(int n) {
+    RMQ(int n, const Monoid &inf): INF(inf) { 
+        init(n, inf);
+    }
+    void init(int n, const Monoid &inf) {
+        INF = inf;
         SIZE_R = 1;
         while (SIZE_R < n) SIZE_R *= 2;
         dat.assign(SIZE_R * 2, pair<Monoid,int>(INF, -1));

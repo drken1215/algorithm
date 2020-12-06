@@ -41,17 +41,23 @@ using namespace std;
 
 template<class Monoid> struct SegTree {
     using Func = function<Monoid(Monoid, Monoid)>;
-    const Func F;
-    const Monoid UNITY;
+    Func F;
+    Monoid IDENTITY;
     int SIZE_R;
     vector<Monoid> dat;
 
     SegTree() {}
-    SegTree(int n, const Func f, const Monoid &unity): F(f), UNITY(unity) { init(n); }
-    void init(int n) {
+    SegTree(int n, const Func f, const Monoid &identity): F(f), IDENTITY(identity) {
         SIZE_R = 1;
         while (SIZE_R < n) SIZE_R *= 2;
-        dat.assign(SIZE_R * 2, UNITY);
+        dat.assign(SIZE_R * 2, IDENTITY);
+    }
+    void init(int n, const Func f, const Monoid &identity) {
+        IDENTITY = identity;
+        F = f;
+        SIZE_R = 1;
+        while (SIZE_R < n) SIZE_R *= 2;
+        dat.assign(SIZE_R * 2, IDENTITY);
     }
     
     /* set, a is 0-indexed */
@@ -70,7 +76,7 @@ template<class Monoid> struct SegTree {
     
     /* get [a, b), a and b are 0-indexed */
     Monoid get(int a, int b) {
-        Monoid vleft = UNITY, vright = UNITY;
+        Monoid vleft = IDENTITY, vright = IDENTITY;
         for (int left = a + SIZE_R, right = b + SIZE_R; left < right; left >>= 1, right >>= 1) {
             if (left & 1) vleft = F(vleft, dat[left++]);
             if (right & 1) vright = F(dat[--right], vright);
@@ -90,6 +96,7 @@ template<class Monoid> struct SegTree {
 };
 
 
+SegTree<pair<double, double>> seg;
 
 int main() {
     long long N; int M; cin >> N >> M;
@@ -101,14 +108,13 @@ int main() {
     }
     sort(pls.begin(), pls.end());
     pls.erase(unique(pls.begin(), pls.end()), pls.end());
+    
     int NN = (int)pls.size();
-
-    SegTree<pair<double,double> > seg(NN,
-                                      [](pair<double,double> a, pair<double,double> b){
-                                          return make_pair(a.first * b.first, a.second * b.first + b.second);
-                                      },
-                                      make_pair(1, 0)
-                                      );
+    auto func = [&](pair<double,double> a, pair<double,double> b) {
+        return make_pair(a.first * b.first, a.second * b.first + b.second);
+    };
+    pair<double, double> identity = make_pair(1, 0);
+    seg.init(NN, func, identity);
 
     double Min = 1.0, Max = 1.0;
     for (int i = 0; i < M; ++i) {
