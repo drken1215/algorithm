@@ -70,7 +70,7 @@
 - [多倍長整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
 - [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
 - [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
-- floor sum
+- [floor sum](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/floor_sum.cpp)
 
 
 
