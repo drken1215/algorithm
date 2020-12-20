@@ -63,7 +63,7 @@
 #### 有理数
 
 - [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
-- Stern-Brocot 木
+- [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Stern_Brocot.cpp)
 
 #### その他
 
