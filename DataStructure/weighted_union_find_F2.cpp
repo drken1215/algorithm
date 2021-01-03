@@ -21,15 +21,14 @@
 using namespace std;
 
 
-template<class Abel> struct UnionFind {
-    const Abel UNITY_SUM = 0;      // to be set
+struct UnionFind {
     vector<int> par;
-    vector<Abel> diff_weight;
-    vector<Abel> val;
+    vector<int> diff_weight;
+    vector<int> val;
     vector<int> onum; // 根が 0 のときの 1 の個数
 
     UnionFind() { }
-    UnionFind(int n) : par(n, -1), diff_weight(n, UNITY_SUM)
+    UnionFind(int n) : par(n, -1), diff_weight(n, 0)
                      , val(n, -1), onum(n, 0) {}
     int root(int x) {
         if (par[x] < 0) return x;
@@ -40,7 +39,7 @@ template<class Abel> struct UnionFind {
         }
     }
     
-    Abel calc_weight(int x) {
+    int calc_weight(int x) {
         int rx = root(x);
         return diff_weight[x];
     }
@@ -49,13 +48,13 @@ template<class Abel> struct UnionFind {
         return root(x) == root(y);
     }
 
-    void set(int x, Abel w) {
+    void set(int x, int w) {
         auto rx = root(x);
         auto dw = diff_weight[x];
         val[rx] = w ^ dw;
     }
     
-    bool merge(int x, int y, Abel w = 0) {
+    bool merge(int x, int y, int w = 0) {
         w ^= calc_weight(x); w ^= calc_weight(y);
         x = root(x), y = root(y);
         if (x == y) return false;
@@ -71,7 +70,7 @@ template<class Abel> struct UnionFind {
         return true;
     }
     
-    Abel diff(int x, int y) {
+    int diff(int x, int y) {
         return calc_weight(y) ^ calc_weight(x);
     }
     
@@ -88,7 +87,7 @@ template<class Abel> struct UnionFind {
 };
 
 /* debug */
-template<class Abel> ostream& operator << (ostream& s, UnionFind<Abel> uf) {
+ostream& operator << (ostream& s, UnionFind uf) {
     map<int, vector<int> > res;
     cout << endl;
     for (int i = 0; i < uf.par.size(); ++i) {
@@ -118,7 +117,7 @@ vector<vector<int>> cls;
 
 void solve() {
     long long res = 0;
-    UnionFind<int> uf(K);
+    UnionFind uf(K);
     
     for (int i = 0; i < N; ++i) {
         int w = 1 - (int)(S[i] - '0');
