@@ -523,7 +523,7 @@
 
 - Trie 木
 - [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
-- Suffix Array (SA-IS)
+- [Suffix Array (SA-IS)](https://github.com/drken1215/algorithm/blob/master/String/sa_is.cpp)
 - Palindromic 木 (AOJ 2292)
 
 #### その他
