@@ -8,7 +8,7 @@
 
 /*
   {2, 325, 9375, 28178, 450775, 9780504, 1795265022}
-  を基底に用いることで、2^64 以下はすべて確定的に判定可能
+  を基底に用いることで、2^64 以下の整数はすべて確定的に素数判定可能
  */
 
 
@@ -16,7 +16,7 @@
 using namespace std;
 
 
-// A^N mod. M
+// A^N mod M
 template<class T> T pow_mod(T A, T N, T M) {
     T res = 1 % M;
     A %= M;
@@ -28,20 +28,19 @@ template<class T> T pow_mod(T A, T N, T M) {
     return res;
 }
 
-// Miller-Rabin
 bool is_prime(long long N) {
     if (N <= 1) return false;
-    if (N == 2) return true;
+    if (N == 2 || N == 3) return true;
     if (N % 2 == 0) return false;
-    vector<long long> A = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
-
+    vector<long long> A = {2, 325, 9375, 28178, 450775,
+                           9780504, 1795265022};
     long long s = 0, d = N - 1;
     while (d % 2 == 0) {
         ++s;
         d >>= 1;
     }
     for (auto a : A) {
-        if (a >= N) break;
+        if (a % N == 0) return true;
         long long t, x = pow_mod<__int128_t>(a, d, N);
         if (x != 1) {
             for (t = 0; t < s; ++t) {
