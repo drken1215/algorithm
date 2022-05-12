@@ -239,7 +239,7 @@
 
 #### ハッシュ
 
-- Zobrist hash
+- [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - 木に対する hash
 
 #### ヒープ
