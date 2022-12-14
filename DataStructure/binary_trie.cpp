@@ -3,11 +3,14 @@
 //
 // verified:
 //
-//   AtCoder ARC 033 C - �ǡ�����¤
+//   AtCoder ARC 033 C - データ構造
 //     https://atcoder.jp/contests/arc033/tasks/arc033_3
 //
-//   AtCoder ��5�� �ɥ�󥴤����ĩ��� ���� B - XOR Spread
+//   AtCoder 第5回 ドワンゴからの挑戦状 本選 B - XOR Spread
 //     https://atcoder.jp/contests/dwacon5th-final/tasks/dwacon5th_final_b
+//
+//   ABC 281 E - Least Elements 
+//     https://atcoder.jp/contests/abc281/tasks/abc281_e
 //
 
 
@@ -29,6 +32,7 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
     // constructor
     BinaryTrie() : lazy(0), root(emplace(nullptr)) {}
     inline size_t get_count(Node *v) const { return v ? v->count : 0; }
+    inline size_t size() const { return get_count(root); }
 
     // add and get value of Node
     inline void add(INT val) {
@@ -230,7 +234,6 @@ void ARC033_C() {
             cout << bt.get(v) << endl;
             bt.erase(v);
         }
-        //COUT(bt);
     }
 }
 
@@ -255,7 +258,61 @@ void AtCoderDwango5Honsen_B() {
     cout << endl;
 }
 
+void ABC281_E() {
+    // 入力
+    long long N, M, K;
+    cin >> N >> M >> K;
+    vector<long long> A(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+
+    // 小さい順に K 個の総和
+    long long sum = 0;
+
+    // Binary Trie
+    BinaryTrie<int, 30> left, right;
+
+    // push と pop
+    auto push = [&](long long x) -> void {
+        // とりあえず x を left に挿入する
+        left.insert(x);
+        sum += x;
+
+        // left のサイズが K を超えるなら left の最大値を right に移す
+        if (left.size() > K) {
+            long long y = left.get(left.get_max());
+            sum -= y;
+            left.erase(y);
+            right.insert(y);
+        }
+    };
+    auto pop = [&](long long x) -> void {
+        // とりあえず x を削除する
+        if (x <= left.get(left.get_max())) {
+            left.erase(x);
+            sum -= x;
+        } else {
+            right.erase(x);
+        }
+
+        // left のサイズが K 未満になるなら right の最小値を left に移す
+        if (left.size() < K) {
+            long long y = right.get(right.get_min());
+            sum += y;
+            left.insert(y);
+            right.erase(y);
+        }
+    };
+
+    for (int i = 0; i < M; ++i) push(A[i]);
+    for (int i = 0; i < N - M + 1; ++i) {
+        cout << sum << " ";
+        if (i+M < N) push(A[i+M]), pop(A[i]);
+    }
+    cout << endl;
+}
+
 int main() {
     //ARC033_C();
-    AtCoderDwango5Honsen_B();
+    //AtCoderDwango5Honsen_B();
+    ABC281_E();
 }
