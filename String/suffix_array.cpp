@@ -1,7 +1,12 @@
 //
-// RMQ (by sparse table)
+// Suffix Array (SA-IS) (O(N))
+//   G. Nong, S. Zhang, and W. H. Chan:
+//   Two Efficient Algorithms for Linear Time Suffix Array Construction
 //
 // verified (suffix array の lcp を sparse table で求める)
+//
+//   Yosupo Judge Suffix Array
+//     https://judge.yosupo.jp/problem/suffixarray
 //
 //   ARC 060 F - 最良表現
 //     https://beta.atcoder.jp/contests/arc060/tasks/arc060_d
