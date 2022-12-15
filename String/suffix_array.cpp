@@ -186,7 +186,7 @@ template<class Str> struct SuffixArray {
     }
 
     // find min id that str.substr(sa[id]) >= T
-    int lower_bound(const string& T) {
+    int lower_bound(const Str& T) {
         int left = -1, right = sa.size();
         while (right - left > 1) {
             int mid = (left + right) / 2;
@@ -199,7 +199,7 @@ template<class Str> struct SuffixArray {
     }
 
     // find min id that str.substr(sa[id], T.size()) > T
-    int upper_bound(const string& T) {
+    int upper_bound(const Str& T) {
         int left = -1, right = sa.size();
         while (right - left > 1) {
             int mid = (left + right) / 2;
@@ -212,7 +212,7 @@ template<class Str> struct SuffixArray {
     }
 
     // search
-    bool is_contain(const string& T) {
+    bool is_contain(const Str& T) {
         int lb = lower_bound(T);
         if (lb >= sa.size()) return false;
         return str.compare(sa[lb], T.size(), T) == 0;
