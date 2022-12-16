@@ -65,6 +65,7 @@ template<class Str> struct SuffixArray {
     vector<int> get_lcp() { return lcp; }
 
     // constructor
+    SuffixArray() {}
     SuffixArray(const Str& str_) : str(str_) {
         build_sa();
     }
