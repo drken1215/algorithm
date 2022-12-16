@@ -244,6 +244,13 @@ template<class Str> struct SuffixArray {
     int getLCP(int a, int b) {
         return st.get(min(rank[a], rank[b]), max(rank[a], rank[b]));
     }
+
+    // debug
+    void dump() {
+        for (int i = 0; i < sa.size(); ++i) {
+            cout << i << ": " << sa[i] << ", " << str.substr(sa[i]) << endl;
+        }
+    }
 };
 
 
