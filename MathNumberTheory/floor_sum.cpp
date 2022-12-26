@@ -2,8 +2,14 @@
 // floor sum
 //
 // verified
-//   OUPC 2020 I - カフェオレ
-//     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2020/problems/I
+//   AtCoder ABC 283 Ex - Popcount Sum
+//     https://atcoder.jp/contests/abc283/tasks/abc283_h
+//
+//   AOJ 3217 Cafe au lait (OUPC 2020 I)
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=3217
+//
+//   yukicoder No.2066 Simple Math !
+//     https://yukicoder.me/problems/no/2066
 //
 
 
@@ -13,9 +19,10 @@ using namespace std;
 
 // sum_{i=0}^{n-1} floor((a * i + b) / m)
 // O(log(n + m + a + b))
-long long floor_sum(long long n, long long a, long long b, long long m) {
+// __int128 can be used for T
+template<class T> T floor_sum(T n, T a, T b, T m) {
     if (n == 0) return 0;
-    long long res = 0;
+    T res = 0;
     if (a >= m) {
         res += n * (n - 1) * (a / m) / 2;
         a %= m;
@@ -25,7 +32,7 @@ long long floor_sum(long long n, long long a, long long b, long long m) {
         b %= m;
     }
     if (a == 0) return res;
-    long long ymax = (a * n + b) / m, xmax = ymax * m - b;
+    T ymax = (a * n + b) / m, xmax = ymax * m - b;
     if (ymax == 0) return res;
     res += (n - (xmax + a - 1) / a) * ymax;
     res += floor_sum(ymax, m, (a - xmax % a) % a, a);
@@ -34,12 +41,49 @@ long long floor_sum(long long n, long long a, long long b, long long m) {
 
 // #lp under (and on) the segment (x1, y1)-(x2, y2)
 // not including y = 0, x = x2
-long long num_lattice_points(long long x1, long long y1, long long x2, long long y2) {
-    long long dx = x2 - x1;
+template<class T> T num_lattice_points(T x1, T y1, T x2, T y2) {
+    T dx = x2 - x1;
     return floor_sum(dx, y2 - y1, dx * y1, dx);
 }
 
 
+/////////////////////////////////////////
+// Solvers
+/////////////////////////////////////////
+
+/* yukicoder No.2066 */
+
+// calc #n that can be expressed n =  Px + Qy (P, Q is coprime)
+// 0 <= n <= M
+long long calc_num(__int128 P, __int128 Q, __int128 M) {
+    __int128 mp = M / P;
+    __int128 N = min(mp + 1, Q);
+    __int128 a = P, b = M + Q - a * (N - 1);
+    return floor_sum(N, a, b, Q) - 1;
+}
+
+void solveYukicoder2066() {
+    int CASE;
+    cin >> CASE;
+    while (CASE--) {
+        long long P, Q, K;
+        cin >> P >> Q >> K;
+
+        long long G = gcd(P, Q);
+        P /= G, Q /= G;
+
+        long long low = -1, high = 1LL<<50;
+        while (high - low > 1) {
+            long long M = (low + high) / 2;
+            if (calc_num(P, Q, M) >= K) high = M;
+            else low = M;
+        }
+        cout << high * G << endl;
+    }
+}
+
+
+/* AOJ 3217 */
 // modint
 template<int MOD> struct Fp {
     long long val;
@@ -113,14 +157,10 @@ template<int MOD> struct Fp {
     }
 };
 
-const int MOD = 1000000007;
-using mint = Fp<MOD>;
+void solveAOJ3217() {
+    const int MOD = 1000000007;
+    using mint = Fp<MOD>;
 
-long long GCD(long long x, long long y) {
-    return y ? GCD(y, x % y) : x;
-}
-
-int main() {
     int N;
     cin >> N;
     vector<long long> X(N), Y(N);
@@ -134,16 +174,21 @@ int main() {
     long long sy = 0;
     for (auto i : ids) {
         res -= mint(X[i]) * mint(sy);
-        res -= num_lattice_points(0, 0, X[i], Y[i]);
-        res += GCD(X[i], Y[i]);
+        res -= num_lattice_points(0LL, 0LL, X[i], Y[i]);
+        res += gcd(X[i], Y[i]);
         sy += Y[i];
     }
     reverse(ids.begin(), ids.end());
     sy = 0;
     for (auto i : ids) {
         res += mint(X[i]) * mint(sy);
-        res += num_lattice_points(0, 0, X[i], Y[i]);
+        res += num_lattice_points(0LL, 0LL, X[i], Y[i]);
         sy += Y[i];
     }
     cout << res << endl;
+}
+
+int main() {
+    //solveYukicoder2066();
+    solveAOJ3217();
 }
