@@ -1,51 +1,63 @@
 //
-// Suffix Array (SA-IS) (O(N))
-//   G. Nong, S. Zhang, and W. H. Chan:
-//   Two Efficient Algorithms for Linear Time Suffix Array Construction
+// Cartesian Tree (O(N))
 //
-// verified (suffix array の lcp を sparse table で求める)
+// verified
+//   Yosupo Judge - Cartesian Tree
+//     https://judge.yosupo.jp/problem/cartesian_tree
 //
-//   Yosupo Judge Suffix Array
-//     https://judge.yosupo.jp/problem/suffixarray
-//
-//   ARC 060 F - 最良表現
-//     https://beta.atcoder.jp/contests/arc060/tasks/arc060_d
-//
-//   AOJ 2644 Longest Match
-//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2644
+//   AtCoder ABC 280 Ex - Substring Sort
+//     https://atcoder.jp/contests/abc280/tasks/abc280_h
 //
 
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
+// Cartesian Tree
+template<class T> struct CartesianTree {
+    int root;  // root
+    vector<int> par, left, right;
 
-// Sparse Table
-template<class MeetSemiLattice> struct SparseTable {
-    vector<vector<MeetSemiLattice> > dat;
-    vector<int> height;
-    
-    SparseTable() { }
-    SparseTable(const vector<MeetSemiLattice> &vec) { init(vec); }
-    void init(const vector<MeetSemiLattice> &vec) {
-        int n = (int)vec.size(), h = 0;
-        while ((1<<h) < n) ++h;
-        dat.assign(h, vector<MeetSemiLattice>(1<<h));
-        height.assign(n+1, 0);
-        for (int i = 2; i <= n; i++) height[i] = height[i>>1]+1;
-        for (int i = 0; i < n; ++i) dat[0][i] = vec[i];
-        for (int i = 1; i < h; ++i)
-            for (int j = 0; j < n; ++j)
-                dat[i][j] = min(dat[i-1][j], dat[i-1][min(j+(1<<(i-1)),n-1)]);
+    CartesianTree() {}
+    CartesianTree(const vector<T>& v) : root(0)
+    , par(v.size(), -1), left(v.size(), -1), right(v.size(), -1) {
+        vector<int> st(v.size(), 0);
+        int top = 0;
+        for (int i = 1; i < v.size(); ++i) {
+            if (v[st[top]] > v[i]) {
+                while (top >= 1 && v[st[top - 1]] > v[i]) --top;
+                par[left[i] = st[top]] = i;
+                if (top == 0) root = i;
+                else right[par[i] = st[top - 1]] = i;
+                st[top] = i;
+            } else {
+                right[par[i] = st[top]] = i;
+                st[++top] = i;
+            }
+        }
     }
-    
-    MeetSemiLattice get(int a, int b) {
-        return min(dat[height[b-a]][a], dat[height[b-a]][b-(1<<height[b-a])]);
+};               
+
+
+///////////////////////////////////////
+// Solvers
+///////////////////////////////////////
+
+using pll = pair<long long, long long>;
+template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+
+void YosupoJudge() {
+    int N;
+    cin >> N;
+    vector<int> a(N);
+    for (int i = 0; i < N; ++i) cin >> a[i];
+
+    CartesianTree<int> ct(a);
+    for (int i = 0; i < ct.par.size(); ++i) {
+        cout << (ct.par[i] != -1 ? ct.par[i] : i) <<  " ";
     }
-};
+    cout << endl;
+}
 
 // SA-IS (O(N))
 template<class Str> struct SuffixArray {
@@ -54,7 +66,6 @@ template<class Str> struct SuffixArray {
     vector<int> sa;    // sa[i] : the starting index of the i-th smallest suffix (i = 0, 1, ..., n)
     vector<int> rank;  // rank[sa[i]] = i
     vector<int> lcp;   // lcp[i]: the lcp of sa[i] and sa[i+1] (i = 0, 1, ..., n-1)
-    SparseTable<int> st;  // use for calcultating lcp(i, j)
 
     // getter
     int& operator [] (int i) {
@@ -81,7 +92,6 @@ template<class Str> struct SuffixArray {
         s.push_back(0);
         sa = sa_is(s);
         calcLCP(s);
-        buildSparseTable();
     }
 
     // SA-IS
@@ -234,120 +244,91 @@ template<class Str> struct SuffixArray {
             lcp[rank[i] - 1] = h;
         }
     }
-    
-    // build sparse table for calculating lcp
-    void buildSparseTable() {
-        st.init(lcp);
-    }
-
-    // calc lcp of str.sutstr(a) and str.substr(b)
-    int getLCP(int a, int b) {
-        return st.get(min(rank[a], rank[b]), max(rank[a], rank[b]));
-    }
 
     // debug
     void dump() {
+        cout << str << endl;
         for (int i = 0; i < sa.size(); ++i) {
             cout << i << ": " << sa[i] << ", " << str.substr(sa[i]) << endl;
         }
     }
 };
 
-
-//////////////////////////////////////
-// Examples
-//////////////////////////////////////
-
-// ARC 060 F
-void solveARC060F() {
-    string str; 
-    cin >> str;
-    int n = (int)str.size();
-
-    // n の約数を求める
-    vector<long long> divs;
-    for (long long i = 1LL; i*i <= n; ++i) {
-        if (n%i == 0LL) {
-            divs.push_back(i);
-            long long temp = n/i;
-            if (i != temp) divs.push_back(temp);
-        }
+void ABC280Ex() {
+    // 入力
+    int N, Q;
+    cin >> N;
+    vector<string> S(N);
+    string T;  // S を '$' を挟みながら連結したもの
+    vector<int> lp(N), rp(N);  // T における S[i] 部分の始点と終点
+    for (int i = 0; i < N; ++i) {
+        cin >> S[i];
+        if (i) T += "$";
+        lp[i] = T.size(), T += S[i], rp[i] = T.size();
     }
-    sort(divs.begin(), divs.end());
-
-    // 求める
-    long long syuuki = n;
-    for (auto d : divs) {
-        bool ok = true;
-        for (int j = 0; j + d < n; ++j) {
-            if (str[j] != str[j+d]) ok = false;
-        }
-        if (ok) syuuki = min(syuuki, d);
-    }
-    if (syuuki == n) cout << 1 << endl << 1 << endl;
-    else if (syuuki == 1) cout << n << endl << 1 << endl;
-    else {
-        vector<int> cannot_cut(n*2, 0);
-        SuffixArray sa(str);
-        for (int d = 1; d < n; ++d) {
-            for (int dd = d; dd < n; dd += d) {
-                int lcp = sa.getLCP(0, dd);
-                if (lcp < d) break;
-                cannot_cut[dd + d] = true;
-            }
-            for (int dd = n-d*2; dd >= 0; dd -= d) {
-                int lcp = sa.getLCP(dd, n-d);
-                if (lcp < d) break;
-                cannot_cut[dd] = true;
-            }
-        }
-        int con = 0;
-        for (int i = 1; i < n; ++i) if (!cannot_cut[i]) ++con;
-        cout << 2 << endl << con << endl;
-    }
-}
-
-// AOJ 2644
-void solveAOJ2644() {
-    // Suffix Array の構築
-    string S;
-    cin >> S;
-    SuffixArray<string> suf(S);
-    vector<int> sa = suf.get_sa();
-
-    // Suffix Array の区間に関する RMQ
-    SparseTable<int> min_st(sa);
-    for (auto& v : sa) v = -v;
-    SparseTable<int> max_st(sa);
-
-    auto solve = [&](const string& x, const string& y) -> int {
-        if (!suf.is_contain(x) || !suf.is_contain(y)) {
-            return 0;
-        }
-        int xl = suf.lower_bound(x);
-        int xr = suf.upper_bound(x);
-        int yl = suf.lower_bound(y);
-        int yr = suf.upper_bound(y);
-        int xres = min_st.get(xl, xr);
-        int yres = -max_st.get(yl, yr);
-
-        if (xres > yres || xres + x.size() > yres + y.size()) 
-            return 0;
-        else 
-            return yres - xres + (int)y.size();   
-    };
-
-    // クエリ処理
-    int Q;
     cin >> Q;
-    while (Q--) {
-        string x, y;
-        cin >> x >> y;
-        cout << solve(x, y) << endl;
+    vector<long long> x(Q);
+    for (int i = 0; i < Q; ++i) cin >> x[i];
+
+    // Suffix Array の構築
+    SuffixArray<string> suf(T);
+    vector<int> sa = suf.get_sa();
+    vector<int> rank = suf.get_rank();
+    vector<int> lcp = suf.get_lcp();
+
+    // $ の影響を除くための処理
+    // rem_len[i] := sa[i] を表す文字列の先頭から $ までの残り文字数
+    // sid[i] := sa[i] を表す文字列に対応する S の id
+    // sstart[i] := sa[i] を表す文字列が S[sid] の何文字から開始か
+    vector<int> rem_len(sa.size()), sid(sa.size()), sstart(sa.size());
+    for (int j = 0; j < N; ++j) {
+        for (int i = lp[j]; i < rp[j]; ++i) {
+            rem_len[rank[i]] = rp[j] - i;
+            sid[rank[i]] = j;
+            sstart[rank[i]] = i - lp[j];
+        }
     }
+    for (int i = 0; i < lcp.size(); ++i) {
+        chmin(lcp[i], rem_len[i]);
+        chmin(lcp[i], rem_len[i+1]);
+    }
+
+    // suffix tree: lcp の Cartesian 木
+    CartesianTree<int> ct(lcp);
+
+    // suffix tree 上を dfs
+    // suffix tree の区間 [left, right), 最小値 mid の深さ depth のところを探索
+    long long num = 0;
+    int query = 0;
+    auto dfs = [&](auto self, int left, int right, int mid, int depth) -> void {
+        // 終端条件
+        if (right - left <= 0) return;
+
+        // mid の処理
+        if (right - left == 1) mid = left;
+
+        // num 〜 num + add の範囲内にある x を処理していく
+        long long width = right - left;
+        long long nex_depth = (right - left > 1 ? lcp[mid] : rem_len[left]);
+        long long add = width * (nex_depth - depth);
+        while (query < Q && x[query] <= num + add) {
+            long long len = depth + (x[query] - num + width - 1) / width;
+            cout << sid[mid]+1 << " " << sstart[mid]+1 << " "
+                 << sstart[mid]+len << endl;
+            ++query;
+        }
+        num += add;
+        
+        // 再帰的に処理
+        if (right - left > 1) {
+            self(self, left, mid+1, ct.left[mid], nex_depth);
+            self(self, mid+1, right, ct.right[mid], nex_depth);
+        }
+    };
+    dfs(dfs, 0, sa.size(), ct.root, 0);
 }
 
 int main() {
-    solveARC060F();
-    //solveAOJ2644();
+    //YosupoJudge();
+    ABC280Ex();
 }

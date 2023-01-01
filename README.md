@@ -254,14 +254,13 @@
 - [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
+- [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
 - Wavelet 木
-- Cartesian 木
-
 
 　
 
-
 <a name="dst"></a>
+
 # DataStructureOnTree
 ツリー上のクエリ処理のためのデータ構造たちの実装です
 
@@ -292,8 +291,8 @@
 
 　
 
-
 <a name="gt"></a>
+
 # GraphTheory
 グラフ理論全般のアルゴリズムです
 
