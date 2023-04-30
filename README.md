@@ -106,13 +106,16 @@
 
 #### ソート
 
-- クイックソート
-- マージソート
-- ヒープソート
-- コムソート
-- Radix ソート
-- 挿入ソート
-- その他のソート達
+- [クイックソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/quick_sort.cpp)
+- [マージソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/merge_sort.cpp)
+- [ヒープソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/heap_sort.cpp)
+- [計数ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/counting_sort.cpp)
+- [挿入ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/insertion_sort.cpp)
+- [選択ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/selection_sort.cpp)
+- [バブルソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/bubble_sort.cpp)
+- [シェルソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/shell_sort.cpp)
+- [コムソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/comb_sort.cpp)
+- [ボゴソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/bogo_sort.cpp)
 
 #### マトロイド
 
@@ -144,15 +147,6 @@
 - 三重対角行列 (連立方程式が O(n))
 - Black Box Linear Algebra
 
-#### 多項式, 方程式
-
-- 二次方程式
-- 多項式 (実数係数)
-- 多項式 (mod. p 係数)
-- きたまさ法 (俗称)
-- きたまさ法 with FFT (俗称)
-- 多項式補間
-
 #### 畳み込み計算
 
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
@@ -163,13 +157,19 @@
 - [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
 - Karatsuba 法
 
-#### 形式的冪級数
+#### 多項式、形式的冪級数
 
-- [形式的冪級数](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
+- [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
 - [形式的冪級数 (実行時 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_runtime_mod.cpp)
+- Bostan-Mori 法
+- Fiduccia 法 (高速きたまさ法)
+- Berlekamp-Massey 法
+- Subset Convolution
+- 多項式補間
 
 #### 最適化
 
+- 二次方程式
 - 二分探索法 (方程式の解を 1 つ求める)
 - 三分探索法
 - 黄金探索法
@@ -422,9 +422,6 @@
 
 #### DP 高速化テクニック
 
-- 累積和
-- スライド最小値
-- インライン DP (俗称)
 - [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
 - [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
 - [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
