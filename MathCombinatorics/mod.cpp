@@ -92,8 +92,8 @@ template<int MOD> struct Fp {
     }
 };
 
-const int MOD = 1000000007;
-//const int MOD = 998244353;
+//const int MOD = 1000000007;
+const int MOD = 998244353;
 using mint = Fp<MOD>;
 
 // Binomial coefficient
