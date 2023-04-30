@@ -298,16 +298,14 @@
 
 #### DFS・BFS
 
-- DFS (連結成分を数える)
-- BFS (重みなしグラフの最短路)
-- トポロジカルソート (DFS)
-- トポロジカルソート (BFS)
-- サイクル検出 (DFS)
-- サイクル検出 (BFS)
-- サイクル検出 (Union-Find)
+- [連結成分の個数 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/dfs.cpp)
+- [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/bfs.cpp)
+- [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_dfs.cpp)
+- [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_bfs.cpp)
+- [サイクル検出 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection_dfs.cpp)
+- [サイクル検出 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection_bfs.cpp)
 - [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_dfs.cpp)
-- 二部グラフ判定 (BFS)
-- 二部グラフ判定 (Union-Find)
+- [二部グラフ判定 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_bfs.cpp)
 
 #### 連結成分分解
 

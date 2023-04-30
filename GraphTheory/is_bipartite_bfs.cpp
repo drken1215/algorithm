@@ -1,9 +1,9 @@
 //
-// 二部グラフ判定 (by DFS)
+// 二部グラフ判定 (by BFS)
 //
 // cf.
-//   DFS (深さ優先探索) 超入門！ 〜 グラフ・アルゴリズムの世界への入口 〜【後編】
-//     https://qiita.com/drken/items/a803d4fc4a727e02f7ba
+//   BFS (幅優先探索) 超入門！ 〜 キューを鮮やかに使いこなす 〜
+//     https://qiita.com/drken/items/996d80bcae64649a6580
 //
 //
 // verified:
@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 using namespace std;
 
 
@@ -26,31 +27,36 @@ using namespace std;
 using pint = pair<int,int>;
 using Graph = vector<vector<int> >;
 
-bool dfs(const Graph &G, int v, int vdir, pint &num, vector<int> &dir) {
-    bool res = true;
-    dir[v] = vdir;
-    if (vdir == 1) ++num.first;
-    else if (vdir == -1) ++num.second;
-    for (auto nv : G[v]) {
-        if (dir[nv] == 0) {
-            if (!dfs(G, nv, -vdir, num, dir)) res = false;
-        }
-        else if (dir[nv] != -vdir) res = false;
-    }
-    return res;
-}
-
 bool isbipartite(const Graph &G, vector<pint> &nums) {
     bool res = true;
     int N = (int)G.size();
     vector<int> dir(N, 0);
     for (int v = 0; v < N; ++v) {
         if (dir[v] != 0) continue;
+        
+        // 頂点 v を始点とした BFS
         pint num = {0, 0};
-        if (!dfs(G, v, 1, num, dir)) res = false;
+        dir[v] = 1;
+        ++num.first;
+        queue<int> que;
+        que.push(v);
+        while (!que.empty()) {
+            int v = que.front();
+            que.pop();
+            for (auto nv : G[v]) {
+                if (dir[nv] != 0) {
+                    if (dir[nv] == dir[v]) return false;
+                } else {
+                    dir[nv] = -dir[v];
+                    if (dir[nv] == 1) ++num.first;
+                    else ++num.second;
+                    que.push(nv);
+                }
+            }
+        }
         nums.push_back(num);
     }
-    return res;
+    return true;
 }
 
 
@@ -96,3 +102,5 @@ int main() {
     long long b = N-a;
     cout << a*(a-1)/2 + b*(b-1)/2 << endl;
 }
+
+
