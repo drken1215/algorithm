@@ -104,12 +104,15 @@
 - ベル数
 - ベルヌーイ数
 
-#### ソート
+#### 高速なソート
 
 - [クイックソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/quick_sort.cpp)
 - [マージソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/merge_sort.cpp)
 - [ヒープソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/heap_sort.cpp)
 - [計数ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/counting_sort.cpp)
+
+#### さまざまなソート
+
 - [挿入ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/insertion_sort.cpp)
 - [選択ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/selection_sort.cpp)
 - [バブルソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/bubble_sort.cpp)
@@ -152,8 +155,7 @@
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
 - [高速アダマール変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_hadmard_transform.cpp)
-- 高速ゼータ変換
-- 高速メビウス変換
+- [高速ゼータ変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
 - [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
 - Karatsuba 法
 
@@ -482,7 +484,6 @@
 #### その他
 
 - [最近点対](https://github.com/drken1215/algorithm/blob/master/Geometry/closest_two_points.cpp)
-- 最近円対
 - 線分併合
 - 線分アレンジメント
 - 3 点を通る円
@@ -525,13 +526,9 @@
 #### その他
 
 - [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
-- split 関数
-- 二次元盤面に番兵追加
-- 二次元盤面を 90 度回転
 
 
 　
-
 
 <a name="ot"></a>
 # Others
