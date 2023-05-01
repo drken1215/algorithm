@@ -65,7 +65,8 @@ template<class FLOWTYPE, class COSTTYPE> struct Graph {
 };
 
 // min-cost flow (by primal-dual)
-template<class FLOWTYPE, class COSTTYPE> COSTTYPE MinCostFlow(Graph<FLOWTYPE, COSTTYPE> &G, int s, int t, FLOWTYPE f) {
+template<class FLOWTYPE, class COSTTYPE> COSTTYPE MinCostFlow
+(Graph<FLOWTYPE, COSTTYPE> &G, int s, int t, FLOWTYPE f) {
     int n = (int)G.size();
     vector<COSTTYPE> dist(n, -1);
     vector<int> prevv(n), preve(n), seen(n, 0);
