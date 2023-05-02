@@ -11,22 +11,13 @@
 //   Codeforces 205 Div1 E. The Child and Binary TreeE
 //     https://codeforces.com/contest/438/problem/E
 //
+//   TDPC T - フィボナッチ (mod. 1000000007)
+//     https://atcoder.jp/contests/tdpc/tasks/tdpc_fibonacci
+//
 
 
 #include <bits/stdc++.h>
 using namespace std;
-
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for(auto it : P) { s << "<" << it << "> "; } return s << endl; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for(auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s << endl; }
 
 
 // modint
@@ -213,7 +204,7 @@ namespace NTT {
     static const mint2 imod01 = 187290749; // imod1 / MOD0;
 
     // small case (T = mint, long long)
-    template<class T> vector<T> naive_mul 
+    template<class T> vector<T> naive_mul
     (const vector<T>& A, const vector<T>& B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
@@ -539,9 +530,36 @@ template <typename mint> struct FPS : vector<mint> {
     }
 };
 
-const int MOD = 998244353;
+const int MOD = 1000000007;
 using mint = Fp<MOD>;
 
+
+////////////////////////////////////////
+// FPS algorithms
+////////////////////////////////////////
+
+// Bostan-Mori
+// find [x^N] P(x)/Q(x), O(K log K N log N)
+// deg(Q(x)) = K, deg(P(x)) < K, Q[0] = 1
+template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
+    assert(!P.empty() && !Q.empty());
+    if (N == 0 || Q.size() == 1) return P[0] / Q[0];
+    
+    int qdeg = (int)Q.size();
+    FPS<mint> P2{P}, minusQ{Q};
+    P2.resize(qdeg - 1);
+    for (int i = 1; i < (int)Q.size(); i += 2) minusQ[i] = -minusQ[i];
+    P2 *= minusQ;
+    FPS<mint> Q2 = Q * minusQ;
+    FPS<mint> S(qdeg - 1), T(qdeg);
+    for (int i = 0; i < (int)S.size(); ++i) {
+        S[i] = (N % 2 == 0 ? P2[i * 2] : P2[i * 2 + 1]);
+    }
+    for (int i = 0; i < (int)T.size(); ++i) {
+        T[i] = Q2[i * 2];
+    }
+    return BostanMori(S, T, N >> 1);
+}
 
 
 ////////////////////////////////////////
@@ -599,8 +617,22 @@ void Codeforces205Div1E() {
     for (int w = 1; w <= M; ++w) cout << F[w] << endl;
 }
 
+void TDPC_T() {
+    long long K, N;
+    cin >> K >> N;
+    
+    --N;
+    FPS<mint> P(K), Q(K + 1);
+    Q[0] = 1;
+    for (int i = 0; i < P.size(); ++i) P[i] = mint(1 - i);
+    for (int i = 1; i < Q.size(); ++i) Q[i] = mint(-1);
+    cout << BostanMori(P, Q, N) << endl;
+}
+
+
 int main() {
     // solveYosupoJudge();
     // HackerRankArrayRestoring();
-    Codeforces205Div1E();
+    // Codeforces205Div1E();
+    TDPC_T();
 }
