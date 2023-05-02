@@ -1,7 +1,7 @@
 //
 // Bostan-Mori 法
 //   find [x^N] P(x)/Q(x), where deg(Q(x)) = K, deg(P(x)) < K, Q[0] = 1
-//   time complexity: O(K log K N log N)
+//   time complexity: O(K log K log N)
 //
 // verified:
 //   TDPC T - フィボナッチ
@@ -285,40 +285,6 @@ namespace NTT {
     }
 };
 
-// Binomial Coefficient
-template<class T> struct BiCoef {
-    vector<T> fact_, inv_, finv_;
-    constexpr BiCoef() {}
-    constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-        init(n);
-    }
-    constexpr void init(int n) noexcept {
-        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].getmod();
-        for(int i = 2; i < n; i++){
-            fact_[i] = fact_[i-1] * i;
-            inv_[i] = -inv_[MOD%i] * (MOD/i);
-            finv_[i] = finv_[i-1] * inv_[i];
-        }
-    }
-    constexpr T com(int n, int k) const noexcept {
-        if (n < k || n < 0 || k < 0) return 0;
-        return fact_[n] * finv_[k] * finv_[n-k];
-    }
-    constexpr T fact(int n) const noexcept {
-        if (n < 0) return 0;
-        return fact_[n];
-    }
-    constexpr T inv(int n) const noexcept {
-        if (n < 0) return 0;
-        return inv_[n];
-    }
-    constexpr T finv(int n) const noexcept {
-        if (n < 0) return 0;
-        return finv_[n];
-    }
-};
-
 // Formal Power Series
 template <typename mint> struct FPS : vector<mint> {
     using vector<mint>::vector;
@@ -523,12 +489,13 @@ template <typename mint> struct FPS : vector<mint> {
     }
 };
 
-const int MOD = 1000000007;
-using mint = Fp<MOD>;
 
+////////////////////////////////////////
+// FPS algorithms
+////////////////////////////////////////
 
 // Bostan-Mori
-// find [x^N] P(x)/Q(x), O(K log K N log N)
+// find [x^N] P(x)/Q(x), O(K log K log N)
 // deg(Q(x)) = K, deg(P(x)) < K, Q[0] = 1
 template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
     assert(!P.empty() && !Q.empty());
@@ -551,25 +518,26 @@ template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q,
 }
 
 
-
 ////////////////////////////////////////
 // solver
 ////////////////////////////////////////
 
 void TDPC_T() {
+    const int MOD = 1000000007;
+    using mint = Fp<MOD>;
+    
+    // 入力
     long long K, N;
     cin >> K >> N;
     
-    --N;
+    // Bostan-Mori
     FPS<mint> P(K), Q(K + 1);
     Q[0] = 1;
     for (int i = 0; i < P.size(); ++i) P[i] = mint(1 - i);
     for (int i = 1; i < Q.size(); ++i) Q[i] = mint(-1);
-    cout << BostanMori(P, Q, N) << endl;
+    cout << BostanMori(P, Q, N - 1) << endl;
 }
-
 
 int main() {
     TDPC_T();
 }
-

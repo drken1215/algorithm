@@ -530,16 +530,13 @@ template <typename mint> struct FPS : vector<mint> {
     }
 };
 
-const int MOD = 1000000007;
-using mint = Fp<MOD>;
-
 
 ////////////////////////////////////////
 // FPS algorithms
 ////////////////////////////////////////
 
 // Bostan-Mori
-// find [x^N] P(x)/Q(x), O(K log K N log N)
+// find [x^N] P(x)/Q(x), O(K log K log N)
 // deg(Q(x)) = K, deg(P(x)) < K, Q[0] = 1
 template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
     assert(!P.empty() && !Q.empty());
@@ -567,12 +564,15 @@ template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q,
 ////////////////////////////////////////
 
 void solveYosupoJudge() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
     int N;
     cin >> N;
     FPS<mint> a(N);
     for (int i = 0; i < N; ++i) cin >> a[i];
 
-    auto res = exp(a); // pow(a, M), exp(a), log(a), inv(a)
+    auto res = inv(a); // pow(a, M), exp(a), log(a)
     for (int i = 0; i < res.size(); ++i) {
         if (i) cout << " ";
         cout << res[i];
@@ -581,6 +581,9 @@ void solveYosupoJudge() {
 }
 
 void HackerRankArrayRestoring() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
     int N, M, Q;
     cin >> N >> M >> Q;
     FPS<mint> f(N-M+1, 0);
@@ -604,6 +607,9 @@ void HackerRankArrayRestoring() {
 }
 
 void Codeforces205Div1E() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
     int N, M;
     cin >> N >> M;
     FPS<mint> C(M+1, 0);
@@ -618,6 +624,9 @@ void Codeforces205Div1E() {
 }
 
 void TDPC_T() {
+    const int MOD = 1000000007;
+    using mint = Fp<MOD>;
+    
     long long K, N;
     cin >> K >> N;
     
@@ -631,8 +640,10 @@ void TDPC_T() {
 
 
 int main() {
-    // solveYosupoJudge();
-    // HackerRankArrayRestoring();
-    // Codeforces205Div1E();
-    TDPC_T();
+    solveYosupoJudge();
+    //HackerRankArrayRestoring();
+    //Codeforces205Div1E();
+    //TDPC_T();
 }
+
+
