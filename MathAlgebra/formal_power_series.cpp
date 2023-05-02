@@ -503,7 +503,7 @@ template <typename mint> struct FPS : vector<mint> {
 
 // Bostan-Mori
 // find [x^N] P(x)/Q(x), O(K log K log N)
-// deg(Q(x)) = K, deg(P(x)) < K, Q[0] = 1
+// deg(Q(x)) = K, deg(P(x)) < K
 template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
     assert(!P.empty() && !Q.empty());
     if (N == 0 || Q.size() == 1) return P[0] / Q[0];
