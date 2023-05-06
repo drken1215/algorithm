@@ -23,7 +23,7 @@ struct SCC {
     SGraph dag;
 
     // constructor
-    SCC(int N) : G(N), rG(N) {}
+    SCC(int N = 0) : G(N), rG(N) {}
 
     // add edge
     void addedge(int u, int v) {
@@ -66,8 +66,8 @@ struct SCC {
         }
     }
 
-    // main
-    void solve() {
+    // main solver
+    vector<vector<int>> find_scc(bool to_reconstruct = true) {
         // first dfs
         int N = (int)G.size();
         seen.assign(N, false);
@@ -87,28 +87,31 @@ struct SCC {
             }
         }
 
-        // reconstruct
-        reconstruct();
+        // reconstruct DAG
+        if (to_reconstruct) reconstruct();
+        return scc;
+        
     }
 };
 
 int main() {
     int N, M;
     cin >> N >> M;
-    SCC scc(N);
+    
+    // SCC を適用するためのグラフを構築する
+    SCC scc_solver(N);
     for (int i = 0; i < M; ++i) {
-        int s, t;
-        cin >> s >> t;
-        scc.addedge(s, t);
-    }
-    scc.solve();
-
-    int Q;
-    cin >> Q;
-    for (int i = 0; i < Q; ++i) {
         int u, v;
         cin >> u >> v;
-        if (scc.cmp[u] == scc.cmp[v]) cout << 1 << endl;
-        else cout << 0 << endl;
+        scc_solver.addedge(u, v);
+    }
+    auto scc = scc_solver.find_scc();
+    
+    // 出力
+    cout << scc.size() << endl;
+    for (auto list : scc) {
+        cout << list.size();
+        for (auto v : list) cout << " " << v;
+        cout << endl;
     }
 }

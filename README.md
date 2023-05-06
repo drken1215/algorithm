@@ -127,6 +127,7 @@
 
 #### その他
 
+- [2-SAT](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/two_sat.cpp)
 - [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
 - [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
 
@@ -157,6 +158,7 @@
 - [高速アダマール変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_hadmard_transform.cpp)
 - [高速ゼータ変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
 - [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
+- Subset Convolution
 - Karatsuba 法
 
 #### 多項式、形式的冪級数
@@ -166,7 +168,6 @@
 - [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - Fiduccia 法 (高速きたまさ法)
 - Berlekamp-Massey 法
-- Subset Convolution
 - 多項式補間
 
 #### 最適化
@@ -176,7 +177,7 @@
 - 三分探索法
 - 黄金探索法
 - Newton 法
-- 単体法
+- 単体法 (二段階単体法)
 - 分枝限定法
 
 
