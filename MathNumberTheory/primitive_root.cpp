@@ -117,11 +117,11 @@ long long calc_primitive_root(long long p) {
 }
 
 
-//-///////////////////////////-//
-// Example
-//-///////////////////////////-//
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
 
-int main() {
+void YosupoJudgePrimitiveRoot() {
     int Q;
     cin >> Q;
     for (int i = 0; i < Q; ++i) {
@@ -131,4 +131,9 @@ int main() {
     }
 }
 
+
+int main() {
+    YosupoJudgePrimitiveRoot();
+
+}
 

@@ -3,8 +3,7 @@
 //   G. Nong, S. Zhang, and W. H. Chan:
 //   Two Efficient Algorithms for Linear Time Suffix Array Construction
 //
-// verified (suffix array の lcp を sparse table で求める)
-//
+// verified (suffix array の lcp を sparse table で求める):
 //   Yosupo Judge Suffix Array
 //     https://judge.yosupo.jp/problem/suffixarray
 //
@@ -254,9 +253,20 @@ template<class Str> struct SuffixArray {
 };
 
 
-//////////////////////////////////////
+/*/////////////////////////////*/
 // Examples
-//////////////////////////////////////
+/*/////////////////////////////*/
+
+// Yosupo Judge Suffix Array
+void YosupoJudgeSuffixArray() {
+    string S;
+    cin >> S;
+    SuffixArray sa(S);
+    for (int i = 0; i < S.size(); ++i) {
+        cout << sa[i + 1] << " ";
+    }
+    cout << endl;
+}
 
 // ARC 060 F
 void solveARC060F() {
@@ -347,7 +357,9 @@ void solveAOJ2644() {
     }
 }
 
+
 int main() {
-    solveARC060F();
+    YosupoJudgeSuffixArray();
+    //solveARC060F();
     //solveAOJ2644();
 }
