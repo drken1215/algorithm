@@ -1,20 +1,23 @@
 //
 // Pollard のロー素因数分解法
 //
-// verifed
+// cf:
+//   素因数分解を O(n^(1/4)) でする (Kiri)
+//     https://qiita.com/Kiri8128/items/eca965fe86ea5f4cbb98
+//
+// verifed:
+//   Yosupo Judge Factorize
+//     https://judge.yosupo.jp/problem/factorize
+//
 //   アルゴ式 番外編：ポラードのロー素因数分解法
 //     https://algo-method.com/tasks/553
-//     
+//
 
 
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
-
-// Miller-Rabin 素数判定法
+// Miller-Rabin
 template<class T> T pow_mod(T A, T N, T M) {
     T res = 1 % M;
     A %= M;
@@ -51,23 +54,31 @@ bool is_prime(long long N) {
     return true;
 }
 
-// Pollard のロー法
-long long gcd(long long A, long long B) {
-    A = abs(A), B = abs(B);
-    if (B == 0) return A;
-    else return gcd(B, A % B);
+// Pollard's Rho
+// xor128 rng
+unsigned int xor_shift_rng() {
+    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
+    unsigned int tt = (tx^(tx<<11));
+    tx = ty; ty = tz; tz = tw;
+    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
 }
-    
+
+int xor_shift_rng(int minv, int maxv) {
+    return xor_shift_rng() % (maxv - minv + 1) + minv;
+}
+
 long long pollard(long long N) {
     if (N % 2 == 0) return 2;
     if (is_prime(N)) return N;
-
+    
+    long long r = xor_shift_rng();  // random r
     auto f = [&](long long x) -> long long {
-        return (__int128_t(x) * x + 1) % N;
+        return (__int128_t(x) * x + r) % N;
     };
     long long step = 0;
     while (true) {
         ++step;
+        r = xor_shift_rng();
         long long x = step, y = f(x);
         while (true) {
             long long p = gcd(y - x + N, N);
@@ -91,17 +102,27 @@ vector<long long> prime_factorize(long long N) {
 }
 
 
-int main() {
+//-///////////////////////////-//
+// Example
+//-///////////////////////////-//
+
+void YosupoJudgeFactorize() {
     // 入力
     int N;
     cin >> N;
-    vector<long long> A(N);
-    for (int i = 0; i < N; ++i) cin >> A[i];
-
     // 素因数分解
-    for (auto a : A) {
+    for (int i = 0; i < N; ++i) {
+        long long a;
+        cin >> a;
         const auto& res = prime_factorize(a);
-        for (auto p : res) cout << p << " ";
+        cout << res.size();
+        for (auto p : res) cout << " " << p;
         cout << endl;
     }
 }
+
+
+int main() {
+    YosupoJudgeFactorize();
+}
+

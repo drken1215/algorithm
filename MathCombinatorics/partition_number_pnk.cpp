@@ -111,14 +111,22 @@ template<class mint> struct PartionNumber {
     }
 };
 
-const int MOD = 1000000007;
-using mint = Fp<MOD>;
 
-int main() {
+//-///////////////////////////-//
+// Example
+//-///////////////////////////-//
+
+void yukicoder269() {
+    const int MOD = 1000000007;
+    using mint = Fp<MOD>;
+
     long long N, S, K;
     cin >> N >> S >> K;
-    
     PartionNumber<mint> pn(S, N);
     cout << pn.get(S - N * (N - 1) / 2 * K, N) << endl;
 }
 
+
+int main() {
+    yukicoder269();
+}
