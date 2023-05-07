@@ -273,7 +273,7 @@
 
 #### LCA
 
-- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_doubling.cpp)
+- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_by_doubling.cpp)
 - [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_euler_tour.cpp)
 - [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_heavy_light_decomposition.cpp)
 

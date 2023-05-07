@@ -12,7 +12,7 @@
 using namespace std;
 
 
-using Graph = vector<vector<int> >;
+using Graph = vector<vector<int>>;
 struct LCA {
     vector<vector<int> > parent; // parent[d][v] := 2^d-th parent of v
     vector<int> depth;
