@@ -62,6 +62,7 @@ struct TreeCenteroid {
         centroids.clear();
         sub_find_centroid(root, size);
         int center = centroids[0];
+        //isRemoved[center] = true;
         for (auto ch : tree[center]) {
             if (isRemoved[ch]) continue;
             if (ch == whoIsParent[center]) {

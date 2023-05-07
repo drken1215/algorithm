@@ -98,11 +98,13 @@
 #### 様々な数
 
 - [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
-- カタラン数
-- 分割数
+- [分割数 P(n, k) (O(nk))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
+- 分割数 P(n)
 - スターリング数
 - ベル数
+- カタラン数
 - ベルヌーイ数
+- モンモール数
 
 #### 高速なソート
 
