@@ -269,22 +269,21 @@
 
 #### 木全般
 
-- [部分木サイズ, LCA など](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
+- [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
 
 #### LCA
 
-- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/LCA_doubling.cpp)
-- LCA (Euler Tour)
-- LCA (HL 分解)
+- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_doubling.cpp)
+- [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_euler_tour.cpp)
+- [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_heavy_light_decomposition.cpp)
 
-#### テクニック
+#### ツリー上のクエリ処理
 
-- [Euler Tour (頂点上)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_nodes.cpp)
+- [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_nodes.cpp)
 - [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_edges.cpp)
 - [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
-- 重心分解
+- [重心分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/tree_centroid_decomposition.cpp)
 - Link-Cut 木
-- マージテク (俗称)
 - DSU on Tree
 
 #### その他の問題
@@ -316,7 +315,6 @@
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
 - 二重頂点連結成分分解
-- 2-SAT
 
 #### ツリー
 

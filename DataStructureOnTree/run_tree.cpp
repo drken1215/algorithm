@@ -1,5 +1,5 @@
 //
-// 木に関する各種クエリ処理
+// 木を走査して、さまざまな情報を求める
 //
 // verified:
 //   Codeforces Round #614 (Div. 1) C. Xenon's Attack on the Gangs
@@ -20,6 +20,10 @@ struct RunTree {
 
     // num[v][i] := the size of subtree of G[v][i] with parent v
     vector<vector<long long> > num;
+    
+    // for finding lca
+    vector<vector<int> > parent;
+    vector<int> depth;
 
     // constructor
     RunTree() {}
@@ -68,8 +72,6 @@ struct RunTree {
     }
     
     // rec
-    vector<vector<int> > parent;
-    vector<int> depth;
     int rec(const Graph &G, int v, int p = -1, int d = 0) {
         int p_index = -1;
         int sum = 1;

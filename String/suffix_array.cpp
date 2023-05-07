@@ -31,7 +31,7 @@ template<class MeetSemiLattice> struct SparseTable {
     SparseTable() { }
     SparseTable(const vector<MeetSemiLattice> &vec) { init(vec); }
     void init(const vector<MeetSemiLattice> &vec) {
-        int n = (int)vec.size(), h = 0;
+        int n = (int)vec.size(), h = 1;
         while ((1<<h) < n) ++h;
         dat.assign(h, vector<MeetSemiLattice>(1<<h));
         height.assign(n+1, 0);
