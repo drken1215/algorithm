@@ -306,13 +306,12 @@
 - [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/bfs.cpp)
 - [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_dfs.cpp)
 - [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_bfs.cpp)
-- [サイクル検出 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection_dfs.cpp)
-- [サイクル検出 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection_bfs.cpp)
 - [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_dfs.cpp)
 - [二部グラフ判定 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_bfs.cpp)
 
 #### 連結成分分解
 
+- [サイクル検出](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection_dfs.cpp)
 - [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/strongly_connected_components.cpp)
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
@@ -468,7 +467,7 @@
 - [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
 - [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
 - [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
-- 凸多角形の直径
+- [凸多角形の直径](https://github.com/drken1215/algorithm/blob/master/Geometry/diameter.cpp)
 - [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
 - [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
 
