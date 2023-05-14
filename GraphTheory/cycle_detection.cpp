@@ -15,6 +15,9 @@
 //   AOJ 2891 - な◯りカット
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2891
 //
+//   ABC 256 E - Takahashi's Anguish
+//    https://atcoder.jp/contests/abc256/tasks/abc256_e
+//
 
 
 #include <bits/stdc++.h>
@@ -77,7 +80,11 @@ template<class T> struct CycleDetection {
     // constructor
     CycleDetection() { }
     CycleDetection(const Graph<T> &graph) { init(graph); }
-    void init(const Graph<T> &graph) { G = graph; }
+    void init(const Graph<T> &graph) {
+        G = graph;
+        seen.assign(G.size(), false);
+        finished.assign(G.size(), false);
+    }
     
     // dfs
     // return the vertex where cycle is detected
@@ -90,12 +97,16 @@ template<class T> struct CycleDetection {
             // detect cycle
             if (seen[e2.to] && !finished[e2.to]) {
                 history.push_back(e2);
+                finished[v] = true;
                 return e2.to;
             }
 
             history.push_back(e2);
             int pos = dfs(e2.to, e2, is_prohibit_reverse);
-            if (pos != -1) return pos;
+            if (pos != -1) {
+                finished[v] = true;
+                return pos;
+            }
             history.pop_back();
         }
         finished[v] = true;
@@ -115,14 +126,20 @@ template<class T> struct CycleDetection {
         return cycle;
     }
     
+    // find cycle, v is the start vertex
+    vector<Edge<T>> detect_from_v(int v, bool is_prohibit_reverse = true) {
+        history.clear();
+        int pos = dfs(v, Edge<T>(), is_prohibit_reverse);
+        if (pos != -1) return reconstruct(pos);
+        else return vector<Edge<T>>();
+    }
+    
     // find cycle
     vector<Edge<T>> detect(bool is_prohibit_reverse = true) {
-        seen.assign(G.size(), false);
-        finished.assign(G.size(), false);
-        history.clear();
         int pos = -1;
         for (int v = 0; v < (int)G.size() && pos == -1; ++v) {
             if (seen[v]) continue;
+            history.clear();
             pos = dfs(v, Edge<T>(), is_prohibit_reverse);
             if (pos != -1) return reconstruct(pos);
         }
@@ -238,6 +255,28 @@ void AOJ2891() {
     }
 }
 
+void ABC256_E() {
+    int N;
+    cin >> N;
+    Graph<long long> G(N);
+    vector<long long> X(N), C(N);
+    for (int i = 0; i < N; ++i) cin >> X[i];
+    for (int i = 0; i < N; ++i) cin >> C[i];
+    for (int i = 0; i < N; ++i) G.add_edge(i, X[i]-1, C[i]);
+
+    long long res = 0;
+    CycleDetection<long long> cd(G);
+    for (int v = 0; v < N; ++v) {
+        if (cd.seen[v]) continue;
+        const auto &cycle = cd.detect_from_v(v, false);
+        if (cycle.empty()) continue;
+        long long minv = 1LL<<60;
+        for (const auto &e : cycle) minv = min(minv, e.val);
+        res += minv;
+    }
+    cout << res << endl;
+}
+
 
 int main() {
     cin.tie(nullptr);
@@ -246,5 +285,6 @@ int main() {
     YosupoCycleDetectionDirected();
     //YosupoCycleDetectionUndirected();
     //AOJ2891();
+    //ABC256_E();
 }
 

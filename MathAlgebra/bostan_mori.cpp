@@ -1,11 +1,14 @@
 //
 // Bostan-Mori 法
-//   find [x^N] P(x)/Q(x), where deg(Q(x)) = K, deg(P(x)) < K
-//   time complexity: O(K log K log N)
+//   find [x^N] P(x)/Q(x)
+//   time complexity: O(K log K log N), where K = max(deg(P(x)), deg(Q(x)))
 //
 // verified:
 //   TDPC T - フィボナッチ
 //     https://atcoder.jp/contests/tdpc/tasks/tdpc_fibonacci
+//
+//   ARC 160 D - Mahjong
+//     https://atcoder.jp/contests/arc160/tasks/arc160_d
 //
 
 
@@ -489,25 +492,66 @@ template <typename mint> struct FPS : vector<mint> {
     }
 };
 
+// Binomial coefficient
+template<class T> struct BiCoef {
+    vector<T> fact_, inv_, finv_;
+    constexpr BiCoef() {}
+    constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
+        init(n);
+    }
+    constexpr void init(int n) noexcept {
+        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
+        int MOD = fact_[0].getmod();
+        for(int i = 2; i < n; i++){
+            fact_[i] = fact_[i-1] * i;
+            inv_[i] = -inv_[MOD%i] * (MOD/i);
+            finv_[i] = finv_[i-1] * inv_[i];
+        }
+    }
+    constexpr T com(int n, int k) const noexcept {
+        if (n < k || n < 0 || k < 0) return 0;
+        return fact_[n] * finv_[k] * finv_[n-k];
+    }
+    constexpr T fact(int n) const noexcept {
+        if (n < 0) return 0;
+        return fact_[n];
+    }
+    constexpr T inv(int n) const noexcept {
+        if (n < 0) return 0;
+        return inv_[n];
+    }
+    constexpr T finv(int n) const noexcept {
+        if (n < 0) return 0;
+        return finv_[n];
+    }
+};
+
 // Bostan-Mori
-// find [x^N] P(x)/Q(x), O(K log K log N)
-// deg(Q(x)) = K, deg(P(x)) < K
+// find [x^N] P(x)/Q(x)
+// O(K log K log N), K = max(deg(P(x)), deg(Q(x)))
 template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
     assert(!P.empty() && !Q.empty());
     if (N == 0) return P[0] / Q[0];
     
     int qdeg = (int)Q.size();
     FPS<mint> P2{P}, minusQ{Q};
-    P2.resize(qdeg - 1);
-    for (int i = 1; i < (int)Q.size(); i += 2) minusQ[i] = -minusQ[i];
+    for (int i = 1; i < (int)Q.size(); i += 2) {
+        minusQ[i] = -minusQ[i];
+    }
     P2 *= minusQ;
     FPS<mint> Q2 = Q * minusQ;
-    FPS<mint> S(qdeg - 1), T(qdeg);
-    for (int i = 0; i < (int)S.size(); ++i) {
-        S[i] = (N % 2 == 0 ? P2[i * 2] : P2[i * 2 + 1]);
+    FPS<mint> S, T;
+    if (N % 2 == 0) {
+        for (int i = 0; i * 2 < (int)P2.size(); ++i) {
+            S.emplace_back(P2[i * 2]);
+        }
+    } else {
+        for (int i = 0; i * 2 + 1 < (int)P2.size(); ++i) {
+            S.emplace_back(P2[i * 2 + 1]);
+        }
     }
-    for (int i = 0; i < (int)T.size(); ++i) {
-        T[i] = Q2[i * 2];
+    for (int i = 0; i * 2 < (int)Q2.size(); ++i) {
+        T.emplace_back(Q2[i * 2]);
     }
     return BostanMori(S, T, N >> 1);
 }
@@ -533,6 +577,35 @@ void TDPC_T() {
     cout << BostanMori(P, Q, N - 1) << endl;
 }
 
+
+
+void ARC160_D() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
+    long long N, M, K;
+    cin >> N >> M >> K;
+    
+    if (M % K != 0) {
+        cout << 0 << endl;
+        return;
+    }
+    
+    BiCoef<mint> bc(N*3);
+    FPS<mint> P(K*(N-K+1)+1, 0), Q(N*2-K+2, 0);
+    for (int i = 0; i <= N-K+1; ++i) {
+        P[i*K] = bc.com(N-K+1, i);
+        if (i % 2 == 1) P[i*K] = -P[i*K];
+    }
+    for (int i = 0; i <= N*2-K+1; ++i) {
+        Q[i] = bc.com(N*2-K+1, i);
+        if (i % 2 == 1) Q[i] = -Q[i];
+    }
+    cout << BostanMori(P, Q, M/K) << endl;
+}
+
 int main() {
     TDPC_T();
+    //ARC160_D();
 }
+
