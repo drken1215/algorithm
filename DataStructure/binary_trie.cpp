@@ -9,13 +9,15 @@
 //   AtCoder 第5回 ドワンゴからの挑戦状 本選 B - XOR Spread
 //     https://atcoder.jp/contests/dwacon5th-final/tasks/dwacon5th_final_b
 //
-//   ABC 281 E - Least Elements 
+//   ABC 281 E - Least Elements
 //     https://atcoder.jp/contests/abc281/tasks/abc281_e
+//
+//   AOJ 3333 - Range Xor Query
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=3333
 //
 
 
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -216,9 +218,9 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
 };
 
 
-//////////////////
-// solver
-//////////////////
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
 
 void ARC033_C() {
     int Q;
@@ -311,8 +313,58 @@ void ABC281_E() {
     cout << endl;
 }
 
+// Binary Trie + Sqrt Decomposition
+void AOJ3333() {
+    const int width = 2000;
+    int N, Q;
+    cin >> N >> Q;
+    vector<int> A(N);
+    vector<BinaryTrie<int,12>> vbt(N/width + 1);
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];
+        vbt[i / width].insert(A[i]);
+    }
+    
+    while (Q--) {
+        int type;
+        cin >> type;
+        if (type == 1) {
+            int k, x;
+            cin >> k >> x;
+            --k;
+            vbt[k / width].erase(A[k]);
+            A[k] ^= x;
+            vbt[k / width].insert(A[k]);
+        } else {
+            int l, r, x;
+            cin >> l >> r >> x;
+            --l;
+            int res = 1<<29;
+            int iter = l;
+            while (iter < r && iter % width != 0) {
+                res = min(res, A[iter] ^ x);
+                ++iter;
+            }
+            while (iter + width <= r) {
+                // ^x をしたときの最小値 (最後に ^x が必要)
+                int tmp = vbt[iter / width].get(vbt[iter / width].get_min(x)) ^ x;
+                res = min(res, tmp);
+                iter += width;
+            }
+            while (iter < r) {
+                res = min(res, A[iter] ^ x);
+                ++iter;
+            }
+            cout << res << endl;
+        }
+    }
+}
+
 int main() {
     //ARC033_C();
     //AtCoderDwango5Honsen_B();
-    ABC281_E();
+    //ABC281_E();
+    AOJ3333();
 }
+
+

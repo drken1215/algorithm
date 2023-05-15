@@ -533,7 +533,6 @@ template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q,
     assert(!P.empty() && !Q.empty());
     if (N == 0) return P[0] / Q[0];
     
-    int qdeg = (int)Q.size();
     FPS<mint> P2{P}, minusQ{Q};
     for (int i = 1; i < (int)Q.size(); i += 2) {
         minusQ[i] = -minusQ[i];
