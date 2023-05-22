@@ -1,83 +1,147 @@
 //
-// 巨大な mod 対策 (普通にやるとオーバーフローしてしまう)
-//
-// cf.
-//   【ライブラリ】mod の値が大きいときの mod 演算
-//     http://drken1215.hatenablog.com/entry/2018/02/08/113249
+// モンゴメリ乗算を用いた modint (mod は 2^62 未満の奇数)
 //
 // verified:
 //   AOJ 2353 Four Arithmetic Operations
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2353
 //
+//   Yosupo Judge Factorize
+//     https://judge.yosupo.jp/problem/factorize
+//
 
 
-/*
-    a を b 回足しあげる、ただし繰り返し二乗法を流用する)
-    という方法をとる
- 
-    
-    問題例
-    ・AOJ 2353 Four Arithmetic Operations
-    ・CS Academy 068 DIV2 E - Sliding Product Sum
- */
-
-
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-inline long long mod(long long a, long long m) {
-    return (a % m + m) % m;
-}
-
-inline long long mul(long long a, long long b, long long m) {
-    a = mod(a, m); b = mod(b, m);
-    if (b == 0) return 0;
-    long long res = mul(mod(a + a, m), b>>1, m);
-    if (b & 1) res = mod(res + a, m);
-    return res;
-}
-
-inline long long inv(long long a, long long m) {
-    long long b = m, u = 1, v = 0;
-    while (b) {
-        long long t = a/b;
-        a = mod(a - mul(t, b, m), m); swap(a, b);
-        u = mod(u - mul(t, v, m), m); swap(u, v);
+// montgomery modint (MOD < 2^62, MOD is odd)
+struct MontgomeryModInt64 {
+    using mint = MontgomeryModInt64;
+    using u64 = uint64_t;
+    using u128 = __uint128_t;
+    
+    // static menber
+    static u64 MOD;
+    static u64 INV_MOD;  // INV_MOD * MOD ≡ 1 (mod 2^64)
+    static u64 T128;  // 2^128 (mod MOD)
+    
+    // inner value
+    u64 val;
+    
+    // constructor
+    MontgomeryModInt64() : val(0) { }
+    MontgomeryModInt64(long long v) : val(reduce((u128(v) + MOD) * T128)) { }
+    u64 get() const {
+        u64 res = reduce(val);
+        return res >= MOD ? res - MOD : res;
     }
-    return mod(u, m);
-}
+    
+    // mod getter and setter
+    static u64 get_mod() { return MOD; }
+    static void set_mod(u64 mod) {
+        assert(mod < (1LL << 62));
+        assert((mod & 1));
+        MOD = mod;
+        T128 = -u128(mod) % mod;
+        INV_MOD = get_inv_mod();
+    }
+    static u64 get_inv_mod() {
+        u64 res = MOD;
+        for (int i = 0; i < 5; ++i) res *= 2 - MOD * res;
+        return res;
+    }
+    static u64 reduce(const u128 &v) {
+        return (v + u128(u64(v) * u64(-INV_MOD)) * MOD) >> 64;
+    }
+    
+    // arithmetic operators
+    mint operator - () const { return mint() - mint(*this); }
+    mint operator + (const mint &r) const { return mint(*this) += r; }
+    mint operator - (const mint &r) const { return mint(*this) -= r; }
+    mint operator * (const mint &r) const { return mint(*this) *= r; }
+    mint operator / (const mint &r) const { return mint(*this) /= r; }
+    mint& operator += (const mint &r) {
+        if ((val += r.val) >= 2 * MOD) val -= 2 * MOD;
+        return *this;
+    }
+    mint& operator -= (const mint &r) {
+        if ((val += 2 * MOD - r.val) >= 2 * MOD) val -= 2 * MOD;
+        return *this;
+    }
+    mint& operator *= (const mint &r) {
+        val = reduce(u128(val) * r.val);
+        return *this;
+    }
+    mint& operator /= (const mint &r) {
+        *this *= r.inv();
+        return *this;
+    }
+    mint inv() const { return pow(MOD - 2); }
+    mint pow(u128 n) const {
+        mint res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
 
-long long pow(long long a, long long n, long long m) {
-    if (n == 0) return 1 % m;
-    long long t = pow(a, n/2, m);
-    t = mul(t, t, m);
-    if (n & 1) t = mul(t, a, m);
-    return t;
-}
+    // other operators
+    bool operator == (const mint &r) const {
+        return (val >= MOD ? val - MOD : val) == (r.val >= MOD ? r.val - MOD : r.val);
+    }
+    bool operator != (const mint &r) const {
+        return (val >= MOD ? val - MOD : val) != (r.val >= MOD ? r.val - MOD : r.val);
+    }
+    friend istream& operator >> (istream &is, mint &x) {
+        long long t;
+        is >> t;
+        x = mint(t);
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const mint &x) {
+        return os << x.get();
+    }
+    friend mint modpow(const mint &r, long long n) {
+        return r.pow(n);
+    }
+    friend mint modinv(const mint &r) {
+        return r.inv();
+    }
+};
 
-// 級数和
-long long ser(long long a, long long n, long long m) {
-    if (n == 0) return 0;
-    long long res = ser(mul(a, a, m), n/2, m);
-    res = mul(res, a+1, m);
-    if (n & 1) res = mod(mul(res, a, m) + 1, m);
-    return res;
-}
+typename MontgomeryModInt64::u64
+MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
 
+
+/*/////////////////////////////*/
+// solvers
+/*/////////////////////////////*/
+
+void AOJ2353() {
+    using mint = MontgomeryModInt64;
+    const long long MOD = 67280421310721LL;
+    mint::set_mod(MOD);
+
+    mint res = 0;
+    int N;
+    cin >> N;
+    for (int i = 0; i < N; ++i) {
+        long long o, y;
+        cin >> o >> y;
+        if (o == 1) res += y;
+        else if (o == 2) res -= y;
+        else if (o == 3) res *= y;
+        else res /= y;
+    }
+    if (res.get() <= 1LL<<31) cout << res.get() << endl;
+    else cout << (long long)res.get() - MOD << endl;
+}
 
 
 int main() {
-    const long long MOD = 67280421310721LL;
-    long long res = 0;
-    int N; cin >> N;
-    for (int i = 0; i < N; ++i) {
-        long long o, y; cin >> o >> y;
-        if (o == 1) res = mod(res + y, MOD);
-        else if (o == 2) res = mod(res - y, MOD);
-        else if (o == 3) res = mul(res, y, MOD);
-        else res = mul(res, inv(y, MOD), MOD);
-    }
-    if (res <= 1LL<<31) cout << res << endl;
-    else cout << res - MOD << endl;
+    AOJ2353();
 }
+
+

@@ -16,7 +16,7 @@
 using namespace std;
 
 
-// montgomery modint (MOD <= 2^64)
+// montgomery modint (MOD < 2^62, MOD is odd)
 struct MontgomeryModInt64 {
     using mint = MontgomeryModInt64;
     using u64 = uint64_t;
@@ -144,9 +144,9 @@ bool MillerRabin(long long N, vector<long long> A) {
 
 bool is_prime(long long N) {
     if (N <= 1) return false;
-    if (N == 2) return true;
-    if (N % 2 == 0) return false;
-    if (N < 4759123141LL)
+    else if (N == 2) return true;
+    else if (N % 2 == 0) return false;
+    else if (N < 4759123141LL)
         return MillerRabin(N, {2, 7, 61});
     else
         return MillerRabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
@@ -158,8 +158,8 @@ bool is_prime(long long N) {
 /*/////////////////////////////*/
 
 void YosupoPrimarityTest() {
-    ios::sync_with_stdio(0);
     cin.tie(0);
+    ios::sync_with_stdio(false);
     int N;
     cin >> N;
     for (int i = 0; i < N; ++i) {
@@ -176,4 +176,6 @@ void YosupoPrimarityTest() {
 int main() {
     YosupoPrimarityTest();
 }
+
+
 
