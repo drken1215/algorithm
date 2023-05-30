@@ -198,7 +198,7 @@
 - [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - [重みつき Union-Find (F2 体)](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find_F2.cpp)
 - [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
-- [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/undo_union_find.cpp)
+- [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - Quick Find
 - Dynamic Connectivity
 
