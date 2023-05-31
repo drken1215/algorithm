@@ -2,52 +2,58 @@
 // Modular Arithmetics
 //
 // cf.
-//   noshi91: modint ¹½Â¤ÂÎ¤ò»È¤Ã¤Æ¤ß¤Ş¤»¤ó¤«¡© (C++)
+//   noshi91: modint æ§‹é€ ä½“ã‚’ä½¿ã£ã¦ã¿ã¾ã›ã‚“ã‹ï¼Ÿ (C++)
 //     http://noshi91.hatenablog.com/entry/2019/03/31/174006
 //
-//   drken: ¡Ö1000000007 ¤Ç³ä¤Ã¤¿¤¢¤Ş¤ê¡×¤Îµá¤áÊı¤òÁíÆÃ½¸¡ª ¢· µÕ¸µ¤«¤éÎ¥»¶ÂĞ¿ô¤Ş¤Ç ¢·
+//   drken: ã€Œ1000000007 ã§å‰²ã£ãŸã‚ã¾ã‚Šã€ã®æ±‚ã‚æ–¹ã‚’ç·ç‰¹é›†ï¼ ï½ é€†å…ƒã‹ã‚‰é›¢æ•£å¯¾æ•°ã¾ã§ ï½
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
 // verified:
 //   ABC 127 E - Cell Distance
-//     https://atcoder.jp/contests/abc127/tasks/abc127_e 
-// 
+//     https://atcoder.jp/contests/abc127/tasks/abc127_e
+//
 
 
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 
 // modint
 template<int MOD> struct Fp {
+    // inner value
     long long val;
+    
+    // constructor
+    constexpr Fp() noexcept : val(0) { }
     constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
         if (val < 0) val += MOD;
     }
-    constexpr int getmod() const { return MOD; }
+    constexpr long long get() const noexcept { return val; }
+    constexpr int get_mod() const noexcept { return MOD; }
+    
+    // arithmetic operators
     constexpr Fp operator - () const noexcept {
         return val ? MOD - val : 0;
     }
-    constexpr Fp operator + (const Fp& r) const noexcept { return Fp(*this) += r; }
-    constexpr Fp operator - (const Fp& r) const noexcept { return Fp(*this) -= r; }
-    constexpr Fp operator * (const Fp& r) const noexcept { return Fp(*this) *= r; }
-    constexpr Fp operator / (const Fp& r) const noexcept { return Fp(*this) /= r; }
-    constexpr Fp& operator += (const Fp& r) noexcept {
+    constexpr Fp operator + (const Fp &r) const noexcept { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const noexcept { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const noexcept { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const noexcept { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) noexcept {
         val += r.val;
         if (val >= MOD) val -= MOD;
         return *this;
     }
-    constexpr Fp& operator -= (const Fp& r) noexcept {
+    constexpr Fp& operator -= (const Fp &r) noexcept {
         val -= r.val;
         if (val < 0) val += MOD;
         return *this;
     }
-    constexpr Fp& operator *= (const Fp& r) noexcept {
+    constexpr Fp& operator *= (const Fp &r) noexcept {
         val = val * r.val % MOD;
         return *this;
     }
-    constexpr Fp& operator /= (const Fp& r) noexcept {
+    constexpr Fp& operator /= (const Fp &r) noexcept {
         long long a = r.val, b = MOD, u = 1, v = 0;
         while (b) {
             long long t = a / b;
@@ -58,43 +64,43 @@ template<int MOD> struct Fp {
         if (val < 0) val += MOD;
         return *this;
     }
-    constexpr bool operator == (const Fp& r) const noexcept {
+    constexpr Fp pow(long long n) const noexcept {
+        Fp res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    constexpr Fp inv() const noexcept {
+        Fp res(1), div(*this);
+        return res / div;
+    }
+
+    // other operators
+    constexpr bool operator == (const Fp &r) const noexcept {
         return this->val == r.val;
     }
-    constexpr bool operator != (const Fp& r) const noexcept {
+    constexpr bool operator != (const Fp &r) const noexcept {
         return this->val != r.val;
     }
-    friend constexpr istream& operator >> (istream& is, Fp<MOD>& x) noexcept {
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) noexcept {
         is >> x.val;
         x.val %= MOD;
         if (x.val < 0) x.val += MOD;
         return is;
     }
-    friend constexpr ostream& operator << (ostream& os, const Fp<MOD>& x) noexcept {
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) noexcept {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD>& r, long long n) noexcept {
-        if (n == 0) return 1;
-        if (n < 0) return modpow(modinv(r), -n);
-        auto t = modpow(r, n / 2);
-        t = t * t;
-        if (n & 1) t = t * r;
-        return t;
+    friend constexpr Fp<MOD> modpow(const Fp<MOD> &r, long long n) noexcept {
+        return r.pow(n);
     }
-    friend constexpr Fp<MOD> modinv(const Fp<MOD>& r) noexcept {
-        long long a = r.val, b = MOD, u = 1, v = 0;
-        while (b) {
-            long long t = a / b;
-            a -= t * b, swap(a, b);
-            u -= t * v, swap(u, v);
-        }
-        return Fp<MOD>(u);
+    friend constexpr Fp<MOD> modinv(const Fp<MOD> &r) noexcept {
+        return r.inv();
     }
 };
-
-//const int MOD = 1000000007;
-const int MOD = 998244353;
-using mint = Fp<MOD>;
 
 // Binomial coefficient
 template<class T> struct BiCoef {
@@ -105,7 +111,7 @@ template<class T> struct BiCoef {
     }
     constexpr void init(int n) noexcept {
         fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].getmod();
+        int MOD = fact_[0].get_mod();
         for(int i = 2; i < n; i++){
             fact_[i] = fact_[i-1] * i;
             inv_[i] = -inv_[MOD%i] * (MOD/i);
@@ -130,12 +136,19 @@ template<class T> struct BiCoef {
     }
 };
 
-BiCoef<mint> bc;
 
-int main() {
+/*/////////////////////////////*/
+// solvers
+/*/////////////////////////////*/
+
+void ABC_127_E() {
+    const int MOD = 1000000007;
+    using mint = Fp<MOD>;
+
     long long N, M, K;
     cin >> N >> M >> K;
-    bc.init(510000);
+    
+    BiCoef<mint> bc(N * M);
     mint sum = 0;
     for (int i = 0; i <= N-1; ++i) {
         for (int j = 0; j <= M-1; ++j) {
@@ -144,5 +157,10 @@ int main() {
             sum += tmp;
         }
     }
-    cout << sum * bc.com(N*M-2, K-2) << endl;
+    cout << sum * bc.com(N * M - 2, K - 2) << endl;
 }
+
+int main() {
+    ABC_127_E();
+}
+
