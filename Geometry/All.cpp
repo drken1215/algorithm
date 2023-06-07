@@ -2,11 +2,7 @@
 // 幾何ライブラリ (二次元)
 //
 
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <iomanip>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -63,10 +59,9 @@ struct Circle : Point {
 };
 
 
-
-////////////////////////////
+/*/////////////////////////////*/
 // 点や線分の位置関係
-////////////////////////////
+/*/////////////////////////////*/
 
 // 粗
 // 1：a-bから見てcは左側(反時計回り)、-1：a-bから見てcは右側(時計回り)、0：一直線上
@@ -97,35 +92,8 @@ bool is_contain(const Point &p, const Point &a, const Point &b, const Point &c) 
 
 
 /*/////////////////////////////*/
-// 特殊な直線, 円を求める
-/*/////////////////////////////*/
-
-// AOJ 1039
-// 2点の比率a:bのアポロニウスの円
-Circle Apporonius(const Point &p, const Point &q, DD a, DD b) {
-    if ( abs(a-b) < EPS ) return Circle(Point(0,0),0);
-    Point c1 = (p * b + q * a) / (a + b);
-    Point c2 = (p * b - q * a) / (b - a);
-    Point c = (c1 + c2) / 2;
-    DD r = abs(c - c1);
-    return Circle(c, r);
-}
-
-
-/*/////////////////////////////*/
 // 円や直線の交差判定, 距離
 /*/////////////////////////////*/
-
-/*
-    ccw を用いている
- 
-    P: point
-    L: Line
-    S: Segment
- 
-    distancePL は、「点」と「直線」の距離
-    distancePS は、「点」と「線分」の距離
-*/
 
 int ccw_for_dis(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
@@ -141,37 +109,38 @@ Point proj(const Point &p, const Line &l) {
 Point refl(const Point &p, const Line &l) {
     return p + (proj(p, l) - p) * 2;
 }
-bool isinterPL(const Point &p, const Line &l) {
+bool is_inter_PL(const Point &p, const Line &l) {
     return (abs(p - proj(p, l)) < EPS);
 }
-bool isinterPS(const Point &p, const Line &s) {
+bool is_inter_PS(const Point &p, const Line &s) {
     return (ccw_for_dis(s[0], s[1], p) == 0);
 }
-bool isinterLL(const Line &l, const Line &m) {
+bool is_inter_LL(const Line &l, const Line &m) {
     return (abs(cross(l[1] - l[0], m[1] - m[0])) > EPS ||
             abs(cross(l[1] - l[0], m[0] - l[0])) < EPS);
 }
-bool isinterSS(const Line &s, const Line &t) {
-    if (eq(s[0], s[1])) return isinterPS(s[0], t);
-    if (eq(t[0], t[1])) return isinterPS(t[0], s);
+bool is_inter_SS(const Line &s, const Line &t) {
+    if (eq(s[0], s[1])) return is_inter_PS(s[0], t);
+    if (eq(t[0], t[1])) return is_inter_PS(t[0], s);
     return (ccw_for_dis(s[0], s[1], t[0]) * ccw_for_dis(s[0], s[1], t[1]) <= 0 &&
             ccw_for_dis(t[0], t[1], s[0]) * ccw_for_dis(t[0], t[1], s[1]) <= 0);
 }
-DD distancePL(const Point &p, const Line &l) {
+DD distance_PL(const Point &p, const Line &l) {
     return abs(p - proj(p, l));
 }
-DD distancePS(const Point &p, const Line &s) {
+DD distance_PS(const Point &p, const Line &s) {
     Point h = proj(p, s);
-    if (isinterPS(h, s)) return abs(p - h);
+    if (is_inter_PS(h, s)) return abs(p - h);
     return min(abs(p - s[0]), abs(p - s[1]));
 }
-DD distanceLL(const Line &l, const Line &m) {
-    if (isinterLL(l, m)) return 0;
-    else return distancePL(m[0], l);
+DD distance_LL(const Line &l, const Line &m) {
+    if (is_inter_LL(l, m)) return 0;
+    else return distance_PL(m[0], l);
 }
-DD distanceSS(const Line &s, const Line &t) {
-    if (isinterSS(s, t)) return 0;
-    else return min(min(distancePS(s[0], t), distancePS(s[1], t)), min(distancePS(t[0], s), distancePS(t[1], s)));
+DD distance_SS(const Line &s, const Line &t) {
+    if (is_inter_SS(s, t)) return 0;
+    else return min(min(distance_PS(s[0], t), distance_PS(s[1], t)),
+                    min(distance_PS(t[0], s), distance_PS(t[1], s)));
 }
 
 
@@ -479,6 +448,16 @@ DD Closet(vector<Point> ps) {
     return DivideAndConqur(ps.begin(), n);
 }
 
+// 2点の比率a:bのアポロニウスの円 (AOJ 1039)
+Circle Apporonius(const Point &p, const Point &q, DD a, DD b) {
+    if ( abs(a-b) < EPS ) return Circle(Point(0,0),0);
+    Point c1 = (p * b + q * a) / (a + b);
+    Point c2 = (p * b - q * a) / (b - a);
+    Point c = (c1 + c2) / 2;
+    DD r = abs(c - c1);
+    return Circle(c, r);
+}
+
 
 /*/////////////////////////////*/
 // solvers
@@ -487,3 +466,5 @@ DD Closet(vector<Point> ps) {
 int main() {
     
 }
+
+
