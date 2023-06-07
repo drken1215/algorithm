@@ -10,9 +10,9 @@
 using namespace std;
 
 
-////////////////////////////
+/*/////////////////////////////*/
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+/*/////////////////////////////*/
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -96,10 +96,9 @@ bool is_contain(const Point &p, const Point &a, const Point &b, const Point &c) 
 }
 
 
-
-////////////////////////////
+/*/////////////////////////////*/
 // 特殊な直線, 円を求める
-////////////////////////////
+/*/////////////////////////////*/
 
 // AOJ 1039
 // 2点の比率a:bのアポロニウスの円
@@ -113,10 +112,9 @@ Circle Apporonius(const Point &p, const Point &q, DD a, DD b) {
 }
 
 
-
-////////////////////////////
+/*/////////////////////////////*/
 // 円や直線の交差判定, 距離
-////////////////////////////
+/*/////////////////////////////*/
 
 /*
     ccw を用いている
@@ -177,10 +175,9 @@ DD distanceSS(const Line &s, const Line &t) {
 }
 
 
-
-////////////////////////////
+/*/////////////////////////////*/
 // 円や直線の交点
-////////////////////////////
+/*/////////////////////////////*/
 
 Point proj_for_crosspoint(const Point &p, const Line &l) {
     DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
@@ -225,10 +222,9 @@ vector<Point> crosspoint(const Circle &e, const Line &l) {
 }
 
 
-
-///////////////////////
+/*/////////////////////////////*/
 // 多角形アルゴリズム
-///////////////////////
+/*/////////////////////////////*/
 
 // 多角形の符号付面積
 DD calc_area(const vector<Point> &pol) {
@@ -238,7 +234,6 @@ DD calc_area(const vector<Point> &pol) {
     }
     return res/2.0L;
 }
-
 
 // 点と多角形の包含関係
 // 2: in, 1: on, 0: out
@@ -269,7 +264,6 @@ bool is_convex(vector<Point> &ps) {
     }
     return true;
 }
-
 
 // 凸包 (一直線上の3点を含めない)
 vector<Point> convex_hull(vector<Point> &ps) {
@@ -329,7 +323,6 @@ vector<Point> convex_hull_colinear(vector<Point> &ps) {
     return res;
 }
 
-
 // convex cut
 int ccw_for_convexcut(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
@@ -384,10 +377,9 @@ vector<Point> voronoi(const vector<Point> &pol, const vector<Point> &ps, int ind
 }
 
 
-
-///////////////////////
+/*/////////////////////////////*/
 // 接線
-///////////////////////
+/*/////////////////////////////*/
 
 // tanline
 vector<Point> tanline(const Point &p, const Circle &c) {
@@ -455,10 +447,9 @@ vector<Line> comtanline(Circle a, Circle b) {
 }
 
 
-
-///////////////////////
+/*/////////////////////////////*/
 // その他
-///////////////////////
+/*/////////////////////////////*/
 
 // 最近点対
 bool compare_y(Point a, Point b) { return a.y < b.y; }
@@ -489,14 +480,9 @@ DD Closet(vector<Point> ps) {
 }
 
 
-// 最近円対
-
-
-
-
-///////////////////////
-// main
-///////////////////////
+/*/////////////////////////////*/
+// solvers
+/*/////////////////////////////*/
 
 int main() {
     
