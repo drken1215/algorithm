@@ -1,5 +1,5 @@
 //
-// Weighted Union Find Tree
+// Weighted Union Find
 //
 // cf.
 //   https://qiita.com/drken/items/cce6fc5c579051e64fab
@@ -10,28 +10,28 @@
 //
 
 
-/*
- ・併合時の工夫: union by size
-    par[x]: x が根のときは x を含むグループのサイズ (の -1 倍)、そうでないときは親ノード
- 
-*/
-
-
-#include <iostream>
-#include <vector>
-#include <map>
+#include <bits/stdc++.h>
 using namespace std;
 
 
+// Weighted Union-Find
 template<class Abel> struct UnionFind {
-    const Abel UNITY_SUM = 0;      // to be set
+    // to be set
+    Abel IDENTITY_SUM;
+    
+    // core member
     vector<int> par;
     vector<Abel> diff_weight;
 
+    // constructor
     UnionFind() { }
-    UnionFind(int n) : par(n, -1), diff_weight(n, UNITY_SUM) {}
-    void init(int n) { par.assign(n, -1), diff_weight.assign(n, UNITY_SUM); }
+    UnionFind(int n, Abel identity = 0) : par(n, -1), diff_weight(n, identity) {}
+    void init(int n, Abel identity = 0) {
+        par.assign(n, -1);
+        diff_weight.assign(n, identity);
+    }
     
+    // core methods
     int root(int x) {
         if (par[x] < 0) return x;
         else {
@@ -40,19 +40,23 @@ template<class Abel> struct UnionFind {
             return par[x] = r;
         }
     }
+    bool is_same(int x, int y) {
+        return root(x) == root(y);
+    }
+    int size(int x) {
+        return -par[root(x)];
+    }
     
+    // calc weight
     Abel calc_weight(int x) {
         root(x);
         return diff_weight[x];
     }
     
-    bool issame(int x, int y) {
-        return root(x) == root(y);
-    }
-    
-    bool merge(int x, int y, Abel w = 0) {
-        w += calc_weight(x); w -= calc_weight(y);
-        x = root(x); y = root(y);
+    // w[y] - w[x] = w
+    bool merge(int x, int y, Abel w) {
+        w += calc_weight(x), w -= calc_weight(y);
+        x = root(x), y = root(y);
         if (x == y) return false;
         if (par[x] > par[y]) swap(x, y), w = -w; // merge technique
         par[x] += par[y];
@@ -61,51 +65,57 @@ template<class Abel> struct UnionFind {
         return true;
     }
     
+    // calc w[y] - w[x]
     Abel diff(int x, int y) {
         return calc_weight(y) - calc_weight(x);
     }
     
-    int size(int x) {
-        return -par[root(x)];
+    // debug
+    friend ostream& operator << (ostream &s, UnionFind uf) {
+        map<int, vector<int>> groups;
+        for (int i = 0; i < uf.par.size(); ++i) {
+            int r = uf.root(i);
+            groups[r].push_back(i);
+        }
+        for (const auto &it : groups) {
+            s << "group: ";
+            for (auto v : it.second) {
+                s << v << "(" << uf.calc_weight(v) << ") ";
+            }
+            s << endl;
+        }
+        return s;
     }
 };
 
 
-/* debug */
-/*
-template<class Abel> ostream& operator << (ostream& s, UnionFind<Abel> uf) {
-    map<int, vector<int> > res;
-    for (int i = 0; i < uf.par.size(); ++i) {
-        int r = uf.root(i);
-        res[r].push_back(i);
-    }
-    for (map<int, vector<int> >::iterator it = res.begin(); it != res.end(); ++it) {
-        s << endl;
-        for (int j = 0; j < (int)it->second.size(); ++j) {
-            s << it->second[j] << "(" << uf.calc_weight(it->second[j]) << "), ";
-        }
-    }
-    return s << endl;
-}
-*/
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
 
-
-int main() {
+void ABC_087_D() {
     int N, M;
     cin >> N >> M;
     UnionFind<long long> uf(N);
+    bool res = true;
     for (int i = 0; i < M; ++i) {
-        int l, r, d; cin >> l >> r >> d; --l, --r;
-        if (uf.issame(l, r)) {
+        int l, r, d;
+        cin >> l >> r >> d;
+        --l, --r;
+        if (uf.is_same(l, r)) {
             long long diff = uf.diff(l, r);
-            if (diff != d) {
-                puts("No");
-                return 0;
-            }
+            if (diff != d) res = false;
         }
-        else {
-            uf.merge(l, r, d);
-        }
+        else uf.merge(l, r, d);
     }
-    puts("Yes");
+    cout << (res ? "Yes" : "No") << endl;
 }
+
+
+int main() {
+    ABC_087_D();
+}
+
+
+
+
