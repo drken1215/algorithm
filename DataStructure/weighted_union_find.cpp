@@ -40,7 +40,7 @@ template<class Abel> struct UnionFind {
             return par[x] = r;
         }
     }
-    bool is_same(int x, int y) {
+    bool same(int x, int y) {
         return root(x) == root(y);
     }
     int size(int x) {
@@ -102,7 +102,7 @@ void ABC_087_D() {
         int l, r, d;
         cin >> l >> r >> d;
         --l, --r;
-        if (uf.is_same(l, r)) {
+        if (uf.same(l, r)) {
             long long diff = uf.diff(l, r);
             if (diff != d) res = false;
         }
@@ -115,6 +115,8 @@ void ABC_087_D() {
 int main() {
     ABC_087_D();
 }
+
+
 
 
 

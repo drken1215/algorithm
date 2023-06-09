@@ -113,29 +113,39 @@ void ABC_302_Ex() {
     // Union-Find
     // 外部データの undo もここで実現する
     UnionFind uf(N);
-    vector<int> nums(N, 0);  // 各連結成分の辺数
+    vector<int> nums(N, 0);  // 各連結成分ごとの種類数
     int cur = 0;  // 現時点での種類数の最大値
     vector<pair<pint,int>> hist;  // 履歴
     vector<int> res(N, 0);  // 答え
-    auto insert = [&](int v) -> void {
+    auto insert = [&](int v, int p) -> void {
         int x = uf.root(A[v]), y = uf.root(B[v]);
         hist.push_back(make_pair(pint(x, nums[x]), cur));
         hist.push_back(make_pair(pint(y, nums[y]), cur));
-        
+        int before = (uf.same(x, y) ? nums[x] : nums[x] + nums[y]);
+        int after = (uf.same(x, y) ?
+                     min(uf.size(x), nums[x] + 1) :
+                     min(uf.size(x) + uf.size(y), nums[x] + nums[y] + 1));
+        uf.merge(x, y);
+        nums[uf.root(x)] = after;
+        res[v] = (p != -1 ? res[p] : 0) + (after - before);
     };
-    auto erase = [&](int v) -> void {
-        
-        
+    auto erase = [&]() -> void {
         for (int iter = 0; iter < 2; ++iter) {
-            nums[hist.top().first.first] = history.top().first.second;
-            cur = hist.top().second;
-            hist.pop();
+            nums[hist.back().first.first] = hist.back().first.second;
+            cur = hist.back().second;
+            hist.pop_back();
         }
+        uf.undo();
     };
     
     // DFS
     auto dfs = [&](auto self, int v, int p) -> void {
-        if (uf.same(A))
+        insert(v, p);
+        for (auto v2 : G[v]) {
+            if (v2 == p) continue;
+            self(self, v2, v);
+        }
+        erase();
     };
     dfs(dfs, 0, -1);
     
@@ -207,3 +217,5 @@ int main() {
     ABC_302_Ex();
     //CF_680_DIV1_C();
 }
+
+
