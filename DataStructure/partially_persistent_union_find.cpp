@@ -5,6 +5,9 @@
 //   AGC 002 D - Stamp Rally
 //     https://beta.atcoder.jp/contests/agc002/tasks/agc002_d
 //
+//   CODE THANKS FESTIVAL 2017 H - Union Sets
+//     https://atcoder.jp/contests/code-thanks-festival-2017-open/tasks/code_thanks_festival_2017_h
+//
 
 /*
     t 秒後の状態を参照できる Union-Find 木です。
@@ -116,9 +119,37 @@ void AGC_002_D() {
     }
 }
 
+void CODE_THANKS_FESTIVAL_2017_H() {
+    int N, M, Q;
+    cin >> N >> M;
+    PartiallyPersistentUnionFind uf(N);
+    for (int t = 0; t < M; ++t) {
+        int a, b;
+        cin >> a >> b;
+        --a, --b;
+        uf.merge(t, a, b);
+    }
+    cin >> Q;
+    for (int q = 0; q < Q; ++q) {
+        int x, y;
+        cin >> x >> y;
+        --x, --y;
+        int low = -1, high = M;
+        while (high - low > 1) {
+            int mid = (low + high) / 2;
+            if (uf.same(mid, x, y)) high = mid;
+            else low = mid;
+        }
+        cout << (high != M ? high + 1 : -1) << endl;
+    }
+}
+
 
 int main() {
-    AGC_002_D();
+    //AGC_002_D();
+    CODE_THANKS_FESTIVAL_2017_H();
 }
+
+
 
 
