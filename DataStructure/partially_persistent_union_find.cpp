@@ -1,5 +1,5 @@
 //
-// Partially Persistent Union-Find tree
+// Partially Persistent Union-Find
 //
 // verified:
 //   AGC 002 D - Stamp Rally
@@ -16,24 +16,27 @@
 */
 
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <map>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-using pint = pair<int,int>;
+// partially persistent union-find
 struct PartiallyPersistentUnionFind {
+    // core member
     vector<int> par, last;
-    vector<vector<pint> > history;
+    vector<vector<pair<int,int>>> history;
 
+    // constructor
     PartiallyPersistentUnionFind() { }
     PartiallyPersistentUnionFind(int n) : par(n, -1), last(n, -1), history(n) {
         for (auto &vec : history) vec.emplace_back(-1, -1);
     }
+    
+    // core methods
     void init(int n) {
-        par.assign(n, -1); last.assign(n, -1); history.assign(n, vector<pint>());
+        par.assign(n, -1);
+        last.assign(n, -1);
+        history.assign(n, vector<pair<int,int>>());
         for (auto &vec : history) vec.emplace_back(-1, -1);
     }
     
@@ -42,12 +45,12 @@ struct PartiallyPersistentUnionFind {
         return root(t, par[x]);
     }
     
-    bool issame(int t, int x, int y) {
+    bool same(int t, int x, int y) {
         return root(t, x) == root(t, y);
     }
     
     bool merge(int t, int x, int y) {
-        x = root(t, x); y = root(t, y);
+        x = root(t, x), y = root(t, y);
         if (x == y) return false;
         if (par[x] > par[y]) swap(x, y); // merge technique
         par[x] += par[y];
@@ -61,29 +64,61 @@ struct PartiallyPersistentUnionFind {
         x = root(t, x);
         return -prev(lower_bound(history[x].begin(), history[x].end(), make_pair(t, 0)))->second;
     }
+    
+    // debug
+    friend ostream& operator << (ostream &s, PartiallyPersistentUnionFind uf) {
+        map<int, vector<int>> groups;
+        int lasttime = 0;
+        for (int i = 0; i < uf.par.size(); ++i) {
+            lasttime = max(lasttime, uf.last[i]);
+        }
+        for (int i = 0; i < uf.par.size(); ++i) {
+            int r = uf.root(lasttime+1, i);
+            groups[r].push_back(i);
+        }
+        for (const auto &it : groups) {
+            s << "group: ";
+            for (auto v : it.second) s << v << " ";
+            s << endl;
+        }
+        return s;
+    }
 };
 
 
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
 
-int main() {
-    int N, M, Q; cin >> N >> M;
+void AGC_002_D() {
+    int N, M, Q;
+    cin >> N >> M;
     PartiallyPersistentUnionFind uf(N);
     for (int t = 0; t < M; ++t) {
-        int a, b; cin >> a >> b; --a, --b;
-        uf.merge(t+1, a, b);
+        int a, b;
+        cin >> a >> b;
+        --a, --b;
+        uf.merge(t, a, b);
     }
     cin >> Q;
     for (int q = 0; q < Q; ++q) {
-        int x, y, z; cin >> x >> y >> z; --x, --y;
-        int low = 0, high = M + 10;
+        int x, y, z;
+        cin >> x >> y >> z;
+        --x, --y;
+        int low = -1, high = M;
         while (high - low > 1) {
             int mid = (low + high) / 2;
-            int num = 0;
-            if (uf.issame(mid, x, y)) num = uf.size(mid, x);
-            else num = uf.size(mid, x) + uf.size(mid, y);
+            int num = (uf.same(mid, x, y) ? uf.size(mid, x) : uf.size(mid, x) + uf.size(mid, y));
             if (num >= z) high = mid;
             else low = mid;
         }
-        cout << high << endl;
+        cout << high+1 << endl;
     }
 }
+
+
+int main() {
+    AGC_002_D();
+}
+
+
