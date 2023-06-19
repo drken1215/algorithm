@@ -25,7 +25,7 @@ template<int MOD> struct Fp {
     
     // constructor
     constexpr Fp() noexcept : val(0) { }
-    constexpr Fp(long long v = 0) noexcept : val(v % MOD) {
+    constexpr Fp(long long v) noexcept : val(v % MOD) {
         if (val < 0) val += MOD;
     }
     constexpr long long get() const noexcept { return val; }

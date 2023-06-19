@@ -28,7 +28,7 @@ struct Fp {
     
     // constructor
     Fp() : val(0) { }
-    Fp(long long v = 0) : val(v % MOD) {
+    Fp(long long v) : val(v % MOD) {
         if (val < 0) val += MOD;
     }
     long long get() const { return val; }
