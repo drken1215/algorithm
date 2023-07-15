@@ -102,6 +102,7 @@ template<class FLOWTYPE> struct FlowGraph {
     }
 };
 
+// Dinic
 template<class FLOWTYPE> FLOWTYPE Dinic
  (FlowGraph<FLOWTYPE> &G, int s, int t, FLOWTYPE limit_flow)
 {
