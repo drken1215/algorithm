@@ -1,4 +1,5 @@
 # 様々なアルゴリズムの実装例
+# 様々なアルゴリズムの実装例
 データ構造や数論的アルゴリズムまで、様々な分野のアルゴリズムたちを C++17 で実装しています。  
 アルゴリズム系の研究開発において計算機実験が必要になる場面や、
 プログラミングコンテストに参加する場面などを想定して、
@@ -306,7 +307,7 @@
 
 ### 連結成分分解
 
-- [サイクル検出](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection.cpp)
+- [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection.cpp)
 - [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/strongly_connected_components.cpp)
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
@@ -391,10 +392,9 @@
 
 - [転倒数](https://github.com/drken1215/algorithm/blob/master/DP/inversion_number.cpp)
 - [LIS](https://github.com/drken1215/algorithm/blob/master/DP/longest_increasing_sequence.cpp)
-- LCS
-- 編集距離
-- 重みつき区間スケジューリング問題
-- ヒストグラム長方形面積最大化
+- [LCS](https://github.com/drken1215/algorithm/blob/master/DP/lcs.cpp)
+- [編集距離](https://github.com/drken1215/algorithm/blob/master/DP/edit_distance.cpp)
+- [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/DP/histogram.cpp)
 - 最適二分探索木
 - Set Cover
 - k-Cover (O(n 2^n))

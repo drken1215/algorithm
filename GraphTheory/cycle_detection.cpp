@@ -38,12 +38,10 @@ template<class T> struct Edge {
 // graph class
 template<class T> struct Graph {
     vector<vector<Edge<T>>> list;
-    vector<vector<Edge<T>>> reversed_list;  // reverse edge
     
-    Graph(int n = 0) : list(n), reversed_list(n) { }
+    Graph(int n = 0) : list(n) { }
     void init(int n = 0) {
         list.assign(n, vector<Edge<T>>());
-        reversed_list.assign(n, vector<Edge<T>>());
     }
     inline const vector<Edge<T>> &operator [] (int i) { return list[i]; }
     inline const vector<Edge<T>> &redges(int i) { return reversed_list[i]; }
@@ -54,7 +52,7 @@ template<class T> struct Graph {
         reversed_list[to].push_back(Edge(to, from, val));
     }
     
-    void add_biedge(int from, int to, T val = -1) {
+    void add_bidirected_edge(int from, int to, T val = -1) {
         list[from].push_back(Edge(from, to, val));
         list[to].push_back(Edge(to, from, val));
     }
@@ -204,7 +202,7 @@ void YosupoCycleDetectionUndirected() {
             return;
         }
         
-        G.add_biedge(u, v, i);
+        G.add_bidirected_edge(u, v, i);
         edges[{u, v}] = i;
     }
     
@@ -234,7 +232,7 @@ void AOJ2891() {
         int a, b;
         cin >> a >> b;
         --a, --b;
-        G.add_biedge(a, b, i);
+        G.add_bidirected_edge(a, b, i);
     }
 
     // 探索
@@ -282,9 +280,11 @@ int main() {
     cin.tie(nullptr);
     ios::sync_with_stdio(false);
     
-    YosupoCycleDetectionDirected();
-    //YosupoCycleDetectionUndirected();
+    //YosupoCycleDetectionDirected();
+    YosupoCycleDetectionUndirected();
     //AOJ2891();
     //ABC256_E();
 }
+
+
 
