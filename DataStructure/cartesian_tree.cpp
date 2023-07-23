@@ -5,6 +5,9 @@
 //   Yosupo Judge - Cartesian Tree
 //     https://judge.yosupo.jp/problem/cartesian_tree
 //
+//   AtCoder ABC 311 G - One More Grid Task
+//     https://atcoder.jp/contests/abc311/tasks/abc311_g
+//
 //   AtCoder ABC 280 Ex - Substring Sort
 //     https://atcoder.jp/contests/abc280/tasks/abc280_h
 //
@@ -36,15 +39,13 @@ template<class T> struct CartesianTree {
             }
         }
     }
-};               
+};
 
 
-///////////////////////////////////////
-// Solvers
-///////////////////////////////////////
 
-using pll = pair<long long, long long>;
-template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
 
 void YosupoJudge() {
     int N;
@@ -57,6 +58,49 @@ void YosupoJudge() {
         cout << (ct.par[i] != -1 ? ct.par[i] : i) <<  " ";
     }
     cout << endl;
+}
+
+void ABC_311_G() {
+    // 入力
+    const int INF = 1<<29;
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int>> A(N, vector<int>(M));
+    for (int i = 0; i < N; ++i) for (int j = 0; j < M; ++j) cin >> A[i][j];
+    
+    // 横方向の区間 [L, R) ごとに解く
+    long long res = 0;
+    for (int L = 0; L < M; ++L) {
+        vector<int> B(N, 0), C(N, INF);
+        for (int R = L; R < M; ++R) {
+            // solve problem [L, R)
+            for (int i = 0; i < N; ++i) {
+                B[i] += A[i][R];
+                C[i] = min(C[i], A[i][R]);
+            }
+             
+            // build cartesian tree
+            CartesianTree<int> ct(C);
+            
+            // build ruisekiwa
+            vector<long long> S(N+1, 0);
+            for (int i = 0; i < N; ++i) S[i+1] = S[i] + B[i];
+            
+            // solve [l, r) on cartesian tree
+            auto dfs = [&](auto self, int l, int r, int cur) -> long long {
+                long long res = (S[r] - S[l]) * C[cur];
+                if (ct.left[cur] != -1) {
+                    res = max(res, self(self, l, cur, ct.left[cur]));
+                }
+                if (ct.right[cur] != -1) {
+                    res = max(res, self(self, cur+1, r, ct.right[cur]));
+                }
+                return res;
+            };
+            res = max(res, dfs(dfs, 0, N, ct.root));
+        }
+    }
+    cout << res << endl;
 }
 
 // SA-IS (O(N))
@@ -95,7 +139,7 @@ template<class Str> struct SuffixArray {
     }
 
     // SA-IS
-    // upper: # of characters 
+    // upper: # of characters
     vector<int> sa_is(vector<int> &s, int upper = 256) {
         int N = (int)s.size();
         if (N == 0) return {};
@@ -254,7 +298,9 @@ template<class Str> struct SuffixArray {
     }
 };
 
-void ABC280Ex() {
+void ABC_280_Ex() {
+    using pll = pair<long long, long long>;
+    
     // 入力
     int N, Q;
     cin >> N;
@@ -289,8 +335,8 @@ void ABC280Ex() {
         }
     }
     for (int i = 0; i < lcp.size(); ++i) {
-        chmin(lcp[i], rem_len[i]);
-        chmin(lcp[i], rem_len[i+1]);
+        lcp[i] = min(lcp[i], rem_len[i]);
+        lcp[i] = min(lcp[i], rem_len[i+1]);
     }
 
     // suffix tree: lcp の Cartesian 木
@@ -330,5 +376,8 @@ void ABC280Ex() {
 
 int main() {
     //YosupoJudge();
-    ABC280Ex();
+    ABC_311_G();
+    //ABC_280_Ex();
 }
+
+
