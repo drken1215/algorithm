@@ -2,8 +2,8 @@
 // サイクル検出
 //
 // cf.
-//   DFS (深さ優先探索) 超入門！ 〜 グラフ・アルゴリズムの世界への入口 〜【後編】
-//     https://qiita.com/drken/items/a803d4fc4a727e02f7ba
+//   グラフのサイクル検出 (閉路検出) by DFS
+//     https://drken1215.hatenablog.com/entry/2023/05/20/200517
 //
 // Verified:
 //   Yosupo Library Checker - Cycle Detection (Directed)
