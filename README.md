@@ -395,6 +395,7 @@
 - [LIS](https://github.com/drken1215/algorithm/blob/master/DP/longest_increasing_sequence.cpp)
 - [LCS](https://github.com/drken1215/algorithm/blob/master/DP/lcs.cpp)
 - [編集距離](https://github.com/drken1215/algorithm/blob/master/DP/edit_distance.cpp)
+- [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/DP/largest_square_in_grid.cpp)
 - [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/DP/histogram.cpp)
 - 最適二分探索木
 - Set Cover

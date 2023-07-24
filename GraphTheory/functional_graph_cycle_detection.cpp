@@ -1,16 +1,3 @@
-//
-// サイクル検出
-//
-// cf.
-//   グラフのサイクル検出 (閉路検出) by DFS
-//     https://drken1215.hatenablog.com/entry/2023/05/20/200517
-//
-// Verified:
-//   ABC 311 C - Find it!
-//     https://atcoder.jp/contests/abc311/tasks/abc311_c
-//
-
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -27,32 +14,18 @@ vector<int> detect_cycle(const vector<int> &G) {
         res.push_back(v);
         v = G[v];
     } while (v != start);
-    
     return res;
 }
 
-
-
-/*/////////////////////////////*/
-// Examples
-/*/////////////////////////////*/
-
-void ABC_311_C() {
+int main() {
     int N;
     cin >> N;
     vector<int> A(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> A[i];
-        --A[i];
-    }
+    for (int i = 0; i < N; ++i) { cin >> A[i]; --A[i]; }
+    
+    // 閉路検出
     const auto &res = detect_cycle(A);
     cout << res.size() << endl;
     for (auto v : res) cout << v+1 << " ";
     cout << endl;
 }
-
-int main() {
-    ABC_311_C();
-}
-
-
