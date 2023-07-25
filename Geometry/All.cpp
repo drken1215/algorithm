@@ -1,6 +1,23 @@
 //
 // 幾何ライブラリ (二次元)
 //
+// verify:
+//   AOJ Course CGL_1_C - 反時計回り
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_C&lang=jp
+//
+//   AOJ Course CGL_2_D - 距離
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_D&lang=jp
+//
+//   AOJ Course CGL_4_A - 凸包
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_A&lang=jp
+//
+//   AOJ Course CGL_7_H - 円と多角形の共通部分
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_H&lang=ja
+//
+//   AtCoder ABC 207 D - Congruence Points (Point の複素数としての割り算)
+//     https://atcoder.jp/contests/abc207/tasks/abc207_d
+//
+//
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -10,58 +27,124 @@ using namespace std;
 // 基本要素 (点, 線分, 円)
 /*/////////////////////////////*/
 
-using DD = double;
-const DD INF = 1LL<<60;      // to be set appropriately
-const DD EPS = 1e-10;        // to be set appropriately
-const DD PI = acosl(-1.0);
-DD torad(int deg) {return (DD)(deg) * PI / 180;}
-DD todeg(DD ang) {return ang * 180 / PI;}
+// basic settings
+using DD = long double;
+const long double PI = acosl(-1.0L);
+constexpr long double INF = 1LL<<60;  // to be set appropriately
+constexpr long double EPS = 1e-10;    // to be set appropriately
+long double torad(int deg) {return (long double)(deg) * PI / 180;}
+long double todeg(long double ang) {return ang * 180 / PI;}
 
-/* Point */
+// Point or Vector
 struct Point {
     DD x, y;
-    Point(DD x = 0.0, DD y = 0.0) : x(x), y(y) {}
-    friend ostream& operator << (ostream &s, const Point &p) {return s << '(' << p.x << ", " << p.y << ')';}
-};
-inline Point operator + (const Point &p, const Point &q) {return Point(p.x + q.x, p.y + q.y);}
-inline Point operator - (const Point &p, const Point &q) {return Point(p.x - q.x, p.y - q.y);}
-inline Point operator * (const Point &p, DD a) {return Point(p.x * a, p.y * a);}
-inline Point operator * (DD a, const Point &p) {return Point(a * p.x, a * p.y);}
-inline Point operator * (const Point &p, const Point &q) {return Point(p.x * q.x - p.y * q.y, p.x * q.y + p.y * q.x);}
-inline Point operator / (const Point &p, DD a) {return Point(p.x / a, p.y / a);}
-inline Point conj(const Point &p) {return Point(p.x, -p.y);}
-inline Point rot(const Point &p, DD ang) {return Point(cos(ang) * p.x - sin(ang) * p.y, sin(ang) * p.x + cos(ang) * p.y);}
-inline Point rot90(const Point &p) {return Point(-p.y, p.x);}
-inline DD cross(const Point &p, const Point &q) {return p.x * q.y - p.y * q.x;}
-inline DD dot(const Point &p, const Point &q) {return p.x * q.x + p.y * q.y;}
-inline DD norm(const Point &p) {return dot(p, p);}
-inline DD abs(const Point &p) {return sqrt(dot(p, p));}
-inline DD amp(const Point &p) {DD res = atan2(p.y, p.x); if (res < 0) res += PI*2; return res;}
-inline bool eq(const Point &p, const Point &q) {return abs(p - q) < EPS;}
-inline bool operator < (const Point &p, const Point &q) {return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);}
-inline bool operator > (const Point &p, const Point &q) {return (abs(p.x - q.x) > EPS ? p.x > q.x : p.y > q.y);}
-inline Point operator / (const Point &p, const Point &q) {return p * conj(q) / norm(q);}
+    
+    // constructor
+    constexpr Point() : x(0), y(0) {}
+    constexpr Point(DD x, DD y) : x(x), y(y) {}
+    
+    // various functions
+    constexpr Point conj() const {return Point(x, -y);}
+    constexpr DD dot(const Point &r) const {return x * r.x + y * r.y;}
+    constexpr DD cross(const Point &r) const {return x * r.y - y * r.x;}
+    constexpr DD norm() const {return dot(*this);}
+    constexpr long double abs() const {return sqrt(norm());}
+    constexpr long double amp() const {
+        long double res = atan2(y, x);
+        if (res < 0) res += PI*2;
+        return res;
+    }
+    constexpr bool eq(const Point &r) const {return (*this - r).abs() <= EPS;}
+    constexpr Point rot90() const {return Point(-y, x);}
+    constexpr Point rot(long double ang) const {
+        return Point(cos(ang) * x - sin(ang) * y, sin(ang) * x + cos(ang) * y);
+    }
+    
+    // arithmetic operators
+    constexpr Point operator - () const {return Point(-x, -y);}
+    constexpr Point operator + (const Point &r) const {return Point(*this) += r;}
+    constexpr Point operator - (const Point &r) const {return Point(*this) -= r;}
+    constexpr Point operator * (const Point &r) const {return Point(*this) *= r;}
+    constexpr Point operator / (const Point &r) const {return Point(*this) /= r;}
+    constexpr Point operator * (DD r) const {return Point(*this) *= r;}
+    constexpr Point operator / (DD r) const {return Point(*this) /= r;}
+    constexpr Point& operator += (const Point &r) {
+        x += r.x, y += r.y;
+        return *this;
+    }
+    constexpr Point& operator -= (const Point &r) {
+        x -= r.x, y -= r.y;
+        return *this;
+    }
+    constexpr Point& operator *= (const Point &r) {
+        DD tx = x, ty = y;
+        x = tx * r.x - ty * r.y;
+        y = tx * r.y + ty * r.x;
+        return *this;
+    }
+    constexpr Point& operator /= (const Point &r) {
+        return *this *= r.conj() / r.norm();
+    }
+    constexpr Point& operator *= (DD r) {
+        x *= r, y *= r;
+        return *this;
+    }
+    constexpr Point& operator /= (DD r) {
+        x /= r, y /= r;
+        return *this;
+    }
 
-/* Line */
+    // friend functions
+    friend ostream& operator << (ostream &s, const Point &p) {
+        return s << '(' << p.x << ", " << p.y << ')';
+    }
+    friend constexpr Point conj(const Point &p) {return p.conj();}
+    friend constexpr DD dot(const Point &p, const Point &q) {return p.dot(q);}
+    friend constexpr DD cross(const Point &p, const Point &q) {return p.cross(q);}
+    friend constexpr DD norm(const Point &p) {return p.norm();}
+    friend constexpr long double abs(const Point &p) {return p.abs();}
+    friend constexpr long double amp(const Point &p) {return p.amp();}
+    friend constexpr bool eq(const Point &p, const Point &q) {return p.eq(q);}
+    friend constexpr Point rot90(const Point &p) {return p.rot90();}
+    friend constexpr Point rot(const Point &p, long long ang) {return p.rot(ang);}
+};
+
+// necessary for some functions
+constexpr bool operator < (const Point &p, const Point &q) {
+    return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
+}
+
+// Line
 struct Line : vector<Point> {
     Line(Point a = Point(0.0, 0.0), Point b = Point(0.0, 0.0)) {
         this->push_back(a);
         this->push_back(b);
     }
-    friend ostream& operator << (ostream &s, const Line &l) {return s << '{' << l[0] << ", " << l[1] << '}';}
+    friend ostream& operator << (ostream &s, const Line &l) {
+        return s << '{' << l[0] << ", " << l[1] << '}';
+    }
 };
 
-/* Circle */
+// Circle
 struct Circle : Point {
     DD r;
     Circle(Point p = Point(0.0, 0.0), DD r = 0.0) : Point(p), r(r) {}
-    friend ostream& operator << (ostream &s, const Circle &c) {return s << '(' << c.x << ", " << c.y << ", " << c.r << ')';}
+    friend ostream& operator << (ostream &s, const Circle &c) {
+        return s << '(' << c.x << ", " << c.y << ", " << c.r << ')';
+    }
 };
 
 
 /*/////////////////////////////*/
 // 点や線分の位置関係
 /*/////////////////////////////*/
+
+// 偏角ソート
+void amp_sort(vector<Point> &v) {
+    sort(v.begin(), v.end(), [&](Point p, Point q) {
+        return (abs(amp(p) - amp(q)) > EPS ? amp(p) < amp(q) : norm(p) < norm(q));
+    });
+}
 
 // 粗
 // 1：a-bから見てcは左側(反時計回り)、-1：a-bから見てcは右側(時計回り)、0：一直線上
@@ -238,7 +321,10 @@ bool is_convex(vector<Point> &ps) {
 vector<Point> convex_hull(vector<Point> &ps) {
     int n = (int)ps.size();
     vector<Point> res(2*n);
-    sort(ps.begin(), ps.end());
+    auto cmp = [&](Point p, Point q) -> bool {
+        return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
+    };
+    sort(ps.begin(), ps.end(), cmp);
     int k = 0;
     for (int i = 0; i < n; ++i) {
         if (k >= 2) {
@@ -267,7 +353,10 @@ vector<Point> convex_hull(vector<Point> &ps) {
 vector<Point> convex_hull_colinear(vector<Point> &ps) {
     int n = (int)ps.size();
     vector<Point> res(2*n);
-    sort(ps.begin(), ps.end());
+    auto cmp = [&](Point p, Point q) -> bool {
+        return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
+    };
+    sort(ps.begin(), ps.end(), cmp);
     int k = 0;
     for (int i = 0; i < n; ++i) {
         if (k >= 2) {
@@ -292,7 +381,7 @@ vector<Point> convex_hull_colinear(vector<Point> &ps) {
     return res;
 }
 
-// convex cut
+// Convex Cut
 int ccw_for_convexcut(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
     if (cross(b-a, c-a) < -EPS) return -1;
@@ -325,7 +414,7 @@ vector<Point> convex_cut(const vector<Point> &pol, const Line &l) {
     return res;
 }
 
-// Voronoi-diagram
+// Voronoi Diagram
 // pol: outer polygon, ps: points
 // find the polygon nearest to ps[ind]
 Line bisector(const Point &p, const Point &q) {
@@ -341,6 +430,91 @@ vector<Point> voronoi(const vector<Point> &pol, const vector<Point> &ps, int ind
         if (i == ind) continue;
         Line l = bisector(ps[ind], ps[i]);
         res = convex_cut(res, l);
+    }
+    return res;
+}
+
+
+/*/////////////////////////////*/
+// 面積アルゴリズム
+/*/////////////////////////////*/
+
+// 円と円の共通部分の面積
+DD calc(const Circle &p, const Circle &q) {
+    DD d = abs(p - q);
+    if (d >= p.r + q.r - EPS) return 0;
+    else if (d <= abs(p.r - q.r) + EPS) return min(p.r, q.r) * min(p.r, q.r) * PI;
+    DD pcos = (p.r*p.r + d*d - q.r*q.r) / (p.r*d*2);
+    DD pang = acosl(pcos);
+    DD parea = p.r*p.r*pang - p.r*p.r*sin(pang*2)/2;
+    DD qcos = (q.r*q.r + d*d - p.r*p.r) / (q.r*d*2);
+    DD qang = acosl(qcos);
+    DD qarea = q.r*q.r*qang - q.r*q.r*sin(qang*2)/2;
+    return parea + qarea;
+}
+
+// 交点
+int ccw_for_crosspoint_CS(const Point &a, const Point &b, const Point &c) {
+    if (cross(b-a, c-a) > EPS) return 1;
+    if (cross(b-a, c-a) < -EPS) return -1;
+    if (dot(b-a, c-a) < -EPS) return 2;
+    if (norm(b-a) < norm(c-a) - EPS) return -2;
+    return 0;
+}
+bool isinterPS_crosspoint_CS(const Point &p, const Line &s) {
+    return (ccw_for_crosspoint_CS(s[0], s[1], p) == 0);
+}
+Point proj_for_crosspoint_CS(const Point &p, const Line &l) {
+    DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
+    return l[0] + (l[1] - l[0]) * t;
+}
+vector<Point> crosspoint_CS(const Circle &e, const Line &s) {
+    vector<Point> res;
+    Point p = proj_for_crosspoint_CS(e, s);
+    DD rcos = abs(e - p), rsin;
+    if (rcos > e.r + EPS) return vector<Point>();
+    else if (e.r - rcos < EPS) rsin = 0;
+    else rsin = sqrt(e.r * e.r - rcos * rcos);
+    Point dir = (s[1] - s[0]) / abs(s[1] - s[0]);
+    Point p1 = p - dir * rsin;
+    Point p2 = p + dir * rsin;
+    if (isinterPS_crosspoint_CS(p1, s)) res.push_back(p1);
+    if (isinterPS_crosspoint_CS(p2, s) && !eq(p1, p2)) res.push_back(p2);
+    return res;
+}
+
+// 原点, 点 x, 点 y とで囲まれる領域の面積 (三角形 ver と扇型 ver)
+DD calc_element(const Point &x, const Point &y, DD r, bool triangle) {
+    if (triangle) return cross(x, y) / 2;
+    else {
+        Point tmp = y * Point(x.x, -x.y);
+        DD ang = atan2(tmp.y, tmp.x);
+        return r * r * ang / 2;
+    }
+}
+
+// 円 C と、三角形 ((0, 0), ia, ib) との共通部分の面積
+DD calc_common_area(const Circle &c, const Point &ia, const Point &ib) {
+    Point a = ia - c, b = ib - c;
+    if (abs(a - b) < EPS) return 0;
+    bool isin_a = (abs(a) < c.r + EPS);
+    bool isin_b = (abs(b) < c.r + EPS);
+    if (isin_a && isin_b) return calc_element(a, b, c.r, true);
+    Circle oc(Point(0, 0), c.r);
+    Line seg(a, b);
+    auto cr = crosspoint_CS(oc, seg);
+    if (cr.empty()) return calc_element(a, b, c.r, false);
+    auto s = cr[0], t = cr.back();
+    return calc_element(s, t, c.r, true)
+        + calc_element(a, s, c.r, isin_a) + calc_element(t, b, c.r, isin_b);
+}
+
+// 円 c と多角形 pol の共通部分の面積
+DD calc_common_area(const Circle &c, const vector<Point> &pol) {
+    DD res = 0;
+    int N = pol.size();
+    for (int i = 0; i < N; ++i) {
+        res += calc_common_area(c, pol[i], pol[(i+1)%N]);
     }
     return res;
 }
@@ -444,7 +618,10 @@ DD DivideAndConqur(vector<Point>::iterator it, int n) {
 }
 DD Closet(vector<Point> ps) {
     int n = (int)ps.size();
-    sort(ps.begin(), ps.end());
+    auto cmp = [&](Point p, Point q) -> bool {
+        return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
+    };
+    sort(ps.begin(), ps.end(), cmp);
     return DivideAndConqur(ps.begin(), n);
 }
 
@@ -463,8 +640,119 @@ Circle Apporonius(const Point &p, const Point &q, DD a, DD b) {
 // solvers
 /*/////////////////////////////*/
 
-int main() {
-    
+// AOJ CGL_1_C - 反時計回り
+void CGL_1_C() {
+    Point a, b, c;
+    cin >> a.x >> a.y >> b.x >> b.y;
+    int N; cin >> N;
+    for (int _ = 0; _ < N; ++_) {
+        cin >> c.x >> c.y;
+        int type = ccw(a, b, c);
+        switch (type) {
+            case 1: {cout << "COUNTER_CLOCKWISE" << endl; continue; }
+            case -1: {cout << "CLOCKWISE" << endl; continue; }
+            case 2: {cout << "ONLINE_BACK" << endl; continue; }
+            case -2: {cout << "ONLINE_FRONT" << endl; continue; }
+            case 0: {cout << "ON_SEGMENT" << endl; continue; }
+        }
+    }
 }
 
+// AOJ CGL_2_D - 距離
+void CGL_2_D() {
+    int Q;
+    cin >> Q;
+    for (int _ = 0; _ < Q; ++_) {
+        Point x1, y1, x2, y2;
+        cin >> x1.x >> x1.y >> y1.x >> y1.y >> x2.x >> x2.y >> y2.x >> y2.y;
+        Line s(x1, y1), t(x2, y2);
+        cout << fixed << setprecision(10) << distance_SS(s, t) << endl;
+    }
+}
+
+// AOJ CGL_4_A - 凸包
+void CGL_4_A() {
+    int n;
+    cin >> n;
+    vector<Point> ps(n);
+    for (int i = 0; i < n; ++i) cin >> ps[i].x >> ps[i].y;
+    const auto &pol = convex_hull_colinear(ps);
+    auto cmp = [&](Point p, Point q) -> bool {
+        return (abs(p.y - q.y) > EPS ? p.y < q.y : p.x < q.x);
+    };
+    Point minv = pol[0];
+    int minp = 0;
+    for (int i = 0; i < (int)pol.size(); ++i) {
+        if (cmp(pol[i], minv)) minv = pol[i], minp = i;
+    }
+    cout << pol.size() << endl;
+    for (int i = 0; i < (int)pol.size(); ++i) {
+        int j = (i + minp) % pol.size();
+        cout << fixed << setprecision(0) << pol[j].x << " " << pol[j].y << endl;
+    }
+}
+
+// AOJ CGL_7_H - 円と多角形の共通部分
+void CGL_7_H() {
+    int N;
+    DD r;
+    cin >> N >> r;
+    Circle c(Point(0, 0), r);
+    vector<Point> pol(N);
+    for (int i = 0; i < N; ++i) cin >> pol[i].x >> pol[i].y;
+    cout << fixed << setprecision(10) << calc_common_area(c, pol) << endl;
+}
+
+// ABC 207 D - Congruence Points (割り算の verify)
+void ABC_207_D() {
+    int N;
+    cin >> N;
+    vector<Point> s(N), t(N);
+    for (int i = 0; i < N; ++i) cin >> s[i].x >> s[i].y;
+    for (int i = 0; i < N; ++i) cin >> t[i].x >> t[i].y;
+    
+    // 例外処理
+    if (N == 1) {
+        cout << "Yes" << endl;
+        return;
+    }
+
+    // s[0] と t[x] が対応するとする
+    bool res = false;
+    for (int x = 0; x < N; ++x) {
+        // 平行移動させて、s[0] と t[x] が原点に来るようにする
+        vector<Point> s2(N), t2(N);
+        for (int i = 0; i < N; ++i) s2[i] = s[i] - s[0], t2[i] = t[i] - t[x];
+        
+        // もう 1 点固定する
+        for (int y = 0; y < N; ++y) {
+            if (x == y) continue;
+            if (abs(abs(t2[y]) - abs(s2[1])) > EPS) continue;
+            
+            // S の各点を回転させる
+            vector<Point> s3(N), t3(N);
+            Point kaiten = t2[y] / s2[1];
+            for (int i = 0; i < N; ++i) {
+                s3[i] = s2[i] * kaiten;
+                t3[i] = t2[i];
+            }
+            
+            // s3 と t3 が一致するかを判定する
+            bool same = true;
+            sort(s3.begin(), s3.end());
+            sort(t3.begin(), t3.end());
+            for (int i = 0; i < N; ++i) if (!eq(s3[i], t3[i])) same = false;
+            if (same) res = true;
+        }
+    }
+    cout << (res ? "Yes" : "No") << endl;
+}
+
+int main() {
+    //CGL_1_C();
+    //CGL_2_D();
+    //CGL_4_A();
+    //CGL_7_H();
+    ABC_207_D();
+}
 

@@ -453,6 +453,11 @@
 - [円と円の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_circles.cpp)
 - [円と線分の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_segment_circle.cpp)
 
+### 接線
+
+- [接線](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
+- [共通接線 (2 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/common_tanline.cpp)
+
 ### 多角形
 
 - [多角形の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_polygon.cpp)
@@ -464,11 +469,6 @@
 - [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
 - [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
 - [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
-
-### 接線
-
-- [接線](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
-- [共通接線 (2 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/common_tanline.cpp)
 
 ### 三次元幾何
 
