@@ -20,7 +20,6 @@
 //   AtCoder ABC 207 D - Congruence Points (Point の複素数としての割り算)
 //     https://atcoder.jp/contests/abc207/tasks/abc207_d
 //
-//
 
 #include <bits/stdc++.h>
 using namespace std;
