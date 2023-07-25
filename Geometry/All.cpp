@@ -31,7 +31,7 @@ using namespace std;
 
 // basic settings
 using DD = long double;
-const long double PI = acosl(-1.0L);
+constexpr long double PI = 3.141592653589793238462643383279502884L;
 constexpr long double INF = 1LL<<60;  // to be set appropriately
 constexpr long double EPS = 1e-10;    // to be set appropriately
 long double torad(int deg) {return (long double)(deg) * PI / 180;}
@@ -512,7 +512,7 @@ vector<Point> voronoi(const vector<Point> &pol, const vector<Point> &ps, int ind
 /*/////////////////////////////*/
 
 // 円と円の共通部分の面積
-DD calc(const Circle &p, const Circle &q) {
+DD calc_common_area(const Circle &p, const Circle &q) {
     DD d = abs(p - q);
     if (d >= p.r + q.r - EPS) return 0;
     else if (d <= abs(p.r - q.r) + EPS) return min(p.r, q.r) * min(p.r, q.r) * PI;

@@ -56,9 +56,8 @@ template<class Str> struct SuffixArray {
     SparseTable<int> st;  // use for calcultating lcp(i, j)
 
     // getter
-    int& operator [] (int i) {
-        return sa[i];
-    }
+    int& operator [] (int i) { return sa[i]; }
+    const int& operator [] (int i) const { return sa[i]; }
     vector<int> get_sa() { return sa; }
     vector<int> get_rank() { return rank; }
     vector<int> get_lcp() { return lcp; }
@@ -97,7 +96,7 @@ template<class Str> struct SuffixArray {
 
     // SA-IS
     // upper: # of characters
-    vector<int> sa_is(vector<int> &s, int num_of_chars = 256) {
+    vector<int> sa_is(vector<int> &s, int num_of_chars) {
         int N = (int)s.size();
         if (N == 0) return {};
         else if (N == 1) return {0};
@@ -371,92 +370,71 @@ void AOJ_2644() {
 }
 
 // ABC 207 D - Congruence Points
-// Point
-using DD = long long;
-constexpr long double EPS = 1e-10;   // to be set appropriately
-const long double PI = acosl(-1.0L);
-
-struct Point {
-    DD x, y;
-    
-    // constructor
-    constexpr Point() : x(0), y(0) {}
-    constexpr Point(DD x, DD y) : x(x), y(y) {}
-    
-    // various functions
-    constexpr Point conj() const {return Point(x, -y);}
-    constexpr DD dot(const Point &r) const {return x * r.x + y * r.y;}
-    constexpr DD cross(const Point &r) const {return x * r.y - y * r.x;}
-    constexpr DD norm() const {return dot(*this);}
-    constexpr long double abs() const {return sqrt(norm());}
-    constexpr long double amp() const {
-        long double res = atan2(y, x);
-        if (res < 0) res += PI*2;
-        return res;
-    }
-    constexpr bool eq(const Point &r) const {return (*this - r).abs() <= EPS;}
-    constexpr Point rot90() const {return Point(-y, x);}
-    constexpr Point rot(long double ang) const {
-        return Point(cos(ang) * x - sin(ang) * y, sin(ang) * x + cos(ang) * y);
-    }
-    
-    // arithmetic operators
-    constexpr Point operator - () const {return Point(-x, -y);}
-    constexpr Point operator + (const Point &r) const {return Point(*this) += r;}
-    constexpr Point operator - (const Point &r) const {return Point(*this) -= r;}
-    constexpr Point operator * (const Point &r) const {return Point(*this) *= r;}
-    constexpr Point operator / (const Point &r) const {return Point(*this) /= r;}
-    constexpr Point operator * (DD r) const {return Point(*this) *= r;}
-    constexpr Point operator / (DD r) const {return Point(*this) /= r;}
-    constexpr Point& operator += (const Point &r) {
-        x += r.x, y += r.y;
-        return *this;
-    }
-    constexpr Point& operator -= (const Point &r) {
-        x -= r.x, y -= r.y;
-        return *this;
-    }
-    constexpr Point& operator *= (const Point &r) {
-        DD tx = x, ty = y;
-        x = tx * r.x - ty * r.y;
-        y = tx * r.y + ty * r.x;
-        return *this;
-    }
-    constexpr Point& operator /= (const Point &r) {
-        return *this *= r.conj() / r.norm();
-    }
-    constexpr Point& operator *= (DD r) {
-        x *= r, y *= r;
-        return *this;
-    }
-    constexpr Point& operator /= (DD r) {
-        x /= r, y /= r;
-        return *this;
-    }
-    
-    // comparison operators
-    constexpr bool operator == (const Point &r) const {return eq(r);}
-    constexpr bool operator != (const Point &r) const {return !eq(r);}
-    constexpr bool operator < (const Point &r) const {
-        return (::abs(x - r.x) > EPS ? x < r.x : y < r.y);
-    }
-    
-    // friend functions
-    friend ostream& operator << (ostream &s, const Point &p) {
-        return s << '(' << p.x << ", " << p.y << ')';
-    }
-    friend constexpr Point conj(const Point &p) {return p.conj();}
-    friend constexpr DD dot(const Point &p, const Point &q) {return p.dot(q);}
-    friend constexpr DD cross(const Point &p, const Point &q) {return p.cross(q);}
-    friend constexpr DD norm(const Point &p) {return p.norm();}
-    friend constexpr long double abs(const Point &p) {return p.abs();}
-    friend constexpr long double amp(const Point &p) {return p.amp();}
-    friend constexpr bool eq(const Point &p, const Point &q) {return p.eq(q);}
-    friend constexpr Point rot90(const Point &p) {return p.rot90();}
-    friend constexpr Point rot(const Point &p, long long ang) {return p.rot(ang);}
-};
-
 void ABC_207_D() {
+    using DD = long long;
+    constexpr long double EPS = 1e-10;   // to be set appropriately
+    constexpr long double PI = 3.141592653589793238462643383279502884L;
+    
+    // Point or Vector
+    struct Point {
+        DD x, y;
+        
+        // constructor
+        constexpr Point() : x(0), y(0) {}
+        constexpr Point(DD x, DD y) : x(x), y(y) {}
+        
+        // various functions
+        constexpr Point conj() const {return Point(x, -y);}
+        constexpr DD dot(const Point &r) const {return x * r.x + y * r.y;}
+        constexpr DD cross(const Point &r) const {return x * r.y - y * r.x;}
+        constexpr DD norm() const {return dot(*this);}
+        constexpr long double abs() const {return sqrt(norm());}
+        constexpr long double amp() const {
+            long double res = atan2(y, x);
+            if (res < 0) res += PI*2;
+            return res;
+        }
+        constexpr bool eq(const Point &r) const {return (*this - r).abs() <= EPS;}
+        constexpr Point rot90() const {return Point(-y, x);}
+        constexpr Point rot(long double ang) const {
+            return Point(cos(ang) * x - sin(ang) * y, sin(ang) * x + cos(ang) * y);
+        }
+        
+        // arithmetic operators
+        constexpr Point operator - () const {return Point(-x, -y);}
+        constexpr Point operator + (const Point &r) const {return Point(*this) += r;}
+        constexpr Point operator - (const Point &r) const {return Point(*this) -= r;}
+        constexpr Point operator * (const Point &r) const {return Point(*this) *= r;}
+        constexpr Point operator / (const Point &r) const {return Point(*this) /= r;}
+        constexpr Point operator * (DD r) const {return Point(*this) *= r;}
+        constexpr Point operator / (DD r) const {return Point(*this) /= r;}
+        constexpr Point& operator += (const Point &r) {
+            x += r.x, y += r.y;
+            return *this;
+        }
+        constexpr Point& operator -= (const Point &r) {
+            x -= r.x, y -= r.y;
+            return *this;
+        }
+        constexpr Point& operator *= (const Point &r) {
+            DD tx = x, ty = y;
+            x = tx * r.x - ty * r.y;
+            y = tx * r.y + ty * r.x;
+            return *this;
+        }
+        constexpr Point& operator /= (const Point &r) {
+            return *this *= r.conj() / r.norm();
+        }
+        constexpr Point& operator *= (DD r) {
+            x *= r, y *= r;
+            return *this;
+        }
+        constexpr Point& operator /= (DD r) {
+            x /= r, y /= r;
+            return *this;
+        }
+    };
+    
     // 入力受け取り
     int N;
     cin >> N;
@@ -476,8 +454,8 @@ void ABC_207_D() {
     // ただし、重心に一致する点が存在する場合は除去しておく。
     vector<Point> s2, t2;
     for (int i = 0; i < N; ++i) {
-        if (s[i] != gs) s2.push_back(s[i] - gs);
-        if (t[i] != gt) t2.push_back(t[i] - gt);
+        if (!s[i].eq(gs)) s2.push_back(s[i] - gs);
+        if (!t[i].eq(gt)) t2.push_back(t[i] - gt);
     }
     if (s2.size() != t2.size()) {
         cout << "No" << endl;
@@ -486,8 +464,8 @@ void ABC_207_D() {
     
     // 偏角ソート
     auto amp_sort = [](vector<Point> &v) -> void {
-        sort(v.begin(), v.end(), [&](Point p, Point q) {
-            return (abs(amp(p) - amp(q)) > EPS ? amp(p) < amp(q) : norm(p) < norm(q));
+        sort(v.begin(), v.end(), [&](const Point &p, const Point &q) {
+            return (abs(p.amp() - q.amp()) > EPS ? p.amp() < q.amp() : p.norm() < q.norm());
         });
     };
     amp_sort(s2), amp_sort(t2);
@@ -495,14 +473,14 @@ void ABC_207_D() {
     // ベクトルを作る (S 側と T 側を連結させてしまう)
     vector<long long> v;
     for (int i = 0; i < (int)s2.size(); ++i) {
-        v.push_back(norm(s2[i]));
-        v.push_back(dot(s2[i], s2[(i+1)%s2.size()]));
-        v.push_back(cross(s2[i], s2[(i+1)%s2.size()]));
+        v.push_back(s2[i].norm());
+        v.push_back(s2[i].dot(s2[(i+1) % s2.size()]));
+        v.push_back(s2[i].cross(s2[(i+1) % s2.size()]));
     }
-    for (int i = 0; i < (int)s2.size(); ++i) {
-        v.push_back(norm(t2[i]));
-        v.push_back(dot(t2[i], t2[(i+1)%t2.size()]));
-        v.push_back(cross(t2[i], t2[(i+1)%t2.size()]));
+    for (int i = 0; i < (int)t2.size(); ++i) {
+        v.push_back(t2[i].norm());
+        v.push_back(t2[i].dot(t2[(i+1) % t2.size()]));
+        v.push_back(t2[i].cross(t2[(i+1) % t2.size()]));
     }
     
     // Suffix Array を構築して、3 の倍数シフトを試す
