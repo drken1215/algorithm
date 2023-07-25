@@ -11,6 +11,9 @@
 //   AOJ Course CGL_4_A - 凸包
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_A&lang=jp
 //
+//   AOJ Course CGL_7_G - 円の共通接線
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_G&lang=ja
+//
 //   AOJ Course CGL_7_H - 円と多角形の共通部分
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_H&lang=ja
 //
@@ -275,6 +278,76 @@ vector<Point> crosspoint(const Circle &e, const Line &l) {
 
 
 /*/////////////////////////////*/
+// 接線
+/*/////////////////////////////*/
+
+// tanline
+vector<Point> tanline(const Point &p, const Circle &c) {
+    vector<Point> res;
+    DD d = norm(p - c);
+    DD l = d - c.r * c.r;
+    if (l < -EPS) return res;
+    if (l <= 0.0) l = 0.0;
+    Point cq = (p - c) * (c.r * c.r / d);
+    Point qs = rot90((p - c) * (c.r * sqrt(l) / d));
+    Point s1 = c + cq + qs, s2 = c + cq - qs;
+    res.push_back(s1);
+    res.push_back(s2);
+    return res;
+}
+
+// common tanline, a and b must be different!
+// Line[0] is tangent point in a
+vector<Line> com_tanline(Circle a, Circle b) {
+    vector<Line> res;
+    // intersect
+    if (abs(a - b) > abs(a.r - b.r) + EPS) {
+        if (abs(a.r - b.r) < EPS) {
+            Point dir = b - a;
+            dir = rot90(dir * (a.r / abs(dir)));
+            res.push_back(Line(a + dir, b + dir));
+            res.push_back(Line(a - dir, b - dir));
+        }
+        else {
+            Point p = a * -b.r + b * a.r;
+            p = p * (1.0 / (a.r - b.r));
+            vector<Point> bs = tanline(p, a);
+            vector<Point> as = tanline(p, b);
+            for (int i = 0; i < min(as.size(), bs.size()); ++i) {
+                res.push_back(Line(bs[i], as[i]));
+            }
+        }
+    }
+    // inscribed
+    else if (abs(abs(a - b) - abs(a.r - b.r)) <= EPS) {
+        Point dir = b - a;
+        if (a.r > b.r) dir = dir * (a.r / abs(dir));
+        else dir = dir * (-a.r / abs(dir));
+        Point p = a + dir;
+        res.push_back(Line(p, p + rot90(dir)));
+    }
+    // disjoint
+    if (abs(a - b) > a.r + b.r + EPS) {
+        Point p = a * b.r + b * a.r;
+        p = p * (1.0 / (a.r + b.r));
+        vector<Point> bs = tanline(p, a);
+        vector<Point> as = tanline(p, b);
+        for (int i = 0; i < min(as.size(), bs.size()); ++i) {
+            res.push_back(Line(bs[i], as[i]));
+        }
+    }
+    // circumscribed
+    else if (abs(abs(a - b) - (a.r + b.r)) <= EPS) {
+        Point dir = b - a;
+        dir = dir * (a.r / abs(dir));
+        Point p = a + dir;
+        res.push_back(Line(p, p + rot90(dir)));
+    }
+    return res;
+}
+
+
+/*/////////////////////////////*/
 // 多角形アルゴリズム
 /*/////////////////////////////*/
 
@@ -521,76 +594,6 @@ DD calc_common_area(const Circle &c, const vector<Point> &pol) {
 
 
 /*/////////////////////////////*/
-// 接線
-/*/////////////////////////////*/
-
-// tanline
-vector<Point> tanline(const Point &p, const Circle &c) {
-    vector<Point> res;
-    DD d = norm(p - c);
-    DD l = d - c.r * c.r;
-    if (l < -EPS) return res;
-    if (l <= 0.0) l = 0.0;
-    Point cq = (p - c) * (c.r * c.r / d);
-    Point qs = rot90((p - c) * (c.r * sqrt(l) / d));
-    Point s1 = c + cq + qs, s2 = c + cq - qs;
-    res.push_back(s1);
-    res.push_back(s2);
-    return res;
-}
-
-// common tanline, a and b must be different!
-// Line[0] is tangent point in a
-vector<Line> comtanline(Circle a, Circle b) {
-    vector<Line> res;
-    // intersect
-    if (abs(a - b) > abs(a.r - b.r) + EPS) {
-        if (abs(a.r - b.r) < EPS) {
-            Point dir = b - a;
-            dir = rot90(dir * (a.r / abs(dir)));
-            res.push_back(Line(a + dir, b + dir));
-            res.push_back(Line(a - dir, b - dir));
-        }
-        else {
-            Point p = a * -b.r + b * a.r;
-            p = p * (1.0 / (a.r - b.r));
-            vector<Point> bs = tanline(p, a);
-            vector<Point> as = tanline(p, b);
-            for (int i = 0; i < min(as.size(), bs.size()); ++i) {
-                res.push_back(Line(bs[i], as[i]));
-            }
-        }
-    }
-    // inscribed
-    else if (abs(abs(a - b) - abs(a.r - b.r)) <= EPS) {
-        Point dir = b - a;
-        if (a.r > b.r) dir = dir * (a.r / abs(dir));
-        else dir = dir * (-a.r / abs(dir));
-        Point p = a + dir;
-        res.push_back(Line(p, p + rot90(dir)));
-    }
-    // disjoint
-    if (abs(a - b) > a.r + b.r + EPS) {
-        Point p = a * b.r + b * a.r;
-        p = p * (1.0 / (a.r + b.r));
-        vector<Point> bs = tanline(p, a);
-        vector<Point> as = tanline(p, b);
-        for (int i = 0; i < min(as.size(), bs.size()); ++i) {
-            res.push_back(Line(bs[i], as[i]));
-        }
-    }
-    // circumscribed
-    else if (abs(abs(a - b) - (a.r + b.r)) <= EPS) {
-        Point dir = b - a;
-        dir = dir * (a.r / abs(dir));
-        Point p = a + dir;
-        res.push_back(Line(p, p + rot90(dir)));
-    }
-    return res;
-}
-
-
-/*/////////////////////////////*/
 // その他
 /*/////////////////////////////*/
 
@@ -692,6 +695,19 @@ void CGL_4_A() {
     }
 }
 
+// AOJ CGL_7_G - 共通接線
+void CGL_7_G() {
+    Circle p, q;
+    cin >> p.x >> p.y >> p.r >> q.x >> q.y >> q.r;
+    auto l = com_tanline(p, q);
+    vector<Point> res;
+    for (int i = 0; i < l.size(); ++i) res.push_back(l[i][0]);
+    sort(res.begin(), res.end());
+    for (int i = 0; i < res.size(); ++i) {
+        cout << fixed << setprecision(10) << res[i].x << " " << res[i].y << endl;
+    }
+}
+
 // AOJ CGL_7_H - 円と多角形の共通部分
 void CGL_7_H() {
     int N;
@@ -752,7 +768,10 @@ int main() {
     //CGL_1_C();
     //CGL_2_D();
     //CGL_4_A();
+    CGL_7_G();
     //CGL_7_H();
-    ABC_207_D();
+    //ABC_207_D();
 }
+
+
 

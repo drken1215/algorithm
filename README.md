@@ -1,5 +1,4 @@
 # 様々なアルゴリズムの実装例
-# 様々なアルゴリズムの実装例
 データ構造や数論的アルゴリズムまで、様々な分野のアルゴリズムたちを C++17 で実装しています。  
 アルゴリズム系の研究開発において計算機実験が必要になる場面や、
 プログラミングコンテストに参加する場面などを想定して、
@@ -431,6 +430,8 @@
 <a name="ge"></a>
 # Geometry
 幾何ライブラリです
+
+### 全般
 
 - [全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
 - [基本要素 (点, 線分, 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements.cpp)
