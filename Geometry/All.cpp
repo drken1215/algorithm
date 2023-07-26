@@ -639,7 +639,7 @@ Circle Apporonius(const Point &p, const Point &q, DD a, DD b) {
 
 
 /*/////////////////////////////*/
-// solvers
+// Examples
 /*/////////////////////////////*/
 
 // AOJ CGL_1_C - 反時計回り
