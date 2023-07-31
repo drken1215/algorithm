@@ -98,7 +98,7 @@
 
 - [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
 - [分割数 P(n, k) (O(nk))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
-- 分割数 P(n)
+- [分割数 P(n)]((https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
 - スターリング数
 - ベル数
 - カタラン数
