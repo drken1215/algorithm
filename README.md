@@ -97,11 +97,11 @@
 ### 様々な数
 
 - [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
-- [分割数 P(n, k) (O(nk))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
-- [分割数 P(n)]((https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
+- [分割数 P(N, K) (O(NK))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
+- [分割数 P(N) (O(N√N))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
 - スターリング数
 - ベル数
-- カタラン数
+- [カタラン数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/catalan_number.cpp)
 - ベルヌーイ数
 - モンモール数
 
