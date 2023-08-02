@@ -16,6 +16,9 @@
 //   ABC 207 D - Congruence Points (verify Suffix Array for vector<int> data)
 //     https://atcoder.jp/contests/abc207/tasks/abc207_d
 //
+//   SRM 402 DIV1 Hard - IncreasingSequence (verify lower_bound(l, r))
+//     https://community.topcoder.com/stat?c=problem_statement&pm=8504&rd=12174
+//
 
 
 #include <bits/stdc++.h>
@@ -95,7 +98,7 @@ template<class Str> struct SuffixArray {
     }
 
     // SA-IS
-    // upper: # of characters
+    // num_of_chars: # of characters
     vector<int> sa_is(vector<int> &s, int num_of_chars) {
         int N = (int)s.size();
         if (N == 0) return {};
@@ -218,6 +221,17 @@ template<class Str> struct SuffixArray {
                 left = mid;
             else
                 right = mid;
+        }
+        return right;
+    }
+    
+    // find min id that sa[id] >= str.substr(l, r-l)
+    int lower_bound(int l, int r) {
+        int left = -1, right = rank[l];
+        while (right - left > 1) {
+            int mid = (left + right) / 2;
+            if (st.get(mid, rank[l]) < r - l) left = mid;
+            else right = mid;
         }
         return right;
     }
