@@ -16,7 +16,7 @@
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2891
 //
 //   ABC 256 E - Takahashi's Anguish
-//    https://atcoder.jp/contests/abc256/tasks/abc256_e
+//     https://atcoder.jp/contests/abc256/tasks/abc256_e
 //
 
 
@@ -43,13 +43,11 @@ template<class T> struct Graph {
     void init(int n = 0) {
         list.assign(n, vector<Edge<T>>());
     }
-    inline const vector<Edge<T>> &operator [] (int i) { return list[i]; }
-    inline const vector<Edge<T>> &redges(int i) { return reversed_list[i]; }
-    inline const size_t size() const { return list.size(); }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    const size_t size() const { return list.size(); }
         
     void add_edge(int from, int to, T val = -1) {
         list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
     }
     
     void add_bidirected_edge(int from, int to, T val = -1) {
@@ -60,7 +58,9 @@ template<class T> struct Graph {
     friend ostream &operator << (ostream &s, const Graph &G) {
         s << endl;
         for (int i = 0; i < G.size(); ++i) {
-            s << i << ": " << G.list[i] << endl;
+            s << i << " -> ";
+            for (const auto &e : G[i]) s << e.to << " ";
+            s << endl;
         }
         return s;
     }
@@ -161,6 +161,8 @@ void YosupoCycleDetectionDirected() {
         G.add_edge(u, v, i);
     }
     
+    //cout << G << endl;
+    
     // cycle detection
     CycleDetection<int> cd(G);
     
@@ -221,7 +223,7 @@ void YosupoCycleDetectionUndirected() {
     }
 }
 
-void AOJ2891() {
+void AOJ_2891() {
     // 頂点数 (サイクルを一つ含むグラフなので辺数は N で確定)
     int N;
     cin >> N;
@@ -253,7 +255,7 @@ void AOJ2891() {
     }
 }
 
-void ABC256_E() {
+void ABC_256_E() {
     int N;
     cin >> N;
     Graph<long long> G(N);
@@ -280,11 +282,9 @@ int main() {
     cin.tie(nullptr);
     ios::sync_with_stdio(false);
     
-    //YosupoCycleDetectionDirected();
-    YosupoCycleDetectionUndirected();
-    //AOJ2891();
-    //ABC256_E();
+    YosupoCycleDetectionDirected();
+    //YosupoCycleDetectionUndirected();
+    //AOJ_2891();
+    //ABC_256_E();
 }
-
-
 

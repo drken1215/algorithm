@@ -2,8 +2,8 @@
 // 強連結成分分解
 //
 // verified:
-//   AOJ Course GRL_3_C: Strongly Connected Components
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_3_C&lang=ja
+//   Yosupo Judge - Strongly Connected Components
+//     https://judge.yosupo.jp/problem/scc
 //
 
 
