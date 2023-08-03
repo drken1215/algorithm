@@ -138,7 +138,12 @@ struct TwoSATSolver : SCC {
 };
 
 
-int main() {
+
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
+
+void ACL_Practice_H() {
     int N, D;
     cin >> N >> D;
     vector<int> X(N), Y(N);
@@ -168,3 +173,10 @@ int main() {
         }
     }
 }
+
+
+int main() {
+    ACL_Practice_H();
+}
+
+
