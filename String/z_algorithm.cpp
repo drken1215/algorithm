@@ -1,17 +1,17 @@
 //
 // Z-algorithm
-//   res[i] := S[i:] ¤È S[0: ] ¤È¤ÎºÇÄ¹¶¦ÄÌÉôÊ¬Îó¤ÎÄ¹¤µ
+//   res[i] := S[i:] ã¨ S[0: ] ã¨ã®æœ€é•·å…±é€šéƒ¨åˆ†åˆ—ã®é•·ã•
 //
 // verified:
-//   ARC 060 F - ºÇÎÉÉ½¸½
+//   AtCoder ARC 055 C - ABCAC
+//     https://atcoder.jp/contests/arc055/tasks/arc055_c
+//
+//   AtCoder ARC 060 F - æœ€è‰¯è¡¨ç¾
 //     https://atcoder.jp/contests/arc060/tasks/arc060_d
 //
 
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -32,21 +32,50 @@ vector<int> Zalgo(const string &S) {
 }
 
 
-vector<long long> divisor(long long n) {
-    vector<long long> res;
-    for (long long i = 1LL; i*i <= n; ++i) {
-        if (n%i == 0LL) {
-            res.push_back(i);
-            long long temp = n/i;
-            if (i != temp) res.push_back(temp);
-        }
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
+
+void ARC_055_C() {
+    string S, T;
+    cin >> S;
+    T = S;
+    reverse(T.begin(), T.end());
+    int N = (int)S.size();
+    
+    const auto &zs = Zalgo(S);
+    const auto &zt = Zalgo(T);
+    
+    long long res = 0;
+    for (int i = N/2+1; i < N; ++i) {
+        int slen = zs[i];
+        int tlen = zt[N-i];
+        if (slen + tlen < N-i) continue;
+        
+        int left = max(1, N-i-tlen);
+        int right = min(N-i-1, slen);
+        res += right - left + 1;
     }
-    sort(res.begin(), res.end());
-    return res;
+    cout << res << endl;
 }
 
-int main() {
-    string str; cin >> str;
+void ARC_060_F() {
+    // ç´„æ•°
+    auto divisor = [](long long n) -> vector<long long> {
+        vector<long long> res;
+        for (long long i = 1LL; i*i <= n; ++i) {
+            if (n%i == 0LL) {
+                res.push_back(i);
+                long long temp = n/i;
+                if (i != temp) res.push_back(temp);
+            }
+        }
+        sort(res.begin(), res.end());
+        return res;
+    };
+    
+    string str;
+    cin >> str;
     int n = (int)str.size();
     vector<long long> divs = divisor(n);
     long long syuuki = n;
@@ -77,3 +106,10 @@ int main() {
         cout << 2 << endl << con << endl;
     }
 }
+
+
+int main() {
+    ARC_055_C();
+    //ARC_060_F();
+}
+
