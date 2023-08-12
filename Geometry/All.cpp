@@ -26,7 +26,7 @@ using namespace std;
 
 
 /*/////////////////////////////*/
-// 基本要素 (点, 線分, 円)
+// 幾何の基本要素 (点, 線分, 円)
 /*/////////////////////////////*/
 
 // basic settings
@@ -177,7 +177,7 @@ bool is_contain(const Point &p, const Point &a, const Point &b, const Point &c) 
 
 
 /*/////////////////////////////*/
-// 円や直線の交差判定, 距離
+// 線分の交差判定や距離計算
 /*/////////////////////////////*/
 
 int ccw_for_dis(const Point &a, const Point &b, const Point &c) {
