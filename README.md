@@ -58,10 +58,6 @@
 - [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
 - [RMQ (Sparse Table)](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 
-### 平方分割
-
-- [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
-
 ### 平衡二分探索木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
@@ -92,6 +88,7 @@
 
 ### その他
 
+- [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
 - [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
@@ -256,10 +253,12 @@
 - [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_dfs.cpp)
 - [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_bfs.cpp)
 
-### 連結成分分解
+### 連結成分分解・Euler 路
 
 - [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection.cpp)
 - [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/functional_graph_cycle_detection.cpp)
+- 有向 Euler 路
+- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
 - [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/strongly_connected_components.cpp)
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
@@ -282,12 +281,16 @@
 - k-最短路
 - SPFA
 
-### その他
+### 全域木
 
 - 最小全域木 (Kruskal 法)
 - 最小有向全域木 (Chu-Liu/Edmonds 法)
-- 有向 Euler 路
-- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
+
+### グラフ上の有名問題
+
+
+### その他
+
 - [彩色数 (O(n2^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
 - [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 - 最大クリーク列挙（O(1.443^n)）

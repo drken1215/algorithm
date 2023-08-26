@@ -138,7 +138,7 @@ template<class T> struct BiCoef {
 
 
 /*/////////////////////////////*/
-// solvers
+// Examples
 /*/////////////////////////////*/
 
 void ABC_127_E() {

@@ -9,6 +9,9 @@
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
 // verified:
+//   Yosupo Library Checker - Binomial Coefficient (Prime Mod)
+//     https://judge.yosupo.jp/problem/binomial_coefficient_prime_mod
+//
 //   ARC 096 E - Everything on It
 //     https://atcoder.jp/contests/arc096/tasks/arc096_c
 //
@@ -144,8 +147,23 @@ template<class T> struct BiCoef {
 
 
 /*/////////////////////////////*/
-// solvers
+// Examples
 /*/////////////////////////////*/
+
+void Yosupo_Binomial_Coefficient() {
+    const int MAX = 11000000;
+    int T, M;
+    cin >> T >> M;
+    using mint = Fp;
+    mint::set_mod(M);
+    
+    BiCoef<mint> bc(MAX);
+    while (T--) {
+        int n, k;
+        cin >> n >> k;
+        cout << bc.com(n, k) << endl;
+    }
+}
 
 // スターリング数 (n 個を k グループにわける、n >= k)
 template<class T> struct Stirling {
@@ -199,8 +217,10 @@ void ARC_096_E() {
     cout << res << endl;
 }
 
+
 int main() {
-    ARC_096_E();
+    Yosupo_Binomial_Coefficient();
+    //ARC_096_E();
 }
 
 

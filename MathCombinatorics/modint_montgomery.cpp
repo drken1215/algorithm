@@ -116,7 +116,7 @@ MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
 
 
 /*/////////////////////////////*/
-// solvers
+// Examples
 /*/////////////////////////////*/
 
 void AOJ2353() {
