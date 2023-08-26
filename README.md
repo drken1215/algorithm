@@ -253,48 +253,44 @@
 - [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_dfs.cpp)
 - [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_bfs.cpp)
 
-### 連結成分分解・Euler 路
+### 連結成分分解
 
 - [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection.cpp)
 - [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/functional_graph_cycle_detection.cpp)
-- 有向 Euler 路
-- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
 - [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/strongly_connected_components.cpp)
 - [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
 - [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
 - 二重頂点連結成分分解 (Block-Cut 木)
 - 三重辺連結成分分解 (SPQR 木)
 
-### ツリー
-
-- [ツリーの直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
-- ツリーの重心
-
 ### 最短路
 
-- 重みなしグラフの最短路 (BFS)
-- 重みが 0, 1 のみのグラフの最短路 (0-1 BFS)
-- 単一始点最短路 (Dijkstra 法, 正辺のみ)
-- 単一始点最短路 (Bellman-Ford 法, 負辺対応)
-- [全頂点対間最短路 (Floyd-Warshall 法)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/floyd_warshall.cpp)
-- 全頂点対間最短路 (Johnson 法)
+- [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_bfs.cpp)
+- [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_01bfs.cpp)
+- [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_dijkstra.cpp)
+- [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_bellman_ford.cpp)
+- [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/floyd_warshall.cpp)
+- 全頂点対間最短路 (Johnson 法, O(EV log V))
 - k-最短路
 - SPFA
 
-### 全域木
+### 木・全域木
 
+- [木の直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
+- 木の重心
 - 最小全域木 (Kruskal 法)
 - 最小有向全域木 (Chu-Liu/Edmonds 法)
 
 ### グラフ上の有名問題
 
-
-### その他
-
-- [彩色数 (O(n2^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
-- [最大安定集合問題 (O(1.381^n))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
-- 最大クリーク列挙（O(1.443^n)）
-- 最小シュタイナー木 (O(n 3^t + n^2 2^t + n^3))
+- 有向 Euler 路
+- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
+- [彩色数 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
+- 辺彩色
+- 二部グラフの辺彩色 (Alon 法, O(E log E))
+- [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
+- 最大クリーク列挙（O(1.443^V)）
+- 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
 
 
 　
