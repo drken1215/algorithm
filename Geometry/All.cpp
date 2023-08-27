@@ -159,7 +159,8 @@ template<class DD> void arg_sort(vector<Point<DD>> &v) {
         else return 1;
     };
     auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
-        return (sign(p) != sign(q) ? sign(p) < sign(q) : p.x * q.y - p.y * q.x > 0);
+        if (sign(p) != sign(q)) return sign(p) < sign(q);
+        return (abs(cross(p, q)) > EPS ? cross(p, q) > EPS : norm(p) < norm(q));
     };
     sort(v.begin(), v.end(), cmp);
 }
@@ -688,9 +689,7 @@ void Yosupo_Sort_Points_by_Argument_1() {
     int N;
     cin >> N;
     vector<Point<long long>> vp(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> vp[i].x >> vp[i].y;
-    }
+    for (int i = 0; i < N; ++i) cin >> vp[i].x >> vp[i].y;
     
     arg_sort_direct(vp);
     for (const auto &p : vp) cout << p.x << " " << p.y << endl;
@@ -700,9 +699,7 @@ void Yosupo_Sort_Points_by_Argument_2() {
     int N;
     cin >> N;
     vector<Point<long long>> vp(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> vp[i].x >> vp[i].y;
-    }
+    for (int i = 0; i < N; ++i) cin >> vp[i].x >> vp[i].y;
     
     arg_sort(vp);
     for (const auto &p : vp) cout << p.x << " " << p.y << endl;
@@ -851,8 +848,7 @@ void ABC_207_D() {
             
             // s3 と t3 が一致するかを判定する
             bool same = true;
-            sort(s3.begin(), s3.end());
-            sort(t3.begin(), t3.end());
+            arg_sort(s3), arg_sort(t3);;
             for (int i = 0; i < N; ++i) if (!eq(s3[i], t3[i])) same = false;
             if (same) res = true;
         }
