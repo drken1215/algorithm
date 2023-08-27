@@ -118,9 +118,8 @@ template<class T> struct PartitionFunction {
 };
 
 
-
 /*/////////////////////////////*/
-// solvers
+// Examples
 /*/////////////////////////////*/
 
 void Yosupo_Partition_Function() {
