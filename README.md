@@ -245,7 +245,7 @@
 # Graph
 グラフアルゴリズムです
 
-### DFS・BFS
+### DFS, BFS
 
 - [連結成分の個数 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/dfs.cpp)
 - [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/bfs.cpp)
@@ -275,7 +275,7 @@
 - k-最短路
 - SPFA
 
-### 木・全域木
+### 木, 全域木
 
 - [木の直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
 - 木の重心
@@ -352,7 +352,7 @@
 - Subset Convolution
 - Karatsuba 法
 
-### 多項式、形式的冪級数
+### 多項式, 形式的冪級数
 
 - [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
 - [形式的冪級数 (実行時 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_runtime_mod.cpp)

@@ -475,7 +475,7 @@ template<typename mint> struct FPS : vector<mint> {
         assert((*this)[0] == 0);
         FPS res(1, 1);
         for (int i = 1; i < deg; i <<= 1) {
-            res = res * (pre(i<<1) - res.log(i<<1) + 1).pre(i<<1);
+            res = res * (pre(i << 1) - res.log(i << 1) + 1).pre(i << 1);
         }
         res.resize(deg);
         return res;
@@ -493,11 +493,9 @@ template<typename mint> struct FPS : vector<mint> {
         }
         long long i = 0;
         while (i < (int)this->size() && (*this)[i] == 0) ++i;
-        if (i == (int)this->size()) return FPS(deg, 0);
-        if (i * e >= deg) return FPS(deg, 0);
+        if (i == (int)this->size() || i > (deg - 1) / e) return FPS(deg, 0);
         mint k = (*this)[i];
-        FPS a = (*this) >> i;
-        FPS res = ((a / k).log(deg) * e).exp(deg) * modpow(k, e) << (e * i);
+        FPS res = ((((*this) >> i) / k).log(deg) * e).exp(deg) * mint(k).pow(e) << (e * i);
         res.resize(deg);
         return res;
     }
@@ -538,7 +536,7 @@ template<typename mint> struct FPS : vector<mint> {
 
 
 /*/////////////////////////////*/
-// solvers
+// Polynomial, FPS algorithms
 /*/////////////////////////////*/
 
 // Bostan-Mori
@@ -563,6 +561,8 @@ template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, 
     }
     return BostanMori(S, T, N >> 1);
 }
+
+// Polynomial Taylor Shift
 
 
 
@@ -715,10 +715,10 @@ void TDPC_T() {
 
 
 int main() {
-    Yosupo_Inv_of_FPS();
+    //Yosupo_Inv_of_FPS();
     //Yosupo_Exp_of_FPS();
     //Yosupo_Log_of_FPS();
-    //Yosupo_Pow_of_FPS();
+    Yosupo_Pow_of_FPS();
     //Yosupo_Sqrt_of_FPS();
     //HackerRankArrayRestoring();
     //Codeforces205Div1E();
