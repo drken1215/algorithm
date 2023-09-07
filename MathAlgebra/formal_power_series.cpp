@@ -422,10 +422,6 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return res;
     }
-    friend constexpr FPS gcd(const FPS &f, const FPS &g) {
-        if (g.empty()) return f;
-        return gcd(g, f % g);
-    }
 
     // advanced operation
     // df/dx
@@ -561,8 +557,6 @@ template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, 
     }
     return BostanMori(S, T, N >> 1);
 }
-
-// Polynomial Taylor Shift
 
 
 
@@ -724,4 +718,3 @@ int main() {
     //Codeforces205Div1E();
     //TDPC_T();
 }
-

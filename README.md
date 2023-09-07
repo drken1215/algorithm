@@ -352,14 +352,21 @@
 - Subset Convolution
 - Karatsuba 法
 
-### 多項式, 形式的冪級数
+### 多項式
+
+- [多項式：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial.cpp)
+- [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
+- [多項式の除算 (by FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
+- [Polynomial Taylor Shift](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
+- 多項式補間
+
+### 形式的冪級数 (FPS)
 
 - [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
 - [形式的冪級数 (実行時 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_runtime_mod.cpp)
 - [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - Fiduccia 法 (高速きたまさ法)
 - Berlekamp-Massey 法
-- 多項式補間
 
 ### 最適化
 
