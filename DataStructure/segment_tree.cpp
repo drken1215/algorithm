@@ -1,19 +1,22 @@
 //
-// segment tree
+// セグメント木
 //
 // verified:
+//   AtCoder Library Practice Contest J - Segment Tree (for max_right)
+//     https://atcoder.jp/contests/practice2/tasks/practice2_j
+//
 //   ARC 008 D - タコヤキオイシクナール
 //     https://beta.atcoder.jp/contests/arc008/tasks/arc008_4
 //
-//   ABC 281 E - Least Elements
+//   ABC 281 E - Least Elements (for max_right)
 //     https://atcoder.jp/contests/abc281/tasks/abc281_e
 //
-//   ABC 307 F - Virus 2
+//   ABC 307 F - Virus 2 (for max_right)
 //     https://atcoder.jp/contests/abc307/tasks/abc307_f
 //
 
 
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 
@@ -22,110 +25,109 @@ template<class Monoid> struct SegTree {
     using Func = function<Monoid(Monoid, Monoid)>;
 
     // core member
-    int SIZE;
-    Func F;
+    int N;
+    Func OP;
     Monoid IDENTITY;
     
-    // data
+    // inner data
     int offset;
     vector<Monoid> dat;
 
     // constructor
     SegTree() {}
-    SegTree(int n, const Func &f, const Monoid &identity)
-    : SIZE(n), F(f), IDENTITY(identity) {
-        offset = 1;
-        while (offset < n) offset *= 2;
-        dat.assign(offset * 2, IDENTITY);
+    SegTree(int n, const Func &op, const Monoid &identity) {
+        init(n, op, identity);
     }
-    void init(int n, const Func &f, const Monoid &identity) {
-        SIZE = n;
-        F = f;
+    SegTree(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
+        init((int)v.size(), op, identity);
+        build(v);
+    }
+    void init(int n, const Func &op, const Monoid &identity) {
+        N = n;
+        OP = op;
         IDENTITY = identity;
         offset = 1;
-        while (offset < n) offset *= 2;
+        while (offset < N) offset *= 2;
         dat.assign(offset * 2, IDENTITY);
     }
-    int size() const { return SIZE; }
-    
-    // set, a is 0-indexed //
-    // build(): O(N)
-    void set(int a, const Monoid &v) { dat[a + offset] = v; }
-    void build() {
-        for (int k = offset - 1; k > 0; --k)
-            dat[k] = F(dat[k*2], dat[k*2+1]);
+    void init(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
+        init((int)v.size(), op, identity);
+        build(v);
     }
-    void build(const vector<Monoid> &vec) {
-        for (int a = 0; a < vec.size() && a + offset < dat.size(); ++a)
-            set(a, vec[a]);
-        build();
+    void build(const vector<Monoid> &v) {
+        assert(N == (int)v.size());
+        for (int i = 0; i < N; ++i) dat[i + offset] = v[i];
+        for (int k = offset - 1; k > 0; --k) dat[k] = OP(dat[k*2], dat[k*2+1]);
     }
+    int size() const {
+        return N;
+    }
+    Monoid operator [] (int a) const { return dat[a + offset]; }
     
-    // update a, a is 0-indexed, O(log N)
-    void update(int a, const Monoid &v) {
+    // update A[a], a is 0-indexed, O(log N)
+    void set(int a, const Monoid &v) {
         int k = a + offset;
         dat[k] = v;
-        while (k >>= 1) dat[k] = F(dat[k*2], dat[k*2+1]);
+        while (k >>= 1) dat[k] = OP(dat[k*2], dat[k*2+1]);
     }
     
     // get [a, b), a and b are 0-indexed, O(log N)
-    Monoid get(int a, int b) {
+    Monoid prod(int a, int b) {
         Monoid vleft = IDENTITY, vright = IDENTITY;
         for (int left = a + offset, right = b + offset; left < right;
         left >>= 1, right >>= 1) {
-            if (left & 1) vleft = F(vleft, dat[left++]);
-            if (right & 1) vright = F(dat[--right], vright);
+            if (left & 1) vleft = OP(vleft, dat[left++]);
+            if (right & 1) vright = OP(dat[--right], vright);
         }
-        return F(vleft, vright);
+        return OP(vleft, vright);
     }
-    Monoid get_all() { return dat[1]; }
-    Monoid operator [] (int a) const { return dat[a + offset]; }
+    Monoid all_prod() { return dat[1]; }
     
     // get max r that f(get(l, r)) = True (0-indexed), O(log N)
     // f(IDENTITY) need to be True
     int max_right(const function<bool(Monoid)> f, int l = 0) {
-        if (l == SIZE) return SIZE;
+        if (l == N) return N;
         l += offset;
         Monoid sum = IDENTITY;
         do {
             while (l % 2 == 0) l >>= 1;
-            if (!f(F(sum, dat[l]))) {
+            if (!f(OP(sum, dat[l]))) {
                 while (l < offset) {
                     l = l * 2;
-                    if (f(F(sum, dat[l]))) {
-                        sum = F(sum, dat[l]);
+                    if (f(OP(sum, dat[l]))) {
+                        sum = OP(sum, dat[l]);
                         ++l;
                     }
                 }
                 return l - offset;
             }
-            sum = F(sum, dat[l]);
+            sum = OP(sum, dat[l]);
             ++l;
         } while ((l & -l) != l);  // stop if l = 2^e
-        return SIZE;
+        return N;
     }
 
     // get min l that f(get(l, r)) = True (0-indexed), O(log N)
     // f(IDENTITY) need to be True
     int min_left(const function<bool(Monoid)> f, int r = -1) {
         if (r == 0) return 0;
-        if (r == -1) r = SIZE;
+        if (r == -1) r = N;
         r += offset;
         Monoid sum = IDENTITY;
         do {
             --r;
             while (r > 1 && (r % 2)) r >>= 1;
-            if (!f(F(dat[r], sum))) {
+            if (!f(OP(dat[r], sum))) {
                 while (r < offset) {
                     r = r * 2 + 1;
-                    if (f(F(dat[r], sum))) {
-                        sum = F(dat[r], sum);
+                    if (f(OP(dat[r], sum))) {
+                        sum = OP(dat[r], sum);
                         --r;
                     }
                 }
                 return r + 1 - offset;
             }
-            sum = F(dat[r], sum);
+            sum = OP(dat[r], sum);
         } while ((r & -r) != r);
         return 0;
     }
@@ -141,28 +143,53 @@ template<class Monoid> struct SegTree {
 };
 
 
+
 /*/////////////////////////////*/
 // Examples
 /*/////////////////////////////*/
 
-// template chmax, chmin
-template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
-template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
-
-// template debug stream
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for(auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for(auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+// ACL practice J - Segment Tree
+void ACL_practice_J() {
+    int N, Q;
+    cin >> N >> Q;
+    vector<int> A(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    
+    // セグ木の準備 (型: int, 演算方法: op, 単位元: -INF)
+    const int INF = 1<<30;
+    SegTree<int> seg(A, [&](int a, int b){ return max(a, b); }, -INF);
+    
+    // クエリ処理
+    while (Q--) {
+        int t;
+        cin >> t;
+        if (t == 1) {
+            int X, V;
+            cin >> X >> V;
+            --X;
+            
+            // A[x] を V に update する処理
+            seg.set(X, V);
+        } else if (t == 2) {
+            int L, R;
+            cin >> L >> R;
+            --L;
+            
+            // A の区間 [L, R) の最大値を求める処理
+            cout << seg.prod(L, R) << endl;
+        } else {
+            int L, V;
+            cin >> L >> V;
+            --L;
+            
+            // x = seg.prod(L, r) として、f(x) = True となる最大の r を求める
+            int res = seg.max_right([&](int x) -> bool { return V > x; }, L);
+            
+            // 求めたいのは V <= prod(L, x) となる最小の x
+            cout << res + 1 << endl;
+        }
+    }
+}
 
 // ARC 008 D - タコヤキオイシクナール
 void ARC_008_D() {
@@ -173,7 +200,8 @@ void ARC_008_D() {
     vector<long long> p(M), pls;
     vector<double> a(M), b(M);
     for (int i = 0; i < M; ++i) {
-        cin >> p[i] >> a[i] >> b[i]; --p[i];
+        cin >> p[i] >> a[i] >> b[i];
+        --p[i];
         pls.push_back(p[i]);
     }
     sort(pls.begin(), pls.end());
@@ -191,8 +219,10 @@ void ARC_008_D() {
     double Min = 1.0, Max = 1.0;
     for (int i = 0; i < M; ++i) {
         int idx = lower_bound(pls.begin(), pls.end(), p[i]) - pls.begin();
-        seg.update(idx, make_pair(a[i], b[i]));
-        pair<double,double> res = seg.get(0, NN);
+        
+        seg.set(idx, make_pair(a[i], b[i]));
+        pair<double,double> res = seg.prod(0, NN);
+        
         Min = min(Min, res.first + res.second);
         Max = max(Max, res.first + res.second);
     }
@@ -224,16 +254,16 @@ void ABC_281_E() {
 
     // push と pop
     auto push = [&](long long x, int id) -> void {
-        seg.update(id, Monoid(1, x));
+        seg.set(id, Monoid(1, x));
     };
     auto pop = [&](long long x, int id) -> void {
-        seg.update(id, zero);
+        seg.set(id, zero);
     };
     auto get = [&]() -> long long {
         int r = seg.max_right([&](Monoid r) {
             return r.first <= K;
         });
-        return seg.get(0, r).second;
+        return seg.prod(0, r).second;
     };
 
     for (int i = 0; i < M; ++i) push(A[i], order[i]);
@@ -300,7 +330,8 @@ void ABC_307_F() {
             if (cur.second + e.second > X[cur.first]) {
                 nex = {first_okay_day(e.second, cur.first+1), e.second};
             }
-            if (chmin(dp[e.first], nex)) {
+            if (dp[e.first] > nex) {
+                dp[e.first] = nex;
                 que.push(Node(dp[e.first], e.first));
             }
         }
@@ -313,8 +344,9 @@ void ABC_307_F() {
     
 
 int main() {
+    ACL_practice_J();
     //ARC_008_D();
-    ABC_281_E();
+    //ABC_281_E();
     //ABC_307_F();
 }
 
