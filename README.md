@@ -6,24 +6,24 @@
 
 　
 
-|分類|内容|具体例|
+|分類|具体例|
 |---|---|---|
-|**[DataStructure](#ds)**|データ構造|Union-Find、セグメント木など|
+|**[DATA STRUCTURE](#ds)**|各種データ構造の実装|Union-Find、セグメント木など|
 |**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
-|**[Geometry](#ge)**|計算幾何|円の交点など|
-|**[Graph](#gt)**|グラフアルゴリズム|強連結成分分解など|
-|**[GraphNetworkFlow](#gnf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
-|**[MathAlgebra](#ma)**|代数的アルゴリズム|行列計算など|
-|**[MathCombinatorics](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
-|**[MathNumberTheory](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**[String](#st)**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
-|**[Tree](#tr)**|木に関するデータ構造とアルゴリズム|Euler ツアー、HL 分解、木の直径など|
-|**[Others](#ot)**|その他|xorshift、サイコロなど|
+|**[GEOMETRY](#ge)**|計算幾何|円の交点など|
+|**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
+|**[GRAPH : NETWORK FLOW](#gnf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
+|**[MATH : ALGEBRA](#ma)**|代数的アルゴリズム|行列計算など|
+|**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
+|**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
+|**[STRING](#st)**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
+|**[TREE](#tr)**|木に関するデータ構造とアルゴリズム|Euler ツアー、HL 分解、木の直径など|
+|**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
 
 　
 <a name="ds"></a>
-# Data Structure
+# データ構造 (DATA STRUCTURE)
 各種データ構造の実装です
 
 ## Union-Find
@@ -104,7 +104,7 @@
 
 　
 <a name="dp"></a>
-# DP
+# 動的計画法 (DP)
 定型的な動的計画法やその他の処理です
 
 ## 有名問題
@@ -112,36 +112,35 @@
 - ナップサック問題
 - [LIS](https://github.com/drken1215/algorithm/blob/master/DP/longest_increasing_sequence.cpp)
 - [LCS](https://github.com/drken1215/algorithm/blob/master/DP/lcs.cpp)
+- TSP (O(2^N N^2))
+- 部分列の個数
+- 最適二分探索木
+- Set Cover
+- k-Cover (O(2^N N))
+- k-partition (O(2^N N^3))
+
+## グリッドに関する DP
+
 - [編集距離](https://github.com/drken1215/algorithm/blob/master/DP/edit_distance.cpp)
 - [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/DP/largest_square_in_grid.cpp)
 - [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/DP/histogram.cpp)
-- 最適二分探索木
-- Set Cover
-- k-Cover (O(n 2^n))
-- k-partition (O(n^3 2^n))
 
-## DP パターン例
-
-- ナップサック DP
-- bitDP
-- 桁 DP
-- 部分列 DP
-
-## DP 高速化
+## Convex Hull Trick
 
 - [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
 - [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
 - [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
+
+## DP 高速化技法
+
 - Monotone Minima
-- Divide and Conquer
-- Monge
 - Alien DP
 - LARSCH
 
 
 　
 <a name="ge"></a>
-# Geometry
+# 幾何 (GEOMETRY)
 幾何ライブラリです
 
 ## 全般
@@ -203,61 +202,59 @@
 
 　
 <a name="gt"></a>
-# Graph
+# グラフ (GRAPH)
 グラフアルゴリズムです
 
 ## DFS, BFS
 
-- [連結成分の個数 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/dfs.cpp)
-- [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/bfs.cpp)
-- [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_dfs.cpp)
-- [二部グラフ判定 (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/is_bipartite_bfs.cpp)
-- [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_dfs.cpp)
-- [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/topological_sort_bfs.cpp)
+- [連結成分の個数 (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/dfs.cpp)
+- [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/bfs.cpp)
+- [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_dfs.cpp)
+- [二部グラフ判定 (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_bfs.cpp)
+- [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_dfs.cpp)
+- [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_bfs.cpp)
 
 ## 連結成分分解
 
-- [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/cycle_detection.cpp)
-- [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/functional_graph_cycle_detection.cpp)
-- [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/GraphTheory/strongly_connected_components.cpp)
-- [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/low_link.cpp)
-- [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/GraphTheory/two_edge_connected_components.cpp)
+- [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
+- [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/functional_graph_cycle_detection.cpp)
+- [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/Graph/strongly_connected_components.cpp)
+- [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/Graph/low_link.cpp)
+- [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/Graph/two_edge_connected_components.cpp)
 - 二重頂点連結成分分解 (Block-Cut 木)
 - 三重辺連結成分分解 (SPQR 木)
 
 ## 最短路
 
-- [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_bfs.cpp)
-- [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_01bfs.cpp)
-- [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_dijkstra.cpp)
-- [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/shortest_path_bellman_ford.cpp)
-- [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/floyd_warshall.cpp)
+- [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
+- [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
+- [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
+- [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
+- [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - 全頂点対間最短路 (Johnson 法, O(EV log V))
 - k-最短路
 - SPFA
 
-## 全域木、路に関する問題
+## 全域木, 路に関する問題
 
 - 最小全域木 (Kruskal 法)
 - 最小有向全域木 (Chu-Liu/Edmonds 法)
 - 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
 - 有向 Euler 路
-- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
+- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
 
 ## グラフ上の有名問題
 
-- [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
+- [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
 - 辺彩色
 - 二部グラフの辺彩色 (Alon 法, O(E log E))
-- [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
+- [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/Graph/maximum_stable_set.cpp)
 - 最大クリーク列挙（O(1.443^V)）
-
-
 
 
 　
 <a name="gnf"></a>
-# GraphNetworkFlow
+# ネットワークフロー (GRAPH : NETWORK FLOW)
 グラフネットワークフロー関連のアルゴリズムです
 
 ## 最大流
@@ -289,7 +286,7 @@
 
 　
 <a name="ma"></a>
-# MathAlgebra
+# 代数 (MATH : ALGEBRA)
 行列計算など代数的計算に関するアルゴリズムです
 
 ## 行列
@@ -343,14 +340,14 @@
 
 　
 <a name="mc"></a>
-# MathCombinatorics
+# 組合せ (MATH : COMBINATORICS)
 組合せ論的アルゴリズムたちです
 
-## modint
+## Modint 
 
-- [modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint.cpp)
-- [実行時に法が決まる modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_runtime.cpp)
-- [モンゴメリ乗算を用いた modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_montgomery.cpp)
+- [Modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint.cpp)
+- [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_runtime.cpp)
+- [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_montgomery.cpp)
 
 ## 二項係数
 
@@ -401,7 +398,7 @@
 
 　
 <a name="mmt"></a>
-# MathNumberTheory
+# 整数 (MATH : NUMBER THEORY)
 整数論的アルゴリズムたちです
 
 ## 約数, 倍数
@@ -453,7 +450,7 @@
 
 　
 <a name="st"></a>
-# String
+# 文字列 (String)
 文字列アルゴリズムです
 
 ## 構文解析
@@ -486,15 +483,17 @@
 
 　
 <a name="tr"></a>
-# Tree
+# 木 (Tree)
 木上のクエリに答えるデータ構造や、木に関する問題を解くアルゴリズムの実装です
 
 ## 木
 
-- [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
-- [木の直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
+- [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
+- [木の直径](https://github.com/drken1215/algorithm/blob/master/Tree/diameter.cpp)
 - 木の重心
 - 木の Distance Frequency Table
+- [根付き木の同型性判定](https://github.com/drken1215/algorithm/blob/master/Tree/rooted_tree_isomorphism.cpp)
+- 木の同型性判定
 
 ## 木 DP
 
@@ -504,29 +503,29 @@
 
 ## LCA
 
-- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_by_doubling.cpp)
-- [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_euler_tour.cpp)
-- [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_heavy_light_decomposition.cpp)
+- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_by_doubling.cpp)
+- [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_euler_tour.cpp)
+- [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_heavy_light_decomposition.cpp)
 
 ## 木上のクエリ処理
 
-- [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_nodes.cpp)
-- [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_edges.cpp)
-- [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
-- [重心分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/tree_centroid_decomposition.cpp)
+- [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour_on_nodes.cpp)
+- [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour_on_edges.cpp)
+- [HL 分解](https://github.com/drken1215/algorithm/blob/master/Tree/heavy_light_decomposition.cpp)
+- [重心分解](https://github.com/drken1215/algorithm/blob/master/Tree/tree_centroid_decomposition.cpp)
 - Link-Cut 木
 - toptree
 - DSU on Tree
 
 ## その他の問題
 
-- [強平衡二分木の Distance Frequency Table](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/find_various_values_of_binary_tree.cpp)
+- [強平衡二分木の Distance Frequency Table](https://github.com/drken1215/algorithm/blob/master/Tree/find_various_values_of_binary_tree.cpp)
 - Level Ancester
 
 
 　
 <a name="ot"></a>
-# Others
+# その他 (OTHERS)
 その他のアルゴリズムです
 
 ## グリッド
