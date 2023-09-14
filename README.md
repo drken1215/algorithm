@@ -8,7 +8,8 @@
 
 |分類|内容|具体例|
 |---|---|---|
-|**[DATA STRUCTURE](#ds)**|各種データ構造の実装|Union-Find、セグメント木など|
+|**[DATA STRUCTURE](#ds)**|各種データ構造の実装|Union-Find、Sparse Table など|
+|**[DATA STRUCTURE : SEGTREE](#dss)**|セグメント木関連の実装|セグメント木、BIT など|
 |**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
 |**[GEOMETRY](#ge)**|計算幾何|円の交点など|
 |**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
@@ -33,44 +34,10 @@
 - [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
-- Dynamic Connectivity
-
-### セグメント木
-
-- [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
-- [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_lazy.cpp)
-- [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
-- [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructure/starry_sky_tree.cpp)
-- マージソート過程保存木
-- 等差数列区間加算木
-- 二次元セグメント木
-
-### Binary Indexed 木
-
-- [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
-- [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
-- [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_RAQ.cpp)
-- [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D.cpp)
-- [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D_RAQ.cpp)
-
-### Sparse Table
-
-- [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
-- [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
-
-### 平衡二分探索木, さまざまな木
-
-- [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
-- Treap 木
-- AVL 木
-- Splay 木
-- 赤黒木
-- [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
-- [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
-- Wavelet 木
 
 ### キュー, ヒープ
 
+- 二分ヒープ
 - 両端 priority queue
 - 削除可能 priority queue
 - SWAG
@@ -79,10 +46,19 @@
 - Radix Heap
 - Fibonacci Heap
 
+### さまざまな木
+
+- [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
+- [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
+- Wavelet 木
+- van Emde Boas 木
+- 64 分木
+
 ### 永続データ構造
 
 - 永続配列
 - 完全永続 Union-Find
+- 永続キュー
 - 永続セグメント木
 - 永続赤黒木
 
@@ -98,8 +74,48 @@
 
 ### その他
 
+- [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
+- [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
+- Dynamic Connectivity
+
+
+　
+<a name="dss"></a>
+# セグメント木 (DATA STRUCTURE : SEGTREE)
+セグメント木、BIT、平衡二分探索木などの実装です
+
+### セグメント木
+
+- [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/segment_tree.cpp)
+- [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/segment_tree_lazy.cpp)
+- [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/range_minimum_query.cpp)
+- [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/starry_sky_tree.cpp)
+- マージソート過程保存木
+- 等差数列区間加算木
+
+### Binary Indexed 木
+
+- [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree.cpp)
+- [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_search_on_BIT.cpp)
+- [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree_RAQ.cpp)
+
+### 二次元セグメント木
+
+- 二次元セグメント木
+- 動的二次元セグメント木
+- [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree_2D.cpp)
+- [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree_2D_RAQ.cpp)
+- 動的二次元 BIT
+
+### 平衡二分探索木
+
+- [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/randomized_binary_search_tree.cpp)
+- Treap 木
+- AVL 木
+- Splay 木
+- 赤黒木
 
 
 　
@@ -133,6 +149,7 @@
 
 ### DP 高速化技法
 
+- Slope Trick
 - Monotone Minima
 - Alien DP
 - LARSCH
@@ -224,7 +241,7 @@
 - 二重頂点連結成分分解 (Block-Cut 木)
 - 三重辺連結成分分解 (SPQR 木)
 
-### 最短路
+### 最短路問題 (基本)
 
 - [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
 - [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
@@ -232,8 +249,13 @@
 - [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
 - [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - 全頂点対間最短路 (Johnson 法, O(EV log V))
-- k-最短路
+
+### 最短路問題 (応用)
+
 - SPFA
+- 補グラフの最短路
+- d-辺最短路
+- Monge グラフ上の d-辺最短路
 
 ### 全域木, 路に関する問題
 
@@ -318,14 +340,18 @@
 - [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - 多項式補間
 - [Polynomial Taylor Shift](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
+- 多項式 GCD
 
 ### 形式的冪級数 (FPS)
 
 - [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
 - [形式的冪級数 (実行時 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_runtime_mod.cpp)
+- Sparse な形式的冪級数
 - [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - Fiduccia 法 (高速きたまさ法)
 - Berlekamp-Massey 法
+- 関数の合成
+- 逆関数
 
 ### 数理最適化
 
