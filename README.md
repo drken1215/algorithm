@@ -17,8 +17,8 @@
 |**[MATH : ALGEBRA](#ma)**|代数的アルゴリズム|行列計算など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**[STRING](#st)**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
-|**[TREE](#tr)**|木に関するデータ構造とアルゴリズム|Euler ツアー、HL 分解、木の直径など|
+|**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
+|**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
 
