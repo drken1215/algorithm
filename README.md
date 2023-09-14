@@ -6,7 +6,7 @@
 
 　
 
-|分類|具体例|
+|分類|内容|具体例|
 |---|---|---|
 |**[DATA STRUCTURE](#ds)**|各種データ構造の実装|Union-Find、セグメント木など|
 |**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
@@ -26,7 +26,7 @@
 # データ構造 (DATA STRUCTURE)
 各種データ構造の実装です
 
-## Union-Find
+### Union-Find
 
 - [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_size.cpp)
 - [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
@@ -35,7 +35,7 @@
 - [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
 - Dynamic Connectivity
 
-## セグメント木
+### セグメント木
 
 - [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_lazy.cpp)
@@ -45,7 +45,7 @@
 - 等差数列区間加算木
 - 二次元セグメント木
 
-## Binary Indexed 木
+### Binary Indexed 木
 
 - [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
 - [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
@@ -53,12 +53,12 @@
 - [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D.cpp)
 - [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D_RAQ.cpp)
 
-## Sparse Table
+### Sparse Table
 
 - [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 
-## 平衡二分探索木, さまざまな木
+### 平衡二分探索木, さまざまな木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
 - Treap 木
@@ -69,7 +69,7 @@
 - [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
 - Wavelet 木
 
-## キュー, ヒープ
+### キュー, ヒープ
 
 - 両端 priority queue
 - 削除可能 priority queue
@@ -79,14 +79,14 @@
 - Radix Heap
 - Fibonacci Heap
 
-## 永続データ構造
+### 永続データ構造
 
 - 永続配列
 - 完全永続 Union-Find
 - 永続セグメント木
 - 永続赤黒木
 
-## 高速化アルゴリズム
+### 高速化アルゴリズム
 
 - [累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum.cpp)
 - [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum_2D.cpp)
@@ -96,7 +96,7 @@
 - [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
 - [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 
-## その他
+### その他
 
 - [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
@@ -107,7 +107,7 @@
 # 動的計画法 (DP)
 定型的な動的計画法やその他の処理です
 
-## 有名問題
+### 有名問題
 
 - ナップサック問題
 - [LIS](https://github.com/drken1215/algorithm/blob/master/DP/longest_increasing_sequence.cpp)
@@ -119,19 +119,19 @@
 - k-Cover (O(2^N N))
 - k-partition (O(2^N N^3))
 
-## グリッドに関する DP
+### グリッドに関する DP
 
 - [編集距離](https://github.com/drken1215/algorithm/blob/master/DP/edit_distance.cpp)
 - [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/DP/largest_square_in_grid.cpp)
 - [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/DP/histogram.cpp)
 
-## Convex Hull Trick
+### Convex Hull Trick
 
 - [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
 - [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
 - [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
 
-## DP 高速化技法
+### DP 高速化技法
 
 - Monotone Minima
 - Alien DP
@@ -143,36 +143,36 @@
 # 幾何 (GEOMETRY)
 幾何ライブラリです
 
-## 全般
+### 全般
 
 - [全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
 - [基本要素 (点, 線分, 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements.cpp)
 - [偏角ソート](https://github.com/drken1215/algorithm/blob/master/Geometry/arg_sort.cpp)
 
-## 点, 線分, 三角形などの位置関係
+### 点, 線分, 三角形などの位置関係
 
 - [点と線分の位置関係 (ccw)](https://github.com/drken1215/algorithm/blob/master/Geometry/ccw.cpp)
 - [点と三角形の包含関係](https://github.com/drken1215/algorithm/blob/master/Geometry/is_contain_in_the_triangle.cpp)
 
-## 射影, 交差判定, 距離
+### 射影, 交差判定, 距離
 
 - [射影](https://github.com/drken1215/algorithm/blob/master/Geometry/projection.cpp)
 - [線分と線分の交差判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_intersect_two_segments.cpp)
 - [線分と線分との距離](https://github.com/drken1215/algorithm/blob/master/Geometry/distance_two_segments.cpp)
 
-## 直線や円の交点
+### 直線や円の交点
 
 - [直線と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_lines.cpp)
 - [円と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_line_circle.cpp)
 - [円と円の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_circles.cpp)
 - [円と線分の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_segment_circle.cpp)
 
-## 接線
+### 接線
 
 - [接線](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
 - [共通接線 (2 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/common_tanline.cpp)
 
-## 多角形
+### 多角形
 
 - [多角形の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_polygon.cpp)
 - [点と多角形の包含判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_contain_in_the_polygon.cpp)
@@ -184,11 +184,11 @@
 - [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
 - [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
 
-## 三次元幾何
+### 三次元幾何
 
 - [三次元幾何一式](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements_3D.cpp)
 
-## その他
+### その他
 
 - [最近点対](https://github.com/drken1215/algorithm/blob/master/Geometry/closest_two_points.cpp)
 - 線分併合
@@ -205,7 +205,7 @@
 # グラフ (GRAPH)
 グラフアルゴリズムです
 
-## DFS, BFS
+### DFS, BFS
 
 - [連結成分の個数 (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/dfs.cpp)
 - [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/bfs.cpp)
@@ -214,7 +214,7 @@
 - [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_dfs.cpp)
 - [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_bfs.cpp)
 
-## 連結成分分解
+### 連結成分分解
 
 - [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
 - [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/functional_graph_cycle_detection.cpp)
@@ -224,7 +224,7 @@
 - 二重頂点連結成分分解 (Block-Cut 木)
 - 三重辺連結成分分解 (SPQR 木)
 
-## 最短路
+### 最短路
 
 - [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
 - [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
@@ -235,7 +235,7 @@
 - k-最短路
 - SPFA
 
-## 全域木, 路に関する問題
+### 全域木, 路に関する問題
 
 - 最小全域木 (Kruskal 法)
 - 最小有向全域木 (Chu-Liu/Edmonds 法)
@@ -243,7 +243,7 @@
 - 有向 Euler 路
 - [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
 
-## グラフ上の有名問題
+### グラフ上の有名問題
 
 - [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
 - 辺彩色
@@ -257,25 +257,25 @@
 # ネットワークフロー (GRAPH : NETWORK FLOW)
 グラフネットワークフロー関連のアルゴリズムです
 
-## 最大流
+### 最大流
 
 - [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
 
-## 最小費用流
+### 最小費用流
 
 - [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
 - [最小費用流 (Primal-Dual 法, 負辺対応)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
 - [最小費用循環流 (Goleberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
 
-## カット
+### カット
 
 - 最小カット (= 最大流)
 - 全域最小カット（Stoer-Wanger 法）
 - 全頂点対間最小カット (Nagamochi-Ibaraki 法)
 - Gomory-Hu 木
 
-## マッチング
+### マッチング
 
 - [二部マッチング (Hopcroft-Karp 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
 - 重みつき二部マッチング (Hungarian 法)
@@ -289,7 +289,7 @@
 # 代数 (MATH : ALGEBRA)
 行列計算など代数的計算に関するアルゴリズムです
 
-## 行列
+### 行列
 
 - [行列 (基本演算)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix.cpp)
 - [行列累乗, ランク, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
@@ -301,7 +301,7 @@
 - 三重対角行列 (連立方程式が O(n))
 - Black Box Linear Algebra
 
-## 畳み込み計算
+### 畳み込み計算
 
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
@@ -311,7 +311,7 @@
 - Subset Convolution
 - Karatsuba 法
 
-## 多項式
+### 多項式
 
 - [多項式：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial.cpp)
 - [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
@@ -319,7 +319,7 @@
 - 多項式補間
 - [Polynomial Taylor Shift](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
 
-## 形式的冪級数 (FPS)
+### 形式的冪級数 (FPS)
 
 - [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
 - [形式的冪級数 (実行時 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_runtime_mod.cpp)
@@ -327,7 +327,7 @@
 - Fiduccia 法 (高速きたまさ法)
 - Berlekamp-Massey 法
 
-## 数理最適化
+### 数理最適化
 
 - 二次方程式
 - 二分探索法 (方程式の解を 1 つ求める)
@@ -343,20 +343,20 @@
 # 組合せ (MATH : COMBINATORICS)
 組合せ論的アルゴリズムたちです
 
-## Modint 
+### Modint 
 
 - [Modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint.cpp)
 - [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_runtime.cpp)
 - [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_montgomery.cpp)
 
-## 二項係数
+### 二項係数
 
 - [二項係数 (オーソドックス, n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
 - [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
 - [二項係数 (漸化式計算, n<=5000, r<=5000, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
 - [二項係数 (任意 mod, n<=10^7, r<=10^7, m<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_any_mod.cpp)
 
-## さまざまな数
+### さまざまな数
 
 - [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
 - [分割数 P(N, K) (O(NK))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
@@ -367,14 +367,14 @@
 - ベルヌーイ数
 - モンモール数
 
-## 高速なソート
+### 高速なソート
 
 - [クイックソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/quick_sort.cpp)
 - [マージソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/merge_sort.cpp)
 - [ヒープソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/heap_sort.cpp)
 - [計数ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/counting_sort.cpp)
 
-## さまざまなソート
+### さまざまなソート
 
 - [挿入ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/insertion_sort.cpp)
 - [選択ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/selection_sort.cpp)
@@ -383,13 +383,13 @@
 - [コムソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/comb_sort.cpp)
 - [ボゴソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/bogo_sort.cpp)
 
-## 集合族に関する問題
+### 集合族に関する問題
 
 - [2-SAT](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/two_sat.cpp)
 - マトロイド上の Greedy 法
 - マトロイド交差
 
-## その他
+### その他
 
 - [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
 - [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
@@ -401,7 +401,7 @@
 # 整数 (MATH : NUMBER THEORY)
 整数論的アルゴリズムたちです
 
-## 約数, 倍数
+### 約数, 倍数
 
 - [約数列挙](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/divisor.cpp)
 - [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
@@ -409,7 +409,7 @@
 - [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
 - [pn + r (n は非負整数) で表せる整数のうち, x 以上となる最小の整数](https://github.com/drken1215/algorithm/blob/master/Others/amari_lower_bound.cpp)
 
-## 素数
+### 素数
 
 - [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
 - [素因数分解](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/prime_factorization.cpp)
@@ -419,7 +419,7 @@
 - [原始根](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/primitive_root.cpp)
 - N 以下の素数の個数 (O(N^2/3))
 
-## エラトステネスの篩
+### エラトステネスの篩
 
 - [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - [エラトステネスの区間篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes_segment.cpp)
@@ -427,7 +427,7 @@
 - 線形篩
 - アトキンの篩
 
-## 方程式
+### 方程式
 
 - [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
 - [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
@@ -435,13 +435,13 @@
 - [ペル方程式](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Pell_equation.cpp)
 - 平方剰余 (Tonelli–Shanks 法)
 
-## さまざまな数
+### さまざまな数
 
 - [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
 - [多倍長整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
 - [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
 
-## その他
+### その他
 
 - [floor sum](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/floor_sum.cpp)
 - [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
@@ -453,11 +453,11 @@
 # 文字列 (String)
 文字列アルゴリズムです
 
-## 構文解析
+### 構文解析
 
 - LL(1) 再帰降下パーサ
 
-## 文字列検索
+### 文字列検索
 
 - [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
@@ -466,17 +466,17 @@
 - 単一パターン検索 (Boyer-Moore 法)
 - 複数パターン検索 (Aho-Corasick 法)
 
-## 文字列系アルゴリズム
+### 文字列系アルゴリズム
 
 - [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
 - [Manacher 法](https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
 
-## 文字列系データ構造
+### 文字列系データ構造
 
 - Trie 木
 - Palindromic 木 (AOJ 2292)
 
-## その他
+### その他
 
 - [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
 
@@ -486,7 +486,7 @@
 # 木 (Tree)
 木上のクエリに答えるデータ構造や、木に関する問題を解くアルゴリズムの実装です
 
-## 木
+### 木
 
 - [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
 - [木の直径](https://github.com/drken1215/algorithm/blob/master/Tree/diameter.cpp)
@@ -495,19 +495,19 @@
 - [根付き木の同型性判定](https://github.com/drken1215/algorithm/blob/master/Tree/rooted_tree_isomorphism.cpp)
 - 木の同型性判定
 
-## 木 DP
+### 木 DP
 
 - 木 DP
 - 全方位木 DP (俗称)
 - 二乗の木 DP (俗称)
 
-## LCA
+### LCA
 
 - [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_by_doubling.cpp)
 - [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_euler_tour.cpp)
 - [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_heavy_light_decomposition.cpp)
 
-## 木上のクエリ処理
+### 木上のクエリ処理
 
 - [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour_on_nodes.cpp)
 - [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour_on_edges.cpp)
@@ -517,7 +517,7 @@
 - toptree
 - DSU on Tree
 
-## その他の問題
+### その他の問題
 
 - [強平衡二分木の Distance Frequency Table](https://github.com/drken1215/algorithm/blob/master/Tree/find_various_values_of_binary_tree.cpp)
 - Level Ancester
@@ -528,18 +528,18 @@
 # その他 (OTHERS)
 その他のアルゴリズムです
 
-## グリッド
+### グリッド
 
 - [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
 - [ハニカムの 6 近傍](https://github.com/drken1215/algorithm/blob/master/Others/honeycomb_neighbors.cpp)
 
-## ビット演算
+### ビット演算
 
 - [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
 - [next_combination](https://github.com/drken1215/algorithm/blob/master/Others/next_combination.cpp)
 - [部分集合の部分集合](https://github.com/drken1215/algorithm/blob/master/Others/subset_enumeration.cpp)
 
-## 探索法
+### 探索法
 
 - α-β 探索
 - 焼き鈍し法
@@ -548,7 +548,7 @@
 - Baby-Step Giant-Step 法
 - 平面走査法
 
-## その他
+### その他
 
 - [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
 - [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
