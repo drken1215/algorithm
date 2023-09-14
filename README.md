@@ -9,15 +9,15 @@
 |分類|内容|具体例|
 |---|---|---|
 |**[DataStructure](#ds)**|データ構造|Union-Find、セグメント木など|
-|**[DataStructureOnTree](#dst)**|木上のクエリに答えるためのデータ構造|Euler ツアー、HL 分解など|
 |**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
 |**[Geometry](#ge)**|計算幾何|円の交点など|
-|**[Graph](#gt)**|グラフアルゴリズム|強連結成分分解、木の直径など|
+|**[Graph](#gt)**|グラフアルゴリズム|強連結成分分解など|
 |**[GraphNetworkFlow](#gnf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
 |**[MathAlgebra](#ma)**|代数的アルゴリズム|行列計算など|
 |**[MathCombinatorics](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MathNumberTheory](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
 |**[String](#st)**|文字列アルゴリズム|ローリングハッシュ、Suffix Array など|
+|**[Tree](#tr)**|木に関するデータ構造とアルゴリズム|Euler ツアー、HL 分解、木の直径など|
 |**[Others](#ot)**|その他|xorshift、サイコロなど|
 
 
@@ -26,17 +26,16 @@
 # DataStructure
 各種データ構造の実装です
 
-### Union-Find
+## Union-Find
 
 - [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_size.cpp)
 - [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
 - [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
-- Quick Find
 - Dynamic Connectivity
 
-### セグメント木
+## セグメント木
 
 - [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree.cpp)
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructure/segment_tree_lazy.cpp)
@@ -45,7 +44,7 @@
 - 等差数列区間加算木
 - 二次元セグメント木
 
-### Binary Indexed 木
+## Binary Indexed 木
 
 - [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree.cpp)
 - [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_search_on_BIT.cpp)
@@ -53,12 +52,12 @@
 - [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D.cpp)
 - [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_indexed_tree_2D_RAQ.cpp)
 
-### RMQ
+## RMQ
 
 - [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/range_minimum_query.cpp)
 - [RMQ (Sparse Table)](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 
-### 平衡二分探索木
+## 平衡二分探索木
 
 - [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructure/randomized_binary_search_tree.cpp)
 - Treap 木
@@ -66,28 +65,25 @@
 - Splay 木
 - 赤黒木
 
-### 永続データ構造
+## 永続データ構造
 
 - 永続配列
-- 完全永続 Union-Find 木
+- 完全永続 Union-Find
 - 永続セグメント木
 - 永続赤黒木
 
-### ハッシュ
+## ヒープ
 
-- [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
-- 木に対する hash
-
-### ヒープ
-
-- 削除可能ヒープ
-- Skew Heap (マージ可能)
-- Paring Heap (マージ可能)
+- 両端 priority queue
+- 削除可能 priority queue
+- Skew Heap (マージ可能ヒープ)
+- Paring Heap (マージ可能ヒープ)
 - Radix Heap
 - Fibonacci Heap
 
-### その他
+## その他
 
+- [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
 - [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
@@ -97,36 +93,6 @@
 - SWAG
 - Wavelet 木
 
-
-　
-<a name="dst"></a>
-# DataStructureOnTree
-ツリー上のクエリ処理のためのデータ構造たちの実装です
-
-### 木全般
-
-- [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
-- [強平衡二分木の走査](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/find_various_values_of_binary_tree.cpp)
-
-### LCA
-
-- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_by_doubling.cpp)
-- [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_euler_tour.cpp)
-- [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_heavy_light_decomposition.cpp)
-
-### ツリー上のクエリ処理
-
-- [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_nodes.cpp)
-- [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_edges.cpp)
-- [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
-- [重心分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/tree_centroid_decomposition.cpp)
-- Link-Cut 木
-- toptree
-- DSU on Tree
-
-### その他の問題
-
-- Level Ancester
 
 
 　
@@ -276,23 +242,22 @@
 - k-最短路
 - SPFA
 
-### 木, 全域木
+### 全域木、路に関する問題
 
-- [木の直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
-- 木の重心
 - 最小全域木 (Kruskal 法)
 - 最小有向全域木 (Chu-Liu/Edmonds 法)
+- 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
+- 有向 Euler 路
+- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
 
 ### グラフ上の有名問題
 
-- 有向 Euler 路
-- [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/GraphTheory/euler_tour_undirected.cpp)
-- [彩色数 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
+- [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/vertex_coloring.cpp)
 - 辺彩色
 - 二部グラフの辺彩色 (Alon 法, O(E log E))
 - [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 - 最大クリーク列挙（O(1.443^V)）
-- 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
+
 
 
 
@@ -325,6 +290,7 @@
 - 重みつき二部マッチング (Hungarian 法)
 - 一般グラフの最大マッチング (Edmonds 法)
 - 一般グラフの最大マッチング (行列補間)
+- 重み付き一般グラフの最大マッチング
 
 
 　
@@ -500,6 +466,7 @@
 
 ### 文字列検索
 
+- [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - 二次元ローリングハッシュ
 - [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
@@ -514,12 +481,45 @@
 ### 文字列系データ構造
 
 - Trie 木
-- [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - Palindromic 木 (AOJ 2292)
 
 ### その他
 
 - [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
+
+
+　
+<a name="tr"></a>
+# Tree
+木上のクエリに答えるデータ構造や、木に関する問題を解くアルゴリズムの実装です
+
+### 木
+
+- [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
+- [木の直径](https://github.com/drken1215/algorithm/blob/master/GraphTheory/diameter.cpp)
+- 木の重心
+- 木の Distance Frequency Table
+
+### LCA
+
+- [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_by_doubling.cpp)
+- [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_euler_tour.cpp)
+- [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/lca_heavy_light_decomposition.cpp)
+
+### 木上のクエリ処理
+
+- [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_nodes.cpp)
+- [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/euler_tour_on_edges.cpp)
+- [HL 分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/heavy_light_decomposition.cpp)
+- [重心分解](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/tree_centroid_decomposition.cpp)
+- Link-Cut 木
+- toptree
+- DSU on Tree
+
+### その他の問題
+
+- [強平衡二分木の Distance Frequency Table](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/find_various_values_of_binary_tree.cpp)
+- Level Ancester
 
 
 　
@@ -555,8 +555,6 @@
 - [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
 - 四面体 (AOJ 2060)
-
-
 
 
 　
