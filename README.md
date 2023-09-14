@@ -369,12 +369,6 @@
 # 組合せ (MATH : COMBINATORICS)
 組合せ論的アルゴリズムたちです
 
-### Modint 
-
-- [Modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint.cpp)
-- [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_runtime.cpp)
-- [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/modint_montgomery.cpp)
-
 ### 二項係数
 
 - [二項係数 (オーソドックス, n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
@@ -426,6 +420,12 @@
 <a name="mmt"></a>
 # 整数 (MATH : NUMBER THEORY)
 整数論的アルゴリズムたちです
+
+### Modint 
+
+- [Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint.cpp)
+- [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_runtime.cpp)
+- [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_montgomery.cpp)
 
 ### 約数, 倍数
 
