@@ -106,6 +106,7 @@
 ### 木全般
 
 - [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/run_tree.cpp)
+- [強平衡二分木の走査](https://github.com/drken1215/algorithm/blob/master/DataStructureOnTree/find_various_values_of_binary_tree.cpp)
 
 ### LCA
 
@@ -292,6 +293,7 @@
 - [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/GraphTheory/maximum_stable_set.cpp)
 - 最大クリーク列挙（O(1.443^V)）
 - 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
+
 
 
 　
