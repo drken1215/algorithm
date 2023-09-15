@@ -53,6 +53,15 @@ template<int MOD> struct Fp {
     constexpr Fp operator - (const Fp &r) const noexcept { return Fp(*this) -= r; }
     constexpr Fp operator * (const Fp &r) const noexcept { return Fp(*this) *= r; }
     constexpr Fp operator / (const Fp &r) const noexcept { return Fp(*this) /= r; }
+    constexpr Fp& operator ++ () noexcept {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -- () noexcept {
+        if (val == 0) val += MOD;
+        --val;
+    }
     constexpr Fp& operator += (const Fp &r) noexcept {
         val += r.val;
         if (val >= MOD) val -= MOD;

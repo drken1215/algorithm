@@ -336,7 +336,7 @@
 
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
-- [任意 mod NTT](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
+- [任意 mod 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
 
 ### 畳み込み (Convolution)
 
@@ -358,7 +358,6 @@
 ### 形式的冪級数 (FPS)
 
 - [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
-- [形式的冪級数 (実行時 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series_runtime_mod.cpp)
 - Sparse な形式的冪級数
 - [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - Fiduccia 法 (高速きたまさ法)

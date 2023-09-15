@@ -12,6 +12,9 @@
 //   Yosupo Library Checker - Polynomial Taylor Shift
 //     https://judge.yosupo.jp/problem/polynomial_taylor_shift
 //
+//   AGC 005 F - Many Easy Problems (Polynomial Taylor Shift % mod 924844033)
+//     https://atcoder.jp/contests/agc005/tasks/agc005_f
+//
 
 
 #include <bits/stdc++.h>
@@ -39,6 +42,15 @@ template<int MOD> struct Fp {
     constexpr Fp operator - (const Fp &r) const noexcept { return Fp(*this) -= r; }
     constexpr Fp operator * (const Fp &r) const noexcept { return Fp(*this) *= r; }
     constexpr Fp operator / (const Fp &r) const noexcept { return Fp(*this) /= r; }
+    constexpr Fp& operator ++ () noexcept {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -- () noexcept {
+        if (val == 0) val += MOD;
+        --val;
+    }
     constexpr Fp& operator += (const Fp &r) noexcept {
         val += r.val;
         if (val >= MOD) val -= MOD;
@@ -535,9 +547,45 @@ void Yosupo_Polynomial_Taylor_Shift() {
     cout << endl;
 }
 
+// AGC 005 F
+void AGC_005_F() {
+    const int MOD = 924844033;
+    using mint = Fp<MOD>;
+    
+    int N;
+    cin >> N;
+    BiCoef<mint> bc(N + 1);
+    vector<vector<int>> G(N);
+    for (int i = 0; i < N-1; ++i) {
+        int a, b;
+        cin >> a >> b;
+        --a, --b;
+        G[a].push_back(b);
+        G[b].push_back(a);
+    }
+    
+    Poly<mint> f(N+1, 0);
+    vector<int> si(N, 1);
+    auto rec = [&](auto self, int v, int p = -1) -> void {
+        for (auto ch : G[v]) {
+            if (ch == p) continue;
+            self(self, ch, v);
+            ++f[si[ch]];
+            si[v] += si[ch];
+        }
+        ++f[N - si[v]];
+    };
+    rec(rec, 0);
+    
+    Poly<mint> g = PolynomialTaylorShift(f, 1);
+    for (int k = 1; k <= N; ++k) cout << bc.com(N, k) * N - g[k] << endl;
+}
+
 
 int main() {
-    Yosupo_Convolution_mod_1000000007();
+    //Yosupo_Convolution_mod_1000000007();
     //Yosupo_Division_of_Polynomials();
     //Yosupo_Polynomial_Taylor_Shift();
+    AGC_005_F();
 }
+
