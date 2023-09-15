@@ -1,16 +1,9 @@
 //
-// 多項式アルゴリズム (by NTT, FPS)
-// 　・係数は p を素数として Fp 体を想定
+// 任意 mod の畳み込み
 //
 // verified:
 //   Yosupo Library Checker - Convolution (Mod 1,000,000,007)
 //     https://judge.yosupo.jp/problem/convolution_mod_1000000007
-//
-//   Yosupo Library Checker - Division of Polynomials
-//     https://judge.yosupo.jp/problem/division_of_polynomials
-//
-//   Yosupo Library Checker - Polynomial Taylor Shift
-//     https://judge.yosupo.jp/problem/polynomial_taylor_shift
 //
 
 
@@ -298,191 +291,6 @@ namespace NTT {
     }
 };
 
-// Polynomial
-template<typename mint> struct Poly : vector<mint> {
-    using vector<mint>::vector;
- 
-    // constructor
-    constexpr Poly(const vector<mint> &r) : vector<mint>(r) {}
- 
-    // core operator
-    constexpr mint eval(const mint &v) {
-        mint res = 0;
-        for (int i = (int)this->size()-1; i >= 0; --i) {
-            res *= v;
-            res += (*this)[i];
-        }
-        return res;
-    }
-    constexpr Poly& normalize() {
-        while (!this->empty() && this->back() == 0) this->pop_back();
-        return *this;
-    }
- 
-    // basic operator
-    constexpr Poly operator - () const noexcept {
-        Poly res = (*this);
-        for (int i = 0; i < (int)res.size(); ++i) res[i] = -res[i];
-        return res;
-    }
-    constexpr Poly operator + (const mint &v) const { return Poly(*this) += v; }
-    constexpr Poly operator + (const Poly &r) const { return Poly(*this) += r; }
-    constexpr Poly operator - (const mint &v) const { return Poly(*this) -= v; }
-    constexpr Poly operator - (const Poly &r) const { return Poly(*this) -= r; }
-    constexpr Poly operator * (const mint &v) const { return Poly(*this) *= v; }
-    constexpr Poly operator * (const Poly &r) const { return Poly(*this) *= r; }
-    constexpr Poly operator / (const mint &v) const { return Poly(*this) /= v; }
-    constexpr Poly operator / (const Poly &r) const { return Poly(*this) /= r; }
-    constexpr Poly operator % (const Poly &r) const { return Poly(*this) %= r; }
-    constexpr Poly operator << (int x) const { return Poly(*this) <<= x; }
-    constexpr Poly operator >> (int x) const { return Poly(*this) >>= x; }
-    constexpr Poly& operator += (const mint &v) {
-        if (this->empty()) this->resize(1);
-        (*this)[0] += v;
-        return *this;
-    }
-    constexpr Poly& operator += (const Poly &r) {
-        if (r.size() > this->size()) this->resize(r.size());
-        for (int i = 0; i < (int)r.size(); ++i) (*this)[i] += r[i];
-        return this->normalize();
-    }
-    constexpr Poly& operator -= (const mint &v) {
-        if (this->empty()) this->resize(1);
-        (*this)[0] -= v;
-        return *this;
-    }
-    constexpr Poly& operator -= (const Poly &r) {
-        if (r.size() > this->size()) this->resize(r.size());
-        for (int i = 0; i < (int)r.size(); ++i) (*this)[i] -= r[i];
-        return this->normalize();
-    }
-    constexpr Poly& operator *= (const mint &v) {
-        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= v;
-        return *this;
-    }
-    constexpr Poly& operator *= (const Poly &r) {
-        return *this = NTT::mul((*this), r);
-    }
-    constexpr Poly& operator <<= (int x) {
-        Poly res(x, 0);
-        res.insert(res.end(), begin(*this), end(*this));
-        return *this = res;
-    }
-    constexpr Poly& operator >>= (int x) {
-        Poly res;
-        res.insert(res.end(), begin(*this) + x, end(*this));
-        return *this = res;
-    }
-    
-    // division
-    constexpr Poly& operator /= (const mint &v) {
-        assert(v != 0);
-        mint iv = modinv(v);
-        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
-        return *this;
-    }
-    constexpr Poly pre(int siz) const {
-        return Poly(begin(*this), begin(*this) + min((int)this->size(), siz));
-    }
-    constexpr Poly rev() const {
-        Poly res = *this;
-        reverse(begin(res), end(res));
-        return res;
-    }
-    constexpr Poly inv(int deg) const {
-        assert((*this)[0] != 0);
-        if (deg < 0) deg = (int)this->size();
-        Poly res({mint(1) / (*this)[0]});
-        for (int i = 1; i < deg; i <<= 1) {
-            res = (res + res - res * res * pre(i << 1)).pre(i << 1);
-        }
-        res.resize(deg);
-        return res;
-    }
-    constexpr Poly inv() const {
-        return inv((int)this->size());
-    }
-    constexpr Poly& operator /= (const Poly &r) {
-        assert(!r.empty());
-        assert(r.back() != 0);
-        this->normalize();
-        if (this->size() < r.size()) {
-            this->clear();
-            return *this;
-        }
-        int need = (int)this->size() - (int)r.size() + 1;
-        *this = (rev().pre(need) * r.rev().inv(need)).pre(need).rev();
-        return *this;
-    }
-    constexpr Poly& operator %= (const Poly &r) {
-        assert(!r.empty());
-        assert(r.back() != 0);
-        this->normalize();
-        Poly q = (*this) / r;
-        return *this -= q * r;
-    }
-};
-
-
-/*/////////////////////////////*/
-// Polynomial Algorithms
-/*/////////////////////////////*/
-
-// Binomial coefficient
-template<class T> struct BiCoef {
-    vector<T> fact_, inv_, finv_;
-    constexpr BiCoef() {}
-    constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-        init(n);
-    }
-    constexpr void init(int n) noexcept {
-        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].get_mod();
-        for(int i = 2; i < n; i++){
-            fact_[i] = fact_[i-1] * i;
-            inv_[i] = -inv_[MOD%i] * (MOD/i);
-            finv_[i] = finv_[i-1] * inv_[i];
-        }
-    }
-    constexpr T com(int n, int k) const noexcept {
-        if (n < k || n < 0 || k < 0) return 0;
-        return fact_[n] * finv_[k] * finv_[n-k];
-    }
-    constexpr T fact(int n) const noexcept {
-        if (n < 0) return 0;
-        return fact_[n];
-    }
-    constexpr T inv(int n) const noexcept {
-        if (n < 0) return 0;
-        return inv_[n];
-    }
-    constexpr T finv(int n) const noexcept {
-        if (n < 0) return 0;
-        return finv_[n];
-    }
-};
-
-// Polynomial Taylor Shift
-// given: f(x), c
-// find: coefficients of f(x + c)
-template<class mint> Poly<mint> PolynomialTaylorShift(const Poly<mint> &f, long long c) {
-    int N = (int)f.size() - 1;
-    BiCoef<mint> bc(N + 1);
-    
-    // convolution
-    Poly<mint> p(N + 1), q(N + 1);
-    for (int i = 0; i <= N; ++i) {
-        p[i] = f[i] * bc.fact(i);
-        q[N - i] = mint(c).pow(i) * bc.finv(i);
-    }
-    Poly<mint> pq = p * q;
-    
-    // result
-    Poly<mint> res(N + 1);
-    for (int i = 0; i <= N; ++i) res[i] = pq[i + N] * bc.finv(i);
-    return res;
-}
-
 
 
 /*/////////////////////////////*/
@@ -495,49 +303,15 @@ void Yosupo_Convolution_mod_1000000007() {
     
     int N, M;
     cin >> N >> M;
-    Poly<mint> a(N), b(M);
+    vector<mint> a(N), b(M);
     for (int i = 0; i < N; ++i) cin >> a[i];
     for (int i = 0; i < M; ++i) cin >> b[i];
-    Poly<mint> res = a * b;
+    vector<mint> res = NTT::mul(a, b);
     for (auto v : res) cout << v << " ";
-    cout << endl;
-}
-
-void Yosupo_Division_of_Polynomials() {
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
-    
-    int N, M;
-    cin >> N >> M;
-    Poly<mint> f(N), g(M);
-    for (int i = 0; i < N; ++i) cin >> f[i];
-    for (int i = 0; i < M; ++i) cin >> g[i];
-    
-    Poly<mint> q = f / g, r = f - g * q;
-    cout << q.size() << " " << r.size() << endl;
-    for (auto v : q) cout << v << " ";
-    cout << endl;
-    for (auto v : r) cout << v << " ";
-    cout << endl;
-}
-
-void Yosupo_Polynomial_Taylor_Shift() {
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
-    
-    long long N, c;
-    cin >> N >> c;
-    Poly<mint> a(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-    
-    Poly<mint> res = PolynomialTaylorShift(a, c);
-    for (int i = 0; i < N; ++i) cout << res[i] << " ";
     cout << endl;
 }
 
 
 int main() {
     Yosupo_Convolution_mod_1000000007();
-    //Yosupo_Division_of_Polynomials();
-    //Yosupo_Polynomial_Taylor_Shift();
 }

@@ -46,6 +46,13 @@
 - Radix Heap
 - Fibonacci Heap
 
+### ハッシュ
+
+- [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
+- [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
+- ローリングハッシュ
+- 根付き木のハッシュ
+
 ### さまざまな木
 
 - [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
@@ -76,7 +83,6 @@
 
 - [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
-- [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
 - Dynamic Connectivity
 
@@ -317,23 +323,30 @@
 - [行列累乗, ランク, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - [行列累乗, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - [行列累乗, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
+- Black Box Linear Algebra
+
+### 特殊な行列
+
 - Toeplitz 行列 (乗算, 連立方程式が O(n^2))
 - 巡回行列 (乗算が O(n^2))
 - コンパニオン行列
 - 三重対角行列 (連立方程式が O(n))
-- Black Box Linear Algebra
 
-### 畳み込み計算
+### FFT, NTT
 
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
+- [任意 mod NTT](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
+
+### 畳み込み (Convolution)
+
 - [高速アダマール変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_hadmard_transform.cpp)
 - [高速ゼータ変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
 - [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
 - Subset Convolution
 - Karatsuba 法
 
-### 多項式
+### 多項式 (Polynomial)
 
 - [多項式：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial.cpp)
 - [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
@@ -353,7 +366,7 @@
 - 関数の合成
 - 逆関数
 
-### 数理最適化
+### 数理最適化 (Optimization)
 
 - 二次方程式
 - 二分探索法 (方程式の解を 1 つ求める)
@@ -487,7 +500,6 @@
 
 - [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
-- 二次元ローリングハッシュ
 - [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
 - 単一パターン検索 (Boyer-Moore 法)
 - 複数パターン検索 (Aho-Corasick 法)
@@ -554,6 +566,11 @@
 # その他 (OTHERS)
 その他のアルゴリズムです
 
+### 入出力
+
+- [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
+- Nyaan's 高速入出力
+
 ### グリッド
 
 - [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
@@ -572,11 +589,9 @@
 - A*
 - IDA*
 - Baby-Step Giant-Step 法
-- 平面走査法
 
 ### その他
 
-- [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
 - [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
