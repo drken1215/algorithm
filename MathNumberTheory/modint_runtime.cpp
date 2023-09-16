@@ -21,8 +21,10 @@
 using namespace std;
 
 
-// modint
-struct Fp {
+// dynamic modint
+struct DynamicModint {
+    using mint = DynamicModint;
+    
     // static menber
     static int MOD;
     
@@ -30,8 +32,8 @@ struct Fp {
     long long val;
     
     // constructor
-    Fp() : val(0) { }
-    Fp(long long v) : val(v % MOD) {
+    DynamicModint() : val(0) { }
+    DynamicModint(long long v) : val(v % MOD) {
         if (val < 0) val += MOD;
     }
     long long get() const { return val; }
@@ -39,28 +41,27 @@ struct Fp {
     static void set_mod(int mod) { MOD = mod; }
     
     // arithmetic operators
-    Fp operator - () const {
-        return val ? MOD - val : 0;
-    }
-    Fp operator + (const Fp &r) const { return Fp(*this) += r; }
-    Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
-    Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
-    Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
-    Fp& operator += (const Fp &r) {
+    mint operator + () const { return mint(*this); }
+    mint operator - () const { return mint(0) - mint(*this); }
+    mint operator + (const mint &r) const { return mint(*this) += r; }
+    mint operator - (const mint &r) const { return mint(*this) -= r; }
+    mint operator * (const mint &r) const { return mint(*this) *= r; }
+    mint operator / (const mint &r) const { return mint(*this) /= r; }
+    mint& operator += (const mint &r) {
         val += r.val;
         if (val >= MOD) val -= MOD;
         return *this;
     }
-    Fp& operator -= (const Fp &r) {
+    mint& operator -= (const mint &r) {
         val -= r.val;
         if (val < 0) val += MOD;
         return *this;
     }
-    Fp& operator *= (const Fp &r) {
+    mint& operator *= (const mint &r) {
         val = val * r.val % MOD;
         return *this;
     }
-    Fp& operator /= (const Fp &r) {
+    mint& operator /= (const mint &r) {
         long long a = r.val, b = MOD, u = 1, v = 0;
         while (b) {
             long long t = a / b;
@@ -71,8 +72,8 @@ struct Fp {
         if (val < 0) val += MOD;
         return *this;
     }
-    Fp pow(long long n) const {
-        Fp res(1), mul(*this);
+    mint pow(long long n) const {
+        mint res(1), mul(*this);
         while (n > 0) {
             if (n & 1) res *= mul;
             mul *= mul;
@@ -80,40 +81,60 @@ struct Fp {
         }
         return res;
     }
-    Fp inv() const {
-        Fp res(1), div(*this);
+    mint inv() const {
+        mint res(1), div(*this);
         return res / div;
     }
 
     // other operators
-    bool operator == (const Fp &r) const {
+    bool operator == (const mint &r) const {
         return this->val == r.val;
     }
-    bool operator != (const Fp &r) const {
+    bool operator != (const mint &r) const {
         return this->val != r.val;
     }
-    friend istream& operator >> (istream &is, Fp &x) {
+    mint& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    mint& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    mint operator ++ (int) {
+        mint res = *this;
+        ++*this;
+        return res;
+    }
+    mint operator -- (int) {
+        mint res = *this;
+        --*this;
+        return res;
+    }
+    friend istream& operator >> (istream &is, mint &x) {
         is >> x.val;
         x.val %= x.get_mod();
         if (x.val < 0) x.val += x.get_mod();
         return is;
     }
-    friend ostream& operator << (ostream &os, const Fp &x) {
+    friend ostream& operator << (ostream &os, const mint &x) {
         return os << x.val;
     }
-    friend Fp modpow(const Fp &r, long long n) {
+    friend mint pow(const mint &r, long long n) {
         return r.pow(n);
     }
-    friend Fp modinv(const Fp &r) {
+    friend mint inv(const mint &r) {
         return r.inv();
     }
 };
 
-int Fp::MOD;
+int DynamicModint::MOD;
 
 // Binomial coefficient
-template<class T> struct BiCoef {
-    vector<T> fact_, inv_, finv_;
+template<class mint> struct BiCoef {
+    vector<mint> fact_, inv_, finv_;
     constexpr BiCoef() {}
     constexpr BiCoef(int n) : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
         init(n);
@@ -127,19 +148,19 @@ template<class T> struct BiCoef {
             finv_[i] = finv_[i-1] * inv_[i];
         }
     }
-    constexpr T com(int n, int k) const noexcept {
+    constexpr mint com(int n, int k) const {
         if (n < k || n < 0 || k < 0) return 0;
         return fact_[n] * finv_[k] * finv_[n-k];
     }
-    constexpr T fact(int n) const noexcept {
+    constexpr mint fact(int n) const {
         if (n < 0) return 0;
         return fact_[n];
     }
-    constexpr T inv(int n) const noexcept {
+    constexpr mint inv(int n) const {
         if (n < 0) return 0;
         return inv_[n];
     }
-    constexpr T finv(int n) const noexcept {
+    constexpr mint finv(int n) const {
         if (n < 0) return 0;
         return finv_[n];
     }
@@ -154,7 +175,7 @@ void Yosupo_Binomial_Coefficient() {
     const int MAX = 11000000;
     int T, M;
     cin >> T >> M;
-    using mint = Fp;
+    using mint = DynamicModint;
     mint::set_mod(M);
     
     BiCoef<mint> bc(MAX);
@@ -166,9 +187,9 @@ void Yosupo_Binomial_Coefficient() {
 }
 
 // スターリング数 (n 個を k グループにわける、n >= k)
-template<class T> struct Stirling {
-    vector<vector<T>> S;
-    constexpr Stirling(int MAX) noexcept : S(MAX, vector<T>(MAX, 0)) {
+template<class mint> struct Stirling {
+    vector<vector<mint>> S;
+    constexpr Stirling(int MAX) : S(MAX, vector<mint>(MAX, 0)) {
         S[0][0] = 1;
         for (int n = 1; n < MAX; ++n) {
             for (int k = 1; k <= n; ++k) {
@@ -176,7 +197,7 @@ template<class T> struct Stirling {
             }
         }
     }
-    constexpr T get(int n, int k) {
+    constexpr mint get(int n, int k) {
         if (n < 0 || k < 0 || n < k) return 0;
         return S[n][k];
     }
@@ -186,7 +207,7 @@ void ARC_096_E() {
     // 入力
     long long N, M;
     cin >> N >> M;
-    using mint = Fp;
+    using mint = DynamicModint;
     mint::set_mod(M);
     
     // 前計算
@@ -217,10 +238,8 @@ void ARC_096_E() {
     cout << res << endl;
 }
 
-
 int main() {
     Yosupo_Binomial_Coefficient();
     //ARC_096_E();
 }
-
 
