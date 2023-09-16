@@ -165,4 +165,3 @@ void AOJ2353() {
 int main() {
     AOJ2353();
 }
-

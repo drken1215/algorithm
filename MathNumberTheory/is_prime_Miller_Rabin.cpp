@@ -57,6 +57,7 @@ struct MontgomeryModInt64 {
     }
     
     // arithmetic operators
+    mint operator + () const { return mint(*this); }
     mint operator - () const { return mint() - mint(*this); }
     mint operator + (const mint &r) const { return mint(*this) += r; }
     mint operator - (const mint &r) const { return mint(*this) -= r; }
@@ -96,6 +97,26 @@ struct MontgomeryModInt64 {
     bool operator != (const mint &r) const {
         return (val >= MOD ? val - MOD : val) != (r.val >= MOD ? r.val - MOD : r.val);
     }
+    mint& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    mint& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    mint operator ++ (int) {
+        mint res = *this;
+        ++*this;
+        return res;
+    }
+    mint operator -- (int) {
+        mint res = *this;
+        --*this;
+        return res;
+    }
     friend istream& operator >> (istream &is, mint &x) {
         long long t;
         is >> t;
@@ -105,10 +126,10 @@ struct MontgomeryModInt64 {
     friend ostream& operator << (ostream &os, const mint &x) {
         return os << x.get();
     }
-    friend mint modpow(const mint &r, long long n) {
+    friend mint pow(const mint &r, long long n) {
         return r.pow(n);
     }
-    friend mint modinv(const mint &r) {
+    friend mint inv(const mint &r) {
         return r.inv();
     }
 };
@@ -176,6 +197,3 @@ void YosupoPrimarityTest() {
 int main() {
     YosupoPrimarityTest();
 }
-
-
-

@@ -182,6 +182,3 @@ void ABC_127_E() {
 int main() {
     ABC_127_E();
 }
-
-
-
