@@ -35,8 +35,8 @@ template<int MOD> struct Fp {
     constexpr int get_mod() const { return MOD; }
     
     // arithmetic operators
-    constexpr Fp operator + () const { return *this; }
-    constexpr Fp operator - () const { return Fp(0) - *this; }
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
     constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
     constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
     constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }

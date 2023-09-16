@@ -46,8 +46,8 @@ template<int MOD> struct Fp {
     constexpr int get_mod() const { return MOD; }
     
     // arithmetic operators
-    constexpr Fp operator + () const { return *this; }
-    constexpr Fp operator - () const { return Fp(0) - *this; }
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
     constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
     constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
     constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
@@ -127,10 +127,10 @@ template<int MOD> struct Fp {
     friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> modpow(const Fp<MOD> &r, long long n) {
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
         return r.pow(n);
     }
-    friend constexpr Fp<MOD> modinv(const Fp<MOD> &r) {
+    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
         return r.inv();
     }
 };
