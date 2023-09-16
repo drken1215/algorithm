@@ -15,6 +15,9 @@
 //   AGC 005 F - Many Easy Problems (Polynomial Taylor Shift % mod 924844033)
 //     https://atcoder.jp/contests/agc005/tasks/agc005_f
 //
+//   AOJ 2213 The Number of Solutions for a Polynomial (多項式の割り算 mod Any, 多項式 GCD)
+//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2213
+//
 
 
 #include <bits/stdc++.h>
@@ -245,7 +248,7 @@ namespace NTT {
         return res;
     }
 
-    // mint
+    // mul by convolution
     template<class mint> vector<mint> mul(const vector<mint> &A, const vector<mint> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
@@ -277,39 +280,8 @@ namespace NTT {
             c2[i] = a2[i] * b2[i];
         }
         trans(c0, true), trans(c1, true), trans(c2, true);
-        static const mint mod0 = MOD0, mod01 = mod0 * MOD1;
+        mint mod0 = MOD0, mod01 = mod0 * MOD1;
         vector<mint> res(N + M - 1);
-        for (int i = 0; i < N + M - 1; ++i) {
-            int y0 = c0[i].val;
-            int y1 = (imod0 * (c1[i] - y0)).val;
-            int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-            res[i] = mod01 * y2 + mod0 * y1 + y0;
-        }
-        return res;
-    }
-
-    // long long
-    vector<long long> mul_ll(const vector<long long> &A, const vector<long long> &B) {
-        if (A.empty() || B.empty()) return {};
-        int N = (int)A.size(), M = (int)B.size();
-        if (min(N, M) < 30) return naive_mul(A, B);
-        int size_fft = get_fft_size(N, M);
-        vector<mint0> a0(size_fft, 0), b0(size_fft, 0), c0(size_fft, 0);
-        vector<mint1> a1(size_fft, 0), b1(size_fft, 0), c1(size_fft, 0);
-        vector<mint2> a2(size_fft, 0), b2(size_fft, 0), c2(size_fft, 0);
-        for (int i = 0; i < N; ++i)
-            a0[i] = A[i], a1[i] = A[i], a2[i] = A[i];
-        for (int i = 0; i < M; ++i)
-            b0[i] = B[i], b1[i] = B[i], b2[i] = B[i];
-        trans(a0), trans(a1), trans(a2), trans(b0), trans(b1), trans(b2);
-        for (int i = 0; i < size_fft; ++i) {
-            c0[i] = a0[i] * b0[i];
-            c1[i] = a1[i] * b1[i];
-            c2[i] = a2[i] * b2[i];
-        }
-        trans(c0, true), trans(c1, true), trans(c2, true);
-        static const long long mod0 = MOD0, mod01 = mod0 * MOD1;
-        vector<long long> res(N + M - 1);
         for (int i = 0; i < N + M - 1; ++i) {
             int y0 = c0[i].val;
             int y1 = (imod0 * (c1[i] - y0)).val;
@@ -396,33 +368,12 @@ template<typename mint> struct Poly : vector<mint> {
         return *this = res;
     }
     
-    // division
+    // division, pow
     constexpr Poly& operator /= (const mint &v) {
         assert(v != 0);
         mint iv = modinv(v);
         for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
         return *this;
-    }
-    constexpr Poly pre(int siz) const {
-        return Poly(begin(*this), begin(*this) + min((int)this->size(), siz));
-    }
-    constexpr Poly rev() const {
-        Poly res = *this;
-        reverse(begin(res), end(res));
-        return res;
-    }
-    constexpr Poly inv(int deg) const {
-        assert((*this)[0] != 0);
-        if (deg < 0) deg = (int)this->size();
-        Poly res({mint(1) / (*this)[0]});
-        for (int i = 1; i < deg; i <<= 1) {
-            res = (res + res - res * res * pre(i << 1)).pre(i << 1);
-        }
-        res.resize(deg);
-        return res;
-    }
-    constexpr Poly inv() const {
-        return inv((int)this->size());
     }
     constexpr Poly& operator /= (const Poly &r) {
         assert(!r.empty());
@@ -433,7 +384,7 @@ template<typename mint> struct Poly : vector<mint> {
             return *this;
         }
         int need = (int)this->size() - (int)r.size() + 1;
-        *this = (rev().pre(need) * r.rev().inv(need)).pre(need).rev();
+        *this = (rev().pre(need) * r.rev().inner_inv(need)).pre(need).rev();
         return *this;
     }
     constexpr Poly& operator %= (const Poly &r) {
@@ -442,6 +393,92 @@ template<typename mint> struct Poly : vector<mint> {
         this->normalize();
         Poly q = (*this) / r;
         return *this -= q * r;
+    }
+    
+    // FPS functions
+    constexpr Poly pre(int siz) const {
+        return Poly(begin(*this), begin(*this) + min((int)this->size(), siz));
+    }
+    constexpr Poly rev() const {
+        Poly res = *this;
+        reverse(begin(res), end(res));
+        return res;
+    }
+    
+    // df/dx
+    constexpr Poly diff() const {
+        int n = (int)this->size();
+        Poly res(n-1);
+        for (int i = 1; i < n; ++i) res[i-1] = (*this)[i] * i;
+        return res;
+    }
+    
+    // \int f dx
+    constexpr Poly integral() const {
+        int n = (int)this->size();
+        Poly res(n+1, 0);
+        for (int i = 0; i < n; ++i) res[i+1] = (*this)[i] / (i+1);
+        return res;
+    }
+
+    // inv(f), f[0] must not be 0
+    constexpr Poly inner_inv(int deg) const {
+        assert((*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        Poly res({mint(1) / (*this)[0]});
+        for (int i = 1; i < deg; i <<= 1) {
+            res = (res + res - res * res * pre(i << 1)).pre(i << 1);
+        }
+        res.resize(deg);
+        return res;
+    }
+    constexpr Poly inner_inv() const {
+        return inner_inv((int)this->size());
+    }
+    
+    // log(f) = \int f'/f dx, f[0] must be 1
+    constexpr Poly inner_log(int deg) const {
+        assert((*this)[0] == 1);
+        Poly res = (diff() * inner_inv(deg)).integral();
+        res.resize(deg);
+        return res;
+    }
+    constexpr Poly inner_log() const {
+        return inner_log((int)this->size());
+    }
+    
+    // exp(f), f[0] must be 0
+    constexpr Poly inner_exp(int deg) const {
+        assert((*this)[0] == 0);
+        Poly res(1, 1);
+        for (int i = 1; i < deg; i <<= 1) {
+            res = res * (pre(i << 1) - res.inner_log(i << 1) + 1).pre(i << 1);
+        }
+        res.resize(deg);
+        return res;
+    }
+    constexpr Poly inner_exp() const {
+        return inner_exp((int)this->size());
+    }
+    
+    // pow(f) = exp(e * log f)
+    constexpr Poly inner_pow(long long e, int deg) const {
+        if (e == 0) {
+            Poly res(deg, 0);
+            res[0] = 1;
+            return res;
+        }
+        long long i = 0;
+        while (i < (int)this->size() && (*this)[i] == 0) ++i;
+        if (i == (int)this->size() || i > (deg - 1) / e) return Poly(deg, 0);
+        mint k = (*this)[i];
+        Poly res = ((((*this) >> i) / k).inner_log(deg) * e).inner_exp(deg)
+                    * mint(k).inner_pow(e) << (e * i);
+        res.resize(deg);
+        return res;
+    }
+    constexpr Poly inner_pow(long long e) const {
+        return inner_pow(e, (int)this->size());
     }
 };
 
@@ -504,6 +541,122 @@ template<class mint> Poly<mint> PolynomialTaylorShift(const Poly<mint> &f, long 
     for (int i = 0; i <= N; ++i) res[i] = pq[i + N] * bc.finv(i);
     return res;
 }
+
+
+/*/////////////////////////////*/
+// for any mod
+/*/////////////////////////////*/
+
+// dynamic modint
+struct DynamicModint {
+    using mint = DynamicModint;
+    
+    // static menber
+    static int MOD;
+    
+    // inner value
+    long long val;
+    
+    // constructor
+    DynamicModint() : val(0) { }
+    DynamicModint(long long v) : val(v % MOD) {
+        if (val < 0) val += MOD;
+    }
+    long long get() const { return val; }
+    static int get_mod() { return MOD; }
+    static void set_mod(int mod) { MOD = mod; }
+    
+    // arithmetic operators
+    mint operator + () const { return mint(*this); }
+    mint operator - () const { return mint(0) - mint(*this); }
+    mint operator + (const mint &r) const { return mint(*this) += r; }
+    mint operator - (const mint &r) const { return mint(*this) -= r; }
+    mint operator * (const mint &r) const { return mint(*this) *= r; }
+    mint operator / (const mint &r) const { return mint(*this) /= r; }
+    mint& operator += (const mint &r) {
+        val += r.val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    mint& operator -= (const mint &r) {
+        val -= r.val;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    mint& operator *= (const mint &r) {
+        val = val * r.val % MOD;
+        return *this;
+    }
+    mint& operator /= (const mint &r) {
+        long long a = r.val, b = MOD, u = 1, v = 0;
+        while (b) {
+            long long t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        val = val * u % MOD;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    mint pow(long long n) const {
+        mint res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    mint inv() const {
+        mint res(1), div(*this);
+        return res / div;
+    }
+
+    // other operators
+    bool operator == (const mint &r) const {
+        return this->val == r.val;
+    }
+    bool operator != (const mint &r) const {
+        return this->val != r.val;
+    }
+    mint& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    mint& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    mint operator ++ (int) {
+        mint res = *this;
+        ++*this;
+        return res;
+    }
+    mint operator -- (int) {
+        mint res = *this;
+        --*this;
+        return res;
+    }
+    friend istream& operator >> (istream &is, mint &x) {
+        is >> x.val;
+        x.val %= x.get_mod();
+        if (x.val < 0) x.val += x.get_mod();
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const mint &x) {
+        return os << x.val;
+    }
+    friend mint pow(const mint &r, long long n) {
+        return r.pow(n);
+    }
+    friend mint inv(const mint &r) {
+        return r.inv();
+    }
+};
+
+int DynamicModint::MOD;
 
 
 
@@ -591,11 +744,48 @@ void AGC_005_F() {
     for (int k = 1; k <= N; ++k) cout << bc.com(N, k) * N - g[k] << endl;
 }
 
+// AOJ 2213
+void AOJ_2213() {
+    using mint = DynamicModint;
+    
+    auto pow = [&](const Poly<mint> &f, long long n, const Poly<mint> &m) -> Poly<mint> {
+        Poly<mint> res = {1}, mul = f;
+        while (n > 0) {
+            if (n & 1) res = res * mul % m;
+            mul = mul * mul % m;
+            n >>= 1;
+        }
+        return res;
+    };
+    auto gcd = [&](auto self, const Poly<mint> &a, const Poly<mint> &b) -> Poly<mint> {
+        if (b.empty()) return a;
+        else return self(self, b, a % b);
+    };
+    
+    long long N, P;
+    while (cin >> N >> P) {
+        if (N == 0) break;
+        mint::set_mod(P);
+        
+        Poly<mint> f(N+1);
+        for (int i = 0; i < N+1; ++i) cin >> f[i];
+        f.normalize();
+        if (f.empty()) {
+            cout << P << endl;
+            continue;
+        }
+        Poly<mint> x = {0, 1};
+        Poly<mint> g = pow(x, P, f) - x;
+        Poly<mint> res = gcd(gcd, f, g);
+        cout << (int)res.size() - 1 << endl;
+    }
+}
+
 
 int main() {
     //Yosupo_Convolution_mod_1000000007();
     //Yosupo_Division_of_Polynomials();
     //Yosupo_Polynomial_Taylor_Shift();
-    AGC_005_F();
+    //AGC_005_F();
+    AOJ_2213();
 }
-

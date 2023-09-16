@@ -180,10 +180,10 @@ namespace NTT {
     }
 
     // number-theoretic transform
-    template<class mint> void trans(vector<mint>& v, bool inv = false) {
+    template<class mint> void trans(vector<mint> &v, bool inv = false) {
         if (v.empty()) return;
         int N = (int)v.size();
-        int MOD = v[0].getmod();
+        int MOD = v[0].get_mod();
         int PR = calc_primitive_root(MOD);
         static bool first = true;
         static vector<long long> vbw(30), vibw(30);
@@ -230,8 +230,7 @@ namespace NTT {
     static const mint2 imod01 = 187290749; // imod1 / MOD0;
 
     // small case (T = mint, long long)
-    template<class T> vector<T> naive_mul
-    (const vector<T>& A, const vector<T>& B) {
+    template<class T> vector<T> naive_mul(const vector<T> &A, const vector<T> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
         vector<T> res(N + M - 1);
@@ -241,13 +240,12 @@ namespace NTT {
         return res;
     }
 
-    // mint
-    template<class mint> vector<mint> mul
-    (const vector<mint>& A, const vector<mint>& B) {
+    // mul by convolution
+    template<class mint> vector<mint> mul(const vector<mint> &A, const vector<mint> &B) {
         if (A.empty() || B.empty()) return {};
         int N = (int)A.size(), M = (int)B.size();
         if (min(N, M) < 30) return naive_mul(A, B);
-        int MOD = A[0].getmod();
+        int MOD = A[0].get_mod();
         int size_fft = get_fft_size(N, M);
         if (MOD == 998244353) {
             vector<mint> a(size_fft), b(size_fft), c(size_fft);
@@ -274,40 +272,8 @@ namespace NTT {
             c2[i] = a2[i] * b2[i];
         }
         trans(c0, true), trans(c1, true), trans(c2, true);
-        static const mint mod0 = MOD0, mod01 = mod0 * MOD1;
+        mint mod0 = MOD0, mod01 = mod0 * MOD1;
         vector<mint> res(N + M - 1);
-        for (int i = 0; i < N + M - 1; ++i) {
-            int y0 = c0[i].val;
-            int y1 = (imod0 * (c1[i] - y0)).val;
-            int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-            res[i] = mod01 * y2 + mod0 * y1 + y0;
-        }
-        return res;
-    }
-
-    // long long
-    vector<long long> mul_ll
-    (const vector<long long>& A, const vector<long long>& B) {
-        if (A.empty() || B.empty()) return {};
-        int N = (int)A.size(), M = (int)B.size();
-        if (min(N, M) < 30) return naive_mul(A, B);
-        int size_fft = get_fft_size(N, M);
-        vector<mint0> a0(size_fft, 0), b0(size_fft, 0), c0(size_fft, 0);
-        vector<mint1> a1(size_fft, 0), b1(size_fft, 0), c1(size_fft, 0);
-        vector<mint2> a2(size_fft, 0), b2(size_fft, 0), c2(size_fft, 0);
-        for (int i = 0; i < N; ++i)
-            a0[i] = A[i], a1[i] = A[i], a2[i] = A[i];
-        for (int i = 0; i < M; ++i)
-            b0[i] = B[i], b1[i] = B[i], b2[i] = B[i];
-        trans(a0), trans(a1), trans(a2), trans(b0), trans(b1), trans(b2);
-        for (int i = 0; i < size_fft; ++i) {
-            c0[i] = a0[i] * b0[i];
-            c1[i] = a1[i] * b1[i];
-            c2[i] = a2[i] * b2[i];
-        }
-        trans(c0, true), trans(c1, true), trans(c2, true);
-        static const long long mod0 = MOD0, mod01 = mod0 * MOD1;
-        vector<long long> res(N + M - 1);
         for (int i = 0; i < N + M - 1; ++i) {
             int y0 = c0[i].val;
             int y1 = (imod0 * (c1[i] - y0)).val;
@@ -633,8 +599,8 @@ void ARC160_D() {
     cout << BostanMori(P, Q, M/K) << endl;
 }
 
+
 int main() {
     TDPC_T();
     //ARC160_D();
 }
-
