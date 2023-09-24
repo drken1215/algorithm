@@ -6,6 +6,9 @@
 //   Codeforces Round 896 (Div. 1) C. Travel Plan
 //     https://codeforces.com/contest/1868/problem/C
 //
+//   AtCoder ABC 321 E - Complete Binary Tree
+//     https://atcoder.jp/contests/abc321/tasks/abc321_e
+//
 
 
 #include <bits/stdc++.h>
@@ -13,6 +16,7 @@ using namespace std;
 
 
 // Find out of Strongly Balanced Binary Tree (N <= 10^18)
+// the vertex number is 1-indexed (root = 1)
 template<class mint> struct FindOutBinaryTree {
     // input data
     long long N;
@@ -26,7 +30,12 @@ template<class mint> struct FindOutBinaryTree {
     
     // constructor
     FindOutBinaryTree() {}
-    FindOutBinaryTree(long long n) : N(n) { init(n); }
+    FindOutBinaryTree(long long n, bool build_dt = true) : N(n) {
+        if (build_dt) init(n);
+    }
+    void set(long long n) {
+        N = n;
+    }
     void init(long long n) {
         N = n;
         int D = 0;
@@ -58,26 +67,32 @@ template<class mint> struct FindOutBinaryTree {
         pre(pre, D);
     }
     
+    // get left depth and right depth
+    pair<long long, long long> get_depth(long long v) {
+        long long left_depth = 0, right_depth = 0;
+        long long left = v, right = v;
+        while (left * 2 <= N) ++left_depth, left = left * 2;
+        while (right * 2 + 1 <= N) ++right_depth, right = right * 2 + 1;
+        return {left_depth, right_depth};
+    }
+    
     // find out the binary tree (size N)
     void findout_binary_tree() {
         auto rec = [&](auto self, long long v) -> pair<vector<mint>, vector<mint>> {
             vector<mint> depth, distance;
             if (v > N) return {depth, distance};
             
-            // 左右の深さを調査
-            int ld = 0, rd = 0;
-            long long lid = v, rid = v;
-            while (lid * 2 <= N) ++ld, lid = lid * 2;
-            while (rid * 2 + 1 <= N) ++rd, rid = rid * 2 + 1;
+            // examine the depth of left subtree and right subtree
+            auto [ld, rd] = get_depth(v);
             if (ld == rd) return {perfect_depth_table[ld], perfect_distance_table[rd]};
 
-            // 左右の二分木を探索
+            // search the left subtree and right subtree
             auto [left_depth, left_distance] = self(self, v * 2);
             auto [right_depth, right_distance] = self(self, v * 2 + 1);
             depth.assign(max((int)left_depth.size(), (int)right_depth.size()) + 1, 0);
             distance.assign((int)left_depth.size() + (int)right_depth.size() + 2, 0);
             
-            // 更新
+            // update
             depth[0] = distance[1] = 1;
             for (int d = 0; d < (int)left_depth.size(); ++d) {
                 depth[d + 1] += left_depth[d];
@@ -103,6 +118,33 @@ template<class mint> struct FindOutBinaryTree {
         auto [depth, distance] = rec(rec, 1);
         depth_table = depth;
         distance_table = distance;
+    }
+    
+    // the number of nodes whose depth from v is d (v is 1-indexed)
+    mint get_num_of_the_depth(long long v, long long d) {
+        if (v <= 0 || v > N || d < 0) return mint(0);
+        auto [left_depth, right_depth] = get_depth(v);
+        if (left_depth < d) return mint(0);
+        else if (right_depth >= d) return mint(1LL << d);
+        else return mint(N - (v << d) + 1);
+    }
+    
+    // the number of nodes whose distance from v is d (v is 1-indexed)
+    mint get_num_of_the_distance(long long v, long long d) {
+        if (v <= 0 || v > N) return mint(0);
+        mint res = get_num_of_the_depth(v, d);
+        for (long long i = 1; i <= d; ++i) {
+            if (v == 1) break;
+            if (i == d) {
+                res += 1;
+                break;
+            }
+            long long v2 = v / 2;
+            if (v == v2 * 2 + 1) res += get_num_of_the_depth(v2 * 2, d - i - 1);
+            else res += get_num_of_the_depth(v2 * 2 + 1, d - i - 1);
+            v = v2;
+        }
+        return res;
     }
 };
 
@@ -196,33 +238,44 @@ template<int MOD> struct Fp {
 // Examples
 /*/////////////////////////////*/
 
-void Codeforces_896_DIV1_C_Solve() {
+void Codeforces_896_DIV1_C() {
     const int MOD = 998244353;
     using mint = Fp<MOD>;
     
-    long long N, M;
-    cin >> N >> M;
-    
-    FindOutBinaryTree<mint> fbt(N);
-    mint res = 0;
-    for (int l = 1; l < (int)fbt.distance_table.size(); ++l) {
-        mint sum = 0;
-        for (int i = 1; i < M; ++i) sum -= mint(i).pow(l);
-        sum += mint(M).pow(l+1);
-        sum *= mint(M).pow(N-l);
-        res += fbt.distance_table[l] * sum;
-    }
-    cout << res << endl;
-}
-
-void Codeforces_896_DIV1_C() {
+    auto solve = [&]() -> void {
+        long long N, M;
+        cin >> N >> M;
+        FindOutBinaryTree<mint> fbt(N);
+        mint res = 0;
+        for (int l = 1; l < (int)fbt.distance_table.size(); ++l) {
+            mint sum = 0;
+            for (int i = 1; i < M; ++i) sum -= mint(i).pow(l);
+            sum += mint(M).pow(l+1);
+            sum *= mint(M).pow(N-l);
+            res += fbt.distance_table[l] * sum;
+        }
+        cout << res << endl;
+    };
     int T;
     cin >> T;
-    while (T--) Codeforces_896_DIV1_C_Solve();
+    while (T--) solve();
+}
+
+void ABC_321_E() {
+    auto solve = [&]() -> void {
+        long long N, X, D;
+        cin >> N >> X >> D;
+        FindOutBinaryTree<long long> fbt(N, false);
+        cout << fbt.get_num_of_the_distance(X, D) << endl;
+    };
+    int T;
+    cin >> T;
+    while (T--) solve();
 }
 
 
 int main() {
-    Codeforces_896_DIV1_C();
+    //Codeforces_896_DIV1_C();
+    ABC_321_E();
 }
 
