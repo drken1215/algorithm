@@ -332,18 +332,12 @@
 - コンパニオン行列
 - 三重対角行列 (連立方程式が O(n))
 
-### FFT, NTT
+### FFT, NTT, Convolution
 
 - [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
 - [任意 mod 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
-
-### 畳み込み (Convolution)
-
-- [高速アダマール変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_hadmard_transform.cpp)
-- [高速ゼータ変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
 - [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
-- Subset Convolution
 - Karatsuba 法
 
 ### 多項式 (Polynomial)
@@ -420,6 +414,17 @@
 - [2-SAT](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/two_sat.cpp)
 - マトロイド上の Greedy 法
 - マトロイド交差
+
+### 集合冪級数 (SPS)
+
+- [高速ゼータ変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
+- [高速アダマール変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_hadmard_transform.cpp)
+- AND Convolution
+- OR Convolution
+- XOR Convolution
+- Subset Convolution
+- 集合冪級数の exp
+- 集合冪級数の合成
 
 ### その他
 

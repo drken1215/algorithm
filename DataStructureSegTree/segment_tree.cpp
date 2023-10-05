@@ -16,12 +16,12 @@
 //
 
 
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 
 // Segment Tree
-template<class Monoid> struct SegTree {
+template<class Monoid> struct SegmentTree {
     using Func = function<Monoid(Monoid, Monoid)>;
 
     // core member
@@ -30,58 +30,66 @@ template<class Monoid> struct SegTree {
     Monoid IDENTITY;
     
     // inner data
-    int offset;
+    int log, offset;
     vector<Monoid> dat;
 
     // constructor
-    SegTree() {}
-    SegTree(int n, const Func &op, const Monoid &identity) {
+    SegmentTree() {}
+    SegmentTree(int n, const Func &op, const Monoid &identity) {
         init(n, op, identity);
     }
-    SegTree(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
-        init((int)v.size(), op, identity);
-        build(v);
+    SegmentTree(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
+        init(v, op, identity);
     }
     void init(int n, const Func &op, const Monoid &identity) {
         N = n;
         OP = op;
         IDENTITY = identity;
-        offset = 1;
-        while (offset < N) offset *= 2;
+        log = 0, offset = 1;
+        while (offset < N) ++log, offset <<= 1;
         dat.assign(offset * 2, IDENTITY);
     }
     void init(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
         init((int)v.size(), op, identity);
         build(v);
     }
+    void pull(int k) {
+        dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
+    }
     void build(const vector<Monoid> &v) {
         assert(N == (int)v.size());
         for (int i = 0; i < N; ++i) dat[i + offset] = v[i];
-        for (int k = offset - 1; k > 0; --k) dat[k] = OP(dat[k*2], dat[k*2+1]);
+        for (int k = offset - 1; k > 0; --k) pull(k);
     }
     int size() const {
         return N;
     }
-    Monoid operator [] (int a) const { return dat[a + offset]; }
+    Monoid operator [] (int i) const {
+        return dat[i + offset];
+    }
     
-    // update A[a], a is 0-indexed, O(log N)
-    void set(int a, const Monoid &v) {
-        int k = a + offset;
+    // update A[i], i is 0-indexed, O(log N)
+    void set(int i, const Monoid &v) {
+        assert(0 <= i && i < N);
+        int k = i + offset;
         dat[k] = v;
-        while (k >>= 1) dat[k] = OP(dat[k*2], dat[k*2+1]);
+        while (k >>= 1) pull(k);
     }
     
-    // get [a, b), a and b are 0-indexed, O(log N)
-    Monoid prod(int a, int b) {
-        Monoid vleft = IDENTITY, vright = IDENTITY;
-        for (int left = a + offset, right = b + offset; left < right;
-        left >>= 1, right >>= 1) {
-            if (left & 1) vleft = OP(vleft, dat[left++]);
-            if (right & 1) vright = OP(dat[--right], vright);
+    // get [l, r), l and r are 0-indexed, O(log N)
+    Monoid prod(int l, int r) {
+        assert(0 <= l && l <= r && r <= N);
+        Monoid val_left = IDENTITY, val_right = IDENTITY;
+        l += offset, r += offset;
+        for (; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) val_left = OP(val_left, dat[l++]);
+            if (r & 1) val_right = OP(dat[--r], val_right);
         }
-        return OP(vleft, vright);
+        return OP(val_left, val_right);
     }
-    Monoid all_prod() { return dat[1]; }
+    Monoid all_prod() {
+        return dat[1];
+    }
     
     // get max r that f(get(l, r)) = True (0-indexed), O(log N)
     // f(IDENTITY) need to be True
@@ -133,10 +141,10 @@ template<class Monoid> struct SegTree {
     }
     
     // debug
-    friend ostream& operator << (ostream &s, const SegTree &seg) {
-        for (int i = 0; i < seg.size(); ++i) {
+    friend ostream& operator << (ostream &s, const SegmentTree &seg) {
+        for (int i = 0; i < (int)seg.size(); ++i) {
             s << seg[i];
-            if (i != seg.size()-1) s << " ";
+            if (i != (int)seg.size() - 1) s << " ";
         }
         return s;
     }
@@ -157,7 +165,7 @@ void ACL_practice_J() {
     
     // セグ木の準備 (型: int, 演算方法: op, 単位元: -INF)
     const int INF = 1<<30;
-    SegTree<int> seg(A, [&](int a, int b){ return max(a, b); }, -INF);
+    SegmentTree<int> seg(A, [&](int a, int b){ return max(a, b); }, -INF);
     
     // クエリ処理
     while (Q--) {
@@ -213,7 +221,7 @@ void ARC_008_D() {
         return make_pair(a.first * b.first, a.second * b.first + b.second);
     };
     pair<double, double> identity = make_pair(1, 0);
-    SegTree<pair<double, double>> seg(NN, func, identity);
+    SegmentTree<pair<double, double>> seg(NN, func, identity);
 
     // 処理
     double Min = 1.0, Max = 1.0;
@@ -250,7 +258,7 @@ void ABC_281_E() {
         return Monoid(a.first + b.first, a.second + b.second);
     };
     Monoid zero = Monoid(0, 0);
-    SegTree<Monoid> seg(N, func, zero);
+    SegmentTree<Monoid> seg(N, func, zero);
 
     // push と pop
     auto push = [&](long long x, int id) -> void {
@@ -305,7 +313,7 @@ void ABC_307_F() {
     for (int i = 0; i < D; ++i) cin >> X[i];
     
     // day >= start かつ X[day] >= x となる最小の day を求める
-    SegTree<long long> seg(D, [&](long long a, long long b){return max(a,b);}, -INF);
+    SegmentTree<long long> seg(D, [&](long long a, long long b){return max(a,b);}, -INF);
     seg.build(X);
     auto first_okay_day = [&](long long x, int start) -> int {
         return seg.max_right([&](long long val) {return val < x;}, start);
@@ -349,4 +357,8 @@ int main() {
     //ABC_281_E();
     //ABC_307_F();
 }
+
+
+
+
 
