@@ -17,24 +17,27 @@
 //   AtCoder ACL Beginner Contest E - Replace Digits
 //     https://atcoder.jp/contests/abl/tasks/abl_e
 //
+//   AtCoder ABC 322 F - Vacation Query
+//     https://atcoder.jp/contests/abc322/tasks/abc322_f
+//
 
 
 /*
     Lazy Segment Tree は「作用つきモノイド」上で定義される
         OP(x, y): 2 つのモノイド間に定義される演算
-        ACT(f, x): f(x), モノイド元 x への作用素 f による作用
-        COMP(g, f): g o f, 作用素 f への作用素 g の合成
+        MAPPING(f, x): f(x), モノイド元 x への作用素 f による作用
+        COMPOSITION(g, f): g o f, 作用素 f への作用素 g の合成
         IDENTITY_MONOID: モノイドの単位元
         IDENTITY_ACTION: 作用素の単位元
 
     // Construction
-    SegTree(N, op, act, comp, identity_monoid, identity_lazy)
-    SegTree(vec, op, act, comp, identity_monoid, identity_lazy)
+    LazySegmentTree(N, op, mapping, composition, identity_monoid, identity_lazy)
+    LazySegmentTree(v, op, mapping, composition, identity_monoid, identity_lazy)
       ex: starry sky tree (区間加算、区間min取得)
         auto op = [](long long x, long long y) { return min(x, y); };
-        auto act = [](int f, long long x) { f + x; };  // replace x with f + x
-        auto comp = [](int g, int f) { g + f; };  // replace f with g + f
-        SegTree<long long, long long> seg(N, op, act, comp, (1LL<<60), 0);
+        auto mapping = [](int f, long long x) { f + x; };  // replace x with f + x
+        auto composition = [](int g, int f) { g + f; };  // replace f with g + f
+        LazySegmentTree<long long, long long> seg(N, op, mapping, composition, (1LL<<60), 0);
 
     // Queries
     set(i, v): 添字 i の箇所を値 v にする, O(log N)
@@ -50,15 +53,15 @@ using namespace std;
 // Lazy Segment Tree
 template<class Monoid, class Action> struct LazySegmentTree {
     // various function types
-    using FuncMonoid = function<Monoid(Monoid, Monoid)>;
-    using FuncAction = function<Monoid(Action, Monoid)>;
+    using FuncOperator = function<Monoid(Monoid, Monoid)>;
+    using FuncMapping = function<Monoid(Action, Monoid)>;
     using FuncComposition = function<Action(Action, Action)>;
 
     // core member
     int N;
-    FuncMonoid OP;
-    FuncAction ACT;
-    FuncComposition COMP;
+    FuncOperator OP;
+    FuncMapping MAPPING;
+    FuncComposition COMPOSITION;
     Monoid IDENTITY_MONOID;
     Action IDENTITY_ACTION;
     
@@ -69,18 +72,29 @@ template<class Monoid, class Action> struct LazySegmentTree {
     
     // constructor
     LazySegmentTree() {}
-    LazySegmentTree(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-                    const Monoid &identity_monoid, const Action &identity_action) {
-        init(n, op, act, comp, identity_monoid, identity_action);
+    LazySegmentTree(int n,
+                    const FuncOperator op,
+                    const FuncMapping mapping,
+                    const FuncComposition composition,
+                    const Monoid &identity_monoid,
+                    const Action &identity_action) {
+        init(n, op, mapping, composition, identity_monoid, identity_action);
     }
     LazySegmentTree(const vector<Monoid> &v,
-                    const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-                    const Monoid &identity_monoid, const Action &identity_action) {
-        init(v, op, act, comp, identity_monoid, identity_action);
+                    const FuncOperator op,
+                    const FuncMapping mapping,
+                    const FuncComposition composition,
+                    const Monoid &identity_monoid,
+                    const Action &identity_action) {
+        init(v, op, mapping, composition, identity_monoid, identity_action);
     }
-    void init(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-              const Monoid &identity_monoid, const Action &identity_action) {
-        N = n, OP = op, ACT = act, COMP = comp;
+    void init(int n,
+              const FuncOperator op,
+              const FuncMapping mapping,
+              const FuncComposition composition,
+              const Monoid &identity_monoid,
+              const Action &identity_action) {
+        N = n, OP = op, MAPPING = mapping, COMPOSITION = composition;
         IDENTITY_MONOID = identity_monoid, IDENTITY_ACTION = identity_action;
         log = 0, offset = 1;
         while (offset < N) ++log, offset <<= 1;
@@ -88,9 +102,12 @@ template<class Monoid, class Action> struct LazySegmentTree {
         lazy.assign(offset * 2, IDENTITY_ACTION);
     }
     void init(const vector<Monoid> &v,
-              const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-              const Monoid &identity_monoid, const Action &identity_action) {
-        init((int)v.size(), op, act, comp, identity_monoid, identity_action);
+              const FuncOperator op,
+              const FuncMapping mapping,
+              const FuncComposition composition,
+              const Monoid &identity_monoid,
+              const Action &identity_action) {
+        init((int)v.size(), op, mapping, composition, identity_monoid, identity_action);
         build(v);
     }
     void build(const vector<Monoid> &v) {
@@ -107,8 +124,8 @@ template<class Monoid, class Action> struct LazySegmentTree {
         dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
     }
     void apply_lazy(int k, const Action &f) {
-        dat[k] = ACT(f, dat[k]);
-        if (k < offset) lazy[k] = COMP(f, lazy[k]);
+        dat[k] = MAPPING(f, dat[k]);
+        if (k < offset) lazy[k] = COMPOSITION(f, lazy[k]);
     }
     void push_lazy(int k) {
         if (lazy[k] == IDENTITY_ACTION) return;
@@ -146,7 +163,7 @@ template<class Monoid, class Action> struct LazySegmentTree {
         assert(0 <= i && i < N);
         int k = i + offset;
         push_lazy_deep(k);
-        dat[k] = ACT(f, dat[k]);
+        dat[k] = MAPPING(f, dat[k]);
         pull_dat_deep(k);
     }
     // apply f for interval [l, r)
@@ -276,9 +293,10 @@ void AOJ_RMQ_RUQ() {
     const long long identity_monoid = (1LL << 31) - 1;
     const long long identity_action = -1;
     auto op = [&](long long x, long long y) { return min(x, y); };
-    auto act = [&](long long f, long long x) { return (f != identity_action ? f : x); };
-    auto comp = [&](long long g, long long f) { return (g != identity_action ? g : f); };
-    LazySegmentTree<long long, long long> seg(N, op, act, comp, identity_monoid, identity_action);
+    auto mapping = [&](long long f, long long x) { return (f != identity_action ? f : x); };
+    auto composition = [&](long long g, long long f) { return (g != identity_action ? g : f); };
+    LazySegmentTree<long long, long long> seg(N, op, mapping, composition,
+                                              identity_monoid, identity_action);
     while (Q--) {
         int type, s, t;
         cin >> type >> s >> t;
@@ -302,9 +320,10 @@ void AOJ_RSQ_RAQ() {
     const pll identity_monoid = {0, 0};  // {val, range}
     const long long identity_action = 0;
     auto op = [&](pll x, pll y) { return pll(x.first + y.first, x.second + y.second); };
-    auto act = [&](long long f, pll x) { return pll(x.first + f * x.second, x.second); };
-    auto comp = [&](long long g, long long f) { return g + f; };
-    LazySegmentTree<pll, long long> seg(v, op, act, comp, identity_monoid, identity_action);
+    auto mapping = [&](long long f, pll x) { return pll(x.first + f * x.second, x.second); };
+    auto composition = [&](long long g, long long f) { return g + f; };
+    LazySegmentTree<pll, long long> seg(v, op, mapping, composition,
+                                        identity_monoid, identity_action);
     while (Q--) {
         int type, s, t;
         cin >> type >> s >> t;
@@ -328,9 +347,10 @@ void AOJ_RMQ_RAQ() {
     const long long identity_monoid = (1LL << 31) - 1;
     const long long identity_action = 0;
     auto op = [&](long long x, long long y) { return min(x, y); };
-    auto act = [&](long long f, long long x) { return f + x; };
-    auto comp = [&](long long g, long long f) { return g + f; };
-    LazySegmentTree<long long, long long> seg(v, op, act, comp, identity_monoid, identity_action);
+    auto mapping = [&](long long f, long long x) { return f + x; };
+    auto composition = [&](long long g, long long f) { return g + f; };
+    LazySegmentTree<long long, long long> seg(v, op, mapping, composition,
+                                              identity_monoid, identity_action);
     while (Q--) {
         int type, s, t;
         cin >> type >> s >> t;
@@ -354,11 +374,12 @@ void AOJ_RSQ_RUQ() {
     const pll identity_monoid = {0, 0};  // {val, range}
     const long long identity_action = 1 << 30;
     auto op = [&](pll x, pll y) { return pll(x.first + y.first, x.second + y.second); };
-    auto act = [&](long long f, pll x) {
+    auto mapping = [&](long long f, pll x) {
         return (f != identity_action ? pll(f * x.second, x.second) : x);
     };
-    auto comp = [&](long long g, long long f) { return g; };
-    LazySegmentTree<pll, long long> seg(v, op, act, comp, identity_monoid, identity_action);
+    auto composition = [&](long long g, long long f) { return g; };
+    LazySegmentTree<pll, long long> seg(v, op, mapping, composition,
+                                        identity_monoid, identity_action);
     while (Q--) {
         int type, s, t;
         cin >> type >> s >> t;
@@ -453,17 +474,18 @@ void ACL_Beginner_Contest_E() {
         int second = x.second + y.second;
         return Node(first, second);
     };
-    auto act = [&](int f, Node x) {
+    auto mapping = [&](int f, Node x) {
         if (f == 0) return x;
         return Node(sum[x.second] * f, x.second);
     };
-    auto comp = [&](int g, int f) {
+    auto composition = [&](int g, int f) {
         return g;
     };
     vector<Node> ini(N, Node(mint(1), 1));
     Node identity_monoid = Node(mint(0), 0);
     int identity_action = 0;
-    LazySegmentTree<Node, int> seg(ini, op, act, comp, identity_monoid, identity_action);
+    LazySegmentTree<Node, int> seg(ini, op, mapping, composition,
+                                   identity_monoid, identity_action);
 
     // query
     while (Q--) {
@@ -475,12 +497,67 @@ void ACL_Beginner_Contest_E() {
     }
 }
 
+void ABC_322_F() {
+    struct Node {
+        int left_zero, left_one, right_zero, right_one, zero, one;
+        Node() {}
+        Node(int lz, int lo, int rz, int ro, int z, int o)
+        : left_zero(lz), left_one(lo), right_zero(rz), right_one(ro), zero(z), one(o) {}
+    };
+    
+    int N, Q;
+    string S;
+    cin >> N >> Q >> S;
+    
+    vector<Node> ini(N);
+    for (int i = 0; i < N; ++i) {
+        if (S[i] == '0') ini[i] = Node(1, 0, 1, 0, 1, 0);
+        else ini[i] = Node(0, 1, 0, 1, 0, 1);
+    }
+    
+    Node identity_monoid = Node(-1, -1, -1, -1, -1, -1);
+    int identity_action = 0;
+    auto op = [&](Node x, Node y) -> Node {
+        if (x.one == -1) return y;
+        if (y.one == -1) return x;
+        Node res;
+        res.left_zero = (x.one ? x.left_zero : x.zero + y.left_zero);
+        res.left_one = (x.zero ? x.left_one : x.one + y.left_one);
+        res.right_zero = (y.one ? y.right_zero : x.right_zero + y.zero);
+        res.right_one = (y.zero ? y.right_one : x.right_one + y.one);
+        res.zero = max({x.zero, x.right_zero + y.left_zero, y.zero});
+        res.one = max({x.one, x.right_one + y.left_one, y.one});
+        return res;
+    };
+    auto mapping = [&](int f, Node x) -> Node {
+        if (f) return Node(x.left_one, x.left_zero, x.right_one, x.right_zero, x.one, x.zero);
+        else return x;
+    };
+    auto composition = [&](int g, int f) -> int {
+        if (g) return !f;
+        else return f;
+    };
+    
+    LazySegmentTree<Node,int> seg(ini, op, mapping, composition,
+                                  identity_monoid, identity_action);
+    while (Q--) {
+        int c, L, R;
+        cin >> c >> L >> R;
+        --L;
+        if (c == 1) {
+            seg.apply(L, R, 1);
+        } else {
+            cout << seg.prod(L, R).one << endl;
+        }
+    }
+}
+
 
 int main() {
     //AOJ_RMQ_RUQ();
     //AOJ_RSQ_RAQ();
     //AOJ_RMQ_RAQ();
     //AOJ_RSQ_RUQ();
-    ACL_Beginner_Contest_E();
+    //ACL_Beginner_Contest_E();
+    ABC_322_F();
 }
-
