@@ -84,6 +84,7 @@
 - [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
+- [Wavelet Matrix](https://github.com/drken1215/algorithm/blob/master/DataStructure/wavelet_matrix.cpp)
 - Dynamic Connectivity
 
 
