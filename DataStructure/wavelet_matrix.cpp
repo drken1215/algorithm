@@ -11,6 +11,9 @@
 //   AtCoder ABC 324 E - G - Generate Arrays (for range_freq)
 //     https://atcoder.jp/contests/abc324/tasks/abc324_g
 //
+//   AOJ 1549 Hard Beans (for prev_value, next_value)
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1549
+//
 
 
 #include <bits/stdc++.h>
@@ -212,14 +215,14 @@ template<class T> struct WaveletMatrix {
     T prev_value(int l, int r, T val) {
         int num = range_freq(l, r, 0, val);
         if (num == 0) return T(-1);
-        else return k_th_smallest(l, r, num - 1);
+        else return k_th_smallest(num - 1, l, r);
     }
     
     // the min value (>= val) in [l, r)
     T next_value(int l, int r, T val) {
         int num = range_freq(l, r, 0, val);
         if (num == r - l) return T(-1);
-        else return k_th_smallest(l, r, num);
+        else return k_th_smallest(num, l, r);
     }
 };
 
@@ -331,10 +334,38 @@ void ABC_324_G() {
     }
 }
 
+void AOJ_1549() {
+    int N, Q;
+    cin >> N;
+    const int GETA = 1100000;
+    vector<int> a(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> a[i];
+        a[i] += GETA;
+    }
+    
+    WaveletMatrix<int> wm(a);
+    cin >> Q;
+    while (Q--) {
+        int l, r, d;
+        cin >> l >> r >> d;
+        ++r;
+        d += GETA;
+        
+        int nex = wm.next_value(l, r, d);
+        int pre = wm.prev_value(l, r, d);
+        int res = GETA*2;
+        if (nex != -1) res = min(res, nex - d);
+        if (pre != -1) res = min(res, d - pre);
+        cout << res << endl;
+    }
+}
+
 
 int main() {
     //ABC_234_D();
     //ABC_281_E();
-    ABC_324_G();
+    //ABC_324_G();
+    AOJ_1549();
 }
 
