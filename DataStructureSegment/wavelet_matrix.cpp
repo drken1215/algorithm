@@ -5,6 +5,12 @@
 //   Yosupu Judge - Range Kth Smallest (for k_th_smallest)
 //     https://judge.yosupo.jp/problem/range_kth_smallest
 //
+//   Yosupu Judge - Static Range Frequency (for rank)
+//     https://judge.yosupo.jp/problem/static_range_frequency
+//
+//   Yosupu Judge - Rectangle Sum (for BIT on WM)
+//     https://judge.yosupo.jp/problem/rectangle_sum
+//
 //   Yosupu Judge - Point Add Rectangle Sum (for BIT on WM)
 //     https://judge.yosupo.jp/problem/point_add_rectangle_sum
 //
@@ -27,27 +33,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-
-
-
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-
-
 
 
 // Bit Vector (for 64-bit non-negative integer)
@@ -113,125 +98,96 @@ struct BitVector {
 // Wavelet Matrix (must vec[i] >= 0)
 template<class T> struct WaveletMatrix {
     // inner data
-    int height;
+    unsigned int n, height;
+    vector<T> v;
     vector<BitVector> bv;
     vector<vector<long long>> sum;
 
     // constructor (sigma: the number of characters)
-    WaveletMatrix() {}
-    WaveletMatrix(vector<T> vec) :
-        WaveletMatrix(vec, *max_element(vec.begin(), vec.end()) + 1) {}
-    WaveletMatrix(vector<T> vec, T sigma) {
-        build(vec, sigma);
+    WaveletMatrix() : n(0) {}
+    WaveletMatrix(unsigned int n) : n(n), v(n) {}
+    WaveletMatrix(const vector<T> &vec) : n(vec.size()), v(vec) {
+        build();
     }
-    void build(vector<T> &vec, T sigma) {
-        height = (sigma == 1) ? 1 : (64 - __builtin_clzll(sigma - 1));
-        bv.resize(height);
-        vector<T> A = vec;
-        sum.resize(height + 1);
-        for (int h = 0; h < height; ++h) {
-            bv[h].resize(vec.size());
-            for (int j = 0; j < vec.size(); ++j) {
-                bv[h].set(j, get(vec[j], height - h - 1));
+    void add(const T &val) {
+        assert(v >= 0);
+        v.push_back(v);
+        n = v.size();
+    }
+    void set(unsigned int i, const T &val) {
+        assert(i >= 0 && i < n && val >= 0);
+        v[i] = val;
+    }
+    void build() {
+        assert(n == (int)v.size());
+        T mv = 1;
+        for (int i = 0; i < n; ++i) mv = max(mv, v[i]);
+        for (height = 1; mv != 0; mv >>= 1) ++height;
+        vector<int> left(n), right(n), ord(n);
+        iota(ord.begin(), ord.end(), 0);
+        bv.assign(height, BitVector(n));
+        sum.assign(height + 1, vector<long long>(n + 1, 0));
+        for (int h = height - 1; h >= 0; --h) {
+            int l = 0, r = 0;
+            for (int i = 0; i < n; ++i) {
+                if ((v[ord[i]] >> h) & 1) {
+                    bv[h].set(i);
+                    right[r++] = ord[i];
+                } else {
+                    left[l++] = ord[i];
+                }
             }
             bv[h].build();
-            stable_partition(vec.begin(), vec.end(), [&](int c) {
-                return !get(c, height - h - 1);
-            });
-        }
-        for (int h = 0; h <= height; ++h) {
-            sum[h].resize((int)A.size() + 1);
-            for (int j = 1; j <= (int)A.size(); ++j) {
-                sum[h][j] = sum[h][j - 1] + A[j - 1];
-            }
-            if (h == height) break;
-            stable_partition(A.begin(), A.end(), [&](int c) {
-                return !get(c, height - h - 1);
-            });
+            ord.swap(left);
+            for (int i = 0; i < r; ++i) ord[i + l] = right[i];
+            for (int i = 0; i < n; ++i) sum[h][i + 1] = sum[h][i] + v[ord[i]];
         }
     }
     
-    // the i-th bit of "val" (0 or 1)
-    int get(const T val, const int i) {
-        return val >> i & 1;
-    }
-    
-    // the number of "val" in [l, r)
-    int rank(const T val, const int l, const int r) {
-        return rank(val, r) - rank(val, l);
-    }
-    
-    // the number of "val" in [0, i)
-    int rank(T val, int i) {
-        int p = 0;
-        for (int h = 0; h < height; ++h) {
-            int p0 = bv[h].rank0(p), i0 = bv[h].rank0(i);
-            if (get(val, height - h - 1)) {
-                p += bv[h].rank0() - p0;
+    // access v[k]
+    T access(int i) {
+        T res = 0;
+        for (int h = height - 1; h >= 0; --h) {
+            int i0 = bv[h].rank0(i);
+            if (bv[h].get(i)) {
                 i += bv[h].rank0() - i0;
+                res |= T(1) << h;
             } else {
-                p = p0;
                 i = i0;
             }
         }
-        return i - p;
-    }
-    
-    // the k-th (0-indexed) smallest value in [l, r)
-    T k_th_smallest(int k, int l, int r) {
-        T res = 0;
-        for (int h = 0; h < height; ++h) {
-            int l0 = bv[h].rank0(l), r0 = bv[h].rank0(r);
-            if (r0 - l0 > k) {
-                l = l0;
-                r = r0;
-            } else {
-                l += bv[h].rank0() - l0;
-                r += bv[h].rank0() - r0;
-                k -= r0 - l0;
-                res |= (1LL << (height - h - 1));
-            }
-        }
         return res;
     }
-    
-    // the k-th (0-indexed) largest value in [l, r)
-    T k_th_largest(int k, int l, int r) {
-       return k_th_smallest(r - l - k - 1, l, r);
+    T operator [] (int i) {
+        return access(i);
     }
     
-    // the sum of the top-k sum in [l, r)
-    T top_k_sum(int k, int l, int r) {
-        if (l == r) return 0;
-        T res = 0, val = 0;
-        for (int h = 0; h < height; ++h) {
+    // count "i" s.t. v[i] = val, i \in [l, r)
+    int rank(int l, int r, const T &val) {
+        assert(0 <= l && l <= r && r <= n);
+        for (int h = height - 1; h >= 0; --h) {
             int l0 = bv[h].rank0(l), r0 = bv[h].rank0(r);
-            if (r0 - l0 > k) {
-                l = l0;
-                r = r0;
-            } else {
+            if ((val >> h) & 1) {
                 l += bv[h].rank0() - l0;
                 r += bv[h].rank0() - r0;
-                k -= r0 - l0;
-                val |= (1LL << (height - h - 1));
-                res += sum[h + 1][r0] - sum[h + 1][l0];
+            } else {
+                l = l0;
+                r = r0;
             }
         }
-        res += (long long)val * k;
-        return res;
+        return r - l;
     }
     
-    // the number of value between [loewr, upper) in [l, r)
-    /*
-    int range_freq(int l, int r, T upper) {
-        if (upper >= (1LL << height)) return r - l;
+    // count "i" s.t. v[i] \in [lower, upper), i \in [l, r)
+    int range_freq(int l, int r, const T &upper) {
+        assert(0 <= l && l <= r && r <= n);
         int res = 0;
         for (int h = height - 1; h >= 0; --h) {
             int l0 = bv[h].rank0(l), r0 = bv[h].rank0(r);
             if ((upper >> h) & 1) {
                 l += bv[h].rank0() - l0;
                 r += bv[h].rank0() - r0;
-                res += r - l;
+                res += r0 - l0;
             } else {
                 l = l0;
                 r = r0;
@@ -239,63 +195,76 @@ template<class T> struct WaveletMatrix {
         }
         return res;
     }
-    int range_freq(int l, int r, T lower, T upper) {
+    int range_freq(int l, int r, const T &lower, const T &upper) {
         return range_freq(l, r, upper) - range_freq(l, r, lower);
     }
-     */
-    int range_freq(const int i, const int j, const T lower, const T upper,
-                   const int l, const int r, const int h) {
-        if (i == j || r <= lower || upper <= l) return 0;
-        int mid = (l + r) >> 1;
-        if (lower <= l && r <= upper) {
-            return j - i;
-        } else {
-            int i0 = bv[h].rank0(i), j0 = bv[h].rank0(j);
-            T left = range_freq(i0, j0, lower, upper, l, mid, h + 1);
-            T right = range_freq(i + bv[h].rank0() - i0, j + bv[h].rank0() - j0,
-                                 lower, upper, mid, r, h + 1);
-            return left + right;
+    
+    // the k-th (0-indexed) smallest value in [l, r)
+    T k_th_smallest(int l, int r, int k) {
+        assert(0 <= l && l <= r && r <= n);
+        T res = 0;
+        for (int h = height - 1; h >= 0; --h) {
+            int l0 = bv[h].rank0(l), r0 = bv[h].rank0(r);
+            if (r0 - l0 <= k) {
+                l += bv[h].rank0() - l0;
+                r += bv[h].rank0() - r0;
+                k -= r0 - l0;
+                res |= T(1) << h;
+            } else {
+                l = l0;
+                r = r0;
+            }
         }
-    }
-    int range_freq(const int l, const int r, const T lower, const T upper) {
-        return range_freq(l, r, lower, upper, 0, 1LL << height, 0);
+        return res;
     }
     
-    // the minmum value between [lower, upper) in [l, r)
-    T range_min(const int i, const int j, const T lower, const T upper,
-                  const int l, const int r, const int h, const T val) {
-        if (i == j || r <= lower || upper <= l) return -1;
-        if (r - l == 1) return val;
-        int mid = (l + r) >> 1;
-        int i0 = bv[h].rank0(i), j0 = bv[h].rank0(j);
-        T res = range_min(i0, j0, lower, upper, l, mid, h + 1, val);
-        if (res < 0) {
-            return range_min(i + bv[h].rank0() - i0, j + bv[h].rank0() - j0,
-                             lower, upper, mid, r, h + 1, val + (1LL << (height - h - 1)));
-        } else {
-            return res;
-        }
+    // the k-th (0-indexed) largest value in [l, r)
+    T k_th_largest(int l, int r, int k) {
+        assert(0 <= l && l <= r && r <= n);
+       return k_th_smallest(l, r, r - l - k - 1);
     }
-    T range_min(int l, int r, T lower, T upper) {
-        return range_min(l, r, lower, upper, 0, 1LL << height, 0, 0);
+    
+    // the sum of the top-k sum in [l, r)
+    T top_k_sum(int l, int r, int k) {
+        assert(0 <= l && l <= r && r <= n);
+        if (l == r) return 0;
+        T res = 0, val = 0;
+        for (int h = height - 1; h >= 0; --h) {
+            int l0 = bv[h].rank0(l), r0 = bv[h].rank0(r);
+            if (r0 - l0 <= k) {
+                l += bv[h].rank0() - l0;
+                r += bv[h].rank0() - r0;
+                k -= r0 - l0;
+                val |= T(1) << h;
+                res += sum[h][r0] - sum[h][l0];
+            } else {
+                l = l0;
+                r = r0;
+            }
+        }
+        res += val * k;
+        return res;
     }
     
     // the max value (< val) in [l, r)
     T prev_value(int l, int r, T val) {
+        assert(0 <= l && l <= r && r <= n);
         int num = range_freq(l, r, 0, val);
         if (num == 0) return T(-1);
-        else return k_th_smallest(num - 1, l, r);
+        else return k_th_smallest(l, r, num - 1);
     }
     
     // the min value (>= val) in [l, r)
     T next_value(int l, int r, T val) {
+        assert(0 <= l && l <= r && r <= n);
         int num = range_freq(l, r, 0, val);
         if (num == r - l) return T(-1);
-        else return k_th_smallest(num, l, r);
+        else return k_th_smallest(l, r, num);
     }
 };
 
-// 2D range count
+
+// 2D queries
 template<class POS, class VAL> struct BITonWaveletMatrix {
     // inner data
     struct BIT {
@@ -340,24 +309,26 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
     
     using Point = pair<POS, POS>;
     int n, height;
+    POS mi = 0;
     vector<BitVector> bv;
     vector<Point> ps;
     vector<POS> ys;
     vector<BIT> bit;
 
     // constructor (sigma: the number of characters)
-    // add_point() cannot be used after init()
+    // add_point() cannot be used after build()
     BITonWaveletMatrix() {}
-    BITonWaveletMatrix(vector<Point> vec) {
+    BITonWaveletMatrix(const vector<Point> &vec) {
         for (auto [x, y] : vec) add_point(x, y);
         build();
     }
     void add_point(POS x, POS y) {
         ps.emplace_back(x, y);
         ys.emplace_back(y);
+        mi = min(mi, y);
     }
     int xid(POS x) const {
-        return lower_bound(ps.begin(), ps.end(), Point(x, 0)) - ps.begin();
+        return lower_bound(ps.begin(), ps.end(), Point(x, mi)) - ps.begin();
     }
     int yid(POS y) const {
         return lower_bound(ys.begin(), ys.end(), y) - ys.begin();
@@ -374,7 +345,7 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
             v[i] = yid(ps[i].second);
             mv = max(mv, v[i]);
         }
-        for (height = 0; mv != 0; mv >>= 1) ++height;
+        for (height = 1; mv != 0; mv >>= 1) ++height;
         iota(ord.begin(), ord.end(), 0);
         bv.resize(height, BitVector(n));
         bit.assign(height + 1, BIT(n));
@@ -448,7 +419,43 @@ void YosupoRangeKthSmallest() {
     for (int q = 0; q < Q; ++q) {
         int l, r, k;
         cin >> l >> r >> k;
-        cout << wm.k_th_smallest(k, l, r) << endl;
+        cout << wm.k_th_smallest(l, r, k) << endl;
+    }
+}
+
+void YosupoStaticRangeFrequency() {
+    int N, Q;
+    cin >> N >> Q;
+    vector<int> a(N);
+    for (int i = 0; i < N; ++i) cin >> a[i];
+    
+    WaveletMatrix<int> wm(a);
+    for (int q = 0; q < Q; ++q) {
+        int l, r, x;
+        cin >> l >> r >> x;
+        cout << wm.rank(l, r, x) << endl;
+    }
+}
+
+void YosupoRectangleSum() {
+    BITonWaveletMatrix<int, long long> wm;
+    
+    int N, Q;
+    cin >> N >> Q;
+    vector<int> ix(N), iy(N), iw(N), lx(Q), ly(Q), rx(Q), ry(Q);
+    for (int i = 0; i < N; ++i) {
+        cin >> ix[i] >> iy[i] >> iw[i];
+        wm.add_point(ix[i], iy[i]);
+    }
+    
+    wm.build();
+    
+    for (int i = 0; i < N; ++i) {
+        wm.add(ix[i], iy[i], iw[i]);
+    }
+    for (int q = 0; q < Q; ++q) {
+        cin >> lx[q] >> ly[q] >> rx[q] >> ry[q];
+        cout << wm.sum(lx[q], rx[q], ly[q], ry[q]) << endl;
     }
 }
 
@@ -492,7 +499,7 @@ void ABC_234_D() {
     
     WaveletMatrix wm(P);
     for (int i = K; i <= N; ++i) {
-        cout << wm.k_th_largest(K - 1, 0, i) << endl;
+        cout << wm.k_th_largest(0, i, K - 1) << endl;
     }
 }
 
@@ -504,7 +511,7 @@ void ABC_281_E() {
     
     WaveletMatrix wm(A);
     for (int i = 0; i < N - M + 1; ++i) {
-        cout << wm.top_k_sum(K, i, i + M) << " ";
+        cout << wm.top_k_sum(i, i + M, K) << " ";
     }
     cout << endl;
 }
@@ -516,6 +523,7 @@ void ABC_324_G() {
     for (int i = 0; i < N; ++i) cin >> A[i];
     
     WaveletMatrix<int> wm(A);
+
     cin >> Q;
     vector<int> left(Q+1, 0), right(Q+1, N), lower(Q+1, 1), upper(Q+1, N+1);
     for (int q = 0; q < Q; ++q) {
@@ -589,24 +597,24 @@ void AOJ_2426() {
         cin >> x[i] >> y[i];
         wm.add_point(x[i], y[i]);
     }
-    for (int i = 0; i < M; ++i) {
-        cin >> lx[i] >> ly[i] >> rx[i] >> ry[i];
-        ++rx[i], ++ry[i];
-    }
     
     wm.build();
     
     for (int i = 0; i < N; ++i) {
         wm.add(x[i], y[i], 1);
     }
-    for (int i = 0; i < M; ++i) {
-        cout << wm.sum(lx[i], rx[i], ly[i], ry[i]) << endl;
+    for (int q = 0; q < M; ++q) {
+        cin >> lx[q] >> ly[q] >> rx[q] >> ry[q];
+        ++rx[q], ++ry[q];
+        cout << wm.sum(lx[q], rx[q], ly[q], ry[q]) << endl;
     }
 }
 
 
 int main() {
     //YosupoRangeKthSmallest();
+    //YosupoStaticRangeFrequency();
+    //YosupoRectangleSum();
     YosupoJudgePointAddRectangleSum();
     //ABC_234_D();
     //ABC_281_E();

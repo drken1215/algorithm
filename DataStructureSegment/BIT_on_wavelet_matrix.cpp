@@ -162,9 +162,9 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
             v[i] = yid(ps[i].second);
             mv = max(mv, v[i]);
         }
-        for (height = 0; mv != 0; mv >>= 1) ++height;
+        for (height = 1; mv != 0; mv >>= 1) ++height;
         iota(ord.begin(), ord.end(), 0);
-        bv.resize(height, BitVector(n));
+        bv.assign(height, BitVector(n));
         bit.assign(height + 1, BIT(n));
         for (int h = height - 1; h >= 0; --h) {
             int l = 0, r = 0;

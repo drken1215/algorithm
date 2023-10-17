@@ -86,8 +86,8 @@
 
 　
 <a name="dss"></a>
-# 区間クエリ系データ構造 (DATA STRUCTURE : SEGMENT)
-セグメント木や BIT など、区間に関するクエリに強いデータ構造の実装です
+# 区間系データ構造 (DATA STRUCTURE : SEGMENT)
+セグメント木や BIT など、区間クエリに強いデータ構造の実装です
 
 ### セグメント木
 
@@ -95,8 +95,7 @@
 - [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
 - [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
 - [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
-- マージソート過程保存木
-- 等差数列区間加算木
+- Segment Tree Beats (俗称)
 
 ### Binary Indexed 木
 
