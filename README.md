@@ -49,7 +49,7 @@
 ### ハッシュ
 
 - [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
-- [Zobrist hash](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
+- [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - ローリングハッシュ
 - 根付き木のハッシュ
 
@@ -86,7 +86,7 @@
 
 　
 <a name="dss"></a>
-# セグメント木 (DATA STRUCTURE : SEGMENT)
+# 区間クエリ系データ構造 (DATA STRUCTURE : SEGMENT)
 セグメント木や BIT など、区間に関するクエリに強いデータ構造の実装です
 
 ### セグメント木
@@ -117,10 +117,11 @@
 - [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sparse_table.cpp)
 - [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/disjoint_sparse_table.cpp)
 
-### Wavelet Matrix
+### ウェーブレット行列
 
-- [Wavelet Matrix](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
-- [BIT on Wavelet Matrix](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
+- [ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
+- [BIT on ウェーブレット行列 (一点加算対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
+- 動的ウェーブレット行列
 
 ### 平衡二分探索木
 

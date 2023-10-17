@@ -6,6 +6,17 @@
 //     https://judge.yosupo.jp/problem/point_add_rectangle_sum
 //
 
+/*
+ 　クエリ先読みを前提として、一点加算のみ可能にしたウェーブレット行列
+ 　　・加算クエリが発生する座標 (x, y) をあらかじめ wm.add_point(x, y) を用いて登録する
+ 　　・取得クエリが発生する区間 (lx, rx, ly, ry) の登録は不要 (内部で自動的に座標圧縮される)
+ 　　・登録後に wm.build() する (以後、add_point(x, y) は使用不可)
+ 
+ 　　・その後は、以下のクエリを O(log N) で実行
+ 　　　　・一点加算クエリ add(x, y, w)
+ 　　　　・区間総和取得クエリ sum(lx, rx, ly, ry)
+ */
+
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -123,9 +134,9 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
     vector<BIT> bit;
 
     // constructor (sigma: the number of characters)
-    // add_point() cannot be used after init()
+    // add_point() cannot be used after build()
     BITonWaveletMatrix() {}
-    BITonWaveletMatrix(vector<Point> vec) {
+    BITonWaveletMatrix(const vector<Point> &vec) {
         for (auto [x, y] : vec) add_point(x, y);
         build();
     }
