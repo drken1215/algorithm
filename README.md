@@ -8,8 +8,8 @@
 
 |分類|内容|具体例|
 |---|---|---|
-|**[DATA STRUCTURE](#ds)**|各種データ構造の実装|Union-Find、Sparse Table など|
-|**[DATA STRUCTURE : SEGTREE](#dss)**|セグメント木関連の実装|セグメント木、BIT など|
+|**[DATA STRUCTURE](#ds)**|各種データ構造|Union-Find、Sparse Table など|
+|**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
 |**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
 |**[GEOMETRY](#ge)**|計算幾何|円の交点など|
 |**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
@@ -57,7 +57,6 @@
 
 - [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
-- Wavelet 木
 - van Emde Boas 木
 - 64 分木
 
@@ -69,7 +68,7 @@
 - 永続セグメント木
 - 永続赤黒木
 
-### 高速化アルゴリズム
+### 各種高速化アルゴリズム
 
 - [累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum.cpp)
 - [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum_2D.cpp)
@@ -81,44 +80,51 @@
 
 ### その他
 
-- [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
-- [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
 - [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
-- [Wavelet Matrix](https://github.com/drken1215/algorithm/blob/master/DataStructure/wavelet_matrix.cpp)
 - Dynamic Connectivity
 
 
 　
 <a name="dss"></a>
-# セグメント木 (DATA STRUCTURE : SEGTREE)
-セグメント木、BIT、平衡二分探索木などの実装です
+# セグメント木 (DATA STRUCTURE : SEGMENT)
+セグメント木や BIT など、区間に関するクエリに強いデータ構造の実装です
 
 ### セグメント木
 
-- [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/segment_tree.cpp)
-- [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/segment_tree_lazy.cpp)
-- [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/range_minimum_query.cpp)
-- [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/starry_sky_tree.cpp)
+- [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree.cpp)
+- [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
+- [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
+- [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
 - マージソート過程保存木
 - 等差数列区間加算木
 
 ### Binary Indexed 木
 
-- [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree.cpp)
-- [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_search_on_BIT.cpp)
-- [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree_RAQ.cpp)
+- [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree.cpp)
+- [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_search_on_BIT.cpp)
+- [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_RAQ.cpp)
 
 ### 二次元セグメント木
 
 - 二次元セグメント木
 - 動的二次元セグメント木
-- [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree_2D.cpp)
-- [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/binary_indexed_tree_2D_RAQ.cpp)
+- [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D.cpp)
+- [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D_RAQ.cpp)
 - 動的二次元 BIT
+
+### Sparse Table
+
+- [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sparse_table.cpp)
+- [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/disjoint_sparse_table.cpp)
+
+### Wavelet Matrix
+
+- [Wavelet Matrix](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
+- [BIT on Wavelet Matrix](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
 
 ### 平衡二分探索木
 
-- [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructureSegTree/randomized_binary_search_tree.cpp)
+- [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/randomized_binary_search_tree.cpp)
 - Treap 木
 - AVL 木
 - Splay 木
