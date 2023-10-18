@@ -26,7 +26,7 @@
 //   AOJ 1549 Hard Beans (for prev_value, next_value)
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1549
 //
-//   AOJ 2426 Treasure Hunt (for BIT on WM) 未 verify
+//   AOJ 2426 Treasure Hunt (for BIT on WM)
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2426
 //
 

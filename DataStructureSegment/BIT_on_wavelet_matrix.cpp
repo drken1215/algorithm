@@ -1,5 +1,5 @@
 //
-// BIT on Wavelet Matrix (Preprocess: O(N log N), Query: O(log N))
+// BIT on Wavelet Matrix (Preprocess: O(N log N), Query: O((log N)^2))
 //
 // verified:
 //   Yosupu Judge - Point Add Rectangle Sum (for BIT on WM)
