@@ -1,5 +1,5 @@
 //
-// Wavelet Matrix (Preprocess: O(N log N), Query: O(log N))
+// Wavelet Matrix (Preprocess: O(N log σ), Query: O(log σ))
 //
 // verified:
 //   Yosupu Judge - Range Kth Smallest (for k_th_smallest)

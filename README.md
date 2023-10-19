@@ -37,7 +37,7 @@
 
 ### キュー, ヒープ
 
-- 二分ヒープ
+- [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
 - 両端 priority queue
 - 削除可能 priority queue
 - SWAG
