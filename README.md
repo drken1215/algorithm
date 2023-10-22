@@ -24,7 +24,7 @@
 
 　
 <a name="ds"></a>
-# データ構造 (DATA STRUCTURE)
+# 1. データ構造 (DATA STRUCTURE)
 各種データ構造の実装です
 
 ## Union-Find
@@ -276,7 +276,6 @@
 - (★★☆☆) 最小全域木 (Kruskal 法)
 - (★★★☆) 有向 Euler 路
 - (★★★☆) [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
-
 - (★★★★) 最小有向全域木 (Chu-Liu/Edmonds 法)
 - (★★★★) 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
 

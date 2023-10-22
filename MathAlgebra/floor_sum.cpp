@@ -2,6 +2,9 @@
 // floor sum
 //
 // verified
+//   Yosupo Library Checker - Sum of Floor of Linear
+//     https://judge.yosupo.jp/problem/sum_of_floor_of_linear
+//
 //   AtCoder ABC 283 Ex - Popcount Sum
 //     https://atcoder.jp/contests/abc283/tasks/abc283_h
 //
@@ -16,10 +19,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+ sum_{i=0}^{n-1} floor((a * i + b) / m)
+ O(log(n + m + a + b))
+ 
+ __int128 can be used for T
+ */
 
 // sum_{i=0}^{n-1} floor((a * i + b) / m)
-// O(log(n + m + a + b))
-// __int128 can be used for T
 template<class T> T floor_sum(T n, T a, T b, T m) {
     if (n == 0) return 0;
     T res = 0;
@@ -47,12 +54,160 @@ template<class T> T num_lattice_points(T x1, T y1, T x2, T y2) {
 }
 
 
+// often use
+struct i128 {
+    // inner value
+    __int128 val;
+    
+    // constructor
+    constexpr i128() {}
+    constexpr i128(long long v) : val(v) {}
+    constexpr i128(const string &s) {
+        parse(s);
+    }
+    constexpr void parse(const string &s) {
+        val = 0;
+        for (char c : s) {
+            if (isdigit(c)) val = val * 10 + (c - '0');
+        }
+        if (s[0] == '-') val *= -1;
+    }
+    constexpr __int128 get() const {
+        return val;
+    }
+    constexpr i128 abs() {
+        if (val < 0) return -val;
+        else return val;
+    }
+    
+    // comparison operators
+    constexpr bool operator == (const i128 &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const i128 &r) const {
+        return this->val != r.val;
+    }
+    constexpr bool operator < (const i128 &r) const {
+        return this->val < r.val;
+    }
+    constexpr bool operator > (const i128 &r) const {
+        return this->val > r.val;
+    }
+    constexpr bool operator <= (const i128 &r) const {
+        return this->val <= r.val;
+    }
+    constexpr bool operator >= (const i128 &r) const {
+        return this->val >= r.val;
+    }
+    
+    // arithmetic operators
+    constexpr i128& operator += (const i128 &r) {
+        val += r.val;
+        return *this;
+    }
+    constexpr i128& operator -= (const i128 &r) {
+        val -= r.val;
+        return *this;
+    }
+    constexpr i128& operator *= (const i128 &r) {
+        val *= r.val;
+        return *this;
+    }
+    constexpr i128& operator /= (const i128 &r) {
+        val /= r.val;
+        return *this;
+    }
+    constexpr i128& operator %= (const i128 &r) {
+        val %= r.val;
+        return *this;
+    }
+    constexpr i128 operator + () const {
+        return i128(*this);
+    }
+    constexpr i128 operator - () const {
+        return i128(0) - i128(*this);
+    }
+    constexpr i128 operator + (const i128 &r) const {
+        return i128(*this) += r;
+    }
+    constexpr i128 operator - (const i128 &r) const {
+        return i128(*this) -= r;
+    }
+    constexpr i128 operator * (const i128 &r) const {
+        return i128(*this) *= r;
+    }
+    constexpr i128 operator / (const i128 &r) const {
+        return i128(*this) /= r;
+    }
+    constexpr i128 operator % (const i128 &r) const {
+        return i128(*this) %= r;
+    }
+    
+    // other operators
+    constexpr i128& operator ++ () {
+        ++val;
+        return *this;
+    }
+    constexpr i128& operator -- () {
+        --val;
+        return *this;
+    }
+    constexpr i128 operator ++ (int) {
+        i128 res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr i128 operator -- (int) {
+        i128 res = *this;
+        --*this;
+        return res;
+    }
+    friend istream& operator >> (istream &is, i128 &x) {
+        string s;
+        is >> s;
+        x.parse(s);
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const i128 &x) {
+        auto tmp = x.val < 0 ? -x.val : x.val;
+        char buffer[128];
+        char *d = end(buffer);
+        do {
+            --d;
+            *d = "0123456789"[tmp % 10];
+            tmp /= 10;
+        } while (tmp != 0);
+        if (x.val < 0) {
+            --d;
+            *d = '-';
+        }
+        int len = end(buffer) - d;
+        if (os.rdbuf()->sputn(d, len) != len) {
+            os.setstate(ios_base::badbit);
+        }
+        return os;
+    }
+};
+
+
+
 /*/////////////////////////////*/
 // Examples
 /*/////////////////////////////*/
 
-/* yukicoder No.2066 */
+// Library Checker
+void YosupoSumOfFloorOfLinear() {
+    int T;
+    cin >> T;
+    while (T--) {
+        long long N, M, A, B;
+        cin >> N >> M >> A >> B;
+        cout << floor_sum(N, A, B, M) << endl;
+    }
+}
 
+
+/* yukicoder No.2066 */
 // calc #n that can be expressed n =  Px + Qy (P, Q is coprime)
 // 0 <= n <= M
 long long calc_num(__int128 P, __int128 Q, __int128 M) {
@@ -62,7 +217,7 @@ long long calc_num(__int128 P, __int128 Q, __int128 M) {
     return floor_sum(N, a, b, Q) - 1;
 }
 
-void solveYukicoder2066() {
+void Yukicoder_2066() {
     int CASE;
     cin >> CASE;
     while (CASE--) {
@@ -157,7 +312,7 @@ template<int MOD> struct Fp {
     }
 };
 
-void solveAOJ3217() {
+void AOJ_3217() {
     const int MOD = 1000000007;
     using mint = Fp<MOD>;
 
@@ -189,6 +344,9 @@ void solveAOJ3217() {
 }
 
 int main() {
-    //solveYukicoder2066();
-    solveAOJ3217();
+    YosupoSumOfFloorOfLinear();
+    //Yukicoder_2066();
+    //AOJ_3217();
 }
+
+
