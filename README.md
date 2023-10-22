@@ -29,15 +29,15 @@
 
 ### Union-Find
 
-- [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_size.cpp)
-- [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
-- [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
-- [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
-- [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
+- (★☆☆☆☆) [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_size.cpp)
+- (★☆☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
+- (★★☆☆☆) [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
+- (★★★☆☆) [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
+- (★★★☆☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
 
 ### キュー, ヒープ
 
-- [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
+- (★☆☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
 - 両端 priority queue
 - 削除可能 priority queue
 - SWAG
@@ -48,8 +48,8 @@
 
 ### ハッシュ
 
-- [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
-- [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
+- (★★★☆☆)[ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
+- (★★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - ローリングハッシュ
 - 根付き木のハッシュ
 
