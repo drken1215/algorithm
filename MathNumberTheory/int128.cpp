@@ -16,14 +16,14 @@ struct i128 {
     __int128 val;
     
     // constructor
-    constexpr i128() {}
+    constexpr i128() : val(0) {}
     constexpr i128(long long v) : val(v) {}
-    constexpr i128(const string &s) {
+    i128(const string &s) : val(0) {
         parse(s);
     }
-    constexpr void parse(const string &s) {
+    void parse(const string &s) {
         val = 0;
-        for (char c : s) {
+        for (auto c : s) {
             if (isdigit(c)) val = val * 10 + (c - '0');
         }
         if (s[0] == '-') val *= -1;
@@ -144,6 +144,7 @@ struct i128 {
         return os;
     }
 };
+
 
 
 /*/////////////////////////////*/
