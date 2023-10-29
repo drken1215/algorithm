@@ -32,11 +32,22 @@
  
  optional settings:
  　・function<T(const string&, int&)> GET_LEAF
-        - 構文解析木において葉となる部分のうち、数値以外を処理する分を設定する (第二引数は文字列中の index)
+        - 構文解析木において葉となる部分のパース方法を外部から指示したい場合に設定する
+        - 第二引数は文字列中の index を表す
  　・string UNARY_OPERATORS
         - パースする文字列に単項演算子 ("-" や "log" など) が含まれる場合、その関数を表す文字列
  　・function<T(T)> UNARY_OPERATION
         - パースする文字列が関数 OPERATOR_FUNC を含む場合、その関数の中身を設定
+ 
+ usage:
+ 　・eval(const string &str, bool default_parse_numeric = true)
+        - 与えられた文字列 S をパースして、計算結果を出力する
+        - root, left, right などに構文解析木の構造が格納される (詳細は dump() を参照)
+        - 引数 default_parse_numeric について
+            - true：文字列 S 中の "927" などの通常の数値情報を long long 型にパースする
+            - false：数値情報などをパースする関数オブジェクトを外部で定義して渡す
+ 　・dump()
+        - 文字列 S の構文解析木を出力する
  */
 
 
@@ -56,15 +67,15 @@ template<class T> struct Parser {
     function<T(const string&, T)> UNARY_OPERATION;  // unary operation
     const string OPERATOR_NUMBER = "num";
     
-    /* results */
-    string S;
+    /* result: parse tree */
     int root;                    // vals[root] is the answer
     vector<T> vals;              // value of each node
     vector<string> ops;          // operator of each node
     vector<int> left, right;     // the index of left-node, right-node
-    vector<int> ids;             // the node-index of i-th value
+    vector<int> ids;             // the node-index of the i-th value
     
     /* constructor */
+    string S;
     Parser() {}
     Parser(const vector<vector<string>> &operators,
            const function<T(const string&, T, T)> operation) {
@@ -119,6 +130,15 @@ template<class T> struct Parser {
         vals.clear(), ops.clear(), left.clear(), right.clear(), ids.clear();
     }
     
+    /* eval */
+    T eval(const string &str, bool default_parse_numeric = true) {
+        clear();
+        S = str;
+        int p = 0, id = 0;
+        root = parse(p, id, default_parse_numeric);
+        return vals[root];
+    }
+    
     /* node generator */
     // value
     int new_leaf(T val, int &id) {
@@ -148,14 +168,7 @@ template<class T> struct Parser {
         return (int)vals.size() - 1;
     }
     
-    /* main parser */
-    T eval(const string &str, bool default_parse_numeric = true) {
-        clear();
-        S = str;
-        int p = 0, id = 0;
-        root = parse(p, id, default_parse_numeric);
-        return vals[root];
-    }
+    /* parser */
     int parse(int &p, int &id, bool default_parse_numeric, int depth = 0) {
         assert(p >= 0 && p < (int)S.size());
         string op;
@@ -174,11 +187,11 @@ template<class T> struct Parser {
             } while (p < (int)S.size() && update);
             return lp;
         }
-        else if (S[p] == '(') {
-            return get_bracket(p, id, default_parse_numeric);
-        }
         else if (default_parse_numeric && isdigit(S[p])) {
             return get_number(p, id);
+        }
+        else if (S[p] == '(') {
+            return get_bracket(p, id, default_parse_numeric);
         }
         else if (is_in_the_operators(p, op, UNARY_OPERATORS)) {
             return get_unary_operation(p, id, op, default_parse_numeric);
