@@ -426,6 +426,7 @@
 ## 集合族に関する問題
 
 - (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/two_sat.cpp)
+- (★★★☆) Project Selection Problem (俗称：燃やす埋める)
 - (★★★☆) マトロイド上の Greedy 法
 - (★★★★) マトロイド交差
 
