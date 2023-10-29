@@ -35,9 +35,9 @@
         - 構文解析木において葉となる部分のパース方法を外部から指示したい場合に設定する
         - 第二引数は文字列中の index を表す
  　・string UNARY_OPERATORS
-        - パースする文字列に単項演算子 ("-" や "log" など) が含まれる場合、その関数を表す文字列
+        - パースする文字列に単項演算子 ("-" や "log" など) が含まれる場合、その関数を表す文字列を設定
  　・function<T(T)> UNARY_OPERATION
-        - パースする文字列が関数 OPERATOR_FUNC を含む場合、その関数の中身を設定
+        - パースする文字列に単項演算子 ("-" や "log" など) が含まれる場合、その関数の中身を設定
  
  usage:
  　・eval(const string &str, bool default_parse_numeric = true)
