@@ -306,7 +306,7 @@
 
 ## カット
 
-- (★★★☆) 最小カット (= 最大流)
+- (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cut.cpp)
 - (★★★★) 全域最小カット（Stoer-Wanger 法）
 - (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法)
 - (★★★★) Gomory-Hu 木
@@ -513,7 +513,7 @@
 
 ### 構文解析
 
-- (★★★☆) [LL(1) 再帰降下パーサ](https://github.com/drken1215/algorithm/blob/master/String/parser.cpp)
+- (★★★☆) [LL(1) 再帰下降パーサ](https://github.com/drken1215/algorithm/blob/master/String/parser.cpp)
 
 ### 文字列検索
 
