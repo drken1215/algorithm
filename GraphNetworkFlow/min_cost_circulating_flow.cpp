@@ -1,5 +1,5 @@
 //
-// Goleberg--Tarjan による cost-scaling を用いた最小費用循環流
+// Goldberg--Tarjan による cost-scaling を用いた最小費用循環流
 //
 // verified
 //   AOJ Course GRL_6_B Network Flow - Minimum Cost Flow
@@ -172,8 +172,15 @@ template<class FLOWTYPE, class COSTTYPE> COSTTYPE MinCostCirculation(Graph<FLOWT
 }
 
 
-const long long INF = 1<<29;  // 十分大きい値
-int main() {
+
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
+
+// AOJ
+void AOJ_Course_GRL_6_B() {
+    const long long INF = 1<<29;  // 十分大きい値
+    
     // 入力
     int V, E;
     long long F;
@@ -195,6 +202,11 @@ int main() {
     // 流量 F を流せない場合
     if (res >= INF) cout << -1 << endl;
     else cout << res << endl;
+}
+
+
+int main() {
+    AOJ_Course_GRL_6_B();
 }
 
 
