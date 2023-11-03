@@ -24,7 +24,7 @@
 
 　
 <a name="ds"></a>
-# 1. データ構造 (DATA STRUCTURE)
+# データ構造 (DATA STRUCTURE)
 各種データ構造の実装です
 
 ## Union-Find
@@ -297,12 +297,21 @@
 
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
+- (★★★☆) 下限容量つき最大流
 
 ## 最小費用流
 
 - (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
 - (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
 - (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
+- (★★★★) 最小費用 b-flow (下限容量つき, 供給点・需要点つき)
+- (★★★★) 最小凸費用流
+
+## 劣モジュラ関数のグラフ表現
+
+- (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
+- (★★★★) [2 変数劣モジュラ関数のグラフ表現 (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
+- (★★★★) 3 変数劣モジュラ関数のグラフ表現 (燃やす埋めるの一般化)
 
 ## カット
 
@@ -426,7 +435,6 @@
 ## 集合族に関する問題
 
 - (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/two_sat.cpp)
-- (★★★☆) Project Selection Problem (俗称：燃やす埋める)
 - (★★★☆) マトロイド上の Greedy 法
 - (★★★★) マトロイド交差
 
