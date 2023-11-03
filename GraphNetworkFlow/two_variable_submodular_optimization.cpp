@@ -7,6 +7,23 @@
 //
 
 
+/*
+ N 個の 0-1 変数 x_0, x_1, ..., x_{N-1} について
+ 
+ ・個別の変数 xi に関するコスト
+    xi = 0 のとき false_cost, xi = 1 のとき true_cost
+ 
+ ・2 変数 xi, xj 間の関係性についてのコスト
+ 　　(xi, xj) = (F, F): コスト A
+ 　　(xi, xj) = (F, T): コスト B
+ 　　(xi, xj) = (T, F): コスト C
+ 　　(xi, xj) = (T, T): コスト D
+ 　　(ただし、B + C >= A + D でなければならない)
+
+ が設定されているときの最小コストを求める
+ */
+
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -71,7 +88,7 @@ template<class T> struct TwoVariableSubmodularOpt {
         add_edge(xi, xj, cost);
     }
     
-    // add constraint (xi = T, xj = T is only cost 0 and other is cost C)
+    // add constraint (xi = T, xj = T is only cost 0, and the others are cost C)
     void add_both_true_benefit(int xi, int xj, T cost) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
@@ -80,7 +97,7 @@ template<class T> struct TwoVariableSubmodularOpt {
         add_edge(xi, xj, cost);
     }
     
-    // add constraint (xi = F, xj = F is only cost 0 and other is cost C)
+    // add constraint (xi = F, xj = F is only cost 0, and the others are cost C)
     void add_both_false_benefit(int xi, int xj, T cost) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
@@ -89,10 +106,10 @@ template<class T> struct TwoVariableSubmodularOpt {
         add_edge(xi, xj, cost);
     }
     
-    // add constraint
+    // add general 2-value submodular function
     // (xi, xj) = (F, F): A, (F, T): B
     // (xi, xj) = (T, F): C, (T, T): D
-    void add_constraint(int xi, int xj, T A, T B, T C, T D) {
+    void add_submodular_function(int xi, int xj, T A, T B, T C, T D) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         assert(B + C >= A + D);  // submodular constraint
@@ -242,3 +259,5 @@ void ARC_085_E() {
 int main() {
     ARC_085_E();
 }
+
+
