@@ -5,6 +5,9 @@
 //   AtCoder ARC 085 E - MUL
 //     https://atcoder.jp/contests/arc085/tasks/arc085_c
 //
+//   AOJ 2903 Board
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2903
+//
 
 
 /*
@@ -105,7 +108,7 @@ template<class T> struct TwoVariableSubmodularOpt {
         add_edge(xi, xj, cost);
     }
     
-    // add general 2-value submodular function
+    // add general 2-variable submodular function
     // (xi, xj) = (F, F): A, (F, T): B
     // (xi, xj) = (T, F): C, (T, T): D
     void add_submodular_function(int xi, int xj, T A, T B, T C, T D) {
@@ -255,8 +258,23 @@ void ARC_085_E() {
 }
 
 
-int main() {
-    ARC_085_E();
+// AOJ 2903 Board
+void AOJ_2903() {
+    const int INF = 1<<29;
+    
+    cin >> n >> m;
+    vector<string> fi(n);
+    for (int i = 0; i < n; ++i) cin >> fi[i];
+    
+    auto get_id = [&](int i, int j) -> int { return i * m + j; };
+    
+    TwoVariableSubmodularOpt<int> tvs(n * m);
+    
 }
 
+
+int main() {
+    //ARC_085_E();
+    AOJ_2903();
+}
 

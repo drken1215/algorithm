@@ -310,8 +310,8 @@
 ## 劣モジュラ関数のグラフ表現
 
 - (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
-- (★★★★) [2 変数劣モジュラ関数のグラフ表現 (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
-- (★★★★) 3 変数劣モジュラ関数のグラフ表現 (燃やす埋めるの一般化)
+- (★★★★) [2 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
+- (★★★★) 3 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)
 
 ## カット
 
@@ -389,7 +389,7 @@
 - (★★☆☆) 三分探索法
 - (★★☆☆) 黄金探索法
 - (★★★☆) Newton 法
-- (★★★★) 単体法 (二段階単体法)
+- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/simplex_method.cpp)
 - (★★★★) 分枝限定法
 
 
