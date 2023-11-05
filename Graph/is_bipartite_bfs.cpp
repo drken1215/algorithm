@@ -1,106 +1,69 @@
 //
 // 二部グラフ判定 (by BFS)
 //
-// cf.
+// reference:
 //   BFS (幅優先探索) 超入門！ 〜 キューを鮮やかに使いこなす 〜
 //     https://qiita.com/drken/items/996d80bcae64649a6580
 //
-//
 // verified:
-//   ARC 099 E - Independence
-//     https://beta.atcoder.jp/contests/arc099/tasks/arc099_c
+//   AtCoder ARC 327 D - Good Tuple Problem
+//     https://atcoder.jp/contests/abc327/tasks/abc327_d
 //
 
-/*
-    二部グラフかどうかを判定する
-    また、各連結成分ごとに、(左ノード数, 右ノード数) を求める
- */
 
-
-#include <iostream>
-#include <vector>
-#include <queue>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-// nums[i] := i 番目の連結成分の {左ノード数, 右ノード数}, 「dir = 1: 左、-1: 右」
-using pint = pair<int,int>;
-using Graph = vector<vector<int> >;
-
-bool isbipartite(const Graph &G, vector<pint> &nums) {
-    bool res = true;
+// 二部グラフ判定 (color は、1: 黒色, -1: 白色, 0: 未確定)
+using Graph = vector<vector<int>>;
+bool is_bipartite(const Graph &G) {
     int N = (int)G.size();
-    vector<int> dir(N, 0);
+    vector<int> color(N, 0);
     for (int v = 0; v < N; ++v) {
-        if (dir[v] != 0) continue;
-        
-        // 頂点 v を始点とした BFS
-        pint num = {0, 0};
-        dir[v] = 1;
-        ++num.first;
+        if (color[v] != 0) continue;
+        color[v] = 1;
         queue<int> que;
         que.push(v);
         while (!que.empty()) {
             int v = que.front();
             que.pop();
-            for (auto nv : G[v]) {
-                if (dir[nv] != 0) {
-                    if (dir[nv] == dir[v]) return false;
+            for (auto v2 : G[v]) {
+                if (color[v2] != 0) {
+                    if (color[v2] == color[v]) return false;
                 } else {
-                    dir[nv] = -dir[v];
-                    if (dir[nv] == 1) ++num.first;
-                    else ++num.second;
-                    que.push(nv);
+                    color[v2] = -color[v];
+                    que.push(v2);
                 }
             }
         }
-        nums.push_back(num);
     }
     return true;
 }
 
 
-int main() {
+
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
+
+void ABC_327_D() {
     int N, M;
     cin >> N >> M;
-    vector<vector<int> > isexistedge(N, vector<int>(N, 1));
+    vector<int> A(M), B(M);
+    for (int i = 0; i < M; ++i) cin >> A[i], --A[i];
+    for (int i = 0; i < M; ++i) cin >> B[i], --B[i];
+    
+    vector<vector<int>> G(N);
     for (int i = 0; i < M; ++i) {
-        int a, b;
-        cin >> a >> b; --a, --b;
-        isexistedge[a][b] = isexistedge[b][a] = 0;
+        G[A[i]].push_back(B[i]);
+        G[B[i]].push_back(A[i]);
     }
-    Graph G(N);
-    for (int i = 0; i < N; ++i) for (int j = 0; j < N; ++j)
-        if (isexistedge[i][j] && i != j)
-            G[i].push_back(j);
-    
-    // 二部グラフの構成
-    vector<pint> nums;
-    if (!isbipartite(G, nums)) {
-        cout << -1 << endl;
-        return 0;
-    }
-    
-    // ナップサック DP
-    vector<int> dp(N+10, 0);
-    dp[0] = 1;
-    for (int i = 0; i < (int)nums.size(); ++i) {
-        for (int j = N; j >= 0; --j) {
-            if (!dp[j]) continue;
-            dp[j] = 0;
-            dp[j + nums[i].first] = 1;
-            dp[j + nums[i].second] = 1;
-        }
-    }
-    
-    long long a = -1;
-    long long mindif = N;
-    for (int i = 0; i <= N; ++i) {
-        if (!dp[i]) continue;
-        if (mindif > abs(i - N/2)) mindif = abs(i - N/2), a = i;
-    }
-    long long b = N-a;
-    cout << a*(a-1)/2 + b*(b-1)/2 << endl;
+    cout << (is_bipartite(G) ? "Yes" : "No") << endl;
 }
 
+
+int main() {
+    ABC_327_D();
+}
 
