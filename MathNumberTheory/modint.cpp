@@ -1,10 +1,7 @@
 //
-// Modular Arithmetics
+// modint
 //
-// cf.
-//   noshi91: modint 構造体を使ってみませんか？ (C++)
-//     http://noshi91.hatenablog.com/entry/2019/03/31/174006
-//
+// reference:
 //   drken: 「1000000007 で割ったあまり」の求め方を総特集！ ～ 逆元から離散対数まで ～
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
@@ -28,16 +25,24 @@ template<int MOD> struct Fp {
     constexpr Fp(long long v) : val(v % MOD) {
         if (val < 0) val += MOD;
     }
-    constexpr long long get() const { return val; }
-    constexpr int get_mod() const { return MOD; }
+    
+    // getter
+    constexpr long long get() const {
+        return val;
+    }
+    constexpr int get_mod() const {
+        return MOD;
+    }
+    
+    // comparison operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
     
     // arithmetic operators
-    constexpr Fp operator + () const { return Fp(*this); }
-    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
-    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
-    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
-    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
-    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
     constexpr Fp& operator += (const Fp &r) {
         val += r.val;
         if (val >= MOD) val -= MOD;
@@ -63,27 +68,14 @@ template<int MOD> struct Fp {
         if (val < 0) val += MOD;
         return *this;
     }
-    constexpr Fp pow(long long n) const {
-        Fp res(1), mul(*this);
-        while (n > 0) {
-            if (n & 1) res *= mul;
-            mul *= mul;
-            n >>= 1;
-        }
-        return res;
-    }
-    constexpr Fp inv() const {
-        Fp res(1), div(*this);
-        return res / div;
-    }
-
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    
     // other operators
-    constexpr bool operator == (const Fp &r) const {
-        return this->val == r.val;
-    }
-    constexpr bool operator != (const Fp &r) const {
-        return this->val != r.val;
-    }
     constexpr Fp& operator ++ () {
         ++val;
         if (val >= MOD) val -= MOD;
@@ -94,12 +86,12 @@ template<int MOD> struct Fp {
         --val;
         return *this;
     }
-    constexpr Fp operator ++ (int) const {
+    constexpr Fp operator ++ (int) {
         Fp res = *this;
         ++*this;
         return res;
     }
-    constexpr Fp operator -- (int) const {
+    constexpr Fp operator -- (int) {
         Fp res = *this;
         --*this;
         return res;
@@ -112,6 +104,21 @@ template<int MOD> struct Fp {
     }
     friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
         return os << x.val;
+    }
+    
+    // other functions
+    constexpr Fp pow(long long n) const {
+        Fp res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    constexpr Fp inv() const {
+        Fp res(1), div(*this);
+        return res / div;
     }
     friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
         return r.pow(n);
@@ -156,9 +163,56 @@ template<class mint> struct BiCoef {
 };
 
 
+
 /*/////////////////////////////*/
 // Examples
 /*/////////////////////////////*/
+
+void small_test() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
+    auto check = [&](mint val, mint res) -> void {
+        cout << val << endl;
+        assert(val == res);
+    };
+    
+    // arithmetic operation
+    mint a = -3;
+    mint b = 5;
+    check(a + b, 2);
+    check(a - b, 998244345);  // -8
+    check(a * b, 998244338);  // -15
+    a += b;
+    check(a, 2);
+    a -= 3;
+    check(a, 998244352);  // -1
+    a *= 6;
+    check(a, 998244347);  // -6
+    a /= 2;
+    check(a, 998244350);  // -3
+
+    // increment
+    check(++a, 998244351);  // -2
+    check(a, 998244351);  // -2
+    check(--a, 998244350);  // -3
+    check(a, 998244350);  // -3
+    check(b++, 5);
+    check(b, 6);
+    check(b--, 6);
+    check(b, 5);
+    
+    // division
+    a = 6, b = 2;
+    check(a / b, 3);
+    mint c = b / a;
+    check(c, 332748118);
+    check(c * a, 2);
+    
+    // pow, inv
+    check(b.pow(20), 1048576);
+    check(b.inv(), 499122177);
+}
 
 void ABC_127_E() {
     const int MOD = 1000000007;
@@ -179,6 +233,8 @@ void ABC_127_E() {
     cout << sum * bc.com(N * M - 2, K - 2) << endl;
 }
 
+
 int main() {
-    ABC_127_E();
+    small_test();
+    //ABC_127_E();
 }
