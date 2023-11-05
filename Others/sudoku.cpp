@@ -1,16 +1,16 @@
 //
-// 数独ソルバーの実装
+// 数独ソルバー
 //
 // verified:
-//   POJ 2676 - Sudoku
+//   POJ 2676 - Sudoku (solve 9 x 9 sudoku)
 //     http://poj.org/problem?id=2676
+//
+//   AtCoder ABC 327 C - Number Place (judge validity)
+//     https://atcoder.jp/contests/abc327/tasks/abc327_c
 //
 
 
-#include <iostream>
-#include <vector>
-#include <set>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -344,10 +344,10 @@ void user_small_test() {
         "***419**5",
         "****8**79"
     };
-    Sudoku board(input);
+    Sudoku sudoku(input);
     
     // 数独を解く
-    vector<vector<vector<int>>> res = board.solve();
+    vector<vector<vector<int>>> res = sudoku.solve();
 
     // 解を出力する
     if (res.size() == 0) {
@@ -374,8 +374,8 @@ void POJ_2676() {
     while (T--) {
         vector<string> input(9);
         for (int i = 0; i < 9; ++i) cin >> input[i];
-        Sudoku board(input, '0');
-        vector<vector<vector<int>>> res = board.solve();
+        Sudoku sudoku(input, '0');
+        vector<vector<vector<int>>> res = sudoku.solve();
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) cout << res[0][i][j];
             cout << endl;
@@ -383,8 +383,20 @@ void POJ_2676() {
     }
 }
 
+// ABC 327 C
+void ABC_327_C() {
+    vector<vector<int>> input(9, vector<int>(9));
+    for (int x = 0; x < 9; ++x) for (int y = 0; y < 9; ++y) cin >> input[x][y];
+    Sudoku sudoku(input);
+    const auto &res = sudoku.solve();
+    if (!res.empty()) cout << "Yes" << endl;
+    else cout << "No" << endl;
+}
+
 
 int main() {
     user_small_test();
     //POJ_2676();
+    //ABC_327_C();
 }
+
