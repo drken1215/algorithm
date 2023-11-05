@@ -10,6 +10,30 @@
 //
 
 
+/*
+    入力: 以下のいずれかをコンストラクタで与える
+    - vector<string> 型変数 (空きマスはデフォルトでは '*')
+    - vector<vector<int>> 型変数 (空きマスはデフォルトでは '-1')
+ 
+    // 使用例
+    vector<string> input = {
+        "53**7****",
+        "6**195***",
+        "*98****6*",
+        "8***6***3",
+        "4**8*3**1",
+        "7***2***6",
+        "*6****28*",
+        "***419**5",
+        "****8**79"
+    };
+    Sudoku sudoku(input);
+ 
+    // 数独を解く (すべての解を求める)
+    vector<vector<vector<int>>> res = sudoku.solve();
+ */
+
+
 #include <bits/stdc++.h>
 using namespace std;
 
