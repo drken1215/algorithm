@@ -620,6 +620,7 @@
 - (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - (★★☆☆) [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
+- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Others/sudoku.cpp)
 - (★★★☆) 四面体 (AOJ 2060)
 
 
