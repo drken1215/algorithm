@@ -11,17 +11,21 @@
 
 
 /*
- N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下のコストが定められたときの最小コスト
+ N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
  
- ・1 変数 xi に関するコスト
+ ・1 変数 xi に関するコスト (1 変数劣モジュラ関数)
     xi = F のときのコスト, xi = T のときのコスト
  
- ・2 変数 xi, xj 間の関係性についてのコスト
+ ・2 変数 xi, xj 間の関係性についてのコスト (2 変数劣モジュラ関数)
  　　(xi, xj) = (F, F): コスト A
  　　(xi, xj) = (F, T): コスト B
  　　(xi, xj) = (T, F): コスト C
  　　(xi, xj) = (T, T): コスト D
  　(ただし、B + C >= A + D でなければならない)
+ 
+ ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
+    ・この場合は、特に Project Selection Problem と呼ばれ、ローカルには「燃やす埋める」などとも呼ばれる
+ ・他に面白い例として、A = B = C = 0, D < 0 の形もある (AOJ 2903 Board)
 
  */
 
@@ -83,28 +87,10 @@ template<class T> struct TwoVariableSubmodularOpt {
     }
     
     // add constraint (xi = T, xj = F is penalty C)
-    void add_penalty(int xi, int xj, T cost) {
+    void add_psp_penalty(int xi, int xj, T cost) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         assert(cost >= 0);
-        add_edge(xi, xj, cost);
-    }
-    
-    // add constraint (xi = T, xj = T is only cost 0, and the others are cost C)
-    void add_both_true_benefit(int xi, int xj, T cost) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(cost >= 0);
-        add_edge(xj, 0, cost);
-        add_edge(xi, xj, cost);
-    }
-    
-    // add constraint (xi = F, xj = F is only cost 0, and the others are cost C)
-    void add_both_false_benefit(int xi, int xj, T cost) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(cost >= 0);
-        add_edge(xi, cost, 0);
         add_edge(xi, xj, cost);
     }
     
@@ -118,7 +104,7 @@ template<class T> struct TwoVariableSubmodularOpt {
         offset += A;
         add_single_cost(xi, 0, D - B);
         add_single_cost(xj, 0, B - A);
-        add_penalty(xi, xj, B + C - A - D);
+        add_psp_penalty(xi, xj, B + C - A - D);
     }
     
     // solve
@@ -250,7 +236,7 @@ void ARC_085_E() {
         for (int j = i+1; j < N; ++j) {
             if ((j+1) % (i+1) == 0) {
                 // i: T, j: F は禁止
-                tvs.add_penalty(i, j, INF);
+                tvs.add_psp_penalty(i, j, INF);
             }
         }
     }
@@ -258,18 +244,32 @@ void ARC_085_E() {
 }
 
 
-// AOJ 2903 Board
+// AOJ 2093 Board
 void AOJ_2903() {
-    const int INF = 1<<29;
-    
+    int n, m;
     cin >> n >> m;
     vector<string> fi(n);
     for (int i = 0; i < n; ++i) cin >> fi[i];
     
     auto get_id = [&](int i, int j) -> int { return i * m + j; };
     
+    // 0: 横, 1: 縦
     TwoVariableSubmodularOpt<int> tvs(n * m);
-    
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            if (fi[i][j] == '.') continue;
+            tvs.add_single_cost(get_id(i, j), 1, 1);
+            if (i+1 < n && fi[i+1][j] == '#') {
+                // (1, 1) だけ 1 の利得 (-1 のコスト)
+                tvs.add_submodular_function(get_id(i, j), get_id(i+1, j), 0, 0, 0, -1);
+            }
+            if (j+1 < m && fi[i][j+1] == '#') {
+                // (0, 0) だけ 1 の利得 (-1 のコスト)
+                tvs.add_submodular_function(get_id(i, j), get_id(i, j+1), -1, 0, 0, 0);
+            }
+        }
+    }
+    cout << tvs.solve() << endl;
 }
 
 
@@ -277,4 +277,7 @@ int main() {
     //ARC_085_E();
     AOJ_2903();
 }
+
+
+
 
