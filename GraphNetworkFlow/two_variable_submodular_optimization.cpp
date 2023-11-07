@@ -2,10 +2,13 @@
 // 2 変数劣モジュラ関数のグラフ表現
 //
 // verified:
-//   AtCoder ARC 085 E - MUL
+//   AtCoder ARC 085 E - MUL (for basid psp)
 //     https://atcoder.jp/contests/arc085/tasks/arc085_c
 //
-//   AOJ 2903 Board
+//   AtCoder ABC 326 G - Unlock Achievement (for all-true profit)
+//     https://atcoder.jp/contests/arc085/tasks/arc085_c
+//
+//   AOJ 2903 Board (for general 2-variable submodular function)
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2903
 //
 
@@ -35,15 +38,15 @@ using namespace std;
 
 
 // 2-variable submodular optimization
-template<class T> struct TwoVariableSubmodularOpt {
+template<class COST> struct TwoVariableSubmodularOpt {
     // edge class
     struct Edge {
         // core members
         int rev, from, to;
-        T cap, icap, flow;
+        COST cap, icap, flow;
         
         // constructor
-        Edge(int r, int f, int t, T c)
+        Edge(int r, int f, int t, COST c)
         : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
         void reset() { cap = icap, flow = 0; }
         
@@ -54,18 +57,19 @@ template<class T> struct TwoVariableSubmodularOpt {
     };
     
     // inner data
-    int N, s, t;
-    T offset;
+    int N, S, T;
+    COST OFFSET, INF;
     vector<vector<Edge>> list;
     vector<pair<int,int>> pos;
     
     // constructor
-    TwoVariableSubmodularOpt() : N(0), s(0), t(0), offset(0) {}
-    TwoVariableSubmodularOpt(int n) : N(n), s(n), t(n + 1), offset(0), list(n + 2) {}
-    void init(int n = 0) {
-        N = n, s = n, t = n + 1;
-        offset = 0;
-        list.assign(n + 2, Edge());
+    TwoVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
+    TwoVariableSubmodularOpt(int n, COST inf = 0)
+    : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
+    void init(int n, COST inf = 0) {
+        N = n, S = n, T = n + 1;
+        OFFSET = 0, INF = inf;
+        list.assign(N + 2, Edge());
         pos.clear();
     }
     friend ostream& operator << (ostream& s, const TwoVariableSubmodularOpt &G) {
@@ -75,19 +79,19 @@ template<class T> struct TwoVariableSubmodularOpt {
     }
 
     // add 1-Variable submodular functioin
-    void add_single_cost(int xi, T false_cost, T true_cost) {
+    void add_single_cost(int xi, COST false_cost, COST true_cost) {
         assert(0 <= xi && xi < N);
         if (false_cost >= true_cost) {
-            offset += true_cost;
-            add_edge(s, xi, false_cost - true_cost);
+            OFFSET += true_cost;
+            add_edge(S, xi, false_cost - true_cost);
         } else {
-            offset += false_cost;
-            add_edge(xi, t, true_cost - false_cost);
+            OFFSET += false_cost;
+            add_edge(xi, T, true_cost - false_cost);
         }
     }
     
-    // add constraint (xi = T, xj = F is penalty C)
-    void add_psp_penalty(int xi, int xj, T cost) {
+    // add "project selection" constraint (xi = T, xj = F is penalty C)
+    void add_psp_penalty(int xi, int xj, COST cost) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         assert(cost >= 0);
@@ -97,28 +101,41 @@ template<class T> struct TwoVariableSubmodularOpt {
     // add general 2-variable submodular function
     // (xi, xj) = (F, F): A, (F, T): B
     // (xi, xj) = (T, F): C, (T, T): D
-    void add_submodular_function(int xi, int xj, T A, T B, T C, T D) {
+    void add_submodular_function(int xi, int xj, COST A, COST B, COST C, COST D) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
-        assert(B + C >= A + D);  // submodular constraint
-        offset += A;
+        assert(B + C >= A + D);  // assure submodular function
+        OFFSET += A;
         add_single_cost(xi, 0, D - B);
         add_single_cost(xj, 0, B - A);
         add_psp_penalty(xi, xj, B + C - A - D);
     }
     
+    // add all True profit
+    void add_all_true_profit(const vector<int> &xs, COST profit) {
+        assert(profit >= 0);
+        int slack = (int)list.size();
+        list.resize(slack + 1);
+        OFFSET -= profit;
+        add_edge(S, slack, profit);
+        for (auto xi : xs) {
+            assert(xi >= 0 && xi < N);
+            add_edge(slack, xi, INF);
+        }
+    }
+    
     // solve
-    T solve() {
-        return dinic(s, t) + offset;
+    COST solve() {
+        return dinic() + OFFSET;
     }
     vector<bool> reconstruct() {
         vector<bool> res(N);
         queue<int> que;
-        que.push(s);
+        que.push(S);
         while (!que.empty()) {
             int v = que.front();
             que.pop();
-            if (s < N) res[s] = true;
+            if (S < N) res[S] = true;
             for (const auto &e : list[v]) {
                 if (e.cap && !res[e.to]) {
                     res[e.to] = true;
@@ -148,7 +165,7 @@ private:
         }
         return edges;
     }
-    void add_edge(int from, int to, T cap) {
+    void add_edge(int from, int to, COST cap) {
         if (!cap) return;
         pos.emplace_back(from, (int)list[from].size());
         list[from].push_back(Edge((int)list[to].size(), from, to, cap));
@@ -156,23 +173,23 @@ private:
     }
     
     // Dinic's algorithm
-    T dinic(int s, int t, T limit_flow) {
-        T current_flow = 0;
+    COST dinic(COST limit_flow) {
+        COST current_flow = 0;
         vector<int> level((int)list.size(), -1), iter((int)list.size(), 0);
         
         // Dinic BFS
         auto bfs = [&]() -> void {
             level.assign((int)list.size(), -1);
-            level[s] = 0;
+            level[S] = 0;
             queue<int> que;
-            que.push(s);
+            que.push(S);
             while (!que.empty()) {
                 int v = que.front();
                 que.pop();
                 for (const Edge &e : list[v]) {
                     if (level[e.to] < 0 && e.cap > 0) {
                         level[e.to] = level[v] + 1;
-                        if (e.to == t) return;
+                        if (e.to == T) return;
                         que.push(e.to);
                     }
                 }
@@ -180,13 +197,13 @@ private:
         };
         
         // Dinic DFS
-        auto dfs = [&](auto self, int v, T up_flow) {
-            if (v == t) return up_flow;
-            T res_flow = 0;
+        auto dfs = [&](auto self, int v, COST up_flow) {
+            if (v == T) return up_flow;
+            COST res_flow = 0;
             for (int &i = iter[v]; i < (int)list[v].size(); ++i) {
                 Edge &e = list[v][i], &re = get_rev_edge(e);
                 if (level[v] >= level[e.to] || e.cap == 0) continue;
-                T flow = self(self, e.to, min(up_flow - res_flow, e.cap));
+                COST flow = self(self, e.to, min(up_flow - res_flow, e.cap));
                 if (flow <= 0) continue;
                 res_flow += flow;
                 e.cap -= flow, e.flow += flow;
@@ -199,18 +216,18 @@ private:
         // flow
         while (current_flow < limit_flow) {
             bfs();
-            if (level[t] < 0) break;
+            if (level[T] < 0) break;
             iter.assign((int)iter.size(), 0);
             while (current_flow < limit_flow) {
-                T flow = dfs(dfs, s, limit_flow - current_flow);
+                COST flow = dfs(dfs, S, limit_flow - current_flow);
                 if (!flow) break;
                 current_flow += flow;
             }
         }
         return current_flow;
     };
-    T dinic(int s, int t) {
-        return dinic(s, t, numeric_limits<T>::max());
+    COST dinic() {
+        return dinic(numeric_limits<COST>::max());
     }
 };
 
@@ -220,6 +237,7 @@ private:
 // Examples
 /*/////////////////////////////*/
 
+// ARC 085 E - MUL
 void ARC_085_E() {
     int N;
     cin >> N;
@@ -239,6 +257,33 @@ void ARC_085_E() {
                 tvs.add_psp_penalty(i, j, INF);
             }
         }
+    }
+    cout << -tvs.solve() << endl;
+}
+
+
+// ABC 326 G - Unlock Achievement
+void ABC_326_G() {
+    int N, M;
+    cin >> N >> M;
+    vector<long long> C(N), A(M);
+    vector<vector<long long>> L(M, vector<long long>(N));
+    for (int i = 0; i < N; ++i) cin >> C[i];
+    for (int i = 0; i < M; ++i) cin >> A[i];
+    for (int i = 0; i < M; ++i) for (int j = 0; j < N; ++j) cin >> L[i][j];
+    
+    const long long INF = 1LL<<55;
+    TwoVariableSubmodularOpt<long long> tvs(N*4, INF);
+    for (int i = 0; i < N*4; ++i) {
+        tvs.add_single_cost(i, 0, C[i/4]);
+        if (i % 4 != 3) tvs.add_psp_penalty(i+1, i, INF);
+    }
+    for (int i = 0; i < M; ++i) {
+        vector<int> ids;
+        for (int j = 0; j < N; ++j) {
+            if (L[i][j] > 1) ids.push_back(j * 4 + (L[i][j] - 2));
+        }
+        tvs.add_all_true_profit(ids, A[i]);
     }
     cout << -tvs.solve() << endl;
 }
@@ -275,8 +320,11 @@ void AOJ_2903() {
 
 int main() {
     //ARC_085_E();
-    AOJ_2903();
+    ABC_326_G();
+    //AOJ_2903();
 }
+
+
 
 
 
