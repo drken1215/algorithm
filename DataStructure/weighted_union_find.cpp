@@ -6,10 +6,10 @@
 //     https://qiita.com/drken/items/cce6fc5c579051e64fab
 //
 // verified:
-//   AtCoeer ABC 328 F - Good Set Query
+//   AtCoder ABC 328 F - Good Set Query
 //     https://atcoder.jp/contests/abc328/tasks/abc328_f
 //
-//   AtCoeer ABC 087 D - People on a Line
+//   AtCoder ABC 087 D - People on a Line
 //     https://atcoder.jp/contests/abc087/tasks/arc090_b
 //
 
@@ -20,7 +20,7 @@
  
     ・same(x, y): x と y が同じグループにいるかどうか
     ・size(x): x を含むグループの所属メンバー数
-    ・groups(): グループ分けの構造を返す, 計算量は O(n)
+    ・groups(): グループ分けの構造を返す, 計算量は O(N)
     ・merge(x, y, w): v[y] - v[x] = w を満たすようにする (すでに同じグループである場合には何もしない)
     ・get_weight(x): v[x] の値を返す
     ・diff(x, y): v[y] - v[x] の値を返す
