@@ -18,14 +18,12 @@
     内部的な変数値 v[0], v[1], ..., v[N-1] を管理する (計算量は基本的に O(α(N)))
     Union-Find 内の各根付き木の根 r に対して v[r] = 0 とする
  
-      same(x, y): x と y が同じグループにいるかどうか
-      size(x): x を含むグループの所属メンバー数
-      groups(): グループ分けの構造を返す, 計算量は O(n)
- 
-      merge(x, y, w): x と y を同じグループにしながら、v[y] - v[x] = w を満たすようにする
-                      (ただし、すでに同じグループである場合には何もしない)
- 　　　calc_weight(x): v[x] の値を返す
-      diff(x, y): v[y] - v[x] の値を返す
+    ・same(x, y): x と y が同じグループにいるかどうか
+    ・size(x): x を含むグループの所属メンバー数
+    ・groups(): グループ分けの構造を返す, 計算量は O(n)
+    ・merge(x, y, w): v[y] - v[x] = w を満たすようにする (すでに同じグループである場合には何もしない)
+    ・get_weight(x): v[x] の値を返す
+    ・diff(x, y): v[y] - v[x] の値を返す
 */
 
 
@@ -63,12 +61,6 @@ template<class T> struct WeightedUnionFind {
         return -par[root(x)];
     }
     
-    // calc v[x]
-    T get_weight(int x) {
-        root(x);
-        return weight[x];
-    }
-    
     // v[y] - v[x] = w
     bool merge(int x, int y, T w) {
         w += get_weight(x), w -= get_weight(y);
@@ -81,8 +73,14 @@ template<class T> struct WeightedUnionFind {
         return true;
     }
     
-    // calc v[y] - v[x]
-    T diff(int x, int y) {
+    // get v[x]
+    T get_weight(int x) {
+        root(x);
+        return weight[x];
+    }
+    
+    // get v[y] - v[x]
+    T get_diff(int x, int y) {
         return get_weight(y) - get_weight(x);
     }
     
@@ -133,7 +131,7 @@ void ABC_328_F() {
             uf.merge(b, a, d);
         } else {
             // x[a] - x[b] = d でないとき、ダメ
-            if (uf.diff(b, a) != d) good = false;
+            if (uf.get_diff(b, a) != d) good = false;
         }
         
         if (good) cout << i+1 << " ";
@@ -153,8 +151,7 @@ void ABC_087_D() {
         cin >> l >> r >> d;
         --l, --r;
         if (uf.same(l, r)) {
-            long long diff = uf.diff(l, r);
-            if (diff != d) res = false;
+            if (uf.get_diff(l, r) != d) res = false;
         }
         else uf.merge(l, r, d);
     }
