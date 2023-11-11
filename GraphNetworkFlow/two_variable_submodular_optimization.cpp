@@ -5,6 +5,9 @@
 //   AtCoder ARC 085 E - MUL (for basid psp)
 //     https://atcoder.jp/contests/arc085/tasks/arc085_c
 //
+//   AtCoder ABC 259 G - Grid Card Game (for basid psp)
+//     https://atcoder.jp/contests/abc259/tasks/abc259_g
+//
 //   AtCoder ABC 326 G - Unlock Achievement (for all-true profit)
 //     https://atcoder.jp/contests/arc085/tasks/arc085_c
 //
@@ -55,12 +58,6 @@ template<class COST> struct TwoVariableSubmodularOpt {
             return s << E.from << "->" << E.to << '(' << E.flow << '/' << E.icap << ')';
         }
     };
-    
-    // inner data
-    int N, S, T;
-    COST OFFSET, INF;
-    vector<vector<Edge>> list;
-    vector<pair<int,int>> pos;
     
     // constructor
     TwoVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
@@ -129,16 +126,17 @@ template<class COST> struct TwoVariableSubmodularOpt {
         return dinic() + OFFSET;
     }
     vector<bool> reconstruct() {
-        vector<bool> res(N);
+        vector<bool> res(N, false), seen(list.size(), false);
         queue<int> que;
+        seen[S] = true;
         que.push(S);
         while (!que.empty()) {
             int v = que.front();
             que.pop();
-            if (S < N) res[S] = true;
             for (const auto &e : list[v]) {
-                if (e.cap && !res[e.to]) {
-                    res[e.to] = true;
+                if (e.cap && !seen[e.to]) {
+                    if (e.to < N) res[e.to] = true;
+                    seen[e.to] = true;
                     que.push(e.to);
                 }
             }
@@ -147,6 +145,12 @@ template<class COST> struct TwoVariableSubmodularOpt {
     }
     
 private:
+    // inner data
+    int N, S, T;
+    COST OFFSET, INF;
+    vector<vector<Edge>> list;
+    vector<pair<int,int>> pos;
+    
     // add edge
     Edge &get_rev_edge(const Edge &e) {
         if (e.from != e.to) return list[e.to][e.rev];
@@ -262,6 +266,38 @@ void ARC_085_E() {
 }
 
 
+// ABC 259 G - Grid Card Game
+void ABC_259_G() {
+    int H, W;
+    cin >> H >> W;
+    vector<vector<long long>> A(H, vector<long long>(W));
+    for (int i = 0; i < H; ++i) for (int j = 0; j < W; ++j) {
+        cin >> A[i][j];
+        A[i][j] *= -1;
+    }
+    
+    TwoVariableSubmodularOpt<long long> tvs(H + W);
+    for (int i = 0; i < H; ++i) {
+        long long sum = 0;
+        for (int j = 0; j < W; ++j) sum += A[i][j];
+        tvs.add_single_cost(i, 0, sum);
+    }
+    for (int j = 0; j < W; ++j) {
+        long long sum = 0;
+        for (int i = 0; i < H; ++i) sum += A[i][j];
+        tvs.add_single_cost(j+H, sum, 0);
+    }
+    long long INF = 1LL<<50;
+    for (int i = 0; i < H; ++i) {
+        for (int j = 0; j < W; ++j) {
+            if (A[i][j] > 0) tvs.add_psp_penalty(i, j+H, INF);
+            else tvs.add_psp_penalty(i, j+H, -A[i][j]);
+        }
+    }
+    cout << -tvs.solve() << endl;
+}
+
+
 // ABC 326 G - Unlock Achievement
 void ABC_326_G() {
     int N, M;
@@ -281,11 +317,12 @@ void ABC_326_G() {
     for (int i = 0; i < M; ++i) {
         vector<int> ids;
         for (int j = 0; j < N; ++j) {
-            if (L[i][j] > 1) ids.push_back(j * 4 + (L[i][j] - 2));
+            if (L[i][j] > 1) ids.push_back(j*4 + (L[i][j] - 2));
         }
         tvs.add_all_true_profit(ids, A[i]);
     }
-    cout << -tvs.solve() << endl;
+    long long res = -tvs.solve();
+    cout << res << endl;
 }
 
 
@@ -320,12 +357,9 @@ void AOJ_2903() {
 
 int main() {
     //ARC_085_E();
-    ABC_326_G();
+    //ABC_259_G();
+    //ABC_326_G();
     //AOJ_2903();
 }
-
-
-
-
 
 

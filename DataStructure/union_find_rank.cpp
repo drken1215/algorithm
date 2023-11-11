@@ -10,10 +10,9 @@
 //
 
 /*
-    併合時の工夫: union by rank
- 
     same(x, y): x と y が同じグループにいるか, 計算量はならし O(α(n))
     merge(x, y): x と y を同じグループにする, 計算量はならし O(α(n))
+    groups(): グループ分けの構造を返す, 計算量は O(n)
 */
 
 
@@ -50,16 +49,25 @@ struct UnionFind {
         return true;
     }
     
+    // get groups
+    vector<vector<int>> groups() {
+        vector<vector<int>> member(par.size());
+        for (int v = 0; v < (int)par.size(); ++v) {
+            member[root(v)].push_back(v);
+        }
+        vector<vector<int>> res;
+        for (int v = 0; v < (int)par.size(); ++v) {
+            if (!member[v].empty()) res.push_back(member[v]);
+        }
+        return res;
+    }
+    
     // debug
     friend ostream& operator << (ostream &s, UnionFind uf) {
-        map<int, vector<int>> groups;
-        for (int i = 0; i < uf.par.size(); ++i) {
-            int r = uf.root(i);
-            groups[r].push_back(i);
-        }
-        for (const auto &it : groups) {
+        const vector<vector<int>> &gs = uf.groups();
+        for (const vector<int> &g : gs) {
             s << "group: ";
-            for (auto v : it.second) s << v << " ";
+            for (int v : g) s << v << " ";
             s << endl;
         }
         return s;
@@ -108,5 +116,7 @@ int main() {
     YosupoUnionFind();
     //AOJ_DSL_1_A();
 }
+
+
 
 
