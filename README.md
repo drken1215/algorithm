@@ -16,7 +16,7 @@
 |**[MATH : ALGEBRA](#ma)**|代数的アルゴリズム|行列計算など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**[OPTIMIZATION, SEARCH](#opt)**|最適化や探索のアルゴリズム|二分探索, 三分探索など|
+|**[OPTIMIZATION](#opt)**|最適化や探索のアルゴリズム|二分探索, 三分探索など|
 |**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
@@ -476,7 +476,7 @@
 ## さまざまな全探索
 
 - (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/next_combination.cpp)
-- (★★☆☆) [部分集合の部分集合](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
+- (★★☆☆) [部分集合の部分集合 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
 - (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Others/sudoku.cpp)
 
 ## 動的計画法
@@ -557,7 +557,7 @@
 ### その他
 
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
-- (★★★☆) 文字列の相異なる部分列の個数 (O(AN))
+- (★★★☆) 文字列の相異なる部分列の個数 (O(cN))
 - (★★★☆) 文字列の相異なる連続部分文字列の個数 (O(N))
 
 
