@@ -1,14 +1,35 @@
+//
+// Convex Hull Trick
+//
+// verified
+//   COLOCON 2018 Final C - スペースエクスプローラー高橋君
+//     https://beta.atcoder.jp/contests/colopl2018-final-open/tasks/colopl2018_final_c
+//
+
+
 #include <iostream>
-#include <string>
 #include <vector>
+#include <deque>
+#include <algorithm>
 using namespace std;
 
+
+// Convex Hull Trick
+/*
+    直線の傾きに単調性を仮定しない
+    - MIN: クエリ x の取りうる最小値
+    - MAX: クエリ x の取りうる最大値
+    - INF: 最大値
+ 
+    - insert (a, b): add y = ax + b
+    - query (x): min_i{ l_i->get(x) }
+*/
 template<class T> struct CHT {
     struct Line {
         T a, b;
-        Line(T a = 0, T b = 0) : a(a), b(b) { }
+        Line(T a = 0,T b = 0) : a(a), b(b) { }
         T get(T x) {
-            return (x - a) * (x - a) + b;
+            return a*x + b;
         }
     };
     
@@ -33,8 +54,7 @@ template<class T> struct CHT {
         if (p->line.get(mid) > l.get(mid)) swap(p->line , l);
         if (p->line.get(low) >= l.get(low)) p->left = insert(p->left, low, mid, l);
         else p->right = insert(p->right, mid, high, l);
-        return p;
-        
+        return p;      
     }
     void insert(T a, T b){
         Line l(a, b);
@@ -53,20 +73,12 @@ template<class T> struct CHT {
 };
 
 
-const long long INF = 1LL<<60;
 int main() {
-    int N, K; cin >> N >> K;
-    vector<long long> A(N);
-    for (int i = 0; i < N; ++i) cin >> A[i];
-    
-    vector<vector<long long> > dp(N+1, vector<long long>(K+1, INF));
-    dp[0][0] = 0;
-    for (int k = 0; k < K; ++k) {
-        CHT<long long> cht(0, 1100000, INF);
-        for (int i = 0; i < N; ++i) {
-            cht.insert(A[i], dp[i][k]);
-            dp[i+1][k+1] = cht.query(A[i]);
-        }
-    }
-    cout << dp[N][K] << endl;
+    long long N; cin >> N;
+    vector<long long> a(N), res(N);
+    for (int i = 0; i < N; ++i) cin >> a[i];
+    CHT<long long> cht(0, 210000, 1LL<<60);
+    for (long long i = 0; i < N; ++i) cht.insert(-2LL*i, a[i] + i*i);
+    for (long long i = 0; i < N; ++i) res[i] = cht.query(i) + i*i;
+    for (int i = 0; i < N; ++i) cout << res[i] << endl;
 }

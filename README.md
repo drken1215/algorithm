@@ -10,13 +10,13 @@
 |---|---|---|
 |**[DATA STRUCTURE](#ds)**|各種データ構造|Union-Find、Sparse Table など|
 |**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
-|**[DP](#dp)**|定型的な動的計画法やその他の処理|いもす法、LIS、CHT など|
 |**[GEOMETRY](#ge)**|計算幾何|円の交点など|
 |**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
 |**[GRAPH : NETWORK FLOW](#gnf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
 |**[MATH : ALGEBRA](#ma)**|代数的アルゴリズム|行列計算など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
+|**[OPTIMIZATION, SEARCH](#opt)**|最適化や探索のアルゴリズム|二分探索, 三分探索など|
 |**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
@@ -33,8 +33,8 @@
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
 - (★★☆☆) [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_enumerable.cpp)
-- (★★★★) [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
-- (★★★★) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
+- (★★★☆) [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
+- (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
 
 ## キュー, ヒープ
 
@@ -131,43 +131,6 @@
 - (★★★★) AVL 木
 - (★★★★) Splay 木
 - (★★★★) 赤黒木
-
-
-　
-<a name="dp"></a>
-# 動的計画法 (DP)
-定型的な動的計画法やその他の処理です
-
-## 有名問題
-
-- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/DP/knapsack.cpp)
-- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/DP/longest_increasing_sequence.cpp)
-- (★★☆☆) TSP (O(2^N N^2))
-- (★★☆☆) 部分列の個数
-- (★★★☆) 最適二分探索木
-- (★★★☆) Set Cover
-- (★★★☆) k-Cover (O(2^N N))
-- (★★★☆) k-partition (O(2^N N^3))
-
-## グリッドに関する DP
-
-- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/DP/lcs.cpp)
-- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/DP/edit_distance.cpp)
-- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/DP/largest_square_in_grid.cpp)
-- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/DP/histogram.cpp)
-
-## Convex Hull Trick
-
-- (★★★☆) [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_both_monotone.cpp)
-- (★★★☆) [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (単調でなくてよい)](https://github.com/drken1215/algorithm/blob/master/DP/convex_hull_trick.cpp)
-
-## DP 高速化技法
-
-- (★★★★) Slope Trick
-- (★★★★) Monotone Minima
-- (★★★★) Alien DP
-- (★★★★) LARSCH
 
 
 　
@@ -383,16 +346,6 @@
 - (★★★★) Σ{i=0}^{n-1} r^i i^d
 - (★★★★) Σ{i=0}^{∞} r^i i^d
 
-## 数理最適化 (Optimization)
-
-- (★★☆☆) 二次方程式
-- (★★☆☆) 二分探索法 (方程式の解を 1 つ求める)
-- (★★☆☆) 三分探索法
-- (★★☆☆) 黄金探索法
-- (★★★☆) Newton 法
-- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/simplex_method.cpp)
-- (★★★★) 分枝限定法
-
 
 　
 <a name="mc"></a>
@@ -516,6 +469,65 @@
 
 
 　
+<a name="opt"></a>
+# 最適化, 探索 (OPTIMIZATION, SEARCH)
+最適化や探索に関するアルゴリズムです
+
+## さまざまな全探索
+
+- (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/next_combination.cpp)
+- (★★☆☆) [部分集合の部分集合](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
+- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Others/sudoku.cpp)
+
+## 動的計画法
+
+- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Optimization/knapsack.cpp)
+- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Optimization/longest_increasing_sequence.cpp)
+- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/Optimization/lcs.cpp)
+- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Optimization/edit_distance.cpp)
+- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Optimization/largest_square_in_grid.cpp)
+- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
+- (★★★★) 最適二分探索木 (O(N^2), Monge 性を活かした区間 DP)
+- (★★★★) 最適二分探索木 (O(N log N), Hu-Tucker 法)
+
+## 動的計画法 (DP) の高速化技法
+
+- (★★★★) Slope Trick
+- (★★★★) Monotone Minima
+- (★★★★) Alien DP
+- (★★★★) LARSCH
+
+## Convex Hull Trick
+
+- (★★★☆) [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_both_monotone.cpp)
+- (★★★☆) [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (単調でなくてよい, Li Chao Tree)](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
+
+## 数理最適化 (Optimization)
+
+- (★★☆☆) 二次方程式
+- (★★☆☆) 二分探索法 (方程式の解を 1 つ求める)
+- (★★☆☆) 三分探索法
+- (★★☆☆) 黄金探索法
+- (★★★☆) Newton 法
+- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
+- (★★★★) 分枝限定法
+
+## 探索法
+
+- (★★★☆) α-β 探索
+- (★★★☆) 焼き鈍し法
+- (★★★☆) A*
+- (★★★☆) IDA*
+
+## 指数時間アルゴリズム
+
+- (★★★★) Set Cover
+- (★★★★) k-Cover (O(2^N N))
+- (★★★★) k-partition (O(2^N N^3))
+
+
+　
 <a name="st"></a>
 # 文字列 (String)
 文字列アルゴリズムです
@@ -545,6 +557,8 @@
 ### その他
 
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
+- (★★★☆) 文字列の相異なる部分列の個数 (O(AN))
+- (★★★☆) 文字列の相異なる連続部分文字列の個数 (O(N))
 
 
 　
@@ -602,26 +616,12 @@
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
 - (★☆☆☆) [ハニカムの 6 近傍](https://github.com/drken1215/algorithm/blob/master/Others/honeycomb_neighbors.cpp)
 
-## ビット演算
-
-- (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
-- (★★☆☆) [next_combination](https://github.com/drken1215/algorithm/blob/master/Others/next_combination.cpp)
-- (★★☆☆) [部分集合の部分集合](https://github.com/drken1215/algorithm/blob/master/Others/subset_enumeration.cpp)
-
-## 探索法
-
-- (★★★☆) α-β 探索
-- (★★★☆) 焼き鈍し法
-- (★★★☆) A*
-- (★★★☆) IDA*
-- (★★★☆) Baby-Step Giant-Step 法
-
 ## その他
 
+- (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
 - (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - (★★☆☆) [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
-- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Others/sudoku.cpp)
 - (★★★☆) 四面体 (AOJ 2060)
 
 
