@@ -513,7 +513,7 @@
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
 
-## 探索法
+## さまざまな探索法
 
 - (★★★☆) α-β 探索
 - (★★★☆) 焼き鈍し法
@@ -544,12 +544,12 @@
 - (★★★☆) 単一パターン検索 (Boyer-Moore 法)
 - (★★★★) 複数パターン検索 (Aho-Corasick 法)
 
-### 文字列系アルゴリズム
+### さまざまな文字列アルゴリズム
 
 - (★★★☆) [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
 - (★★★☆) [Manacher 法](https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
 
-### 文字列系データ構造
+### さまざまな文字列データ構造
 
 - (★★★☆) Trie 木
 - (★★★★) Palindromic 木 (AOJ 2292)
@@ -557,8 +557,8 @@
 ### その他
 
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
-- (★★★☆) 文字列の相異なる部分列の個数 (O(cN))
-- (★★★☆) 文字列の相異なる連続部分文字列の個数 (O(N))
+- (★★★☆) [文字列の相異なる部分列の個数 (O(cN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
+- (★★★☆) [文字列の相異なる連続部分文字列の個数 (O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
 
 
 　
@@ -598,7 +598,7 @@
 ## その他の問題
 
 - (★★★☆) [強平衡二分木の Distance Frequency Table](https://github.com/drken1215/algorithm/blob/master/Tree/find_various_values_of_binary_tree.cpp)
-- Level Ancester
+- (★★★★) Level Ancester
 
 
 　
