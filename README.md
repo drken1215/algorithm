@@ -477,7 +477,7 @@
 
 - (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/next_combination.cpp)
 - (★★☆☆) [部分集合の部分集合 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
-- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Others/sudoku.cpp)
+- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Optimization/sudoku.cpp)
 
 ## 動的計画法
 
