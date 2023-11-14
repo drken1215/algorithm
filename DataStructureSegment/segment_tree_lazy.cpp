@@ -128,7 +128,6 @@ template<class Monoid, class Action> struct LazySegmentTree {
         if (k < offset) lazy[k] = COMPOSITION(f, lazy[k]);
     }
     void push_lazy(int k) {
-        if (lazy[k] == IDENTITY_ACTION) return;
         apply_lazy(k * 2, lazy[k]);
         apply_lazy(k * 2 + 1, lazy[k]);
         lazy[k] = IDENTITY_ACTION;
