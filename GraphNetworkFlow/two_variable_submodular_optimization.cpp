@@ -1,7 +1,10 @@
 //
 // 2 変数劣モジュラ関数のグラフ表現
 //
-// verified:
+// verified
+//   競プロ典型 90 問 040 - Get More Money（★7）
+//     https://atcoder.jp/contests/typical90/tasks/typical90_an
+//
 //   AtCoder ARC 085 E - MUL (for basid psp)
 //     https://atcoder.jp/contests/arc085/tasks/arc085_c
 //
@@ -241,6 +244,39 @@ private:
 // Examples
 /*/////////////////////////////*/
 
+// 競プロ典型 90 問 040 - Get More Money（★7）
+void Kyopro_Typical_90_040() {
+    // 入力
+    int N, W;
+    cin >> N >> W;
+    vector<int> A(N);
+    vector<vector<int>> c(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    for (int i = 0; i < N; ++i) {
+        int k;
+        cin >> k;
+        c[i].resize(k);
+        for (int j = 0; j < k; ++j) cin >> c[i][j], --c[i][j];
+    }
+    
+    // 家 i に入らない: F, 家 i に入る: T
+    TwoVariableSubmodularOpt<long long> tvs(N);
+    for (int i = 0; i < N; ++i) {
+        tvs.add_single_cost(i, 0, W - A[i]);
+    }
+    
+    // 家 v in c[i] に入るためには家 i に入る必要がある
+    // つまり、v: T, i: F は禁止
+    const long long INF = 1LL<<50;
+    for (int i = 0; i < N; ++i) {
+        for (auto v : c[i]) {
+            tvs.add_psp_penalty(v, i, INF);
+        }
+    }
+    cout << -tvs.solve() << endl;
+}
+
+
 // ARC 085 E - MUL
 void ARC_085_E() {
     int N;
@@ -356,10 +392,10 @@ void AOJ_2903() {
 
 
 int main() {
+    Kyopro_Typical_90_040();
     //ARC_085_E();
     //ABC_259_G();
     //ABC_326_G();
     //AOJ_2903();
 }
-
 
