@@ -34,11 +34,10 @@
  
  ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
     ・この場合は、特に Project Selection Problem と呼ばれ、ローカルには「燃やす埋める」などとも呼ばれる
- 　　・xi = T, xj = F のときにコスト C がかかる
+    ・xi = T, xj = F のときにコスト C がかかる
  
  ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
- 　　・xi = T, xj = T のときに (-D) の利得が得られる
-
+    ・xi = T, xj = T のときに (-D) の利得が得られる
  */
 
 
@@ -48,37 +47,17 @@ using namespace std;
 
 // 2-variable submodular optimization
 template<class COST> struct TwoVariableSubmodularOpt {
-    // edge class
-    struct Edge {
-        // core members
-        int rev, from, to;
-        COST cap, icap, flow;
-        
-        // constructor
-        Edge(int r, int f, int t, COST c)
-        : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
-        void reset() { cap = icap, flow = 0; }
-        
-        // debug
-        friend ostream& operator << (ostream& s, const Edge& E) {
-            return s << E.from << "->" << E.to << '(' << E.flow << '/' << E.icap << ')';
-        }
-    };
-    
-    // constructor
+    // constructors
     TwoVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
     TwoVariableSubmodularOpt(int n, COST inf = 0)
     : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
+    
+    // initializer
     void init(int n, COST inf = 0) {
         N = n, S = n, T = n + 1;
         OFFSET = 0, INF = inf;
         list.assign(N + 2, Edge());
         pos.clear();
-    }
-    friend ostream& operator << (ostream& s, const TwoVariableSubmodularOpt &G) {
-        const auto &edges = G.get_edges();
-        for (const auto &e : edges) s << e << endl;
-        return s;
     }
 
     // add 1-Variable submodular functioin
@@ -179,6 +158,8 @@ template<class COST> struct TwoVariableSubmodularOpt {
     COST solve() {
         return dinic() + OFFSET;
     }
+    
+    // reconstrcut the optimal assignment
     vector<bool> reconstruct() {
         vector<bool> res(N, false), seen(list.size(), false);
         queue<int> que;
@@ -198,7 +179,31 @@ template<class COST> struct TwoVariableSubmodularOpt {
         return res;
     }
     
+    // debug
+    friend ostream& operator << (ostream& s, const TwoVariableSubmodularOpt &G) {
+        const auto &edges = G.get_edges();
+        for (const auto &e : edges) s << e << endl;
+        return s;
+    }
+    
 private:
+    // edge class
+    struct Edge {
+        // core members
+        int rev, from, to;
+        COST cap, icap, flow;
+        
+        // constructor
+        Edge(int r, int f, int t, COST c)
+        : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
+        void reset() { cap = icap, flow = 0; }
+        
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& E) {
+            return s << E.from << "->" << E.to << '(' << E.flow << '/' << E.icap << ')';
+        }
+    };
+    
     // inner data
     int N, S, T;
     COST OFFSET, INF;
