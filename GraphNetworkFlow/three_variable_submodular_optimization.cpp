@@ -1,7 +1,7 @@
 //
-// 2 変数劣モジュラ関数のグラフ表現
+// 3 変数劣モジュラ関数のグラフ表現
 //
-// verified:
+// verified (3 変数は未 verify):
 //   競プロ典型 90 問 040 - Get More Money（★7）
 //     https://atcoder.jp/contests/typical90/tasks/typical90_an
 //
@@ -38,6 +38,16 @@
  
  ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
     ・xi = T, xj = T のときに (-D) の利得が得られる
+ 
+ ・3 変数 xi, xj, xk 間の関係性についてのコスト (3 変数劣モジュラ関数)
+ 　　(xi, xj, xk) = (F, F, F): コスト A
+ 　　(xi, xj, xk) = (F, F, T): コスト B
+ 　　(xi, xj, xk) = (F, T, F): コスト C
+ 　　(xi, xj, xk) = (F, T, T): コスト D
+ 　　(xi, xj, xk) = (T, F, F): コスト E
+ 　　(xi, xj, xk) = (T, F, T): コスト F
+ 　　(xi, xj, xk) = (T, T, F): コスト G
+ 　　(xi, xj, xk) = (T, T, T): コスト H
  */
 
 
@@ -151,6 +161,49 @@ template<class COST> struct TwoVariableSubmodularOpt {
         for (auto xi : xs) {
             assert(xi >= 0 && xi < N);
             add_edge(xi, y, INF);
+        }
+    }
+    
+    // add general 3-variable submodular function
+    // (xi, xj, xk) = (F, F, F): cost A
+    // (xi, xj, xk) = (F, F, T): cost B
+    // (xi, xj, xk) = (F, T, F): cost C
+    // (xi, xj, xk) = (F, T, T): cost D
+    // (xi, xj, xk) = (T, F, F): cost E
+    // (xi, xj, xk) = (T, F, T): cost F
+    // (xi, xj, xk) = (T, T, F): cost G
+    // (xi, xj, xk) = (T, T, T): cost H
+    void add_submodular_function(int xi, int xj, int xk,
+                                 COST A, COST B, COST C, COST D,
+                                 COST E, COST F, COST G, COST H) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(0 <= xk && xk < N);
+        COST P = (A + D + F + G) - (B + C + E + H);
+        COST P12 = (C + E) - (A + G), P13 = (D + G) - (C + H);
+        COST P21 = (D + F) - (B + H), P23 = (B + C) - (A + D);
+        COST P31 = (B + E) - (A + F), P32 = (F + G) - (E + H);
+        assert(P12 >= 0 && P21 >= 0);
+        assert(P23 >= 0 && P32 >= 0);
+        assert(P31 >= 0 && P13 >= 0);
+        if (P >= 0) {
+            OFFSET += A;
+            add_single_cost(xi, 0, F - B);
+            add_single_cost(xj, 0, G - E);
+            add_single_cost(xk, 0, D - C);
+            add_psp_penalty(xj, xi, P12);
+            add_psp_penalty(xk, xj, P23);
+            add_psp_penalty(xi, xk, P31);
+            add_all_true_profit({xi, xj, xk}, P);
+        } else {
+            OFFSET += H;
+            add_single_cost(xi, C - G, 0);
+            add_single_cost(xj, B - D, 0);
+            add_single_cost(xk, E - F, 0);
+            add_psp_penalty(xi, xj, P21);
+            add_psp_penalty(xj, xk, P32);
+            add_psp_penalty(xk, xi, P13);
+            add_all_false_profit({xi, xj, xk}, -P);
         }
     }
     
