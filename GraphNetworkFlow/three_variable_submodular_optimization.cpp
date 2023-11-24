@@ -55,11 +55,11 @@
 using namespace std;
 
 
-// 2-variable submodular optimization
-template<class COST> struct TwoVariableSubmodularOpt {
+// 1, 2, 3-variable submodular optimization
+template<class COST> struct ThreeVariableSubmodularOpt {
     // constructors
-    TwoVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
-    TwoVariableSubmodularOpt(int n, COST inf = 0)
+    ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
+    ThreeVariableSubmodularOpt(int n, COST inf = 0)
     : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
     
     // initializer
@@ -233,8 +233,8 @@ template<class COST> struct TwoVariableSubmodularOpt {
     }
     
     // debug
-    friend ostream& operator << (ostream& s, const TwoVariableSubmodularOpt &G) {
-        const auto &edges = G.get_edges();
+    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &tvs) {
+        const auto &edges = tvs.get_edges();
         for (const auto &e : edges) s << e << endl;
         return s;
     }
@@ -370,7 +370,7 @@ void Kyopro_Typical_90_040() {
     
     // 家 i に入らない: F, 家 i に入る: T
     const long long INF = 1LL<<50;
-    TwoVariableSubmodularOpt<long long> tvs(N, INF);
+    ThreeVariableSubmodularOpt<long long> tvs(N, INF);
     for (int i = 0; i < N; ++i) {
         tvs.add_single_cost(i, 0, W - A[i]);
     }
@@ -395,7 +395,7 @@ void ARC_085_E() {
     
     // i 個目の宝石を割らない: F, i 個目の宝石を割る: T とする
     const long long INF = 1LL<<55;
-    TwoVariableSubmodularOpt<long long> tvs(N, INF);
+    ThreeVariableSubmodularOpt<long long> tvs(N, INF);
     for (int i = 0; i < N; ++i) {
         tvs.add_single_cost(i, -a[i], 0);
     }
@@ -424,7 +424,7 @@ void ABC_259_G() {
     
     // セットアップ
     const long long INF = 1LL<<50;
-    TwoVariableSubmodularOpt<long long> tvs(H + W, INF);
+    ThreeVariableSubmodularOpt<long long> tvs(H + W, INF);
     for (int i = 0; i < H; ++i) {
         long long sum = 0;
         for (int j = 0; j < W; ++j) sum += A[i][j];
@@ -457,7 +457,7 @@ void ABC_326_G() {
     
     // セットアップ
     const long long INF = 1LL<<55;
-    TwoVariableSubmodularOpt<long long> tvs(N*4, INF);
+    ThreeVariableSubmodularOpt<long long> tvs(N*4, INF);
     for (int i = 0; i < N*4; ++i) {
         tvs.add_single_cost(i, 0, C[i/4]);
         if (i % 4 != 3) tvs.add_psp_constraint(i+1, i);
@@ -484,7 +484,7 @@ void AOJ_2903() {
     auto get_id = [&](int i, int j) -> int { return i * m + j; };
     
     // 0: 横, 1: 縦
-    TwoVariableSubmodularOpt<int> tvs(n * m);
+    ThreeVariableSubmodularOpt<int> tvs(n * m);
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
             if (fi[i][j] == '.') continue;
