@@ -12,7 +12,7 @@
 //     https://atcoder.jp/contests/abc259/tasks/abc259_g
 //
 //   AtCoder ABC 326 G - Unlock Achievement (for all-true profit)
-//     https://atcoder.jp/contests/arc085/tasks/arc085_c
+//     https://atcoder.jp/contests/abc326/tasks/abc326_g
 //
 //   AOJ 2903 Board (for general 2-variable submodular function)
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2903
@@ -34,7 +34,10 @@
  
  ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
     ・この場合は、特に Project Selection Problem と呼ばれ、ローカルには「燃やす埋める」などとも呼ばれる
- ・他に面白い例として、A = B = C = 0, D < 0 の形もある (AOJ 2903 Board)
+ 　　・xi = T, xj = F のときにコスト C がかかる
+ 
+ ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
+ 　　・xi = T, xj = T のときに (-D) の利得が得られる
 
  */
 
@@ -90,12 +93,43 @@ template<class COST> struct TwoVariableSubmodularOpt {
         }
     }
     
-    // add "project selection" constraint (xi = T, xj = F is penalty C)
-    void add_psp_penalty(int xi, int xj, COST cost) {
+    // add "project selection" constraint
+    // xi = T, xj = F: strictly prohibited
+    void add_psp_constraint(int xi, int xj) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
-        assert(cost >= 0);
-        add_edge(xi, xj, cost);
+        add_edge(xi, xj, INF);
+    }
+    
+    // add "project selection" penalty
+    // xi = T, xj = F: cost C
+    void add_psp_penalty(int xi, int xj, COST C) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(C >= 0);
+        add_edge(xi, xj, C);
+    }
+    
+    // add both True profit
+    // xi = T, xj = T: profit P (cost -P)
+    void add_both_true_profit(int xi, int xj, COST P) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(P >= 0);
+        OFFSET -= P;
+        add_edge(S, xi, P);
+        add_edge(xi, xj, P);
+    }
+    
+    // add both False profit
+    // xi = F, xj = F: profit P (cost -P)
+    void add_both_false_profit(int xi, int xj, COST P) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(P >= 0);
+        OFFSET -= P;
+        add_edge(xj, T, P);
+        add_edge(xi, xj, P);
     }
     
     // add general 2-variable submodular function
@@ -112,15 +146,32 @@ template<class COST> struct TwoVariableSubmodularOpt {
     }
     
     // add all True profit
-    void add_all_true_profit(const vector<int> &xs, COST profit) {
-        assert(profit >= 0);
-        int slack = (int)list.size();
-        list.resize(slack + 1);
-        OFFSET -= profit;
-        add_edge(S, slack, profit);
+    // y = F: not gain profit (= cost is P), T: gain profit (= cost is 0)
+    // y: T, xi: F is prohibited
+    void add_all_true_profit(const vector<int> &xs, COST P) {
+        assert(P >= 0);
+        int y = (int)list.size();
+        list.resize(y + 1);
+        OFFSET -= P;
+        add_edge(S, y, P);
         for (auto xi : xs) {
             assert(xi >= 0 && xi < N);
-            add_edge(slack, xi, INF);
+            add_edge(y, xi, INF);
+        }
+    }
+    
+    // add all False profit
+    // y = F: gain profit (= cost is 0), T: not gain profit (= cost is P)
+    // xi = T, y = F is prohibited
+    void add_all_false_profit(const vector<int> &xs, COST P) {
+        assert(P >= 0);
+        int y = (int)list.size();
+        list.resize(y + 1);
+        OFFSET -= P;
+        add_edge(y, T, P);
+        for (auto xi : xs) {
+            assert(xi >= 0 && xi < N);
+            add_edge(xi, y, INF);
         }
     }
     
@@ -260,17 +311,17 @@ void Kyopro_Typical_90_040() {
     }
     
     // 家 i に入らない: F, 家 i に入る: T
-    TwoVariableSubmodularOpt<long long> tvs(N);
+    const long long INF = 1LL<<50;
+    TwoVariableSubmodularOpt<long long> tvs(N, INF);
     for (int i = 0; i < N; ++i) {
         tvs.add_single_cost(i, 0, W - A[i]);
     }
     
     // 家 v in c[i] に入るためには家 i に入る必要がある
     // つまり、v: T, i: F は禁止
-    const long long INF = 1LL<<50;
     for (int i = 0; i < N; ++i) {
         for (auto v : c[i]) {
-            tvs.add_psp_penalty(v, i, INF);
+            tvs.add_psp_constraint(v, i);
         }
     }
     cout << -tvs.solve() << endl;
@@ -285,16 +336,17 @@ void ARC_085_E() {
     for (int i = 0; i < N; ++i) cin >> a[i];
     
     // i 個目の宝石を割らない: F, i 個目の宝石を割る: T とする
-    TwoVariableSubmodularOpt<long long> tvs(N);
+    const long long INF = 1LL<<55;
+    TwoVariableSubmodularOpt<long long> tvs(N, INF);
     for (int i = 0; i < N; ++i) {
         tvs.add_single_cost(i, -a[i], 0);
     }
-    const long long INF = 1LL<<55;
+    
     for (int i = 0; i < N; ++i) {
         for (int j = i+1; j < N; ++j) {
             if ((j+1) % (i+1) == 0) {
                 // i: T, j: F は禁止
-                tvs.add_psp_penalty(i, j, INF);
+                tvs.add_psp_constraint(i, j);
             }
         }
     }
@@ -312,7 +364,9 @@ void ABC_259_G() {
         A[i][j] *= -1;
     }
     
-    TwoVariableSubmodularOpt<long long> tvs(H + W);
+    // セットアップ
+    const long long INF = 1LL<<50;
+    TwoVariableSubmodularOpt<long long> tvs(H + W, INF);
     for (int i = 0; i < H; ++i) {
         long long sum = 0;
         for (int j = 0; j < W; ++j) sum += A[i][j];
@@ -323,10 +377,9 @@ void ABC_259_G() {
         for (int i = 0; i < H; ++i) sum += A[i][j];
         tvs.add_single_cost(j+H, sum, 0);
     }
-    long long INF = 1LL<<50;
     for (int i = 0; i < H; ++i) {
         for (int j = 0; j < W; ++j) {
-            if (A[i][j] > 0) tvs.add_psp_penalty(i, j+H, INF);
+            if (A[i][j] > 0) tvs.add_psp_constraint(i, j+H);
             else tvs.add_psp_penalty(i, j+H, -A[i][j]);
         }
     }
@@ -344,11 +397,12 @@ void ABC_326_G() {
     for (int i = 0; i < M; ++i) cin >> A[i];
     for (int i = 0; i < M; ++i) for (int j = 0; j < N; ++j) cin >> L[i][j];
     
+    // セットアップ
     const long long INF = 1LL<<55;
     TwoVariableSubmodularOpt<long long> tvs(N*4, INF);
     for (int i = 0; i < N*4; ++i) {
         tvs.add_single_cost(i, 0, C[i/4]);
-        if (i % 4 != 3) tvs.add_psp_penalty(i+1, i, INF);
+        if (i % 4 != 3) tvs.add_psp_constraint(i+1, i);
     }
     for (int i = 0; i < M; ++i) {
         vector<int> ids;
@@ -379,11 +433,11 @@ void AOJ_2903() {
             tvs.add_single_cost(get_id(i, j), 1, 1);
             if (i+1 < n && fi[i+1][j] == '#') {
                 // (1, 1) だけ 1 の利得 (-1 のコスト)
-                tvs.add_submodular_function(get_id(i, j), get_id(i+1, j), 0, 0, 0, -1);
+                tvs.add_both_true_profit(get_id(i, j), get_id(i+1, j), 1);
             }
             if (j+1 < m && fi[i][j+1] == '#') {
                 // (0, 0) だけ 1 の利得 (-1 のコスト)
-                tvs.add_submodular_function(get_id(i, j), get_id(i, j+1), -1, 0, 0, 0);
+                tvs.add_both_false_profit(get_id(i, j), get_id(i, j+1), 1);
             }
         }
     }
@@ -392,10 +446,10 @@ void AOJ_2903() {
 
 
 int main() {
-    Kyopro_Typical_90_040();
+    //Kyopro_Typical_90_040();
     //ARC_085_E();
     //ABC_259_G();
     //ABC_326_G();
-    //AOJ_2903();
+    AOJ_2903();
 }
 
