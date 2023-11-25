@@ -14,6 +14,9 @@
 //   AtCoder ABC 326 G - Unlock Achievement (for all-true profit)
 //     https://atcoder.jp/contests/abc326/tasks/abc326_g
 //
+//   AtCoder ABC 225 G - X (for xi = xj = 1 profit)
+//     https://atcoder.jp/contests/abc225/tasks/abc225_g
+//
 //   AOJ 2903 Board (for general 2-variable submodular function)
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2903
 //
@@ -474,6 +477,38 @@ void ABC_326_G() {
 }
 
 
+// ABC 225 G - X
+void ABC_225_G() {
+    long long H, W, C;
+    cin >> H >> W >> C;
+    vector<vector<long long>> A(H, vector<long long>(W));
+    for (int i = 0; i < H; ++i) for (int j = 0; j < W; ++j) cin >> A[i][j];
+    
+    auto get_id = [&](int i, int j) -> int { return i * W + j; };
+    
+    // セットアップ (F: × を書かない, T: x を書く)
+    const long long INF = 1LL<<45;
+    ThreeVariableSubmodularOpt<long long> tvs(H * W, INF);
+    for (int i = 0; i < H; ++i) {
+        for (int j = 0; j < W; ++j) {
+            tvs.add_single_cost(get_id(i, j), 0, C * 2 - A[i][j]);
+            
+            // 斜めに隣接すると、C の利得
+            if (i+1 < H && j-1 >= 0) {
+                tvs.add_both_true_profit(get_id(i, j), get_id(i+1, j-1), C);
+            }
+            if (i+1 < H && j+1 < W) {
+                tvs.add_both_true_profit(get_id(i, j), get_id(i+1, j+1), C);
+            }
+        }
+    }
+    
+    // 求める
+    long long res = -tvs.solve();
+    cout << res << endl;
+}
+
+
 // AOJ 2093 Board
 void AOJ_2903() {
     int n, m;
@@ -508,6 +543,6 @@ int main() {
     //ARC_085_E();
     //ABC_259_G();
     //ABC_326_G();
-    AOJ_2903();
+    ABC_225_G();
+    //AOJ_2903();
 }
-
