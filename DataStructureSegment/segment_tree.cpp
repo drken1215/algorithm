@@ -91,7 +91,7 @@ template<class Monoid> struct SegmentTree {
         return dat[1];
     }
     
-    // get max r that f(get(l, r)) = True (0-indexed), O(log N)
+    // get max r such that f(v) = True (v = prod(l, r)), O(log N)
     // f(IDENTITY) need to be True
     int max_right(const function<bool(Monoid)> f, int l = 0) {
         if (l == N) return N;

@@ -20,6 +20,9 @@
 //   AtCoder ABC 322 F - Vacation Query
 //     https://atcoder.jp/contests/abc322/tasks/abc322_f
 //
+//   AtCoder ABC 330 E - Mex and Update (for max_right)
+//     https://atcoder.jp/contests/abc330/tasks/abc330_e
+//
 
 
 /*
@@ -206,7 +209,7 @@ template<class Monoid, class Action> struct LazySegmentTree {
         return dat[1];
     }
     
-    // get max r that f(get(l, r)) = True (0-indexed), O(log N)
+    // get max r such that f(v) = True (v = prod(l, r)), O(log N)
     // f(IDENTITY) need to be True
     int max_right(const function<bool(Monoid)> f, int l = 0) {
         if (l == N) return N;
@@ -496,6 +499,8 @@ void ACL_Beginner_Contest_E() {
     }
 }
 
+
+// ABC 322 F - Vacation Query
 void ABC_322_F() {
     struct Node {
         int left_zero, left_one, right_zero, right_one, zero, one;
@@ -552,11 +557,53 @@ void ABC_322_F() {
 }
 
 
+// ABC 330 E - Mex and Update
+void ABC_330_E() {
+    int N, Q;
+    cin >> N >> Q;
+    vector<int> A(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    
+    // 区間加算、区間最小値取得の遅延評価セグメント木
+    const int MAX = N + 1;
+    vector<int> zero(MAX, 0);
+    const int identity_monoid = MAX;
+    const int identity_action = 0;
+    auto op = [&](int x, int y) { return min(x, y); };
+    auto mapping = [&](int f, int x) { return x + f; };
+    auto composition = [&](int g, int f) { return g + f; };
+    LazySegmentTree<int, int> seg(zero, op, mapping, composition,
+                                        identity_monoid, identity_action);
+    
+    for (int i = 0; i < N; ++i) {
+        if (A[i] < MAX) seg.apply(A[i], A[i] + 1, 1);
+    }
+    
+    while (Q--) {
+        int id, v;
+        cin >> id >> v;
+        --id;
+        
+        // セグ木の更新
+        if (A[id] < MAX) seg.apply(A[id], A[id] + 1, -1);
+        A[id] = v;
+        if (A[id] < MAX) seg.apply(A[id], A[id] + 1, 1);
+        
+        // セグ木上の二分探索
+        // seg.prod(0, r) > 0 を満たす最大の r を求める
+        auto check = [&](int val) -> bool { return val > 0; };
+        int res = seg.max_right(check, 0);
+        cout << res << endl;
+    }
+}
+
+
 int main() {
     //AOJ_RMQ_RUQ();
     //AOJ_RSQ_RAQ();
     //AOJ_RMQ_RAQ();
     //AOJ_RSQ_RUQ();
     //ACL_Beginner_Contest_E();
-    ABC_322_F();
+    //ABC_322_F();
+    ABC_330_E();
 }
