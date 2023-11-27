@@ -184,4 +184,3 @@ int main() {
     Yosupo_Gcd_of_Gaussian_Integers();
     //New_Year_Contest_L();
 }
-
