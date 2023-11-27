@@ -40,7 +40,7 @@
 
 - (★☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
 - (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/removable_queue.cpp)
-- (★★☆☆) 両端 priority queue (Interval Heap)
+- (★★☆☆) [両端 priority queue (Interval Heap)](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
 - (★★★☆) SWAG
 - (★★★★) Skew Heap (マージ可能ヒープ)
 - (★★★★) Paring Heap (マージ可能ヒープ)
