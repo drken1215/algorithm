@@ -175,9 +175,12 @@
 - (★★★☆) [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
 - (★★★☆) [凸多角形の直径](https://github.com/drken1215/algorithm/blob/master/Geometry/diameter.cpp)
 - (★★★☆) [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
-- (★★★☆) [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
 - (★★★★) [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
 - (★★★★) [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
+- (★★★☆) [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
+- (★★★★) ボロノイ図 (単純ver, O(N log N))
+- (★★★★) ドロネーの三角形分割 (期待値 O(N^2))
+
 
 ## 三次元幾何
 
@@ -241,6 +244,7 @@
 - (★★★☆) 有向 Euler 路
 - (★★★☆) [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
 - (★★★★) 最小有向全域木 (Chu-Liu/Edmonds 法)
+- (★★★★) 行列木定理
 - (★★★★) 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
 
 ## グラフ上の有名問題
@@ -343,6 +347,7 @@
 ## さまざまな和
 
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/floor_sum.cpp)
+- (★★★★) Bk = Σ{i=0}^{n-1} i^k を係数とする多項式
 - (★★★★) Σ{i=0}^{n-1} r^i i^d
 - (★★★★) Σ{i=0}^{∞} r^i i^d
 

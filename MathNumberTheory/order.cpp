@@ -6,6 +6,9 @@
 //   AtCoder ABC 335 G - Discrete Logarithm Problems
 //     https://atcoder.jp/contests/abc335/tasks/abc335_g
 //
+//   AOJ 3062 Product
+//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=3062
+//
 
 
 #include <bits/stdc++.h>
@@ -320,7 +323,28 @@ void ABC_335_G() {
     cout << res << endl;
 }
 
+void AOJ_3062() {
+    int P, T;
+    cin >> P >> T;
+    PrimeProcessor pp(P);
+    while (T--) {
+        int N, A;
+        cin >> N;
+        int g = P - 1;
+        for (int i = 0; i < N; ++i) {
+            int G;
+            cin >> G;
+            g = gcd(g, (P - 1) / pp.calc_order(G));
+        }
+        cin >> A;
+        int ga = (P - 1) / pp.calc_order(A);
+        cout << (ga % g ? 0 : 1) << endl;
+    }
+}
+
 
 int main() {
     ABC_335_G();
+    //AOJ_3062();
 }
+
