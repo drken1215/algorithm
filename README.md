@@ -40,7 +40,7 @@
 
 - (★☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
 - (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/removable_queue.cpp)
-- (★★☆☆) [両端 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
+- (★★★☆) [両端 priority queue (削除も可能)](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
 - (★★★☆) SWAG
 - (★★★★) Skew Heap (マージ可能ヒープ)
 - (★★★★) Paring Heap (マージ可能ヒープ)
@@ -415,8 +415,9 @@
 # 整数 (MATH : NUMBER THEORY)
 整数論的アルゴリズムたちです
 
-## Modint 
+## Mod の処理
 
+- (★★☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_pow_inv.cpp)
 - (★★☆☆) [Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint.cpp)
 - (★★☆☆) [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_runtime.cpp)
 - (★★★★) [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_montgomery.cpp)
@@ -436,6 +437,7 @@
 - (★★★★) [確率的な高速素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
 - (★★★★) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/pollard_rho.cpp)
 - (★★★★) [原始根](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/primitive_root.cpp)
+- (★★★★) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
 - (★★★★) N 以下の素数の個数 (O(N^2/3))
 
 ## エラトステネスの篩
@@ -448,6 +450,7 @@
 
 ## 方程式
 
+- (★★★☆) 一次合同方程式
 - (★★★☆) [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
 - (★★★☆) [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
 - (★★★☆) [離散対数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_log.cpp)

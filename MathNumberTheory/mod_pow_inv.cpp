@@ -1,15 +1,45 @@
 //
-// 128 ビット整数 __int128 型のラッパー
+// mod_pow, mod_inv
 //
-// verified
-//   Yosupo Library Checker - Sum of Floor of Linear
-//     https://judge.yosupo.jp/problem/sum_of_floor_of_linear
+// reference:
+//   drken: 「998244353 で割ったあまり」の求め方を総特集！ ～ 逆元から離散対数まで ～
+//     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
+//
+// verified:
+//   simple test
 //
 
 
 #include <bits/stdc++.h>
 using namespace std;
 
+
+template<class T> T mod_pow(T a, T n, T m) {
+    T res = 1;
+    while (n > 0) {
+        if (n % 2 == 1) res = res * a % m;
+        a = a * a % m;
+        n >>= 1;
+    }
+    return res;
+};
+
+template<class T> T mod_inv(T a, T m) {
+    T b = m, u = 1, v = 0;
+    while (b > 0) {
+        T t = a / b;
+        a -= t * b, swap(a, b);
+        u -= t * v, swap(u, v);
+    }
+    u %= m;
+    if (u < 0) u += m;
+    return u;
+};
+
+
+/*/////////////////////////////*/
+// Example
+/*/////////////////////////////*/
 
 struct i128 {
     // inner value
@@ -176,53 +206,10 @@ struct i128 {
 };
 
 
-
-/*/////////////////////////////*/
-// Examples
-/*/////////////////////////////*/
-
-void mini_test() {
-    i128 a = 99;
-    i128 b("993421434234324234234432421234324");
-    
-    cout << a + b << endl;
-    cout << a * b << endl;
-    cout << a % b << endl;
-    cout << b * 2 << endl;
-}
-
-// Library Checker
-// sum_{i=0}^{n-1} floor((a * i + b) / m)
-template<class T> T floor_sum(T n, T a, T b, T m) {
-    if (n == 0) return 0;
-    T res = 0;
-    if (a >= m) {
-        res += n * (n - 1) * (a / m) / 2;
-        a %= m;
-    }
-    if (b >= m) {
-        res += n * (b / m);
-        b %= m;
-    }
-    if (a == 0) return res;
-    T ymax = (a * n + b) / m, xmax = ymax * m - b;
-    if (ymax == 0) return res;
-    res += (n - (xmax + a - 1) / a) * ymax;
-    res += floor_sum(ymax, m, (a - xmax % a) % a, a);
-    return res;
-}
-
-void YosupoSumOfFloorOfLinear() {
-    int T;
-    cin >> T;
-    while (T--) {
-        i128 N, M, A, B;
-        cin >> N >> M >> A >> B;
-        cout << floor_sum(N, A, B, M) << endl;
-    }
-}
-
 int main() {
-    //mini_test();
-    YosupoSumOfFloorOfLinear();
+    const i128 P = 9999999999971LL;
+    for (i128 a = 1; a <= 100; ++a) {
+        cout << mod_pow(a, P - 2, P) << ", " << mod_inv(a, P) << endl;
+    }
 }
+
