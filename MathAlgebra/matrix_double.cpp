@@ -43,7 +43,7 @@ template<class T> struct Matrix {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
                 if (j) os << ", ";
-                os << mat[i][j];
+                os << mat.val[i][j];
             }
             os << endl;
         }
@@ -149,7 +149,7 @@ template<class T> struct Matrix {
         return mat.gauss_jordan(is_extended);
     }
     friend constexpr vector<T> linear_equation(const Matrix<T> &mat, const vector<T> &b) {
-        // extended
+        // extend
         Matrix<T> A(mat.height(), mat.width() + 1);
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
@@ -246,7 +246,7 @@ void AOJ_2171() {
 
 void AOJ_1328() {
     using D = long double;
-    EPS = 1e-5;
+    EPS = 1e-5;  // set EPS
     
     auto dpow = [&](D a, int n) -> D {
         D res = 1.0;

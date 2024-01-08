@@ -1,162 +1,395 @@
 //
-// mod. p 行列 (行列累乗と、掃き出し法)
+// mod. p 行列 (行列累乗、掃き出し法)
 //
 // verified:
 //   TCO 2013 Round 2A Med TheMagicMatrix
-//     https://community.topcoder.com/stat?c=problem_statement&pm=12495&rd=15594
+//     https://vjudge.net/problem/TopCoder-12495
+//
+//   AOJ 3369 (?) Namori Counting (OUPC 2023 day2-D)
+//     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2023Day2/problems/D
+//
+//   AOJ 3369 (?) Namori Counting (OUPC 2023 day2-D)
+//     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2023Day2/problems/D
 //
 
 
-#include <iostream>
-#include <vector>
-#include <set>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-const long long MOD = 1234567891LL;
-long long modinv(long long a, long long mod) {
-    long long b = mod, u = 1, v = 0;
-    while (b) {
-        long long t = a/b;
-        a -= t*b; swap(a, b);
-        u -= t*v; swap(u, v);
-    }
-    u %= mod;
-    if (u < 0) u += mod;
-    return u;
-}
+
+#define DEBUG 1
+#define COUT(x) if (DEBUG) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, vector<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, deque<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, set<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, multiset<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+
+
 
 // matrix
-template<int MOD> struct Matrix {
-    vector<vector<long long> > val;
-    Matrix(int n, int m, long long x = 0) : val(n, vector<long long>(m, x)) {}
-    void init(int n, int m, long long x = 0) {val.assign(n, vector<long long>(m, x));}
-    size_t size() const {return val.size();}
-    inline vector<long long>& operator [] (int i) {return val[i];}
-};
-
-template<int MOD> ostream& operator << (ostream& s, Matrix<MOD> A) {
-    s << endl;
-    for (int i = 0; i < A.size(); ++i) {
-        for (int j = 0; j < A[i].size(); ++j) {
-            s << A[i][j] << ", ";
+template<class mint> struct MintMatrix {
+    // inner value
+    vector<vector<mint>> val;
+    
+    // constructors
+    MintMatrix(int H, int W, mint x = 0) : val(H, vector<mint>(W, x)) {}
+    MintMatrix(const MintMatrix &mat) : val(mat.val) {}
+    void init(int H, int W, mint x = 0) {
+        val.assign(H, vector<mint>(W, x));
+    }
+    void resize(int H, int W) {
+        val.resize(H);
+        for (int i = 0; i < H; ++i) val[i].resize(W);
+    }
+    
+    // getter and debugger
+    constexpr int height() const { return (int)val.size(); }
+    constexpr int width() const { return (int)val[0].size(); }
+    vector<mint>& operator [] (int i) { return val[i]; }
+    constexpr vector<mint>& operator [] (int i) const { return val[i]; }
+    friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
+        os << endl;
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) {
+                if (j) os << ", ";
+                os << mat.val[i][j];
+            }
+            os << endl;
         }
-        s << endl;
+        return os;
     }
-    return s;
-}
-
-template<int MOD> Matrix<MOD> operator * (Matrix<MOD> A, Matrix<MOD> B) {
-    Matrix<MOD> R(A.size(), B[0].size());
-    for (int i = 0; i < A.size(); ++i)
-        for (int j = 0; j < B[0].size(); ++j)
-            for (int k = 0; k < B.size(); ++k)
-                R[i][j] = (R[i][j] + A[i][k] * B[k][j] % MOD) % MOD;
-    return R;
-}
-
-template<int MOD> Matrix<MOD> pow(Matrix<MOD> A, long long n) {
-    Matrix<MOD> R(A.size(), A.size());
-    for (int i = 0; i < A.size(); ++i) R[i][i] = 1;
-    while (n > 0) {
-        if (n & 1) R = R * A;
-        A = A * A;
-        n >>= 1;
+    
+    // comparison operators
+    constexpr bool operator == (const MintMatrix &r) const {
+        return this->val == r.val;
     }
-    return R;
-}
-
-template<int MOD> int GaussJordan(Matrix<MOD> &A, bool is_extended = false) {
-    int m = A.size(), n = A[0].size();
-    for (int row = 0; row < m; ++row)
-        for (int col = 0; col < n; ++col)
-            A[row][col] = (A[row][col] % MOD + MOD) % MOD;
-    int rank = 0;
-    for (int col = 0; col < n; ++col) {
-        if (is_extended && col == n-1) break;
+    constexpr bool operator != (const MintMatrix &r) const {
+        return this->val != r.val;
+    }
+    
+    // arithmetic operators
+    constexpr MintMatrix& operator += (const MintMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) {
+                val[i][j] += r[i][j];
+            }
+        }
+        return *this;
+    }
+    constexpr MintMatrix& operator -= (const MintMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) {
+                val[i][j] -= r[i][j];
+            }
+        }
+        return *this;
+    }
+    constexpr MintMatrix& operator *= (const mint &v) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] *= v;
+        return *this;
+    }
+    constexpr MintMatrix& operator *= (const MintMatrix &r) {
+        assert(width() == r.height());
+        MintMatrix<mint> res(height(), r.width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < r.width(); ++j)
+                for (int k = 0; k < width(); ++k)
+                    res[i][j] += val[i][k] * r[k][j];
+        return (*this) = res;
+    }
+    constexpr MintMatrix operator + () const { return MintMatrix(*this); }
+    constexpr MintMatrix operator - () const { return MintMatrix(*this) *= mint(-1); }
+    constexpr MintMatrix operator + (const MintMatrix &r) const { return MintMatrix(*this) += r; }
+    constexpr MintMatrix operator - (const MintMatrix &r) const { return MintMatrix(*this) -= r; }
+    constexpr MintMatrix operator * (const mint &v) const { return MintMatrix(*this) *= v; }
+    constexpr MintMatrix operator * (const MintMatrix &r) const { return MintMatrix(*this) *= r; }
+    
+    // pow
+    constexpr MintMatrix pow(long long n) const {
+        assert(height() == width());
+        MintMatrix<mint> res(height(), width()),  mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    friend constexpr MintMatrix<mint> pow(const MintMatrix<mint> &mat, long long n) {
+        return mat.pow(n);
+    }
+    
+    // gauss-jordan
+    constexpr int find_pivot(int cur_rank, int col) const {
         int pivot = -1;
-        for (int row = rank; row < m; ++row) {
-            if (A[row][col] != 0) {
+        for (int row = cur_rank; row < height(); ++row) {
+            if (val[row][col] != 0) {
                 pivot = row;
                 break;
             }
         }
-        if (pivot == -1) continue;
-        swap(A[pivot], A[rank]);
-        auto inv = modinv(A[rank][col], MOD);
-        for (int col2 = 0; col2 < n; ++col2)
-            A[rank][col2] = A[rank][col2] * inv % MOD;
-        for (int row = 0; row < m; ++row) {
-            if (row != rank && A[row][col]) {
-                auto fac = A[row][col];
-                for (int col2 = 0; col2 < n; ++col2) {
-                    A[row][col2] -= A[rank][col2] * fac % MOD;
-                    if (A[row][col2] < 0) A[row][col2] += MOD;
+        return pivot;
+    }
+    constexpr void sweep(int cur_rank, int col, int pivot) {
+        swap(val[pivot], val[cur_rank]);
+        auto ifac = val[cur_rank][col].inv();
+        for (int col2 = 0; col2 < width(); ++col2) {
+            val[cur_rank][col2] *= ifac;
+        }
+        for (int row = 0; row < height(); ++row) {
+            if (row != cur_rank && val[row][col] != 0) {
+                auto fac = val[row][col];
+                for (int col2 = 0; col2 < width(); ++col2) {
+                    val[row][col2] -= val[cur_rank][col2] * fac;
                 }
             }
         }
-        ++rank;
     }
-    return rank;
+    constexpr int gauss_jordan(int not_sweep_width = 0) {
+        int rank = 0;
+        for (int col = 0; col < width(); ++col) {
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
+            if (pivot == -1) continue;
+            sweep(rank++, col, pivot);
+        }
+        return rank;
+    }
+    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
+        return mat.gauss_jordan(not_sweep_width);
+    }
+    friend constexpr int linear_equation
+    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res) {
+        // extend
+        MintMatrix<mint> A(mat.height(), mat.width() + 1);
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
+            A[i].back() = b[i];
+        }
+        int rank = A.gauss_jordan(1);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) if (A[row].back() != 0) return -1;
+
+        // answer
+        res.assign(mat.width(), 0);
+        for (int i = 0; i < rank; ++i) res[i] = A[i].back();
+        return rank;
+    }
+    friend constexpr int linear_equation(const MintMatrix<mint> &mat, const vector<mint> &b) {
+        vector<mint> res;
+        return linear_equation(mat, b, res);
+    }
+    
+    // determinant
+    constexpr mint det() const {
+        MintMatrix<mint> A(*this);
+        int rank = 0;
+        mint res = 1;
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return mint(0);
+            res *= A[pivot][rank];
+            A.sweep(rank++, col, pivot);
+        }
+        return res;
+    }
+    friend constexpr mint det(const MintMatrix<mint> &mat) {
+        return mat.det();
+    }
+};
+
+// modint
+template<int MOD> struct Fp {
+    // inner value
+    long long val;
+    
+    // constructor
+    constexpr Fp() : val(0) { }
+    constexpr Fp(long long v) : val(v % MOD) {
+        if (val < 0) val += MOD;
+    }
+    constexpr Fp(const Fp &v) : val(v.get()) { }
+    constexpr long long get() const { return val; }
+    constexpr int get_mod() const { return MOD; }
+    
+    // arithmetic operators
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) {
+        val += r.val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -= (const Fp &r) {
+        val -= r.val;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    constexpr Fp& operator *= (const Fp &r) {
+        val = val * r.val % MOD;
+        return *this;
+    }
+    constexpr Fp& operator /= (const Fp &r) {
+        long long a = r.val, b = MOD, u = 1, v = 0;
+        while (b) {
+            long long t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        val = val * u % MOD;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    constexpr Fp pow(long long n) const {
+        Fp res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    constexpr Fp inv() const {
+        Fp res(1), div(*this);
+        return res / div;
+    }
+
+    // other operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
+    constexpr Fp& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    constexpr Fp operator ++ (int) const {
+        Fp res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr Fp operator -- (int) const {
+        Fp res = *this;
+        --*this;
+        return res;
+    }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+        is >> x.val;
+        x.val %= MOD;
+        if (x.val < 0) x.val += MOD;
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+        return os << x.val;
+    }
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+        return r.pow(n);
+    }
+    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+        return r.inv();
+    }
+};
+
+
+
+/*/////////////////////////////*/
+// Examples
+/*/////////////////////////////*/
+
+// AOJ 3369 Namori Counting (OUPC 2023 day2-D)
+void AOJ_3369() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
+    int N, M;
+    cin >> N >> M;
+    vector<int> deg(N, 0);
+    vector<vector<int>> G(N, vector<int>(N, 0));
+    for (int i = 0; i < M; ++i) {
+        int u, v;
+        cin >> u >> v;
+        --u, --v;
+        ++G[u][v], ++G[v][u];
+        ++deg[u], ++deg[v];
+    }
+    
+    // ラプラシアン行列の余因子を求めるため、行・列の末尾を削る
+    MintMatrix<mint> L(N - 1, N - 1, 0);
+    for (int i = 0; i < N - 1; ++i) {
+        for (int j = 0; j < N - 1; ++j) {
+            if (i == j) L[i][j] = deg[i];
+            else L[i][j] = -G[i][j];
+        }
+    }
+    mint res = det(L) * (M - N + 1);
+    cout << res << endl;
 }
 
-template<int MOD> int linear_equation(Matrix<MOD> A, vector<long long> b, vector<long long> &res) {
-    int m = A.size(), n = A[0].size();
-    Matrix<MOD> M(m, n + 1);
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) M[i][j] = A[i][j];
-        M[i][n] = b[i];
-    }
-    int rank = GaussJordan(M, true);
 
-    // check if it has no solution
-    for (int row = rank; row < m; ++row) if (M[row][n]) return -1;
-
-    // answer
-    res.assign(n, 0);
-    for (int i = 0; i < rank; ++i) res[i] = M[i][n];
-    return rank;
-}
-
-
-
-long long modpow(long long a, long long n, long long mod) {
-    long long res = 1;
-    while (n > 0) {
-        if (n & 1) res = res * a % mod;
-        a = a * a % mod;
-        n >>= 1;
-    }
-    return res;
-}
-
+// TCO 2013 Round 2A Med TheMagicMatrix
 class TheMagicMatrix {
 public:
-    int find(int n, vector <int> rows, vector <int> cols, vector <int> vals) {
-        int m = rows.size();
-
+    int find(int n, vector<int> rows, vector<int> cols, vector<int> vals) {
+        const int MOD = 1234567891;
+        using mint = Fp<MOD>;
+        using mint2 = Fp<2>;
+        using mint5 = Fp<5>;
+        
         // 数字のない行と列がある場合
+        int m = (int)rows.size();
         set<int> sr, sc;
-        for (int i = 0; i < rows.size(); ++i) {
+        for (int i = 0; i < m; ++i) {
             sr.insert(rows[i]);
             sc.insert(cols[i]);
         }
         if (sr.size() < n && sc.size() < n) {
-            long long ex = (n-1)*(n-1) - m + 1;
-            return modpow(10LL, ex, MOD);
+            long long ex = (n - 1) * (n - 1) - m + 1;
+            return mint(10).pow(ex).get();
         }
 
         // 連立一次方程式を立てる
-        Matrix<2> M2(n*2+m, n*n);
-        Matrix<5> M5(n*2+m, n*n);
-        vector<long long> b(n*2+m);
+        MintMatrix<mint2> M2(n * 2 + m, n * n);
+        MintMatrix<mint5> M5(n * 2 + m, n * n);
+        vector<mint2> b2(n * 2 + m);
+        vector<mint5> b5(n * 2 + m);
 
         // 行和
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 int id = i * n + j;
-                M2[i][id] = M5[i][id] = 1;
+                M2[i][id] = 1;
+                M5[i][id] = 1;
             }
         }
 
@@ -164,44 +397,49 @@ public:
         for (int j = 0; j < n; ++j) {
             for (int i = 0; i < n; ++i) {
                 int id = i * n + j;
-                M2[j + n][id] = M5[j + n][id] = 1;
+                M2[j + n][id] = 1;
+                M5[j + n][id] = 1;
             }
         }
 
         // 条件
         for (int k = 0; k < m; ++k) {
             int id = rows[k] * n + cols[k];
-            M2[k + n*2][id] = M5[k + n*2][id] = 1;
-            b[k + n*2] = vals[k];
+            M2[k + n * 2][id] = 1;
+            M5[k + n * 2][id] = 1;
+            b2[k + n * 2] = vals[k];
+            b5[k + n * 2] = vals[k];
         }
 
         // X = 0, 1, ..., 9
-        long long res = 0;
+        mint res = 0;
         for (int X = 0; X < 10; ++X) {
-            for (int i = 0; i < n*2; ++i) b[i] = X;
-
-            vector<long long> v;
-            int rank2 = linear_equation(M2, b, v);
-            int rank5 = linear_equation(M5, b, v);
+            for (int i = 0; i < n * 2; ++i) {
+                b2[i] = X;
+                b5[i] = X;
+            }
+            int rank2 = linear_equation(M2, b2);
+            int rank5 = linear_equation(M5, b5);
             if (rank2 == -1 || rank5 == -1) continue;
-            long long tmp = modpow(2LL, n*n-rank2, MOD) * modpow(5LL, n*n-rank5, MOD) % MOD;
-            res = (res + tmp) % MOD;
+            mint tmp = mint(2).pow(n * n - rank2) * mint(5).pow(n * n - rank5);
+            res += tmp;
         }
-        return res;
+        return res.get();
     }
 };
 
-
-
-
+void TCO_2013_Round2_A() {
+    int n, m;
+    cin >> n >> m;
+    vector<int> r(m), c(m), v(m);
+    for (int i = 0; i < m; ++i) cin >> r[i] >> c[i] >> v[i];
+    TheMagicMatrix tmm;
+    cout << tmm.find(n, r, c, v) << endl;
+}
 
 
 int main() {
-    int n, m;
-    while (cin >> n >> m) {
-        vector<int> r(m), c(m), v(m);
-        for (int i = 0; i < m; ++i) cin >> r[i] >> c[i] >> v[i];
-        TheMagicMatrix tmm;
-        cout << tmm.find(n, r, c, v) << endl;
-    }
+    AOJ_3369();
+    //TCO_2013_Round2_A();
 }
+
