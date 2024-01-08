@@ -1,10 +1,10 @@
 //
-// mod. p ¹ÔÎó (¹ÔÎóÎß¾è¤È¡¢Áİ¤­½Ğ¤·Ë¡)
+// mod. p è¡Œåˆ— (è¡Œåˆ—ç´¯ä¹—ã¨ã€æƒãå‡ºã—æ³•)
 //
 // verified:
 //   TCO 2013 Round 2A Med TheMagicMatrix
 //     https://community.topcoder.com/stat?c=problem_statement&pm=12495&rd=15594
-// 
+//
 
 
 #include <iostream>
@@ -37,7 +37,7 @@ template<int MOD> struct Matrix {
 };
 
 template<int MOD> ostream& operator << (ostream& s, Matrix<MOD> A) {
-    s << endl; 
+    s << endl;
     for (int i = 0; i < A.size(); ++i) {
         for (int j = 0; j < A[i].size(); ++j) {
             s << A[i][j] << ", ";
@@ -49,10 +49,10 @@ template<int MOD> ostream& operator << (ostream& s, Matrix<MOD> A) {
 
 template<int MOD> Matrix<MOD> operator * (Matrix<MOD> A, Matrix<MOD> B) {
     Matrix<MOD> R(A.size(), B[0].size());
-    for (int i = 0; i < A.size(); ++i) 
+    for (int i = 0; i < A.size(); ++i)
         for (int j = 0; j < B[0].size(); ++j)
-            for (int k = 0; k < B.size(); ++k) 
-                R[i][j] = (R[i][j] + A[i][k] * B[k][j] % MOD) % MOD; 
+            for (int k = 0; k < B.size(); ++k)
+                R[i][j] = (R[i][j] + A[i][k] * B[k][j] % MOD) % MOD;
     return R;
 }
 
@@ -136,7 +136,7 @@ public:
     int find(int n, vector <int> rows, vector <int> cols, vector <int> vals) {
         int m = rows.size();
 
-        // ¿ô»ú¤Î¤Ê¤¤¹Ô¤ÈÎó¤¬¤¢¤ë¾ì¹ç
+        // æ•°å­—ã®ãªã„è¡Œã¨åˆ—ãŒã‚ã‚‹å ´åˆ
         set<int> sr, sc;
         for (int i = 0; i < rows.size(); ++i) {
             sr.insert(rows[i]);
@@ -147,12 +147,12 @@ public:
             return modpow(10LL, ex, MOD);
         }
 
-        // Ï¢Î©°ì¼¡ÊıÄø¼°¤òÎ©¤Æ¤ë
+        // é€£ç«‹ä¸€æ¬¡æ–¹ç¨‹å¼ã‚’ç«‹ã¦ã‚‹
         Matrix<2> M2(n*2+m, n*n);
         Matrix<5> M5(n*2+m, n*n);
         vector<long long> b(n*2+m);
 
-        // ¹ÔÏÂ
+        // è¡Œå’Œ
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 int id = i * n + j;
@@ -160,7 +160,7 @@ public:
             }
         }
 
-        // ÎóÏÂ
+        // åˆ—å’Œ
         for (int j = 0; j < n; ++j) {
             for (int i = 0; i < n; ++i) {
                 int id = i * n + j;
@@ -168,7 +168,7 @@ public:
             }
         }
 
-        // ¾ò·ï
+        // æ¡ä»¶
         for (int k = 0; k < m; ++k) {
             int id = rows[k] * n + cols[k];
             M2[k + n*2][id] = M5[k + n*2][id] = 1;

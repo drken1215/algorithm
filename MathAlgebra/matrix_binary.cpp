@@ -1,11 +1,11 @@
 //
-// binary ¹ÔÎó (¹ÔÎóÎß¾è¤È¡¢Áİ¤­½Ğ¤·Ë¡)
+// binary è¡Œåˆ— (è¡Œåˆ—ç´¯ä¹—ã¨ã€æƒãå‡ºã—æ³•)
 //
 // verified:
-//   ¤ß¤ó¤Ê¤Î¥×¥í¥³¥ó 2019 E - Odd Subrectangles
+//   ã¿ã‚“ãªã®ãƒ—ãƒ­ã‚³ãƒ³ 2019 E - Odd Subrectangles
 //     https://atcoder.jp/contests/yahoo-procon2019-qual/tasks/yahoo_procon2019_qual_e
 //
-//   AOJ 1308 Awkward Lights (ICPC ¥¢¥¸¥¢ 2010 D)
+//   AOJ 1308 Awkward Lights (ICPC ã‚¢ã‚¸ã‚¢ 2010 D)
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1308
 //
 //   AOJ 2624 Graph Automata Player
@@ -29,7 +29,7 @@ struct BitMatrix {
 };
 
 ostream& operator << (ostream& s, BitMatrix A) {
-    s << endl; 
+    s << endl;
     for (int i = 0; i < A.H; ++i) {
         for (int j = 0; j < A.W; ++j) {
             s << A[i][j] << ", ";
@@ -109,7 +109,7 @@ long long modpow(long long a, long long n, long long mod) {
     return res;
 }
 
-int main() { 
+int main() {
     int N, M; cin >> N >> M;
     BitMatrix A(N, M);
     for (int i = 0; i < N; ++i) {
@@ -119,6 +119,6 @@ int main() {
         }
     }
     vector<int> res;
-    int r = GaussJordan(A);  
+    int r = GaussJordan(A);
     cout << (modpow(2LL, N+M-1, MOD) - modpow(2LL, N+M-r-1, MOD) + MOD) % MOD << endl;
 }
