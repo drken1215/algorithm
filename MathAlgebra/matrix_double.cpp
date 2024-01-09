@@ -117,36 +117,44 @@ template<class T> struct Matrix {
     }
     
     // gauss-jordan
-    constexpr int gauss_jordan(bool is_extended = false) {
+    constexpr int find_pivot(int cur_rank, int col) const {
+        int pivot = -1;
+        T max_v = EPS;
+        for (int row = cur_rank; row < height(); ++row) {
+            if (abs(val[row][col]) > max_v) {
+                max_v = abs(val[row][col]);
+                pivot = row;
+            }
+        }
+        return pivot;
+    }
+    constexpr void sweep(int cur_rank, int col, int pivot) {
+        swap(val[pivot], val[cur_rank]);
+        auto fac = val[cur_rank][col];
+        for (int col2 = 0; col2 < width(); ++col2) {
+            val[cur_rank][col2] /= fac;
+        }
+        for (int row = 0; row < height(); ++row) {
+            if (row != cur_rank && abs(val[row][col]) > EPS) {
+                auto fac = val[row][col];
+                for (int col2 = 0; col2 < width(); ++col2) {
+                    val[row][col2] -= val[cur_rank][col2] * fac;
+                }
+            }
+        }
+    }
+    constexpr int gauss_jordan(int not_sweep_width = 0) {
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
-            if (is_extended && col == width() - 1) break;
-            int pivot = -1;
-            T max_v = EPS;
-            for (int row = rank; row < height(); ++row) {
-                if (abs(val[row][col]) > max_v) {
-                    max_v = abs(val[row][col]);
-                    pivot = row;
-                }
-            }
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
-            swap(val[pivot], val[rank]);
-            auto fac = val[rank][col];
-            for (int col2 = 0; col2 < width(); ++col2) val[rank][col2] /= fac;
-            for (int row = 0; row < height(); ++row) {
-                if (row != rank && abs(val[row][col]) > EPS) {
-                    auto fac = val[row][col];
-                    for (int col2 = 0; col2 < width(); ++col2) {
-                        val[row][col2] -= val[rank][col2] * fac;
-                    }
-                }
-            }
-            ++rank;
+            sweep(rank++, col, pivot);
         }
         return rank;
     }
-    friend constexpr int gauss_jordan(Matrix<T> &mat, bool is_extended = false) {
-        return mat.gauss_jordan(is_extended);
+    friend constexpr int gauss_jordan(Matrix<T> &mat, int not_sweep_width = 0) {
+        return mat.gauss_jordan(not_sweep_width);
     }
     friend constexpr vector<T> linear_equation(const Matrix<T> &mat, const vector<T> &b) {
         // extend
@@ -155,7 +163,7 @@ template<class T> struct Matrix {
             for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
             A[i].back() = b[i];
         }
-        int rank = A.gauss_jordan(true);
+        int rank = A.gauss_jordan(1);
         
         // check if it has no solution
         vector<T> res;
@@ -172,9 +180,9 @@ template<class T> struct Matrix {
 
 
 
-/*/////////////////////////////*/
-// Examples
-/*/////////////////////////////*/
+/* ------------------------------ */
+//  Examples
+/* ------------------------------ */
 
 void AOJ_2171() {
     int N, s, t;
@@ -236,7 +244,7 @@ void AOJ_2171() {
                 A[v][v] += K;
             }
         }
-        
+          
         // 解く
         auto res = linear_equation(A, b);
         if (res.empty()) cout << "impossible" << endl;

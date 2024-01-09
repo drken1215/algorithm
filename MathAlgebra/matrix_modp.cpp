@@ -17,27 +17,6 @@
 using namespace std;
 
 
-
-#define DEBUG 1
-#define COUT(x) if (DEBUG) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-
-
-
 // matrix
 template<class mint> struct MintMatrix {
     // inner value
@@ -323,9 +302,9 @@ template<int MOD> struct Fp {
 
 
 
-/*/////////////////////////////*/
-// Examples
-/*/////////////////////////////*/
+/* ------------------------------ */
+//  Examples
+/* ------------------------------ */
 
 // AOJ 3369 Namori Counting (OUPC 2023 day2-D)
 void AOJ_3369() {
