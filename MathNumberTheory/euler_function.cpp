@@ -23,6 +23,12 @@ long long Euler(long long N) {
     return res;
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long N;
     cin >> N;

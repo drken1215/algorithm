@@ -15,9 +15,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -68,9 +68,9 @@ struct Circle : Point {
 };
 
 
-///////////////////////
+//------------------------------//
 // 多角形アルゴリズム
-///////////////////////
+//------------------------------//
 
 // 一直線上の3点を含めない
 vector<Point> ConvexHull(vector<Point> &ps) {
@@ -132,8 +132,13 @@ vector<Point> ConvexHullCollinearOK(vector<Point> &ps) {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
-    int n; cin >> n;
+    int n;
+    cin >> n;
     vector<Point> ps(n);
     for (int i = 0; i < n; ++i) cin >> ps[i].x >> ps[i].y;
     auto pol = ConvexHullCollinearOK(ps);

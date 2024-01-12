@@ -12,6 +12,7 @@
 using namespace std;
 
 
+// BIT 2D
 template <class Abel> struct BIT2D {
     const Abel UNITY_SUM = 0;
     vector<vector<Abel> > dat[2][2];
@@ -78,6 +79,10 @@ template <class Abel> struct BIT2D {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 // xor に対応するため
 struct XOR {

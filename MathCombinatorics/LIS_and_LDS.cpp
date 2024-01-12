@@ -48,6 +48,11 @@ vector<long long> LISLDS(long long N, long long A, long long B) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long N, A, B; cin >> N >> A >> B;
     if (A + B > N+1 || A * B < N) cout << -1 << endl;

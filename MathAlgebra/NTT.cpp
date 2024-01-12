@@ -316,6 +316,12 @@ template<class T> struct BiCoef {
     }
 };
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 const int MOD = 998244353;
 using mint = Fp<MOD>;
 

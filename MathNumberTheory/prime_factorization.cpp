@@ -17,6 +17,7 @@
 #include <map>
 using namespace std;
 
+
 vector<pair<long long, long long> > prime_factorize(long long n) {
     vector<pair<long long, long long> > res;
     for (long long p = 2; p * p <= n; ++p) {
@@ -28,6 +29,12 @@ vector<pair<long long, long long> > prime_factorize(long long n) {
     if (n != 1) res.push_back(make_pair(n, 1));
     return res;
 }
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int n; cin >> n;

@@ -358,9 +358,9 @@ template<typename mint> struct Poly : vector<mint> {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Polynomial Algorithms
-/*/////////////////////////////*/
+//------------------------------//
 
 // Binomial coefficient
 template<class T> struct BiCoef {
@@ -417,9 +417,9 @@ template<class mint> Poly<mint> PolynomialTaylorShift(const Poly<mint> &f, long 
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Polynomial_Taylor_Shift() {
     const int MOD = 998244353;

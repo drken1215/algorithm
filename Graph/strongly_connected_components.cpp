@@ -140,9 +140,9 @@ template<class T> struct SCC {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Strongly_Connected_Components() {
     cin.tie(nullptr);

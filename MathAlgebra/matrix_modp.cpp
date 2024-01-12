@@ -303,7 +303,7 @@ template<int MOD> struct Fp {
 
 
 //------------------------------//
-//  Examples
+// Examples
 //------------------------------//
 
 // AOJ 3369 Namori Counting (OUPC 2023 day2-D)

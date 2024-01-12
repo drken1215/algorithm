@@ -15,6 +15,7 @@
 #include <vector>
 using namespace std;
 
+
 // Graph is expressed as adjacent-list
 typedef vector<vector<int> > Graph;
 int ConnectedCase(Graph &G, vector<int> &can);
@@ -85,6 +86,10 @@ int StableSet(Graph &G) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main () {
     int N, M;

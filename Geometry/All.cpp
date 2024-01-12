@@ -35,9 +35,10 @@
 using namespace std;
 
 
-/*/////////////////////////////*/
+
+//------------------------------//
 // 幾何の基本要素 (点, 線分, 円)
-/*/////////////////////////////*/
+//------------------------------//
 
 // basic settings
 long double EPS = 1e-10;  // to be set appropriately
@@ -146,9 +147,9 @@ template<class DD> struct Circle : Point<DD> {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // 点や線分の位置関係
-/*/////////////////////////////*/
+//------------------------------//
 
 // arg sort
 // by defining comparison
@@ -203,9 +204,9 @@ template<class DD> bool is_contain
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // 線分の交差判定や距離計算
-/*/////////////////////////////*/
+//------------------------------//
 
 template<class DD> int ccw_for_dis
  (const Point<DD> &a, const Point<DD> &b, const Point<DD> &c) {
@@ -257,9 +258,9 @@ template<class DD> DD distance_SS(const Line<DD> &s, const Line<DD> &t) {
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // 円や直線の交点
-/*/////////////////////////////*/
+//------------------------------//
 
 template<class DD> Point<DD> proj_for_crosspoint(const Point<DD> &p, const Line<DD> &l) {
     DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
@@ -308,9 +309,9 @@ template<class DD> vector<Point<DD>> crosspoint(const Circle<DD> &e, const Line<
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // 接線
-/*/////////////////////////////*/
+//------------------------------//
 
 // tanline
 template<class DD> vector<Point<DD>> tanline(const Point<DD> &p, const Circle<DD> &c) {
@@ -378,9 +379,9 @@ template<class DD> vector<Line<DD>> com_tanline(const Circle<DD> &a, const Circl
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // 多角形アルゴリズム
-/*/////////////////////////////*/
+//------------------------------//
 
 // 多角形の符号付面積
 template<class DD> DD calc_area(const vector<Point<DD>> &pol) {
@@ -544,9 +545,9 @@ template<class DD> vector<Point<DD>> voronoi
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // 面積アルゴリズム
-/*/////////////////////////////*/
+//------------------------------//
 
 // 円と円の共通部分の面積
 template<class DD> DD calc_common_area(const Circle<DD> &p, const Circle<DD> &q) {
@@ -632,9 +633,9 @@ template<class DD> DD calc_common_area(const Circle<DD> &c, const vector<Point<D
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // その他
-/*/////////////////////////////*/
+//------------------------------//
 
 // 最近点対
 template<class DD> DD Cloest(vector<Point<DD>> &ps) {
@@ -678,9 +679,9 @@ template<class DD> Circle<DD> Apporonius(const Point<DD> &p, const Point<DD> &q,
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // arg sort
 void Yosupo_Sort_Points_by_Argument_1() {
@@ -869,4 +870,3 @@ int main() {
     //CGL_7_H();
     ABC_207_D();
 }
-

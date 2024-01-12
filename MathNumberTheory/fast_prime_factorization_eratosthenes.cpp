@@ -85,6 +85,10 @@ struct Eratos {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 long long GCD(long long x, long long y) {
     if (y == 0) return x;
     return GCD(y, x % y);

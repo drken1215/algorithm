@@ -519,9 +519,9 @@ template<typename mint> struct FPS : vector<mint> {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Polynomial, FPS algorithms
-/*/////////////////////////////*/
+//------------------------------//
 
 // Bostan-Mori
 // find [x^N] P(x)/Q(x), O(K log K log N)
@@ -548,9 +548,9 @@ template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, 
 
 
 
-/*/////////////////////////////*/
-// solvers
-/*/////////////////////////////*/
+//------------------------------//
+// Examples
+//------------------------------//
 
 void Yosupo_Inv_of_FPS() {
     const int MOD = 998244353;

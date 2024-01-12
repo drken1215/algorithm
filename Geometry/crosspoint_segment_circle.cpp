@@ -14,9 +14,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL << 60;      // to be set appropriately
@@ -68,9 +68,9 @@ struct Circle : Point {
 
 
 
-////////////////////////////
+//------------------------------//
 // 円や直線の交点
-////////////////////////////
+//------------------------------//
 
 Point proj_for_crosspoint(const Point &p, const Line &l) {
     DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
@@ -176,10 +176,11 @@ DD calc_common_area(const Circle &c, const vector<Point> &pol) {
 
 
 
-////////////////////////////
-// AOJ 1183 鎖中経路
-////////////////////////////
+//------------------------------//
+// Examples
+//------------------------------//
 
+// AOJ 1183 鎖中経路
 bool isin(const vector<Circle> &cs, const Line &l) {
     vector<Point> vps;
     for (auto c : cs) {
@@ -197,7 +198,6 @@ bool isin(const vector<Circle> &cs, const Line &l) {
     }
     return true;
 }
-
 
 int main() {
     int N;

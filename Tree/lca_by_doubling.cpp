@@ -53,8 +53,13 @@ struct LCA {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
-    int N; cin >> N;
+    int N;
+    cin >> N;
     Graph G(N);
     for (int i = 0; i < N; ++i) {
         int num; cin >> num;

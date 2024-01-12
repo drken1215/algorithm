@@ -117,6 +117,11 @@ struct SuffixArray {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 vector<long long> divisor(long long n) {
     vector<long long> res;
     for (long long i = 1LL; i*i <= n; ++i) {
@@ -129,8 +134,6 @@ vector<long long> divisor(long long n) {
     sort(res.begin(), res.end());
     return res;
 }
-
-
 
 int main() {
     string str; cin >> str;

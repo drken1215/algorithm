@@ -94,6 +94,10 @@ template<class Monoid, class Action> struct StarrySky {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     int N, Q; scanf("%d %d", &N, &Q);
     StarrySky<long long, long long> sk(N, (1LL<<60), 0);

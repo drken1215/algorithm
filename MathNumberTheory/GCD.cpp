@@ -16,6 +16,7 @@
 #include <cmath>
 using namespace std;
 
+
 long long GCD(long long a, long long b) {
     if (a < 0) a = -a;
     if (b < 0) b = -b;
@@ -24,6 +25,10 @@ long long GCD(long long a, long long b) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N; long long X;

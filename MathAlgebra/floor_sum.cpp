@@ -156,6 +156,36 @@ struct i128 {
         return i128(*this) %= r;
     }
     
+    // bit operators
+    constexpr i128 operator >>= (long long r) {
+        val >>= r;
+        return *this;
+    }
+    constexpr i128 operator <<= (long long r) {
+        val <<= r;
+        return *this;
+    }
+    constexpr i128 operator &= (long long r) {
+        val &= r;
+        return *this;
+    }
+    constexpr i128 operator |= (long long r) {
+        val |= r;
+        return *this;
+    }
+    constexpr i128 operator << (long long r) const {
+        return i128(*this) <<= r;
+    }
+    constexpr i128 operator >> (long long r) const {
+        return i128(*this) >>= r;
+    }
+    constexpr i128 operator & (long long r) const {
+        return i128(*this) &= r;
+    }
+    constexpr i128 operator | (long long r) const {
+        return i128(*this) |= r;
+    }
+    
     // other operators
     constexpr i128& operator ++ () {
         ++val;
@@ -204,9 +234,9 @@ struct i128 {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // Library Checker
 void YosupoSumOfFloorOfLinear() {

@@ -222,9 +222,9 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void YosupoJudgePointAddRectangleSum() {
     BITonWaveletMatrix<int, long long> wm;

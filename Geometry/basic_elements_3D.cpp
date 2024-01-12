@@ -17,9 +17,9 @@
 using namespace std;
 
 
-/////////////////////////////////
+//------------------------------//
 // 3 次元幾何ライブラリ一式
-/////////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -132,10 +132,11 @@ vector<Point3D> crosspointSPL(const Line3D &s, const Plane &pl) {
 
 
 
-/////////////////////////////////
-// AOJ 0115 Starship UAZ Advance
-/////////////////////////////////
+//------------------------------//
+// Exapmles
+//------------------------------//
 
+// AOJ 0115 Starship UAZ Advance
 void solveAOJ0115() {
     Point3D my, en, bar[3];
     cin >> my.x >> my.y >> my.z >> en.x >> en.y >> en.z;
@@ -154,12 +155,6 @@ void solveAOJ0115() {
             cout << "MISS" << endl;
     }
 }
-
-
-
-/////////////////////////////////
-// AOJ 1523 Cone Cuts
-/////////////////////////////////
 
 // 2 次元
 struct Point {
@@ -237,11 +232,6 @@ void solveAOJ1523() {
     cout << fixed << setprecision(9) << sol << " " << tot-sol << endl;
 }
 
-
-
-/////////////////////////////////
-// main
-/////////////////////////////////
 
 int main() {
     solveAOJ0115();

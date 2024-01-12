@@ -11,6 +11,7 @@
 #include <vector>
 using namespace std;
 
+
 struct UnionFind {
     vector<int> par;
     
@@ -39,6 +40,12 @@ struct UnionFind {
         return -par[root(x)];
     }
 };
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N, M, Q;

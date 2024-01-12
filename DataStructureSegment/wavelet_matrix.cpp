@@ -405,9 +405,9 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void YosupoRangeKthSmallest() {
     int N, Q;

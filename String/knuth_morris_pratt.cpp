@@ -1,16 +1,16 @@
 //
 // Knuth-Morris-Pratt
-//   fail[i] := pat[0:i) ¤Î suffix ¤È pat ¤Î prefix ¤¬¤É¤ì¤À¤±°ìÃ×¤¹¤ë¤« (Ä¹¤µ i Ì¤Ëş¤Ç)
-//   O(N) ¤Ç¹½ÃÛ¤Ç¤­¤ë
-//   ¤³¤ì¤òÍøÍÑ¤·¤Æ°Ê²¼¤òµá¤á¤é¤ì¤¿¤ë
-//     ¡¦pat[0:i) ¤ÎºÇ¾®¼ş´ü ("abcabcab" ¤Ï "abc" ¤Î·«¤êÊÖ¤·¤ò¶èÀÚ¤ë¤³¤È¤Ç¤Ç¤­¤ë¤Î¤Ç 3)
-//     ¡¦Ê¸»úÎó S ¤Ë¤ª¤¤¤Æ S[i:] ¤Î prefix ¤¬ pat ¤È°ìÃ×¤¹¤ë¤è¤¦¤Ê i ¤ò¤¹¤Ù¤Æµá¤á¤ë
+//   fail[i] := pat[0:i) ã® suffix ã¨ pat ã® prefix ãŒã©ã‚Œã ã‘ä¸€è‡´ã™ã‚‹ã‹ (é•·ã• i æœªæº€ã§)
+//   O(N) ã§æ§‹ç¯‰ã§ãã‚‹
+//   ã“ã‚Œã‚’åˆ©ç”¨ã—ã¦ä»¥ä¸‹ã‚’æ±‚ã‚ã‚‰ã‚ŒãŸã‚‹
+//     ãƒ»pat[0:i) ã®æœ€å°å‘¨æœŸ ("abcabcab" ã¯ "abc" ã®ç¹°ã‚Šè¿”ã—ã‚’åŒºåˆ‡ã‚‹ã“ã¨ã§ã§ãã‚‹ã®ã§ 3)
+//     ãƒ»æ–‡å­—åˆ— S ã«ãŠã„ã¦ S[i:] ã® prefix ãŒ pat ã¨ä¸€è‡´ã™ã‚‹ã‚ˆã†ãª i ã‚’ã™ã¹ã¦æ±‚ã‚ã‚‹
 //
 // verified:
 //   ABC 150 F - Xor Shift
 //     https://atcoder.jp/contests/abc150/tasks/abc150_f
 //
-//   ARC 060 F - ºÇÎÉÉ½¸½
+//   ARC 060 F - æœ€è‰¯è¡¨ç¾
 //     https://atcoder.jp/contests/arc060/tasks/arc060_d
 //
 
@@ -18,6 +18,7 @@
 #include <iostream>
 #include <vector>
 using namespace std;
+
 
 // T = string or vector<long long>
 template<class T> struct KMP {
@@ -53,6 +54,11 @@ template<class T> struct KMP {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 void solve(int N, const vector<long long> &a, const vector<long long> &b) {
     vector<long long> da(N*2), db(N);
     for (int i = 0; i < N*2; ++i) {
@@ -76,4 +82,3 @@ int main() {
     for (int i = 0; i < N; ++i) cin >> b[i];
     solve(N, a, b);
 }
-

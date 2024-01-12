@@ -25,6 +25,11 @@ long long extGCD(long long a, long long b, long long &x, long long &y) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long a, b; cin >> a >> b;
     long long x, y;

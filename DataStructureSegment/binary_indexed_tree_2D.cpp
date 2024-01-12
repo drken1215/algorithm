@@ -13,6 +13,7 @@
 using namespace std;
 
 
+// BIT 2D
 template <class Abel> struct BIT2D {
     const Abel UNITY_SUM = 0;
     vector<vector<Abel> > dat;
@@ -56,6 +57,10 @@ template <class Abel> struct BIT2D {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 typedef pair<int,int> pint; // zahyou
 typedef pair<int,pint> ppint; // (time, zahyou)

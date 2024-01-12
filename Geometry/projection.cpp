@@ -14,9 +14,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -60,9 +60,9 @@ struct Line : vector<Point> {
 };
 
 
-////////////////////////////
+//------------------------------//
 // 円や直線の交差判定, 距離
-////////////////////////////
+//------------------------------//
 
 /*
  ccw を用いている
@@ -124,10 +124,16 @@ DD distanceSS(const Line &s, const Line &t) {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
-    DD xp1, yp1, xp2, yp2; cin >> xp1 >> yp1 >> xp2 >> yp2;
+    DD xp1, yp1, xp2, yp2;
+    cin >> xp1 >> yp1 >> xp2 >> yp2;
     Line l(Point(xp1, yp1), Point(xp2, yp2));
-    int Q; cin >> Q;
+    int Q;
+    cin >> Q;
     for (int qu = 0; qu < Q; ++qu) {
         DD x, y; cin >> x >> y;
         Point p(x, y);

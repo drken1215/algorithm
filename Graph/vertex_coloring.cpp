@@ -131,6 +131,12 @@ bool isinterSS(const Line &s, const Line &t) {
             ccw_for_dis(t[0], t[1], s[0]) * ccw_for_dis(t[0], t[1], s[1]) <= 0);
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     int N;
     while (cin >> N, N) {

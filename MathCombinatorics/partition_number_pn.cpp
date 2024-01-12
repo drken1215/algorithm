@@ -118,9 +118,10 @@ template<class T> struct PartitionFunction {
 };
 
 
-/*/////////////////////////////*/
+
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Partition_Function() {
     using mint = Fp<998244353>;

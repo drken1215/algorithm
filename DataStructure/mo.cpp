@@ -1,12 +1,11 @@
 //
 // Mo のアルゴリズム
 //
-// cf.
+// reference:
 //   ei1333: Mo's algorithm
 //     https://ei1333.hateblo.jp/entry/2017/09/11/211011
 //
-//
-// verified
+// verified:
 //   SPOJ FREQUENT - Frequent values
 //     https://www.spoj.com/problems/FREQUENT/
 //
@@ -33,6 +32,8 @@
 #include <cstring>
 using namespace std;
 
+
+// Mo
 struct Mo {
     vector<int> left, right, index; // the interval's left, right, index
     vector<bool> v;
@@ -79,6 +80,11 @@ struct Mo {
     void erase(int id);
 };
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 const int GETA = 100000;
 int N, Q;

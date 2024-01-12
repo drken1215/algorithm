@@ -152,9 +152,9 @@ template<class Monoid> struct SegmentTree {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // ACL practice J - Segment Tree
 void ACL_practice_J() {

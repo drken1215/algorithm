@@ -483,9 +483,9 @@ template<typename mint> struct Poly : vector<mint> {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Polynomial Algorithms
-/*/////////////////////////////*/
+//------------------------------//
 
 // Binomial coefficient
 template<class T> struct BiCoef {
@@ -543,9 +543,9 @@ template<class mint> Poly<mint> PolynomialTaylorShift(const Poly<mint> &f, long 
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // for any mod
-/*/////////////////////////////*/
+//------------------------------//
 
 // dynamic modint
 struct DynamicModint {
@@ -660,9 +660,9 @@ int DynamicModint::MOD;
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Convolution_mod_1000000007() {
     const int MOD = 1000000007;

@@ -10,6 +10,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 long long P;
 long long x, y, u, v;
 bool exist_bigger = false;
@@ -34,6 +35,12 @@ void SternBrocot(long long N, long long sl = 0, long long bl = 1, long long sr =
     // right
     SternBrocot(N, s, b, sr, br);
 }
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     long long N;

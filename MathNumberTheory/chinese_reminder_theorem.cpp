@@ -51,6 +51,12 @@ pair<long long, long long> ChineseRem(const vector<long long> &vr, const vector<
     return make_pair(R, M);
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long N;
     int M, D;

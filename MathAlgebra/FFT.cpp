@@ -6,10 +6,12 @@
 //     https://atc001.contest.atcoder.jp/tasks/fft_c
 //
 
+
 #include <iostream>
 #include <vector>
 #include <cmath>
 using namespace std;
+
 
 // FFT
 namespace FFT {
@@ -85,6 +87,12 @@ namespace FFT {
         return res;
     }
 };
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N;

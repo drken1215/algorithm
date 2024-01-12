@@ -42,6 +42,12 @@ long long solve(long long L, long long R) {
     return res;
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long L, R;
     cin >> L >> R;

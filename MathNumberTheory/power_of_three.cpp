@@ -1,5 +1,5 @@
 //
-// Ê¿¹Õ»°¿ÊË¡Å¸³«
+// å¹³è¡¡ä¸‰é€²æ³•å±•é–‹
 //
 // verified
 //   TopCoder SRM 604 DIV1 Easy PowerOfThree
@@ -31,11 +31,11 @@ public:
         vector<int> vx = PowerThree(x);
         vector<int> vy = PowerThree(y);
 
-        // ·å¿ô¤ò¹ç¤ï¤»¤ë
+        // æ¡æ•°ã‚’åˆã‚ã›ã‚‹
         while (vx.size() < vy.size()) vx.push_back(0);
         while (vy.size() < vx.size()) vy.push_back(0);
         
-        // ³Æ·åÈæ³Ó
+        // å„æ¡æ¯”è¼ƒ
         for (int i = 0; i < vx.size(); ++i) {
             if (vx[i] == 0 && vy[i] == 0) return "Impossible";
             if (vx[i] != 0 && vy[i] != 0) return "Impossible";
@@ -43,6 +43,12 @@ public:
         return "Possible";
     }
 };
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
 

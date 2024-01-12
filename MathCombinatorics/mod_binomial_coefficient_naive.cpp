@@ -44,6 +44,11 @@ void calc_Dcom(long long n, long long p) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
 
 }

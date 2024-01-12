@@ -135,9 +135,14 @@ template<int MOD> struct Fp {
     }
 };
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 const int MOD = 998244353;
 using mint = Fp<MOD>;
-
 
 int main() {
     const int MAX = 1000001;

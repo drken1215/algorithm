@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-    // 3 »³¤ÎÀĞ¤Î¸Ä¿ô¤òÆşÎÏ
+    // 3 å±±ã®çŸ³ã®å€‹æ•°ã‚’å…¥åŠ›
     int A, B, C;
     cout << "The number of the first pile: ";
     cin >> A;
@@ -18,19 +18,19 @@ int main() {
     cout << "The number of the third pile: ";
     cin >> C;
 
-    // Àè¼ê¤È¸å¼ê¤ÎÀïÎ¬
+    // å…ˆæ‰‹ã¨å¾Œæ‰‹ã®æˆ¦ç•¥
     string ans;
     cout << "Are you first? (yes / no): " << endl;
     cin >> ans;
     bool yours = (ans == "yes" ? true : false);
 
-    // ÀĞ¤ò¼è¤ì¤Ê¤¯¤Ê¤ë¤Ş¤Ç¥×¥ì¥¤¤¹¤ë
+    // çŸ³ã‚’å–ã‚Œãªããªã‚‹ã¾ã§ãƒ—ãƒ¬ã‚¤ã™ã‚‹
     while (A + B + C > 0) {
         cout << "-----------------" << endl;
         
-        // ¥×¥ì¥¤¥ä¡¼¤Î¥¿¡¼¥ó (Îã³°½èÍı¤Ï¾ÊÎ¬)
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¿ãƒ¼ãƒ³ (ä¾‹å¤–å‡¦ç†ã¯çœç•¥)
         if (yours) {
-            // ÀĞ¤Î»³¤È¼è¤ëÀĞ¤Î¸Ä¿ô¤òÆşÎÏ
+            // çŸ³ã®å±±ã¨å–ã‚‹çŸ³ã®å€‹æ•°ã‚’å…¥åŠ›
             int which, num;
             cout << "Your Turn" << endl;
             cout << "Current state: ("
@@ -42,12 +42,12 @@ int main() {
             cout << "The number of stones? : ";
             cin >> num;
 
-            // ÀĞ¤Î¸Ä¿ô¤òÊÑ¹¹
+            // çŸ³ã®å€‹æ•°ã‚’å¤‰æ›´
             if (which == 1) A -= num;
             else if (which == 2) B -= num;
-            else C -= num;    
+            else C -= num;
         }
-        // AI ¤Î¥¿¡¼¥ó
+        // AI ã®ã‚¿ãƒ¼ãƒ³
         else {
             cout << "AI's turn" << endl;
             cout << "Current state: ("
@@ -55,16 +55,16 @@ int main() {
                  << B << ", "
                  << C << ")" << endl;
 
-            // A, B, C ¤Î XOR ÏÂ¤ò S ¤È¤¹¤ë
+            // A, B, C ã® XOR å’Œã‚’ S ã¨ã™ã‚‹
             int S = A ^ B ^ C;
 
-            // S > 0 ¤Î¤È¤­¤Ï¾¡¤Á¥Ñ¥¿¡¼¥ó¤Ë¤¹¤ë
+            // S > 0 ã®ã¨ãã¯å‹ã¡ãƒ‘ã‚¿ãƒ¼ãƒ³ã«ã™ã‚‹
             if (S > 0) {
                 if ((A ^ S) < A) A ^= S;
                 else if ((B ^ S) < B) B ^= S;
                 else C ^= S;
             }
-            // ¤½¤ì°Ê³°¤Î¾ì¹ç¤Ï¥é¥ó¥À¥à¤ËÀĞ¤ò¸º¤é¤¹
+            // ãã‚Œä»¥å¤–ã®å ´åˆã¯ãƒ©ãƒ³ãƒ€ãƒ ã«çŸ³ã‚’æ¸›ã‚‰ã™
             else {
                 if (A > 0) A = rand() % A;
                 else if (B > 0) B = rand() % B;
@@ -77,7 +77,7 @@ int main() {
                  << C << ")" << endl;
         }
 
-        // ¼êÈÖ¤òÆş¤ìÂØ¤¨
+        // æ‰‹ç•ªã‚’å…¥ã‚Œæ›¿ãˆ
         yours = !yours;
     }
 

@@ -173,9 +173,9 @@ template<class FLOWTYPE, class COSTTYPE> COSTTYPE MinCostCirculation(Graph<FLOWT
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // AOJ
 void AOJ_Course_GRL_6_B() {

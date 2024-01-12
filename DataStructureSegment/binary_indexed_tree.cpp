@@ -12,6 +12,7 @@
 using namespace std;
 
 
+// BIT
 template <class Abel> struct BIT {
     Abel UNITY_SUM = 0;
     vector<Abel> dat;
@@ -49,6 +50,11 @@ template <class Abel> struct BIT {
     }
 };
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N, Q; cin >> N >> Q;

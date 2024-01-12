@@ -1,10 +1,6 @@
 //
 // 削除可能な両端 priority queue
 //
-// reference:
-//
-//
-//
 // verified:
 //   Yosupo Library Checker - Double-Ended Priority Queue
 //     https://judge.yosupo.jp/problem/double_ended_priority_queue
@@ -110,9 +106,9 @@ template<class T> struct DoubleEndedPriorityQueue {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // Yosupo Library Checker - Double-Ended Priority Queue
 void YosupoDoubleEndedProrityQueue() {

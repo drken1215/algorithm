@@ -32,7 +32,8 @@ using namespace std;
 const long long INF = 1LL<<60;
 
 int main() {
-    int V, E; cin >> V >> E;
+    int V, E;
+    cin >> V >> E;
     
     // initialization of Floyd-Warshall
     vector<vector<long long> > dp(V, vector<long long>(V, INF));

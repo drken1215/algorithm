@@ -14,9 +14,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -67,9 +67,9 @@ struct Circle : Point {
 };
 
 
-///////////////////////
+//------------------------------//
 // 多角形アルゴリズム
-///////////////////////
+//------------------------------//
 
 // 130825(AOJ 2160)
 // 多角形の符号付面積
@@ -82,8 +82,14 @@ DD CalcArea(const vector<Point> &pol) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
-    int n; cin >> n;
+    int n;
+    cin >> n;
     vector<Point> pol(n);
     for (int i = 0; i < n; ++i) cin >> pol[i].x >> pol[i].y;
     cout << fixed << setprecision(1) << CalcArea(pol) << endl;

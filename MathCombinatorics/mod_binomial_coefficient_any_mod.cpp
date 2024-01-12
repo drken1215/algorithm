@@ -106,6 +106,12 @@ long long Garner(vector<long long> b, vector<long long> m, long long MOD) {
     return constants.back();
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 // 入力
 int N, T, M;
 vector<int> x, y, r;

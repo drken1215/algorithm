@@ -15,9 +15,9 @@
 using namespace std;
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Prime Functions
-/*/////////////////////////////*/
+//------------------------------//
 
 // montgomery modint (MOD < 2^62, MOD is odd)
 struct MontgomeryModInt64 {
@@ -219,9 +219,10 @@ vector<long long> prime_factorize(long long N) {
 }
 
 
-/*/////////////////////////////*/
+
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void YosupoJudgeFactorize() {
     cin.tie(0);

@@ -36,6 +36,11 @@ long long COM(int n, int k){
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     COMinit(); // テーブルを作る
     long long N, A, B, K;

@@ -54,9 +54,9 @@ long long max_area_in_histogram(const vector<long long> &H) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void AOJ_Course_DPL_3_C() {
     int N;

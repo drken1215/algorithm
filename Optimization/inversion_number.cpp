@@ -13,6 +13,7 @@
 #include <algorithm>
 using namespace std;
 
+
 template <class Abel> struct BIT {
     const Abel UNITY_SUM = 0;                       // to be set
     vector<Abel> dat;
@@ -65,6 +66,10 @@ template<class T> long long inversion_number(const vector<T> &a) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int n; cin >> n;

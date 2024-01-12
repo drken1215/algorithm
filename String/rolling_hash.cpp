@@ -1,5 +1,5 @@
 //
-// •Ì°º•Í•Û•∞•œ•√•∑•Â
+// „É≠„Éº„É™„É≥„Ç∞„Éè„ÉÉ„Ç∑„É•
 //
 // verified:
 //   ABC 141 E - Who Says a Pun?
@@ -14,7 +14,7 @@
 using namespace std;
 
 
-// •Ì°º•Í•Û•∞•œ•√•∑•Â
+// „É≠„Éº„É™„É≥„Ç∞„Éè„ÉÉ„Ç∑„É•
 struct RollingHash {
     static const int base1 = 1007, base2 = 2009;
     static const int mod1 = 1000000007, mod2 = 1000000009;
@@ -73,15 +73,20 @@ struct RollingHash {
 };
 
 
-int main() { 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
+int main() {
     int N;
     string S;
     cin >> N >> S;
 
-    // •Ì•Í•œ
+    // „É≠„É™„Éè
     RollingHash rh(S);
 
-    // µ·§·§Î
+    // Ê±Ç„ÇÅ„Çã
     int res = 0;
     for (int i = 0; i < N; ++i) {
         for (int j = i+1; j < N; ++j) {
@@ -89,7 +94,7 @@ int main() {
             lcp = min(lcp, j-i);
             res = max(res, lcp);
         }
-    }   
+    }
         
     cout << res << endl;
 }

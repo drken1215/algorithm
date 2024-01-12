@@ -15,9 +15,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -68,10 +68,9 @@ struct Circle : Point {
 };
 
 
-
-///////////////////////
+//------------------------------//
 // 接線
-///////////////////////
+//------------------------------//
 
 // 点と円
 vector<Point> tanline(const Point &p, const Circle &c) {
@@ -122,8 +121,13 @@ vector<Line> comtanline(Circle a, Circle b) {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
-    Point p; Circle c;
+    Point p;
+    Circle c;
     cin >> p.x >> p.y >> c.x >> c.y >> c.r;
     auto res = tanline(p, c);
     cout << fixed << setprecision(10);

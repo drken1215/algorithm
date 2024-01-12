@@ -73,9 +73,9 @@ pair<long long, long long> PellMul(pair<long long, long long> p, pair<long long,
 
 
 
-///////////////////////////////////////
-// solver
-///////////////////////////////////////
+//------------------------------//
+// Examples
+//------------------------------//
 
 void AOJ2116() {
     long long N;

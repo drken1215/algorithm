@@ -14,6 +14,7 @@
 #include <iostream>
 using namespace std;
 
+
 bool is_prime(long long n) {
     if (n <= 1) return false;
     for (long long p = 2; p * p <= n; ++p) {
@@ -21,6 +22,12 @@ bool is_prime(long long n) {
     }
     return true;
 }
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int n; cin >> n;

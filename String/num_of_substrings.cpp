@@ -276,9 +276,9 @@ long long num_of_substrings(const string &S) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void YosupoNumOfSubstrings() {
     string S;

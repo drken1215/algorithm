@@ -67,6 +67,10 @@ template<class SemiGroup> struct DisjointSparseTable {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     int T; scanf("%d", &T);
     int N, P, Q;

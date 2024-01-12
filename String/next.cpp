@@ -30,6 +30,10 @@ vector<vector<int> > calcNext(const string &S) {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 // chmin
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 

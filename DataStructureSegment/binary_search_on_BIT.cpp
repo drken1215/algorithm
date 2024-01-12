@@ -69,6 +69,11 @@ template <class Abel> struct BIT {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     BIT<int> bit(200000);
     int Q;

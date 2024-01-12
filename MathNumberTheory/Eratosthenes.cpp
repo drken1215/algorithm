@@ -39,6 +39,11 @@ vector<int> Era(int n) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     vector<int> primes = Era(1000000);
     int n;

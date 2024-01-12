@@ -5,19 +5,8 @@
 #include <algorithm>
 using namespace std;
 
-// chmax, chmin
-template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
-template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 
-// debug stream of pair, vector 
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-
-
-// Í­Íı¿ô
+// æœ‰ç†æ•°
 long long calc_gcd(long long a, long long b) {return b ? calc_gcd(b, a % b) : a;}
 struct frac {
     long long first, second;
@@ -42,7 +31,7 @@ struct frac {
     inline const frac& operator *= (long long a);
     inline const frac& operator /= (const frac& a);
     inline const frac& operator /= (long long a);
-    inline friend ostream& operator << (ostream& s, const frac& f) { 
+    inline friend ostream& operator << (ostream& s, const frac& f) {
         s << f.first; if (f.second != 1) s << "/" << f.second; return s;
     }
 };
@@ -87,7 +76,7 @@ inline frac operator / (const frac& a, const frac& b) {
     return res;
 }
 inline frac abs(const frac& a) {
-    frac res; res = a; res.normalize(); 
+    frac res; res = a; res.normalize();
     if (res.first < 0) res.first = res.first * (-1);
     return res;
 }
@@ -101,16 +90,20 @@ inline const frac& frac::operator /= (const frac& x) {*this = *this / x; return 
 inline const frac& frac::operator /= (long long x) {*this = *this / x; return *this;}
 
 
-
 long double cost(const frac &f, long long T) {
     long double df = f.to_d();
     return sqrt(df * T * T / 2 + 0.5 / df);
 }
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long T; int N;
     cin >> T >> N;
-    const frac center(1, T); // 45 ÅÙÂÇ¤Á½Ğ¤·¤Î¾ì¹ç
+    const frac center(1, T); // 45 åº¦æ‰“ã¡å‡ºã—ã®å ´åˆ
     using pf = pair<frac,frac>;
     vector<pf> upper, lower, middle;
     for (int i = 0; i < N; ++i) {
@@ -127,7 +120,7 @@ int main() {
             return a.first > b.first;});
 
     long double res = 0.0;
-    frac left = 0, right = 1000100; // right * 10^12/4 ¤¬¥ª¡¼¥Ğ¡¼¥Õ¥í¡¼¤·¤Ê¤¤¤è¤¦¤Ë
+    frac left = 0, right = 1000100; // right * 10^12/4 ãŒã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ã—ãªã„ã‚ˆã†ã«
     for (auto inter : lower) {
         if (left >= inter.first) continue;
         res += cost(inter.second, T);

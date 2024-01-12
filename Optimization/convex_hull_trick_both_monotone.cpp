@@ -61,6 +61,10 @@ template<class T> struct CHT {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long N; cin >> N;
     vector<long long> a(N), res(N, 1LL<<60);

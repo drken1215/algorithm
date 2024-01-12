@@ -218,9 +218,10 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
 };
 
 
-/*/////////////////////////////*/
+
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void ARC033_C() {
     int Q;
@@ -360,11 +361,10 @@ void AOJ3333() {
     }
 }
 
+
 int main() {
     //ARC033_C();
     //AtCoderDwango5Honsen_B();
     //ABC281_E();
     AOJ3333();
 }
-
-

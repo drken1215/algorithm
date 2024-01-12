@@ -1,8 +1,8 @@
 //
-// Â¿ÇÜÄ¹À°¿ô
+// å¤šå€é•·æ•´æ•°
 //
 // verified
-//   ARC 007 D - ÇË¤ì¤¿½ÉÂê
+//   ARC 007 D - ç ´ã‚ŒãŸå®¿é¡Œ
 //     https://atcoder.jp/contests/arc007/tasks/arc007_4
 //
 
@@ -23,7 +23,7 @@ struct bint : vector<long long> {
     // constructor
     bint(long long num = 0) : vector<long long>(DEFAULT_SIZE, 0), sign(1) {
         if (num < 0) sign = -1, num = -num;
-        (*this)[0] = num; 
+        (*this)[0] = num;
         this->normalize();
     }
     bint(int size, long long num) : vector<long long>(size, num), sign(1) {}
@@ -62,8 +62,8 @@ struct bint : vector<long long> {
                 break;
             }
         }
-        if (!allzero) res.sign = -res.sign; 
-        return res; 
+        if (!allzero) res.sign = -res.sign;
+        return res;
     }
     bint& operator += (const bint& r) {
         while (size() < r.size()) this->emplace_back(0);
@@ -109,7 +109,7 @@ struct bint : vector<long long> {
         return this->normalize();
     }
     bint& operator *= (const bint& r) {
-        int tx = (int)size()-1, ty = (int)r.size()-1; 
+        int tx = (int)size()-1, ty = (int)r.size()-1;
         for (tx = size()-1; tx >= 0; --tx) if ((*this)[tx] > 0) break;
         for (ty = r.size()-1; ty >= 0; --ty) if (r[ty] > 0) break;
         bint res(0);
@@ -205,7 +205,7 @@ struct bint : vector<long long> {
         if (x.sign < y.sign) return true;
         else if (x.sign > y.sign) return false;
         else {
-            int tx = (int)x.size()-1, ty = (int)y.size()-1; 
+            int tx = (int)x.size()-1, ty = (int)y.size()-1;
             for (tx = x.size()-1; tx >= 0; --tx) if (x[tx] > 0) break;
             for (ty = y.size()-1; ty >= 0; --ty) if (y[ty] > 0) break;
             if (tx < ty) return true;
@@ -227,7 +227,7 @@ struct bint : vector<long long> {
     friend bool operator >= (const bint& x, const bint& y) { return !(x < y); }
     friend bool operator == (const bint &x, const bint& y) {
         if (x.sign != y.sign) return false;
-        int tx = (int)x.size()-1, ty = (int)y.size()-1; 
+        int tx = (int)x.size()-1, ty = (int)y.size()-1;
         for (tx = x.size()-1; tx >= 0; --tx) if (x[tx] > 0) break;
         for (ty = y.size()-1; ty >= 0; --ty) if (y[ty] > 0) break;
         if (tx != ty) return false;
@@ -255,7 +255,7 @@ bint toBint(const string &is) {
 string toStr(const bint &r) {
     stringstream ss;
     if (r.sign == -1) ss << '-';
-    int d = (int)r.size()-1; 
+    int d = (int)r.size()-1;
     for (; d >= 0; --d) if (r[d] > 0) break;
     if (d == -1) ss << 0;
     else ss << r[d];
@@ -275,7 +275,7 @@ istream &operator >> (istream &is, bint &x) {
 
 ostream &operator << (ostream &os, const bint &x) {
     if (x.sign == -1) os << '-';
-    int d = x.size()-1; 
+    int d = x.size()-1;
     for (d = x.size()-1; d >= 0; --d) if (x[d] > 0) break;
     if (d == -1) os << 0;
     else os << x[d];
@@ -289,12 +289,12 @@ ostream &operator << (ostream &os, const bint &x) {
 
 
 
-/////////////////////////////////////////
-// solver
-/////////////////////////////////////////
+//------------------------------//
+// Examples
+//------------------------------//
 
-// ½é¹à¤¬ syoko, ÂèÆó¹à¤ò niko ¤È¤¹¤ë¤³¤È¤¬²ÄÇ½¤«¤É¤¦¤«
-// S ¤ÎÀèÆ¬¤Ï niko ¤ÎÀèÆ¬¤«¤é»Ï¤Ş¤ë
+// åˆé …ãŒ syoko, ç¬¬äºŒé …ã‚’ niko ã¨ã™ã‚‹ã“ã¨ãŒå¯èƒ½ã‹ã©ã†ã‹
+// S ã®å…ˆé ­ã¯ niko ã®å…ˆé ­ã‹ã‚‰å§‹ã¾ã‚‹
 bool isValid(const string &S, const bint &syoko, const bint &niko) {
     if (niko <= syoko) return false;
     int N = (int)S.size();
@@ -318,16 +318,16 @@ bool isValid(const string &S, const bint &syoko, const bint &niko) {
     return true;
 }
 
-// »î¤¹
+// è©¦ã™
 void judge(const string &S, const bint& syoko, const bint& niko_koho, bint& niko) {
     if (!isValid(S, syoko, niko_koho)) return;
     if (niko == 0) niko = niko_koho;
     else if (niko_koho < niko) niko = niko_koho;
 }
 
-// ²ò¤¯
+// è§£ã
 void solve(string S) {
-    // ½é¹à
+    // åˆé …
     if (S[0] == '0') S = "1" + S;
     int zeronum = 0;
     for (int i = 1; i < S.size(); ++i) {
@@ -349,15 +349,15 @@ void solve(string S) {
         judge(S, syoko, niko_koho, niko);
     }
 
-    // +1 ¤¬ valid ¤«
+    // +1 ãŒ valid ã‹
     judge(S, syoko, syoko + 1, niko);
 
-    // 0 ¤ò·Ò¤²¤Æ¤¤¤¯
+    // 0 ã‚’ç¹‹ã’ã¦ã„ã
     bint niko_koho = toBint(S);
     while (niko_koho <= syoko) niko_koho *= 10;
     judge(S, syoko, niko_koho, niko);
 
-    // ½ĞÎÏ
+    // å‡ºåŠ›
     cout << syoko << " " << niko - syoko << endl;
 }
 

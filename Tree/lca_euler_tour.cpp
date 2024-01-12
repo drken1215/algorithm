@@ -10,6 +10,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // Sparse Table
 template<class MeetSemiLattice> struct SparseTable {
     vector<vector<pair<MeetSemiLattice,int> > > dat;
@@ -83,6 +84,12 @@ struct EulerTour {
         return node[st.get(a, b+1).second];
     }
 };
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main () {
     // グラフの入力

@@ -181,7 +181,7 @@ template<class T> struct Matrix {
 
 
 //------------------------------//
-//  Examples
+// Examples
 //------------------------------//
 
 void AOJ_2171() {

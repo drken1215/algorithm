@@ -16,6 +16,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // Cartesian Tree
 template<class T> struct CartesianTree {
     int root;  // root
@@ -43,9 +44,9 @@ template<class T> struct CartesianTree {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void YosupoJudge() {
     int N;

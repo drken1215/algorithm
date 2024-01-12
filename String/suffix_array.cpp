@@ -279,9 +279,9 @@ template<class Str> struct SuffixArray {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // Yosupo Judge Suffix Array
 void YosupoJudgeSuffixArray() {

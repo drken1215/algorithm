@@ -1,5 +1,5 @@
 //
-// ±ß¤ÈÂ¿³Ñ·Á¤Î¶¦ÄÌÉôÊ¬¤ÎÌÌÀÑ
+// å††ã¨å¤šè§’å½¢ã®å…±é€šéƒ¨åˆ†ã®é¢ç©
 //
 // verified:
 //   AOJ Course CGL_7_H: Intersection of a Circle and a Polygon
@@ -14,9 +14,9 @@
 using namespace std;
 
 
-////////////////////////////
-// ´ğËÜÍ×ÁÇ (ÅÀ, ÀşÊ¬, ±ß)
-////////////////////////////
+//------------------------------//
+// åŸºæœ¬è¦ç´  (ç‚¹, ç·šåˆ†, å††)
+//------------------------------//
 
 using DD = long double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -68,9 +68,9 @@ struct Circle : Point {
 
 
 
-//////////////////////////////
-// ±ß¤ÈÀşÊ¬¤Î¸òÅÀ
-//////////////////////////////
+//------------------------------//
+// å††ã¨ç·šåˆ†ã®äº¤ç‚¹
+//------------------------------//
 
 int ccw_for_crosspoint_cs(const Point &a, const Point &b, const Point &c) {
     if (cross(b-a, c-a) > EPS) return 1;
@@ -102,11 +102,11 @@ vector<Point> crosspoint_CS(const Circle &e, const Line &s) {
 }
 
 
-//////////////////////////////
-// ±ß¤ÈÂ¿³Ñ·Á¤Î¶¦ÄÌÉôÊ¬¤ÎÌÌÀÑ
-//////////////////////////////
+//------------------------------//
+// å††ã¨å¤šè§’å½¢ã®å…±é€šéƒ¨åˆ†ã®é¢ç©
+//------------------------------//
 
-// ¸¶ÅÀ, ÅÀ x, ÅÀ y ¤È¤Ç°Ï¤Ş¤ì¤ëÎÎ°è¤ÎÌÌÀÑ (»°³Ñ·Á ver ¤ÈÀğ·¿ ver)
+// åŸç‚¹, ç‚¹ x, ç‚¹ y ã¨ã§å›²ã¾ã‚Œã‚‹é ˜åŸŸã®é¢ç© (ä¸‰è§’å½¢ ver ã¨æ‰‡å‹ ver)
 DD calc_element(const Point &x, const Point &y, DD r, bool triangle) {
     if (triangle) return cross(x, y) / 2;
     else {
@@ -116,7 +116,7 @@ DD calc_element(const Point &x, const Point &y, DD r, bool triangle) {
     }
 }
 
-// ±ß C ¤È¡¢»°³Ñ·Á ((0, 0), ia, ib) ¤È¤Î¶¦ÄÌÉôÊ¬¤ÎÌÌÀÑ
+// å†† C ã¨ã€ä¸‰è§’å½¢ ((0, 0), ia, ib) ã¨ã®å…±é€šéƒ¨åˆ†ã®é¢ç©
 DD calc_common_area(const Circle &c, const Point &ia, const Point &ib) {
     Point a = ia - c, b = ib - c;
     if (abs(a - b) < EPS) return 0;
@@ -132,7 +132,7 @@ DD calc_common_area(const Circle &c, const Point &ia, const Point &ib) {
         + calc_element(a, s, c.r, isin_a) + calc_element(t, b, c.r, isin_b);
 }
 
-// ±ß c ¤ÈÂ¿³Ñ·Á pol ¤Î¶¦ÄÌÉôÊ¬¤ÎÌÌÀÑ
+// å†† c ã¨å¤šè§’å½¢ pol ã®å…±é€šéƒ¨åˆ†ã®é¢ç©
 DD calc_common_area(const Circle &c, const vector<Point> &pol) {
     DD res = 0;
     int N = pol.size();

@@ -1,7 +1,6 @@
 //
-// ¥Ç¥Ğ¥Ã¥°ÍÑ¥Ş¥¯¥í¤Ê¤É
+// ãƒ‡ãƒãƒƒã‚°
 //
-
 
 
 #include <iostream>
@@ -17,7 +16,7 @@ template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 
 
-// debug stream of pair, vector 
+// debug stream of pair, vector
 #define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
 template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
 { return s << '<' << P.first << ", " << P.second << '>'; }

@@ -139,9 +139,9 @@ private:
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 //Yosupo Library Checker - Gcd of Gaussian Integers
 void Yosupo_Gcd_of_Gaussian_Integers() {

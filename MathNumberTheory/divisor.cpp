@@ -32,6 +32,11 @@ vector<long long> calc_divisor(long long n) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     long long N, M;
     cin >> N >> M;

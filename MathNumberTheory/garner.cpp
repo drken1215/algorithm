@@ -95,6 +95,10 @@ long long Garner(vector<long long> b, vector<long long> m, long long MOD) {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     int N; cin >> N;
     vector<long long> b(N), m(N);

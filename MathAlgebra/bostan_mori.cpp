@@ -552,9 +552,10 @@ template <typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q,
 }
 
 
-////////////////////////////////////////
-// solver
-////////////////////////////////////////
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 void TDPC_T() {
     const int MOD = 1000000007;
@@ -571,7 +572,6 @@ void TDPC_T() {
     for (int i = 1; i < Q.size(); ++i) Q[i] = mint(-1);
     cout << BostanMori(P, Q, N - 1) << endl;
 }
-
 
 
 void ARC160_D() {

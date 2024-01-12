@@ -15,7 +15,8 @@ using Graph = vector<vector<int>>;
 
 int main() {
     // 頂点数と辺数
-    int N, M; cin >> N >> M;
+    int N, M;
+    cin >> N >> M;
 
     // グラフ入力受取
     Graph G(N);

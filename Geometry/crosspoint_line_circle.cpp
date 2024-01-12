@@ -15,9 +15,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -68,9 +68,9 @@ struct Circle : Point {
 };
 
 
-////////////////////////////
+//------------------------------//
 // 円や直線の交点
-////////////////////////////
+//------------------------------//
 
 Point proj_for_crosspoint(const Point &p, const Line &l) {
     DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
@@ -116,7 +116,14 @@ vector<Point> crosspoint(const Circle &e, const Line &l) {
 
 
 
-bool cmp(const Point &a, const Point &b) { return make_pair(a.x, a.y) < make_pair(b.x, b.y); }
+//------------------------------//
+// Examples
+//------------------------------//
+
+bool cmp(const Point &a, const Point &b) {
+    return make_pair(a.x, a.y) < make_pair(b.x, b.y);
+}
+
 int main() {
     Circle c; cin >> c.x >> c.y >> c.r;
     int Q; cin >> Q;

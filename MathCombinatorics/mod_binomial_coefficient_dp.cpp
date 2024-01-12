@@ -58,6 +58,11 @@ long long modpow(long long a, long long n, long long mod) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
     COMinit();
     const int MOD2 = 1000000007;

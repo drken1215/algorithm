@@ -22,6 +22,7 @@
 using namespace std;
 
 
+// RMQ
 template<class Monoid> struct RMQ {
     Monoid INF;
     int SIZE_R;
@@ -77,6 +78,10 @@ template<class Monoid> struct RMQ {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N, Q; cin >> N >> Q;

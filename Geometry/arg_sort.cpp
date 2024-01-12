@@ -107,9 +107,9 @@ template<class DD> void arg_sort(vector<Point<DD>> &v) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Sort_Points_by_Argument() {
     int N;

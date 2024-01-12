@@ -140,9 +140,9 @@ template<class FLOWTYPE> FLOWTYPE FordFulkerson(FlowGraph<FLOWTYPE> &G, int s, i
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // AOJ
 void AOJ_Course_GRL_6_A() {

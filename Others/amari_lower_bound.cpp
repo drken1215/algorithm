@@ -12,7 +12,6 @@
 using namespace std;
 
 
-
 // pn + r (n は非負整数) で表せる整数のうち、x 以上となる最小の整数
 long long amari_lower_bound(long long p, long long r, long long x) {
     if (r >= x) return r;
@@ -20,6 +19,10 @@ long long amari_lower_bound(long long p, long long r, long long x) {
 }
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 // matrix
 int MOD;

@@ -284,9 +284,9 @@ template<class Monoid, class Action> struct LazySegmentTree {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // RMQ and RUQ (change the val / min)
 void AOJ_RMQ_RUQ() {

@@ -25,6 +25,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // removable min heap
 template<class T> struct removable_min_heap {
     // inner data
@@ -91,9 +92,9 @@ template<class T> struct removable_max_heap {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // ABC 281 E - Least Elements
 void ABC_281_E() {

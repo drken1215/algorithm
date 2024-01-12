@@ -356,9 +356,9 @@ template<typename mint> struct Poly : vector<mint> {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Convolution() {
     const int MOD = 998244353;

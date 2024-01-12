@@ -9,6 +9,8 @@
 #include <iostream>
 using namespace std;
 
+
+// RBST
 typedef long long VAL;
 const VAL SUM_UNITY = 0;
 struct RBST {
@@ -213,6 +215,12 @@ struct RBST {
 		cout << "}" << endl;
 	}
 };
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
 	RBST S;

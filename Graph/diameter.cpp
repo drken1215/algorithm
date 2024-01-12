@@ -39,6 +39,11 @@ struct Diameter {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 using Graph = vector<vector<int> >;
 int N;
 Graph G;

@@ -114,9 +114,14 @@ template<int MOD> struct Fp {
     }
 };
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 const int MOD = 998244353;
 using mint = Fp<MOD>;
-
 
 // 級数和を求める
 vector<mint> operator + (const vector<mint> &f, const vector<mint> &g) {

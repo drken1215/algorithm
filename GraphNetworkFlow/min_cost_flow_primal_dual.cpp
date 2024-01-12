@@ -193,9 +193,9 @@ MinCostFlow(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T)
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // AOJ
 void AOJ_Course_GRL_6_B() {

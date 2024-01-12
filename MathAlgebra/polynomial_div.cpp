@@ -407,9 +407,9 @@ template<typename mint> struct Poly : vector<mint> {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Division_of_Polynomials() {
     const int MOD = 998244353;

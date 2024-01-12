@@ -1,5 +1,5 @@
 //
-// Ãµ∏˛•™•§•È°ºœ©§Úµ·§·§Î
+// ÁÑ°Âêë„Ç™„Ç§„É©„ÉºË∑Ø„ÇíÊ±Ç„ÇÅ„Çã
 //
 // verified:
 //   Codeforces 554 DIV2 E. Neko and Flashback
@@ -125,6 +125,11 @@ struct Euler {
     }
 };
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 void solve(const vector<int> &a, const vector<int> &b) {
     vector<int> vals;

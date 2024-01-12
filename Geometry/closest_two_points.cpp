@@ -15,9 +15,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点, 線分, 円)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -96,6 +96,11 @@ DD Closet(vector<Point> ps) {
     return DivideAndConqur(ps.begin(), n);
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N; cin >> N;

@@ -167,9 +167,10 @@ template<class mint> struct BiCoef {
 };
 
 
-/*/////////////////////////////*/
+
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void Yosupo_Binomial_Coefficient() {
     const int MAX = 11000000;

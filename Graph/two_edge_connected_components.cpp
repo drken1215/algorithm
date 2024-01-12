@@ -184,8 +184,14 @@ struct LCA {
 };
 
 
+
+//------------------------------//
+// Examples
+//------------------------------//
+
 int main() {
-    int V, E; cin >> V >> E;
+    int V, E;
+    cin >> V >> E;
     Graph G(V);
     for (int i = 0; i < E; ++i) {
         int s, t; cin >> s >> t; --s, --t;

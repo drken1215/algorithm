@@ -1,7 +1,7 @@
 //
 // LIS (Longest Increasing Sequence)
-//   ¿ôÎó a ¤ÎºÇÄ¹Áı²ÃÉôÊ¬Îó¤òµá¤á¤ë
-//     is_strong = true ¤Î¤È¤­¶¹µÁÃ±Ä´Áı²Ã¤Ê¤â¤Î¡¢false ¤Î¤È¤­¹­µÁÃ±Ä´Áı²Ã¤Ê¤â¤Î
+//   æ•°åˆ— a ã®æœ€é•·å¢—åŠ éƒ¨åˆ†åˆ—ã‚’æ±‚ã‚ã‚‹
+//     is_strong = true ã®ã¨ãç‹­ç¾©å˜èª¿å¢—åŠ ãªã‚‚ã®ã€false ã®ã¨ãåºƒç¾©å˜èª¿å¢—åŠ ãªã‚‚ã®
 //
 // verified
 //   AOJ Course DPL_1_D Combinatorial - Longest Increasing Subsequence
@@ -15,7 +15,7 @@
 using namespace std;
 
 
-// dp[i] := Ä¹¤µ¤¬ i ¤ÎÁı²ÃÉôÊ¬Îó¤È¤·¤ÆºÇ¸åÈø¤ÎÍ×ÁÇ¤Î¤È¤ê¤¦¤ëºÇ¾®ÃÍ
+// dp[i] := é•·ã•ãŒ i ã®å¢—åŠ éƒ¨åˆ†åˆ—ã¨ã—ã¦æœ€å¾Œå°¾ã®è¦ç´ ã®ã¨ã‚Šã†ã‚‹æœ€å°å€¤
 template<class T> int LIS(vector<T> a,  bool is_strong = true) {
     const T INF = 1<<30; // to be set appropriately
     int n = (int)a.size();
@@ -27,6 +27,11 @@ template<class T> int LIS(vector<T> a,  bool is_strong = true) {
     return lower_bound(dp.begin(), dp.end(), INF) - dp.begin();
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     int N; cin >> N;

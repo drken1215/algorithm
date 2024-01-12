@@ -19,6 +19,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // a^x ≡ b (mod. m) となる最小の正の整数 x を求める
 long long modlog(long long a, long long b, int m) {
     auto modpow = [&](long long a, long long n, long long m) -> long long {
@@ -74,9 +75,9 @@ long long modlog(long long a, long long b, int m) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void subcheck(long long a, long long m) {
     vector<long long> correct(m, -1);

@@ -159,9 +159,9 @@ template<class FLOWTYPE> FLOWTYPE Dinic(FlowGraph<FLOWTYPE> &G, int s, int t) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 void KUPC_2016_E() {
     const vector<int> dx = {1, 0, -1, 0};

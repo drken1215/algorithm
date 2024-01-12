@@ -153,6 +153,9 @@ template <class Abel> struct BIT {
 
 
 
+//------------------------------//
+// Examples
+//------------------------------//
 
 /* AOJ 2667 Tree */
 int main() {

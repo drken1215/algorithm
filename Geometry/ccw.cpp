@@ -13,9 +13,9 @@
 using namespace std;
 
 
-////////////////////////////
+//------------------------------//
 // 基本要素 (点)
-////////////////////////////
+//------------------------------//
 
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
@@ -77,6 +77,11 @@ bool is_contain(const Point &p, const Point &a, const Point &b, const Point &c) 
     return false;
 }
 
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 int main() {
     Point a, b, c;

@@ -71,11 +71,9 @@
 
 ## 各種高速化アルゴリズム
 
-- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum.cpp)
-- (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DP/cumulative_sum_2D.cpp)
-- (★☆☆☆) [いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos.cpp)
-- (★★☆☆) [二次元いもす法 (俗称)](https://github.com/drken1215/algorithm/blob/master/DP/imos_2D.cpp)
-- (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DP/sliding_minimum.cpp)
+- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructure/cumulative_sum.cpp)
+- (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructure/cumulative_sum_2D.cpp)
+- (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructure/sliding_minimum.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 
@@ -304,8 +302,7 @@
 
 ## 行列
 
-- (★★☆☆) [行列 (基本演算)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix.cpp)
-- (★★★☆) [行列累乗, ランク, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
+- (★★★☆) [行列累乗, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [行列累乗, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [行列累乗, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - (★★★★) Black Box Linear Algebra
