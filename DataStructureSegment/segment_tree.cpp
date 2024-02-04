@@ -14,6 +14,9 @@
 //   ABC 307 F - Virus 2 (for max_right)
 //     https://atcoder.jp/contests/abc307/tasks/abc307_f
 //
+//   ABC 339 G - Smaller Sum (merge-sort tree)
+//     https://atcoder.jp/contests/abc339/tasks/abc339_g
+//
 
 
 #include <bits/stdc++.h>
@@ -349,16 +352,76 @@ void ABC_307_F() {
         cout << (dp[v].first <= D ? dp[v].first : -1) << endl;
     }
 }
-    
 
-int main() {
-    ACL_practice_J();
-    //ARC_008_D();
-    //ABC_281_E();
-    //ABC_307_F();
+// ABC 339 G
+void ABC_339_G() {
+    int N;
+    cin >> N;
+    vector<long long> A(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    
+    // merge sort tree (with 累積和)
+    using Node = pair<vector<long long>, vector<long long>>;
+    auto merge = [&](const vector<long long> &l, const vector<long long> &r) {
+        vector<long long> res;
+        int lp = 0, rp = 0;
+        while (lp < l.size() || rp < r.size()) {
+            if (lp == l.size()) res.push_back(r[rp++]);
+            else if (rp == r.size()) res.push_back(l[lp++]);
+            else if (l[lp] < r[rp]) res.push_back(l[lp++]);
+            else res.push_back(r[rp++]);
+        }
+        return res;
+    };
+    auto merge2 = [&](const Node &l, const Node &r) {
+        const auto &res = merge(l.first, r.first);
+        vector<long long> sum({0});
+        for (auto v : res) sum.push_back(sum.back() + v);
+        return Node(res, sum);
+    };
+    Node unity(vector<long long>(), vector<long long>({0}));
+    vector<Node> vec(N);
+    for (int i = 0; i < N; ++i) {
+        vec[i] = Node(vector<long long>({A[i]}), vector<long long>({0, A[i]}));
+    }
+    SegmentTree<Node> seg(vec, merge2, unity);
+    
+    // セグ木の構造を利用して X 以下の値の総和を求める
+    auto getsum = [&](long long X, const Node &node) {
+        int id = lower_bound(node.first.begin(), node.first.end(), X + 1) - node.first.begin();
+        return node.second[id];
+    };
+    auto query = [&](auto query, int l, int r, long long X, int id, int left, int right) {
+        if (l <= left && right <= r) {
+            return getsum(X, seg.dat[id]);
+        } else if (l < right && left < r) {
+            int mid = (left + right) / 2;
+            return query(query, l, r, X, id*2, left, mid)
+                + query(query, l, r, X, id*2+1, mid, right);
+        } else {
+            return 0LL;
+        }
+    };
+    
+    // query
+    int Q;
+    cin >> Q;
+    long long res = 0;
+    while (Q--) {
+        long long a, b, c;
+        cin >> a >> b >> c;
+        long long L = a ^ res, R = b ^ res, X = c ^ res;
+        --L;
+        res = query(query, L, R, X, 1, 0, seg.offset);
+        cout << res << endl;
+    }
 }
 
 
-
-
-
+int main() {
+    //ACL_practice_J();
+    //ARC_008_D();
+    //ABC_281_E();
+    //ABC_307_F();
+    ABC_339_G();
+}
