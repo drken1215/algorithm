@@ -94,7 +94,7 @@
 - (★★★☆) [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
 - (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
 - (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
-- (★★★☆) [マージソート木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/marge_sort_tree.cpp)
+- (★★★☆) [マージソート木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
 - (★★★★) Segment Tree Beats (俗称)
 
 ## Binary Indexed 木
