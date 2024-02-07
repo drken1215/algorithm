@@ -5,37 +5,130 @@
 //   https://drken1215.hatenablog.com/entry/2019/01/16/030000
 //
 // verified
+//   ARC 171 D - Rolling Hash
+//     https://atcoder.jp/contests/arc171/tasks/arc171_d
+//
 //   AOJ 2136 Webby Subway
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2136
 //
 
 
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <iomanip>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-// 彩色数
-long long modpow(long long a, long long n, long long MOD) {
-    long long res = 1;
-    while (n > 0) {
-        if (n & 1) res = res * a % MOD;
-        a = a * a % MOD;
-        n >>= 1;
+// modint
+template<int MOD> struct Fp {
+    // inner value
+    long long val;
+    
+    // constructor
+    constexpr Fp() : val(0) { }
+    constexpr Fp(long long v) : val(v % MOD) {
+        if (val < 0) val += MOD;
     }
-    return res;
-}
-int chromatic_number(const vector<vector<int> > &G) {
-    const int MOD = 1000000007;
+    constexpr long long get() const { return val; }
+    constexpr int get_mod() const { return MOD; }
+    
+    // arithmetic operators
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) {
+        val += r.val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -= (const Fp &r) {
+        val -= r.val;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    constexpr Fp& operator *= (const Fp &r) {
+        val = val * r.val % MOD;
+        return *this;
+    }
+    constexpr Fp& operator /= (const Fp &r) {
+        long long a = r.val, b = MOD, u = 1, v = 0;
+        while (b) {
+            long long t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        val = val * u % MOD;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    constexpr Fp pow(long long n) const {
+        Fp res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    constexpr Fp inv() const {
+        Fp res(1), div(*this);
+        return res / div;
+    }
+
+    // other operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
+    constexpr Fp& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    constexpr Fp operator ++ (int) const {
+        Fp res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr Fp operator -- (int) const {
+        Fp res = *this;
+        --*this;
+        return res;
+    }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+        is >> x.val;
+        x.val %= MOD;
+        if (x.val < 0) x.val += MOD;
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+        return os << x.val;
+    }
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+        return r.pow(n);
+    }
+    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+        return r.inv();
+    }
+};
+
+int chromatic_number(const vector<vector<int>> &G) {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
     int n = (int)G.size();
     vector<int> neighbor(n, 0);
     for (int i = 0; i < n; ++i) {
         int S = (1<<i);
-        for (int j = 0; j < n; ++j)
-            if (G[i][j])
-                S |= (1<<j);
+        for (int j = 0; j < n; ++j) if (G[i][j]) S |= (1<<j);
         neighbor[i] = S;
     }
     
@@ -55,11 +148,10 @@ int chromatic_number(const vector<vector<int> > &G) {
         // then
         //   f[S] = sum_{T in S} g(T)
         //   g[S] = sum_{T in S} (-1)^(|S|-|T|)f[T]
-        long long g = 0;
+        mint g = 0;
         for (int S = 0; S < (1<<n); ++S) {
-            if ((n - __builtin_popcount(S)) & 1) g -= modpow(I[S], mid, MOD);
-            else g += modpow(I[S], mid, MOD);
-            g = (g % MOD + MOD) % MOD;
+            if ((n - __builtin_popcount(S)) & 1) g -= mint(I[S]).pow(mid);
+            else g += mint(I[S]).pow(mid);
         }
         if (g != 0) high = mid;
         else low = mid;
@@ -69,10 +161,28 @@ int chromatic_number(const vector<vector<int> > &G) {
 
 
 
-////////////////////////////
-// solver
-////////////////////////////
+//------------------------------//
+// Examples
+//------------------------------//
 
+// ARC 171 D
+void ARC_171_D() {
+    long long P, B, N, M;
+    cin >> P >> B >> N >> M;
+    
+    vector<vector<int>> G(N+1, vector<int>(N+1, 0));
+    for (int i = 0; i < M; ++i) {
+        int l, r;
+        cin >> l >> r;
+        --l;
+        G[l][r] = G[r][l] = 1;
+    }
+    if (chromatic_number(G) <= P) cout << "Yes" << endl;
+    else cout << "No" << endl;
+}
+
+
+// AOJ 2136 - Webby Subway
 using DD = double;
 const DD INF = 1LL<<60;      // to be set appropriately
 const DD EPS = 1e-10;        // to be set appropriately
@@ -131,22 +241,18 @@ bool isinterSS(const Line &s, const Line &t) {
             ccw_for_dis(t[0], t[1], s[0]) * ccw_for_dis(t[0], t[1], s[1]) <= 0);
 }
 
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-int main() {
+void AOJ_2136() {
     int N;
     while (cin >> N, N) {
-        vector<vector<int> > G(N, vector<int>(N, 0));
-        vector<vector<Line> > lines(N);
+        vector<vector<int>> G(N, vector<int>(N, 0));
+        vector<vector<Line>> lines(N);
         for (int i = 0; i < N; ++i) {
-            int num; cin >> num;
-            double x, y; cin >> x >> y;
+            int num;
+            double x, y;
+            cin >> num >> x >> y;
             for (int j = 1; j < num; ++j) {
-                double nx, ny; cin >> nx >> ny;
+                double nx, ny;
+                cin >> nx >> ny;
                 Line l(Point(x, y), Point(nx, ny));
                 lines[i].push_back(l);
                 x = nx, y = ny;
@@ -166,3 +272,10 @@ int main() {
         cout << chromatic_number(G) << endl;
     }
 }
+
+
+int main() {
+    ARC_171_D();
+    //AOJ_2136();
+}
+
