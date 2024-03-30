@@ -106,7 +106,7 @@
 ## 動的・二次元セグメント木
 
 - (★★★☆) 動的セグメント木
-- (★★★☆) 二次元セグメント木
+- (★★★☆) [二次元セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_2d.cpp)
 - (★★★☆) [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D.cpp)
 - (★★★★) [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D_RAQ.cpp)
 - (★★★★) 動的二次元セグメント木
