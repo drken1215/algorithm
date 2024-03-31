@@ -116,11 +116,13 @@
 
 - (★★★☆) [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sparse_table.cpp)
 - (★★★★) [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/disjoint_sparse_table.cpp)
+- (★★★★) 二次元 Sparse Table
 
 ## ウェーブレット行列
 
 - (★★★★) [ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
 - (★★★★) [BIT on ウェーブレット行列 (一点加算対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
+- (★★★★) セグメント木 on ウェーブレット行列
 - (★★★★) 動的ウェーブレット行列
 
 ## 平衡二分探索木
@@ -469,7 +471,7 @@
 
 ## その他
 
-- (★☆☆☆) [pn + r (n は非負整数) で表せる整数のうち, x 以上となる最小の整数](https://github.com/drken1215/algorithm/blob/master/Others/amari_lower_bound.cpp)
+- (★☆☆☆) [m で割って r 余る, x 以上の最小の整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/amari_lower_bound.cpp)
 - (★★☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
 - (★★★☆) [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Stern_Brocot.cpp)
 
