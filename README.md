@@ -122,7 +122,7 @@
 
 - (★★★★) [ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
 - (★★★★) [BIT on ウェーブレット行列 (一点加算対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
-- (★★★★) セグメント木 on ウェーブレット行列
+- (★★★★) [セグメント木 on ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_on_wavelet_matrix.cpp)
 - (★★★★) 動的ウェーブレット行列
 
 ## 平衡二分探索木
