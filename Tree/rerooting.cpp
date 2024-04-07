@@ -2,6 +2,9 @@
 // 抽象化した全方位木 DP
 //
 // verified:
+//   EDPC V - Subtree
+//     https://atcoder.jp/contests/dp/tasks/dp_v
+//
 //   AtCoder ABC 348 E - Minimize Sum of Distances
 //     https://atcoder.jp/contests/abc348/tasks/abc348_e
 //
@@ -109,7 +112,36 @@ template<class Monoid, class Edge> struct ReRooting {
 // Examples
 //------------------------------//
 
-// ABC 348 E
+// TDPC V - Subtree
+void TDPC_V() {
+    int N, M;
+    cin >> N >> M;
+    
+    using Edge = int;
+    using Graph = vector<vector<Edge>>;
+    Graph G(N);
+    for (int i = 0; i < N - 1; ++i) {
+        int x, y;
+        cin >> x >> y;
+        --x, --y;
+        G[x].push_back(y);
+        G[y].push_back(x);
+    }
+    
+    using Monoid = long long;
+    Monoid identity = 1;
+    auto getid = [&](Edge e) -> int { return e; };
+    auto addedge = [&](Edge e, Monoid a) -> Monoid { return a; };
+    auto merge = [&](Monoid a, Monoid b) -> Monoid { return a * b % M; };
+    auto addnode = [&](int v, Monoid a) -> Monoid { return (a + 1) % M; };
+    ReRooting<Monoid, Edge> rr(G, identity, getid, addedge, merge, addnode);
+    
+    for (int v = 0; v < N; ++v) {
+        cout << (rr.get(v) + M - 1) % M << endl;
+    }
+}
+
+// ABC 348 E - Minimize Sum of Distances
 void ABC_348_E() {
     using Edge = int;
     using Graph = vector<vector<Edge>>;
@@ -155,8 +187,8 @@ void ABC_348_E() {
 }
 
 
-
 int main() {
-    ABC_348_E();
+    TDPC_V();
+    //ABC_348_E();
 }
 
