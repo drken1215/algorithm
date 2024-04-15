@@ -1,5 +1,5 @@
 //
-// 抽象化した全方位木 DP
+// 抽象化した全方位木 DP (木 DP パートで辺に関する処理も行う場合)
 //
 // verified:
 //   EDPC V - Subtree
@@ -12,7 +12,7 @@
 /*
     通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
  　　　1. res = IDENTITY
- 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, rec(v2))
+ 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, ADDEDGE(e, rec(v2)))
  　　　3. return ADDNODE(v, res)
  　　というような更新を行うものとする。
  　　このような木 DP を全方位木 DP へと拡張する。
@@ -24,14 +24,18 @@ using namespace std;
 
 
 // re-rooting
-template<class Monoid> struct ReRooting {
-    using Graph = vector<vector<int>>;
+template<class Monoid, class Edge> struct ReRooting {
+    using Graph = vector<vector<Edge>>;
+    using GetIdFunc = function<int(Edge)>;
+    using AddEdgeFunc = function<Monoid(Edge, Monoid)>;
     using MergeFunc = function<Monoid(Monoid, Monoid)>;
     using AddNodeFunc = function<Monoid(int, Monoid)>;
     
     // core member
     Graph G;
     Monoid IDENTITY;
+    GetIdFunc GETID;
+    AddEdgeFunc ADDEDGE;
     MergeFunc MERGE;
     AddNodeFunc ADDNODE;
     
@@ -40,10 +44,12 @@ template<class Monoid> struct ReRooting {
     
     // constructor
     ReRooting() {}
-    ReRooting(const Graph &g, const Monoid &identity,
-              const MergeFunc &merge, const AddNodeFunc &addnode) {
+    ReRooting(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
+              const AddEdgeFunc &addedge, const MergeFunc &merge, const AddNodeFunc &addnode) {
         G = g;
         IDENTITY = identity;
+        GETID = getid;
+        ADDEDGE = addedge;
         MERGE = merge;
         ADDNODE = addnode;
         build();
@@ -54,16 +60,16 @@ template<class Monoid> struct ReRooting {
         Monoid res = IDENTITY;
         dp[v].assign(G[v].size(), IDENTITY);
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = GETID(G[v][i]);
             if (v2 == p) continue;
             dp[v][i] = rec(v2, v);
-            res = MERGE(res, dp[v][i]);
+            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
         }
         return ADDNODE(v, res);
     }
     void rerec(int v, int p, Monoid pval) {
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = GETID(G[v][i]);
             if (v2 == p) {
                 dp[v][i] = pval;
                 continue;
@@ -72,37 +78,38 @@ template<class Monoid> struct ReRooting {
         vector<Monoid> left(G[v].size() + 1, IDENTITY);
         vector<Monoid> right(G[v].size() + 1, IDENTITY);
         for (int i = 0; i < G[v].size(); ++i) {
-            left[i + 1] = MERGE(left[i], dp[v][i]);
-            right[i + 1] = MERGE(right[i], dp[v][(int)G[v].size() - i - 1]);
+            int ri = (int)G[v].size() - i - 1;
+            left[i + 1] = MERGE(left[i], ADDEDGE(G[v][i], dp[v][i]));
+            right[i + 1] = MERGE(right[i], ADDEDGE(G[v][ri], dp[v][ri]));
         }
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = GETID(G[v][i]), ri = (int)G[v].size() - i - 1;
             if (v2 == p) continue;
-            Monoid pval2 = MERGE(left[i], right[(int)G[v].size() - i - 1]);
+            Monoid pval2 = MERGE(left[i], right[ri]);
             rerec(v2, v, ADDNODE(v, pval2));
         }
     }
     void build() {
         dp.assign(G.size(), vector<Monoid>());
-        int root = 0, nullparent = -1;
-        rec(root, nullparent);
-        rerec(root, nullparent, IDENTITY);
+        int root = 0;
+        rec(root, -1);
+        rerec(root, -1, IDENTITY);
     }
     
     // getter
     Monoid get(int v) {
         Monoid res = IDENTITY;
         for (int i = 0; i < G[v].size(); ++i) {
-            res = MERGE(res, dp[v][i]);
+            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
         }
         return ADDNODE(v, res);
     }
     
     // dump
-    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid> &rr) {
+    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid, Edge> &rr) {
         for (int v = 0; v < rr.G.size(); ++v) {
             for (int i = 0; i < rr.G[v].size(); ++i) {
-                os << v << " -> " << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
+                os << v << " -> " << rr.GETID(rr.G[v][i]) << ": " << rr.dp[v][i] << endl;
             }
         }
         return os;
@@ -120,7 +127,8 @@ void TDPC_V() {
     int N, M;
     cin >> N >> M;
     
-    using Graph = vector<vector<int>>;
+    using Edge = int;
+    using Graph = vector<vector<Edge>>;
     Graph G(N);
     for (int i = 0; i < N - 1; ++i) {
         int x, y;
@@ -132,9 +140,11 @@ void TDPC_V() {
     
     using Monoid = long long;
     Monoid identity = 1;
+    auto getid = [&](Edge e) -> int { return e; };
+    auto addedge = [&](Edge e, Monoid a) -> Monoid { return a; };
     auto merge = [&](Monoid a, Monoid b) -> Monoid { return a * b % M; };
     auto addnode = [&](int v, Monoid a) -> Monoid { return (a + 1) % M; };
-    ReRooting<Monoid> rr(G, identity, merge, addnode);
+    ReRooting<Monoid, Edge> rr(G, identity, getid, addedge, merge, addnode);
     
     //cout << rr << endl;
     
@@ -145,7 +155,8 @@ void TDPC_V() {
 
 // ABC 348 E - Minimize Sum of Distances
 void ABC_348_E() {
-    using Graph = vector<vector<int>>;
+    using Edge = int;
+    using Graph = vector<vector<Edge>>;
     int N;
     cin >> N;
     Graph G(N);
@@ -161,6 +172,10 @@ void ABC_348_E() {
     
     using Monoid = pair<long long, long long>;  // (siz, sum)
     Monoid IDENTITY = Monoid(-1, -1);
+    auto GETID = [&](Edge e) { return e; };
+    auto ADDEDGE = [&](Edge e, Monoid a) {
+        return a;
+    };
     auto MERGE = [&](Monoid a, Monoid b) {
         if (a.first == -1) return b;
         else if (b.first == -1) return a;
@@ -174,7 +189,7 @@ void ABC_348_E() {
         return res;
     };
     
-    ReRooting<Monoid> rr(G, IDENTITY, MERGE, ADDNODE);
+    ReRooting<Monoid, Edge> rr(G, IDENTITY, GETID, ADDEDGE, MERGE, ADDNODE);
     long long res = 1LL << 62;
     for (int v = 0; v < N; ++v) {
         auto tmp = rr.get(v);
@@ -185,7 +200,8 @@ void ABC_348_E() {
 
 
 int main() {
-    //TDPC_V();
-    ABC_348_E();
+    TDPC_V();
+    //ABC_348_E();
 }
+
 

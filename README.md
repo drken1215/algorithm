@@ -586,6 +586,7 @@
 - (★★☆☆) 木 DP
 - (★★★☆) 二乗の木 DP (俗称)
 - (★★★☆) [全方位木 DP](https://github.com/drken1215/algorithm/blob/master/Tree/rerooting.cpp)
+- (★★★☆) [全方位木 DP (辺に重みがある場合)](https://github.com/drken1215/algorithm/blob/master/Tree/rerooting_with_edge.cpp)
 
 ## LCA
 
