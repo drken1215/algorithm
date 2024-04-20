@@ -128,7 +128,7 @@ template<class DD> constexpr bool operator < (const Point<DD> &p, const Point<DD
 
 // Line
 template<class DD> struct Line : vector<Point<DD>> {
-    Line(Point<DD> a = Point(0, 0), Point<DD> b = Point(0, 0)) {
+    Line(Point<DD> a = Point<DD>(0, 0), Point<DD> b = Point<DD>(0, 0)) {
         this->push_back(a);
         this->push_back(b);
     }
