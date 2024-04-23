@@ -17,41 +17,6 @@
 using namespace std;
 
 
-
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
-template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
-
-// 4-neighbor (or 8-neighbor)
-const vector<int> dx = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> dy = {0, 1, 0, -1, 1, 1, -1, -1};
-
-
-/*///////////////////////////////////////////////////////*/
-// debug
-/*///////////////////////////////////////////////////////*/
-
-#define DEBUG 1
-#define COUT(x) if (DEBUG) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-
-
-
 // matrix
 template<class mint> struct MintMatrix {
     // inner value

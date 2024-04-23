@@ -64,7 +64,7 @@ template<class T> struct Matrix {
         assert(width() == r.width());
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
-                val[i][j] += r[i][j];
+                val[i][j] += r.val[i][j];
             }
         }
         return *this;
@@ -74,7 +74,7 @@ template<class T> struct Matrix {
         assert(width() == r.width());
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
-                val[i][j] -= r[i][j];
+                val[i][j] -= r.val[i][j];
             }
         }
         return *this;
@@ -91,7 +91,7 @@ template<class T> struct Matrix {
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < r.width(); ++j)
                 for (int k = 0; k < width(); ++k)
-                    res[i][j] += val[i][k] * r[k][j];
+                    res[i][j] += val[i][k] * r.val[k][j];
         return (*this) = res;
     }
     constexpr Matrix operator + () const { return Matrix(*this); }
