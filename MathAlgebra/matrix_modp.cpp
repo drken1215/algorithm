@@ -2,11 +2,11 @@
 // mod. p 行列 (行列累乗、掃き出し法)
 //
 // verified:
+//   AtCoder ARC 176 D - Swap Permutation
+//     https://atcoder.jp/contests/arc176/tasks/arc176_d
+//
 //   TCO 2013 Round 2A Med TheMagicMatrix
 //     https://vjudge.net/problem/TopCoder-12495
-//
-//   AOJ 3369 (?) Namori Counting (OUPC 2023 day2-D)
-//     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2023Day2/problems/D
 //
 //   AOJ 3369 (?) Namori Counting (OUPC 2023 day2-D)
 //     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2023Day2/problems/D
@@ -15,6 +15,41 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+
+
+
+using pint = pair<int, int>;
+using pll = pair<long long, long long>;
+template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
+template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+
+// 4-neighbor (or 8-neighbor)
+const vector<int> dx = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> dy = {0, 1, 0, -1, 1, 1, -1, -1};
+
+
+/*///////////////////////////////////////////////////////*/
+// debug
+/*///////////////////////////////////////////////////////*/
+
+#define DEBUG 1
+#define COUT(x) if (DEBUG) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, vector<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, deque<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, set<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, multiset<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+
 
 
 // matrix
@@ -64,7 +99,7 @@ template<class mint> struct MintMatrix {
         assert(width() == r.width());
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
-                val[i][j] += r[i][j];
+                val[i][j] += r.val[i][j];
             }
         }
         return *this;
@@ -74,7 +109,7 @@ template<class mint> struct MintMatrix {
         assert(width() == r.width());
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
-                val[i][j] -= r[i][j];
+                val[i][j] -= r.val[i][j];
             }
         }
         return *this;
@@ -91,7 +126,7 @@ template<class mint> struct MintMatrix {
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < r.width(); ++j)
                 for (int k = 0; k < width(); ++k)
-                    res[i][j] += val[i][k] * r[k][j];
+                    res[i][j] += val[i][k] * r.val[k][j];
         return (*this) = res;
     }
     constexpr MintMatrix operator + () const { return MintMatrix(*this); }
@@ -105,6 +140,7 @@ template<class mint> struct MintMatrix {
     constexpr MintMatrix pow(long long n) const {
         assert(height() == width());
         MintMatrix<mint> res(height(), width()),  mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = 1;
         while (n > 0) {
             if (n & 1) res *= mul;
             mul *= mul;
@@ -306,6 +342,66 @@ template<int MOD> struct Fp {
 // Examples
 //------------------------------//
 
+// AtCoder ARC 176 D - Swap Permutation
+void ARC_176_D() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
+    long long N, M;
+    cin >> N >> M;
+    vector<long long> P(N);
+    for (int i = 0; i < N; ++i) cin >> P[i], --P[i];
+    
+    long long NC = N * (N - 1) / 2, N2C = (N - 2) * (N - 3) / 2;
+    mint all = mint(NC).pow(M);
+    
+    if (N == 2) {
+        cout << all << endl;
+        return;
+    }
+    
+    auto Q = P;
+    sort(Q.begin(), Q.end());
+    vector<long long> left(N+1, 0), right(N+1, 0);
+    for (int i = 0; i < N; ++i) {
+        left[i+1] = left[i] + Q[i];
+        right[i+1] = right[i] + Q[N-i-1];
+    }
+    
+    auto calc_sum = [&](long long x) -> long long {
+        long long l = lower_bound(Q.begin(), Q.end(), x) - Q.begin();
+        return (x * l - left[l]) + (right[N - l] - x * (N - l));
+    };
+    
+    vector<mint> f(N, 0);
+    mint S = 0;
+    for (int i = 0; i < N; ++i) {
+        f[i] = calc_sum(P[i]);
+        S += f[i];
+    }
+    
+    MintMatrix<mint> A(4, 4);
+    A[0][0] = mint(N2C + 1); // / NC;
+    A[0][1] = A[0][2] = A[1][2] = A[2][1] = mint(1); // / NC;
+    A[1][0] = A[2][0] = mint(N - 2); // / NC;
+    A[1][1] = A[2][2] = mint(N2C + N - 2); // / NC;
+    A[1][3] = A[2][3] = mint(2); // / NC;
+    A[3][1] = A[3][2] = mint(N - 3); // / NC;
+    A[3][3] = mint(N2C + N * 2 - 7); // / NC;
+    auto AM = pow(A, M);
+    
+    mint res = 0;
+    for (int i = 0; i + 1 < N; ++i) {
+        mint diff = abs(P[i] - P[i+1]);
+        res += AM[0][0] * diff;
+        res += AM[1][0] * (f[i] - diff) / mint(N - 2);
+        res += AM[2][0] * (f[i+1] - diff) / mint(N - 2);
+        if (N > 3) res += AM[3][0] * (mint(S) / 2 - f[i] - f[i+1] + diff) / mint(N2C);
+    }
+    cout << res << endl;
+}
+
+
 // AOJ 3369 Namori Counting (OUPC 2023 day2-D)
 void AOJ_3369() {
     const int MOD = 998244353;
@@ -418,7 +514,8 @@ void TCO_2013_Round2_A() {
 
 
 int main() {
-    AOJ_3369();
+    ARC_176_D();
+    //AOJ_3369();
     //TCO_2013_Round2_A();
 }
 
