@@ -11,6 +11,9 @@
 //   AtCoder ABC 259 G - Grid Card Game (for basid psp)
 //     https://atcoder.jp/contests/abc259/tasks/abc259_g
 //
+//   AtCoder ARC 176 E - Max Vector (for k-value psp)
+//     https://atcoder.jp/contests/arc176/tasks/arc176_e
+//
 //   AtCoder ABC 326 G - Unlock Achievement (for all-true profit)
 //     https://atcoder.jp/contests/abc326/tasks/abc326_g
 //
@@ -392,6 +395,57 @@ void ABC_259_G() {
 }
 
 
+// AtCoder ARC 176 E - Max Vector
+void ARC_176_E() {
+    const int VAL = 500;
+    
+    int N, M;
+    cin >> N >> M;
+    vector<int> X(N), Y(N);
+    for (int i = 0; i < N; ++i) cin >> X[i];
+    for (int i = 0; i < N; ++i) cin >> Y[i];
+    vector A(M, vector(N, 0));
+    for (int i = 0; i < M; ++i) for (int j = 0; j < N; ++j) cin >> A[i][j];
+    
+    /*
+     j = 0, 1, ..., 499 について
+     x[i,j] = 1 (Xi が j より大きい) -> cost 1; 0 (Xi が j 以下である) -> cost 0
+     y[i,j] = 0 (Yi が j より大きい) -> cost 1; 1 (Yi が j 以下である) -> cost 0
+     z[i] = 1 (X 側を選ぶとき), 0 (Y 側を選ぶとき)
+     
+     x[i,j] = 0, x[i,j+1] = 1 -> cost INF
+     y[i,j] = 1, y[i,j+1] = 0 -> cost INF
+     
+     x[i,X[i]-1] = 1 である -> 0 に cost INF
+     y[i,Y[i]-1] = 0 である -> 1 に cost INF
+     
+     z[j] = 1 かつ X[i,A[j,i]-1] = 0 -> cost INF
+     z[j] = 0 かつ Y[i,A[j,i]-1] = 1 -> cost INF
+     */
+    const long long INF = 1LL<<50;
+    TwoVariableSubmodularOpt<long long> tvs(N * VAL * 2 + M, INF);
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < VAL; ++j) {
+            tvs.add_single_cost(i * VAL + j, 0, 1);
+            tvs.add_single_cost(N * VAL + i * VAL + j, 1, 0);
+            if (j + 1 < VAL) {
+                tvs.add_psp_constraint(i * VAL + j + 1, i * VAL + j);
+                tvs.add_psp_constraint(N * VAL + i * VAL + j, N * VAL + i * VAL + j + 1);
+            }
+        }
+        tvs.add_single_cost(i * VAL + X[i] - 1, INF, 0);
+        tvs.add_single_cost(N * VAL + i * VAL + Y[i] - 1, 0, INF);
+    }
+    for (int j = 0; j < M; ++j) {
+        for (int i = 0; i < N; ++i) {
+            tvs.add_psp_constraint(N * VAL * 2 + j, i * VAL + A[j][i] - 1);
+            tvs.add_psp_constraint(N * VAL + i * VAL + A[j][i] - 1, N * VAL * 2 + j);
+        }
+    }
+    cout << tvs.solve() << endl;
+}
+
+
 // ABC 326 G - Unlock Achievement
 void ABC_326_G() {
     int N, M;
@@ -454,7 +508,7 @@ int main() {
     //Kyopro_Typical_90_040();
     //ARC_085_E();
     //ABC_259_G();
+    ARC_176_E();
     //ABC_326_G();
-    AOJ_2903();
+    //AOJ_2903();
 }
-
