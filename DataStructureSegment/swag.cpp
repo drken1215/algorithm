@@ -2,8 +2,11 @@
 // SWAG (Sliding Window Aggregation)
 //
 // references:
-//   https://scrapbox.io/data-structures/Sliding_Window_Aggregation
-//   https://www.slideshare.net/catupper/amortize-analysis-of-deque-with-2-stack
+//   Sliding Window Aggregation
+//     https://scrapbox.io/data-structures/Sliding_Window_Aggregation
+//
+//   計算量のはなし 2 〜 Deque は Stack 2 つでつくれる 〜
+//     https://www.slideshare.net/catupper/amortize-analysis-of-deque-with-2-stack
 //
 // verified:
 //   AOJ DSL_3_D - Sliding Minimum Elements

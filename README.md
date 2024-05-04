@@ -68,14 +68,13 @@
 - (★★★★) 永続セグメント木
 - (★★★★) 永続赤黒木
 
-## 各種高速化アルゴリズム
-
-- (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
-
 ## その他
 
 - (★★★☆) [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
+- (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 - (★★★★) Dynamic Connectivity
+
+
 
 
 　
@@ -202,6 +201,7 @@
 - (★★★☆) 双対変換
 - (★★★★) 最小包含円
 - (★★★★) kd 木
+
 
 
 　
