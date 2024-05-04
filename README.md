@@ -41,7 +41,6 @@
 - (★☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
 - (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/removable_queue.cpp)
 - (★★★☆) [両端 priority queue (削除も可能)](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
-- (★★★☆) SWAG
 - (★★★★) Skew Heap (マージ可能ヒープ)
 - (★★★★) Paring Heap (マージ可能ヒープ)
 - (★★★★) Radix Heap
@@ -71,10 +70,6 @@
 
 ## 各種高速化アルゴリズム
 
-- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructure/cumulative_sum.cpp)
-- (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructure/cumulative_sum_2D.cpp)
-- (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructure/sliding_minimum.cpp)
-- (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructure/mo.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 
 ## その他
@@ -132,6 +127,16 @@
 - (★★★★) AVL 木
 - (★★★★) Splay 木
 - (★★★★) 赤黒木
+
+## 各種高速化アルゴリズム
+
+- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum.cpp)
+- (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum_2D.cpp)
+- (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sliding_minimum.cpp)
+- (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
+- (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/mo.cpp)
+
+
 
 
 　
