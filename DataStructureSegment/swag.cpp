@@ -12,6 +12,9 @@
 //   AOJ DSL_3_D - Sliding Minimum Elements
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_D&lang=ja
 //
+//   Yosupo Library Checker - Queue Operate All Composite
+//     https://judge.yosupo.jp/problem/queue_operate_all_composite
+//
 //   Yosupo Library Checker - Deque Operate All Composite
 //     https://judge.yosupo.jp/problem/deque_operate_all_composite
 //
@@ -76,7 +79,6 @@ template<class Monoid> struct SWAG {
         vector<Monoid> tmp;
         for (int i = dat_left.size() - 1; i >= 0; --i) tmp.emplace_back(dat_left[i]);
         for (int i = 0; i < dat_right.size(); ++i) tmp.emplace_back(dat_right[i]);
-        //tmp.insert(tmp.end(), dat_right.begin(), dat_right.end());
         clear();
         int mid = tmp.size() / 2;
         for (int i = mid - 1; i >= 0; --i) push_front(tmp[i]);
@@ -240,35 +242,72 @@ template<int MOD> struct Fp {
         return r.inv();
     }
 };
-void yosupo_deque_operate_all_composite() {
+
+void yosupo_queue_operate_all_composite() {
     const int MOD = 998244353;
     using mint = Fp<MOD>;
+    
+    // setup SWAG
     using Monoid = pair<mint,mint>;
     auto op = [&](Monoid x, Monoid y) {
         return Monoid(x.first * y.first, x.second * y.first + y.second);
     };
     Monoid identity = {1, 0};
-    
     SWAG<Monoid> sw(op, identity);
+    
+    // queries
     int Q;
-    cin >> Q;
+    scanf("%d", &Q);
     while (Q--) {
         int t, a, b, x;
-        cin >> t;
+        scanf("%d", &t);
         if (t == 0) {
             cin >> a >> b;
+            sw.push_back(Monoid(a, b));
+        } else if (t == 1) {
+            sw.pop_front();
+        } else {
+            scanf("%d", &x);
+            auto f = sw.prod();
+            int res = (f.first * x + f.second).val;
+            printf("%d\n", res);
+        }
+    }
+}
+
+void yosupo_deque_operate_all_composite() {
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    
+    // setup SWAG
+    using Monoid = pair<mint,mint>;
+    auto op = [&](Monoid x, Monoid y) {
+        return Monoid(x.first * y.first, x.second * y.first + y.second);
+    };
+    Monoid identity = {1, 0};
+    SWAG<Monoid> sw(op, identity);
+    
+    // queries
+    int Q;
+    scanf("%d", &Q);
+    while (Q--) {
+        int t, a, b, x;
+        scanf("%d", &t);
+        if (t == 0) {
+            scanf("%d %d", &a, &b);
             sw.push_front(Monoid(a, b));
         } else if (t == 1) {
-            cin >> a >> b;
+            scanf("%d %d", &a, &b);
             sw.push_back(Monoid(a, b));
         } else if (t == 2) {
             sw.pop_front();
         } else if (t == 3) {
             sw.pop_back();
         } else {
-            cin >> x;
+            scanf("%d", &x);
             auto f = sw.prod();
-            cout << f.first * x + f.second << endl;
+            int res = (f.first * x + f.second).val;
+            printf("%d\n", res);
         }
     }
 }
@@ -276,6 +315,6 @@ void yosupo_deque_operate_all_composite() {
 
 int main() {
     //AOJ_DSL_3_D();
+    //yosupo_queue_operate_all_composite();
     yosupo_deque_operate_all_composite();
 }
-
