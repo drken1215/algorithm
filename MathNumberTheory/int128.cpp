@@ -56,6 +56,18 @@ struct i128 {
     constexpr bool operator >= (const i128 &r) const {
         return this->val >= r.val;
     }
+    friend constexpr bool operator < (long long x, const i128 &y) {
+        return y.val > x;
+    }
+    friend constexpr bool operator > (long long x, const i128 &y) {
+        return y.val < x;
+    }
+    friend constexpr bool operator <= (long long x, const i128 &y) {
+        return y.val >= x;
+    }
+    friend constexpr bool operator >= (long long x, const i128 &y) {
+        return y.val <= x;
+    }
     
     // arithmetic operators
     constexpr i128& operator += (const i128 &r) {
