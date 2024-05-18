@@ -64,6 +64,9 @@ template<class Monoid> struct SegmentTree {
         for (int i = 0; i < N; ++i) dat[i + offset] = v[i];
         for (int k = offset - 1; k > 0; --k) pull(k);
     }
+    void clear() {
+        dat.assign(dat.size(), IDENTITY);
+    }
     int size() const {
         return N;
     }
