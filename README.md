@@ -46,17 +46,17 @@
 - (★★★★) Radix Heap
 - (★★★★) Fibonacci Heap
 
-# ハッシュ
+## ハッシュ
 
 - (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
 - (★★★☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
 - (★★★☆) ローリングハッシュ
 - (★★★★) 根付き木のハッシュ
 
-## さまざまな木
+## S に属する k 以上の要素のうちの最小値の取得
 
-- (★★★☆) [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
-- (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
+- (★★☆☆) std::set
+- (★★★☆) セグメント木上の二分探索
 - (★★★★) van Emde Boas 木
 - (★★★★) 64 分木
 
@@ -72,12 +72,14 @@
 
 - (★★★☆) [区間の集合を set で管理する](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
+- (★★★☆) [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
+- (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - (★★★★) Dynamic Connectivity
 
 
 
 
-　
+　 
 <a name="dss"></a>
 # 区間系データ構造 (DATA STRUCTURE : SEGMENT)
 セグメント木や BIT など、区間クエリに強いデータ構造の実装です
@@ -180,6 +182,7 @@
 - (★★★☆) [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
 - (★★★☆) [凸多角形の直径](https://github.com/drken1215/algorithm/blob/master/Geometry/diameter.cpp)
 - (★★★☆) [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
+- (★★★★) 凸多角形と直線の交点 O(log N)
 - (★★★★) [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
 - (★★★★) [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
 - (★★★☆) [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
@@ -632,6 +635,7 @@
 
 ## その他
 
+- (★★★★) [ACL](https://github.com/drken1215/algorithm/blob/master/Others/acl.cpp)
 - (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
 - (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)

@@ -426,6 +426,7 @@ template<class DD> bool is_convex(const vector<Point<DD>> &ps) {
 // 凸包 (一直線上の3点を含めない)
 template<class DD> vector<Point<DD>> convex_hull(vector<Point<DD>> &ps) {
     int n = (int)ps.size();
+    if (n == 1) return ps;
     vector<Point<DD>> res(2*n);
     auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
         return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
@@ -458,6 +459,7 @@ template<class DD> vector<Point<DD>> convex_hull(vector<Point<DD>> &ps) {
 // 凸包 (一直線上の3点を含める)
 template<class DD> vector<Point<DD>> convex_hull_colinear(vector<Point<DD>> &ps) {
     int n = (int)ps.size();
+    if (n == 1) return ps;
     vector<Point<DD>> res(2*n);
     auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
         return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
