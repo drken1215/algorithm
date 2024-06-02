@@ -13,7 +13,6 @@
 #endif
 using namespace std;
 
-namespace atcoder {
 namespace internal {
 // @param n `0 <= n`
 // @return minimum non-negative `x` s.t. `n <= 2**x`
@@ -358,6 +357,7 @@ struct static_modint_base : modint_base {};
 template <class T> using is_modint = std::is_base_of<modint_base, T>;
 template <class T> using is_modint_t = std::enable_if_t<is_modint<T>::value>;
 }  // namespace internal
+
 template <int m, std::enable_if_t<(1 <= m)>* = nullptr>
 struct static_modint : internal::static_modint_base {
     using mint = static_modint;
@@ -568,6 +568,7 @@ template <int id> internal::barrett dynamic_modint<id>::bt = 998244353;
 using modint998244353 = static_modint<998244353>;
 using modint1000000007 = static_modint<1000000007>;
 using modint = dynamic_modint<-1>;
+
 namespace internal {
 template <class T>
 using is_static_modint = std::is_base_of<internal::static_modint_base, T>;
@@ -662,6 +663,7 @@ void butterfly_inv(std::vector<mint>& a) {
     }
 }
 }  // namespace internal
+
 template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 std::vector<mint> convolution(std::vector<mint> a, std::vector<mint> b) {
     int n = int(a.size()), m = int(b.size());
@@ -1619,6 +1621,7 @@ std::vector<int> sa_is(const std::vector<int>& s, int upper) {
     return sa;
 }
 }  // namespace internal
+
 std::vector<int> suffix_array(const std::vector<int>& s, int upper) {
     assert(0 <= upper);
     for (int d : s) {
@@ -1737,7 +1740,6 @@ private:
     std::vector<bool> _answer;
     internal::scc_graph scc;
 };
-}  // namespace atcoder
 
 
 
@@ -1791,7 +1793,7 @@ void ACL_practice_L() {
     }
     
     // 遅延評価セグメント木のセットアップ
-    atcoder::lazy_segtree<Node, op, e, Act, mapping, composition, id> seg(A);
+    lazy_segtree<Node, op, e, Act, mapping, composition, id> seg(A);
     
     // クエリ処理
     while (Q--) {
@@ -1810,4 +1812,6 @@ void ACL_practice_L() {
 int main() {
     ACL_practice_L();
 }
+
+
 
