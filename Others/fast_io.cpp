@@ -1,249 +1,277 @@
 //
 // Fast IO
 //
-// references:
-//   maspy: [Library Checker] Many A + B
-//     https://maspypy.com/library-checker-many-a-b
-//
 // verified:
 //   Yosupo Library Checker - Many A + B
 //     https://judge.yosupo.jp/problem/many_aplusb
 //
+//   Yosupo Library Checker - Many A + B (128 bit)
+//     https://judge.yosupo.jp/problem/many_aplusb_128bit
+//
 
 
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
 
 
 namespace mylib {
-struct FastInput {
+static constexpr int BUF_SIZE = 1 << 17;
+
+struct FastRead {
 private:
-    static const unsigned int INQSZ = 1 << 17;
-    int p = 0;
-    int q = 0;
-    static char Q[INQSZ + 1];
-    void seek1KiB() {
-        if (q < p + 1024) {
-            if (p <= q - p) memcpy(Q, Q + p, q - p);
-            else memmove(Q, Q + p, q - p);
-            q -= p;
-            p = 0;
-            q += fread(Q + q, 1, INQSZ - q, stdin);
-            if (q <= 1024) memset(Q + q, 0, 1025 - q);
+    FILE *stream_;
+    array<char, BUF_SIZE> buf_;
+    char *begin_;
+    char *end_;
+    char *ptr_;
+
+    // reader
+    void skip_space() {
+        while (*ptr_ <= ' ') ++ptr_;
+    }
+    template<int N = 0> void read() {
+        if (const auto n = end_ - ptr_; n <= N) {
+            ignore = fread(copy_n(ptr_, n, begin_), 1, BUF_SIZE - n, stream_);
+            ptr_ = begin_;
         }
     }
     
+    // parser
+    template<unsigned_integral T> void parse(T &x) {
+        common_type_t<T, uint64_t> x2 = 0;
+        while (true) {
+            uint64_t v;
+            memcpy(&v, ptr_, 8);
+            if ((v -= 0x3030303030303030) & 0x8080808080808080) break;
+            v = (v * 10 + (v >> 8)) & 0xff00ff00ff00ff;
+            v = (v * 100 + (v >> 16)) & 0xffff0000ffff;
+            v = (v * 10000 + (v >> 32)) & 0xffffffff;
+            x2 = 100000000 * x2 + v;
+            ptr_ += 8;
+        }
+        while (true) {
+            uint32_t v;
+            memcpy(&v, ptr_, 4);
+            if ((v -= 0x30303030) & 0x80808080) break;
+            v = (v * 10 + (v >> 8)) & 0xff00ff;
+            v = (v * 100 + (v >> 16)) & 0xffff;
+            x2 = 10000 * x2 + v;
+            ptr_ += 4;
+            break;
+        }
+        while (true) {
+            uint16_t v;
+            memcpy(&v, ptr_, 2);
+            if ((v -= 0x3030) & 0x8080) break;
+            v = (v * 10 + (v >> 8)) & 0xff;
+            x2 = 100 * x2 + v;
+            ptr_ += 2;
+            break;
+        }
+        if (' ' < *ptr_) {
+            x2 *= 10;
+            x2 += *ptr_++ - '0';
+        }
+        ++ptr_;
+        x = static_cast<T>(x2);
+    }
+    
 public:
-    char seekChar() {
-        if (p == q) {
-            q = fread(Q, 1, INQSZ, stdin);
-            Q[q] = '\0';
-            p = 0;
-        }
-        return Q[p];
+    // constructor
+    FastRead() : FastRead(stdin) {}
+    explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
+    explicit FastRead(FILE *stream)
+    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { read(); }
+    ~FastRead() { if (stream_ != stdin) fclose(stream_); }
+    FastRead(const FastRead&) = delete;
+    FastRead &operator = (const FastRead&) = delete;
+    
+    // operators
+    template<unsigned_integral T> void operator () (T &x) {
+        skip_space();
+        read<64>();
+        parse(x);
     }
-    void skipSpace() {
-        bool f = true;
-        while (f) {
-            seek1KiB();
-            for (int i = 0; i < 1024; ++i) if (!isspace(Q[p++])) {
-                f = false;
-                break;
-            }
+    template<signed_integral T> void operator () (T &x) {
+        skip_space();
+        read<64>();
+        make_unsigned_t<T> u;
+        if (*ptr_ == '-') {
+            ++ptr_;
+            parse(u);
+            u = -u;
+        } else {
+            parse(u);
         }
-        --p;
+        x = u;
     }
-    unsigned int nextU32() {
-        skipSpace();
-        seek1KiB();
-        unsigned int buf = 0;
-        while (true) {
-            char tmp = Q[p];
-            if ('9' < tmp || tmp < '0') break;
-            buf = buf * 10 + (tmp - '0');
-            ++p;
+    void operator () (char &x) {
+        skip_space();
+        read<64>();
+        x = *ptr_;
+        ++ptr_;
+    }
+    void operator () (string &x) {
+        x = "";
+        skip_space();
+        read<64>();
+        while (*ptr_ > ' ' && *ptr_ != '\0') {
+            x.push_back(*ptr_);
+            ++ptr_;
         }
-        return buf;
+        ++ptr_;
     }
-    int nextI32() {
-        skipSpace();
-        if (Q[p] == '-') {
-            ++p;
-            return (int)(1 + ~nextU32());
-        }
-        return (int)nextU32();
+    template<class... Ts> requires(sizeof...(Ts) != 1) void operator () (Ts&... xs) {
+        ((*this)(xs), ...);
     }
-    unsigned long long nextU64() {
-        skipSpace();
-        seek1KiB();
-        unsigned long long buf = 0;
-        while (true) {
-            char tmp = Q[p];
-            if ('9' < tmp || tmp < '0') break;
-            buf = buf * 10 + (tmp - '0');
-            ++p;
-        }
-        return buf;
-    }
-    long long nextI64() {
-        skipSpace();
-        seek1KiB();
-        if (seekChar() == '-') {
-            ++p;
-            return (long long)(-nextU64());
-        }
-        return (long long)nextU64();
-    }
-    char nextChar() {
-        skipSpace();
-        char buf = seekChar();
-        ++p;
-        return buf;
-    }
-    string nextToken() {
-        skipSpace();
-        string buf;
-        while (true) {
-            char ch = seekChar();
-            if (isspace(ch) || ch == '\0') break;
-            buf.push_back(ch);
-            ++p;
-        }
-        return buf;
-    }
-    FastInput& operator >> (unsigned int &dest) { dest = nextU32(); return *this; }
-    FastInput& operator >> (int &dest) { dest = nextI32(); return *this; }
-    FastInput& operator >> (unsigned long &dest) { dest = nextU64(); return *this; }
-    FastInput& operator >> (long &dest) { dest = nextI64(); return *this; }
-    FastInput& operator >> (unsigned long long &dest) { dest = nextU64(); return *this; }
-    FastInput& operator >> (long long &dest) { dest = nextI64(); return *this; }
-    FastInput& operator >> (string &dest) { dest = nextToken(); return *this; }
-    FastInput& operator >> (char &dest) { dest = nextChar(); return *this; }
-} cin;
-
-struct FastOutputTable {
-    char LZ[1000][4] = {};
-    char NLZ[1000][4] = {};
-    constexpr FastOutputTable() {
-        for (uint_fast32_t d = 0; d < 1000; ++d) {
-            LZ[d][0] = ('0' + d / 100 % 10);
-            LZ[d][1] = ('0' + d /  10 % 10);
-            LZ[d][2] = ('0' + d /   1 % 10);
-            LZ[d][3] = '\0';
-        }
-        for (uint_fast32_t d = 0; d < 1000; ++d) {
-            uint_fast32_t i = 0;
-            if (d >= 100) NLZ[d][i++] = ('0' + d / 100 % 10);
-            if (d >=  10) NLZ[d][i++] = ('0' + d /  10 % 10);
-            if (d >=   1) NLZ[d][i++] = ('0' + d /   1 % 10);
-            NLZ[d][i++] = '\0';
-        }
-    }
+    template<class T> FastRead& operator >> (T &x) { (*this)(x); return *this; }
 };
 
-struct FastOutput {
+class FastWrite {
 private:
-    static const int OUTQSZ = 1 << 17;
-    static char Q[OUTQSZ];
-    static constexpr FastOutputTable TB = FastOutputTable();
-    int p = 0;
-    static constexpr uint_fast32_t P10(uint_fast32_t d) {
-        return d ? P10(d - 1) * 10 : 1;
+    FILE *stream_;
+    array<char, BUF_SIZE> buf_;
+    char *begin_;
+    char *end_;
+    char *ptr_;
+    
+    // preparation
+    template <class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
+    template <class T> static constexpr auto POW10 = [] {
+        array<T, DIGITS<T>> ret;
+        ret[0] = 1;
+        for (int i = 1; i < DIGITS<T>; ++i) {
+            ret[i] = 10 * ret[i - 1];
+        }
+        return ret;
+    } ();
+    static constexpr auto LUT = [] {
+        array<char, 40000> res;
+        char* p = res.data();
+        char a = '0', b = '0', c = '0', d = '0';
+        do {
+            *p++ = a, *p++ = b, *p++ = c, *p++ = d;
+        } while (d++ < '9'
+                 || (d = '0', c++ < '9'
+                     || (c = '0', b++ < '9'
+                         || (b = '0', a++ < '9'))));
+        return res;
+    } ();
+    
+    // flush
+    template<int N = BUF_SIZE> void flush() {
+        if (end_ - ptr_ <= N) {
+            fwrite(begin_, 1, ptr_ - begin_, stream_);
+            ptr_ = begin_;
+        }
     }
-    static constexpr uint_fast64_t P10L(uint_fast32_t d) {
-        return d ? P10L(d - 1) * 10 : 1;
+    
+    // writer
+    template<int N = 4> void le4(uint64_t x) {
+        if constexpr (1 < N) {
+            if (x < POW10<uint64_t>[N - 1]) {
+                le4<N - 1>(x);
+                return;
+            }
+        }
+        ptr_ = copy_n(&LUT[x * 4 + (4 - N)], N, ptr_);
     }
-    template<class T, class U> static void Fil(T& m, U& l, U x) {
-        m = l/x;
-        l -= m*x;
+    template<int N> void w4(uint64_t x) {
+        if constexpr (0 < N) {
+            ptr_ = copy_n(&LUT[x / POW10<uint64_t>[N - 4] * 4], 4, ptr_);
+            w4<N - 4>(x % POW10<uint64_t>[N - 4]);
+        }
     }
-    void next_dig9(uint_fast32_t x) {
-        uint_fast32_t y;
-        Fil(y, x, P10(6));
-        nextCstr(TB.LZ[y]);
-        Fil(y, x, P10(3));
-        nextCstr(TB.LZ[y]); nextCstr(TB.LZ[x]);
+    template<int N> void write(uint64_t x) {
+        if constexpr (N < DIGITS<uint64_t>) {
+            if (POW10<uint64_t>[N] <= x) {
+                write<N + 4>(x);
+                return;
+            }
+        }
+        le4(x / POW10<uint64_t>[N - 4]);
+        w4<N - 4>(x % POW10<uint64_t>[N - 4]);
+    }
+    void write(unsigned_integral auto x) {
+        write<4>(x);
+    }
+    void write(__uint128_t x) {
+        if (x < POW10<__uint128_t>[16]) {
+            write(static_cast<uint64_t>(x));
+        } else if (x < POW10<__uint128_t>[32]) {
+            write(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
+            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
+        } else {
+            write(static_cast<uint64_t>(x / POW10<__uint128_t>[32]));
+            x %= POW10<__uint128_t>[32];
+            w4<16>(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
+            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
+        }
     }
     
 public:
-    void nextChar(char c) {
-        Q[p++] = c;
-        if (p == OUTQSZ) {
-            fwrite(Q, p, 1, stdout);
-            p = 0;
+    // constructor
+    FastWrite() : FastWrite(stdout) {}
+    explicit FastWrite(const filesystem::path& p) : FastWrite(fopen(p.c_str(), "w")) {}
+    explicit FastWrite(FILE* stream)
+    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(begin_) {}
+    ~FastWrite() {
+        flush();
+        if (stream_ != stdout) { fclose(stream_); }
+    }
+    FastWrite(const FastWrite&) = delete;
+    FastWrite& operator = (const FastWrite&) = delete;
+    
+    // operators
+    template<unsigned_integral T> void operator () (T x) {
+        flush<DIGITS<T>>();
+        write(x);
+    }
+    template<signed_integral T> void operator () (T x) {
+        flush<1 + DIGITS<T>>();
+        using U = make_unsigned_t<T>;
+        const U u = x;
+        if (x < 0) {
+            *ptr_++ = '-';
+            write(static_cast<U>(-u));
+        } else {
+            write(u);
         }
     }
-    void nextEoln() {
-        nextChar('\n');
+    void operator () (char c) {
+        flush<1>();
+        *ptr_++ = c;
     }
-    void nextCstr(const char *s) {
-        while (*s) nextChar(*(s++));
-    }
-    void nextU32(uint_fast32_t x) {
-        uint_fast32_t y = 0;
-        if (x >= P10(9)) {
-            Fil(y, x, P10(9));
-            nextCstr(TB.NLZ[y]); next_dig9(x);
-        } else if (x >= P10(6)) {
-            Fil(y, x, P10(6));
-            nextCstr(TB.NLZ[y]);
-            Fil(y, x, P10(3));
-            nextCstr(TB.LZ[y]); nextCstr(TB.LZ[x]);
-        } else if (x >= P10(3)) {
-            Fil(y, x, P10(3));
-            nextCstr(TB.NLZ[y]); nextCstr(TB.LZ[x]);
+    void operator () (string_view s) {
+        while (!s.empty()) {
+            flush<0>();
+            const auto n = min(ssize(s), end_ - ptr_);
+            if (n == BUF_SIZE) {
+                fwrite(s.data(), 1, BUF_SIZE, stream_);
+            } else {
+                ptr_ = copy_n(s.data(), n, ptr_);
+            }
+            s.remove_prefix(n);
         }
-        else if (x >= 1) nextCstr(TB.NLZ[x]);
-        else nextChar('0');
+        flush<0>();
     }
-    void nextI32(int_fast32_t x) {
-        if (x >= 0) nextU32(x);
-        else {
-            nextChar('-');
-            nextU32((uint_fast32_t)-x);
+    template <char End = '\n', char Sep = ' ', class T, class... Ts>
+    void ln(T&& x, Ts&&... xs) {
+        (*this)(forward<T>(x));
+        if constexpr (sizeof...(Ts) == 0) {
+            *ptr_++ = End;
+        } else {
+            *ptr_++ = Sep;
+            ln<End, Sep>(forward<Ts>(xs)...);
         }
     }
-    void nextU64(uint_fast64_t x) {
-        uint_fast32_t y = 0;
-        if (x >= P10L(18)) {
-            Fil(y, x, P10L(18));
-            nextU32(y);
-            Fil(y, x, P10L(9));
-            next_dig9(y);
-            next_dig9(x);
-        } else if (x >= P10L(9)) {
-            Fil(y, x, P10L(9));
-            nextU32(y);
-            next_dig9(x);
-        } else nextU32(x);
-    }
-    void nextI64(int_fast64_t x) {
-        if (x >= 0) nextU64(x);
-        else {
-            nextChar('-');
-            nextU64((uint_fast64_t)-x);
-        }
-    }
-    void writeToFile(bool flush = false) {
-        fwrite(Q, p, 1, stdout);
-        if (flush) fflush(stdout);
-        p = 0;
-    }
-    FastOutput() { Q[0] = 0; }
-    ~FastOutput() { writeToFile(); }
-    FastOutput& operator << (unsigned int tg) { nextU32(tg); return *this; }
-    FastOutput& operator << (unsigned long tg) { nextU64(tg); return *this; }
-    FastOutput& operator << (unsigned long long tg) { nextU64(tg); return *this; }
-    FastOutput& operator << (int tg) { nextI32(tg); return *this; }
-    FastOutput& operator << (long tg) { nextI64(tg); return *this; }
-    FastOutput& operator << (long long tg) { nextI64(tg); return *this; }
-    FastOutput& operator << (const string& tg) { nextCstr(tg.c_str()); return *this; }
-    FastOutput& operator << (const char* tg) { nextCstr(tg); return *this; }
-    FastOutput& operator << (char tg) { nextChar(tg); return *this; }
-} cout;
+    template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
+};
 
-char FastInput::Q[INQSZ + 1];
-char FastOutput::Q[OUTQSZ];
+mylib::FastRead cin;
+mylib::FastWrite cout;
 } // namespace mylib
 
 
@@ -261,13 +289,27 @@ void Yosupo_A_puls_B() {
     for (int t = 0; t < T; ++t) {
         unsigned long long a, b;
         cin >> a >> b;
-        unsigned long long ans = a + b;
-        cout << ans << '\n';
+        cout << a + b << '\n';
+    }
+}
+
+// Yosupo Library Checker - Many A + B (128 bit)
+void Yosupo_128_A_puls_B() {
+    using mylib::cin, mylib::cout;
+    using i128 = ::__int128_t;
+
+    int T;
+    cin >> T;
+    for (int t = 0; t < T; ++t) {
+        i128 a, b;
+        cin >> a >> b;
+        cout << a + b << '\n';
     }
 }
 
 
 int main() {
     Yosupo_A_puls_B();
+    //Yosupo_128_A_puls_B();
 }
 
