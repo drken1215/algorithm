@@ -626,7 +626,7 @@
 ## 入出力
 
 - (★☆☆☆) [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
-- (★★★☆) Nyaan's 高速入出力
+- (★★★☆) [Fast IO](https://github.com/drken1215/algorithm/blob/master/Others/fast_io.cpp)
 
 ## グリッド
 

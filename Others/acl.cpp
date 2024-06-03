@@ -13,6 +13,7 @@
 #endif
 using namespace std;
 
+
 namespace atcoder {
 namespace internal {
 // @param n `0 <= n`
@@ -1814,8 +1815,3 @@ void ACL_practice_L() {
 int main() {
     ACL_practice_L();
 }
-
-
-
-
-
