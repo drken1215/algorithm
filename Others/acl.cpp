@@ -13,6 +13,7 @@
 #endif
 using namespace std;
 
+namespace atcoder {
 namespace internal {
 // @param n `0 <= n`
 // @return minimum non-negative `x` s.t. `n <= 2**x`
@@ -70,7 +71,7 @@ struct barrett {
         _umul128(z, im, &x);
 #else
         unsigned long long x =
-            (unsigned long long)(((unsigned __int128)(z)*im) >> 64);
+        (unsigned long long)(((unsigned __int128)(z)*im) >> 64);
 #endif
         unsigned int v = (unsigned int)(z - x * _m);
         if (_m <= v) v += _m;
@@ -204,7 +205,7 @@ template <class E> struct csr {
     std::vector<int> start;
     std::vector<E> elist;
     csr(int n, const std::vector<std::pair<int, E>>& edges)
-        : start(n + 1), elist(edges.size()) {
+    : start(n + 1), elist(edges.size()) {
         for (auto e : edges) {
             start[e.first + 1]++;
         }
@@ -221,7 +222,7 @@ template <class E> struct csr {
 // R. Tarjan,
 // Depth-First Search and Linear Graph Algorithms
 struct scc_graph {
-  public:
+public:
     scc_graph(int n) : _n(n) {}
     int num_vertices() { return _n; }
     void add_edge(int from, int to) { edges.push_back({from, {to}}); }
@@ -276,7 +277,7 @@ struct scc_graph {
         }
         return groups;
     }
-  private:
+private:
     int _n;
     struct edge {
         int to;
@@ -287,64 +288,64 @@ struct scc_graph {
 #ifndef _MSC_VER
 template <class T>
 using is_signed_int128 =
-    typename std::conditional<std::is_same<T, __int128_t>::value ||
-                                  std::is_same<T, __int128>::value,
-                              std::true_type,
-                              std::false_type>::type;
+typename std::conditional<std::is_same<T, __int128_t>::value ||
+std::is_same<T, __int128>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using is_unsigned_int128 =
-    typename std::conditional<std::is_same<T, __uint128_t>::value ||
-                                  std::is_same<T, unsigned __int128>::value,
-                              std::true_type,
-                              std::false_type>::type;
+typename std::conditional<std::is_same<T, __uint128_t>::value ||
+std::is_same<T, unsigned __int128>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using make_unsigned_int128 =
-    typename std::conditional<std::is_same<T, __int128_t>::value,
-                              __uint128_t,
-                              unsigned __int128>;
+typename std::conditional<std::is_same<T, __int128_t>::value,
+__uint128_t,
+unsigned __int128>;
 template <class T>
 using is_integral = typename std::conditional<std::is_integral<T>::value ||
-                                                  is_signed_int128<T>::value ||
-                                                  is_unsigned_int128<T>::value,
-                                              std::true_type,
-                                              std::false_type>::type;
+is_signed_int128<T>::value ||
+is_unsigned_int128<T>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using is_signed_int = typename std::conditional<(is_integral<T>::value &&
                                                  std::is_signed<T>::value) ||
-                                                    is_signed_int128<T>::value,
-                                                std::true_type,
-                                                std::false_type>::type;
+is_signed_int128<T>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using is_unsigned_int =
-    typename std::conditional<(is_integral<T>::value &&
-                               std::is_unsigned<T>::value) ||
-                                  is_unsigned_int128<T>::value,
-                              std::true_type,
-                              std::false_type>::type;
+typename std::conditional<(is_integral<T>::value &&
+                           std::is_unsigned<T>::value) ||
+is_unsigned_int128<T>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using to_unsigned = typename std::conditional<
-    is_signed_int128<T>::value,
-    make_unsigned_int128<T>,
-    typename std::conditional<std::is_signed<T>::value,
-                              std::make_unsigned<T>,
-                              std::common_type<T>>::type>::type;
+is_signed_int128<T>::value,
+make_unsigned_int128<T>,
+typename std::conditional<std::is_signed<T>::value,
+std::make_unsigned<T>,
+std::common_type<T>>::type>::type;
 #else
 template <class T> using is_integral = typename std::is_integral<T>;
 template <class T>
 using is_signed_int =
-    typename std::conditional<is_integral<T>::value && std::is_signed<T>::value,
-                              std::true_type,
-                              std::false_type>::type;
+typename std::conditional<is_integral<T>::value && std::is_signed<T>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using is_unsigned_int =
-    typename std::conditional<is_integral<T>::value &&
-                                  std::is_unsigned<T>::value,
-                              std::true_type,
-                              std::false_type>::type;
+typename std::conditional<is_integral<T>::value &&
+std::is_unsigned<T>::value,
+std::true_type,
+std::false_type>::type;
 template <class T>
 using to_unsigned = typename std::conditional<is_signed_int<T>::value,
-                                              std::make_unsigned<T>,
-                                              std::common_type<T>>::type;
+std::make_unsigned<T>,
+std::common_type<T>>::type;
 #endif
 template <class T>
 using is_signed_int_t = std::enable_if_t<is_signed_int<T>::value>;
@@ -361,7 +362,7 @@ template <class T> using is_modint_t = std::enable_if_t<is_modint<T>::value>;
 template <int m, std::enable_if_t<(1 <= m)>* = nullptr>
 struct static_modint : internal::static_modint_base {
     using mint = static_modint;
-  public:
+public:
     static constexpr int mod() { return m; }
     static mint raw(int v) {
         mint x;
@@ -458,14 +459,14 @@ struct static_modint : internal::static_modint_base {
     friend bool operator!=(const mint& lhs, const mint& rhs) {
         return lhs._v != rhs._v;
     }
-  private:
+private:
     unsigned int _v;
     static constexpr unsigned int umod() { return m; }
     static constexpr bool prime = internal::is_prime<m>;
 };
 template <int id> struct dynamic_modint : internal::modint_base {
     using mint = dynamic_modint;
-  public:
+public:
     static int mod() { return (int)(bt.umod()); }
     static void set_mod(int m) {
         assert(1 <= m);
@@ -559,7 +560,7 @@ template <int id> struct dynamic_modint : internal::modint_base {
     friend bool operator!=(const mint& lhs, const mint& rhs) {
         return lhs._v != rhs._v;
     }
-  private:
+private:
     unsigned int _v;
     static internal::barrett bt;
     static unsigned int umod() { return bt.umod(); }
@@ -655,8 +656,8 @@ void butterfly_inv(std::vector<mint>& a) {
                 auto r = a[i + offset + p];
                 a[i + offset] = l + r;
                 a[i + offset + p] =
-                    (unsigned long long)(mint::mod() + l.val() - r.val()) *
-                    inow.val();
+                (unsigned long long)(mint::mod() + l.val() - r.val()) *
+                inow.val();
             }
             inow *= sum_ie[bsf(~(unsigned int)(s))];
         }
@@ -696,8 +697,8 @@ std::vector<mint> convolution(std::vector<mint> a, std::vector<mint> b) {
     return a;
 }
 template <unsigned int mod = 998244353,
-          class T,
-          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
+class T,
+std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
 std::vector<T> convolution(const std::vector<T>& a, const std::vector<T>& b) {
     int n = int(a.size()), m = int(b.size());
     if (!n || !m) return {};
@@ -728,11 +729,11 @@ std::vector<long long> convolution_ll(const std::vector<long long>& a,
     static constexpr unsigned long long M1M2 = MOD1 * MOD2;
     static constexpr unsigned long long M1M2M3 = MOD1 * MOD2 * MOD3;
     static constexpr unsigned long long i1 =
-        internal::inv_gcd(MOD2 * MOD3, MOD1).second;
+    internal::inv_gcd(MOD2 * MOD3, MOD1).second;
     static constexpr unsigned long long i2 =
-        internal::inv_gcd(MOD1 * MOD3, MOD2).second;
+    internal::inv_gcd(MOD1 * MOD3, MOD2).second;
     static constexpr unsigned long long i3 =
-        internal::inv_gcd(MOD1 * MOD2, MOD3).second;
+    internal::inv_gcd(MOD1 * MOD2, MOD3).second;
     auto c1 = convolution<MOD1>(a, b);
     auto c2 = convolution<MOD2>(a, b);
     auto c3 = convolution<MOD3>(a, b);
@@ -760,7 +761,7 @@ std::vector<long long> convolution_ll(const std::vector<long long>& a,
         //   ((2) mod MOD1) mod 5 = 3
         //   ((3) mod MOD1) mod 5 = 4
         long long diff =
-            c1[i] - internal::safe_mod((long long)(x), (long long)(MOD1));
+        c1[i] - internal::safe_mod((long long)(x), (long long)(MOD1));
         if (diff < 0) diff += MOD1;
         static constexpr unsigned long long offset[5] = {
             0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3};
@@ -775,7 +776,7 @@ std::vector<long long> convolution_ll(const std::vector<long long>& a,
 // Zvi Galil and Giuseppe F. Italiano,
 // Data structures and algorithms for disjoint set union problems
 struct dsu {
-  public:
+public:
     dsu() : _n(0) {}
     dsu(int n) : _n(n), parent_or_size(n, -1) {}
     int merge(int a, int b) {
@@ -816,12 +817,12 @@ struct dsu {
             result[leader_buf[i]].push_back(i);
         }
         result.erase(
-            std::remove_if(result.begin(), result.end(),
-                           [&](const std::vector<int>& v) { return v.empty(); }),
-            result.end());
+                     std::remove_if(result.begin(), result.end(),
+                                    [&](const std::vector<int>& v) { return v.empty(); }),
+                     result.end());
         return result;
     }
-  private:
+private:
     int _n;
     // root node: -1 * component size
     // otherwise: parent
@@ -831,7 +832,7 @@ struct dsu {
 // Reference: https://en.wikipedia.org/wiki/Fenwick_tree
 template <class T> struct fenwick_tree {
     using U = internal::to_unsigned_t<T>;
-  public:
+public:
     fenwick_tree() : _n(0) {}
     fenwick_tree(int n) : _n(n), data(n) {}
     void add(int p, T x) {
@@ -846,7 +847,7 @@ template <class T> struct fenwick_tree {
         assert(0 <= l && l <= r && r <= _n);
         return sum(r) - sum(l);
     }
-  private:
+private:
     int _n;
     std::vector<U> data;
     U sum(int r) {
@@ -860,14 +861,14 @@ template <class T> struct fenwick_tree {
 };
 
 template <class S,
-          S (*op)(S, S),
-          S (*e)(),
-          class F,
-          S (*mapping)(F, S),
-          F (*composition)(F, F),
-          F (*id)()>
+S (*op)(S, S),
+S (*e)(),
+class F,
+S (*mapping)(F, S),
+F (*composition)(F, F),
+F (*id)()>
 struct lazy_segtree {
-  public:
+public:
     lazy_segtree() : lazy_segtree(0) {}
     lazy_segtree(int n) : lazy_segtree(std::vector<S>(n, e())) {}
     lazy_segtree(const std::vector<S>& v) : _n(int(v.size())) {
@@ -1000,7 +1001,7 @@ struct lazy_segtree {
         } while ((r & -r) != r);
         return 0;
     }
-  private:
+private:
     int _n, size, log;
     std::vector<S> d;
     std::vector<F> lz;
@@ -1095,7 +1096,7 @@ long long floor_sum(long long n, long long m, long long a, long long b) {
 }
 
 template <class Cap> struct mf_graph {
-  public:
+public:
     mf_graph() : _n(0) {}
     mf_graph(int n) : _n(n), g(n) {}
     int add_edge(int from, int to, Cap cap) {
@@ -1168,7 +1169,7 @@ template <class Cap> struct mf_graph {
                 _edge& e = g[v][i];
                 if (level_v <= level[e.to] || g[e.to][e.rev].cap == 0) continue;
                 Cap d =
-                    self(self, e.to, std::min(up - res, g[e.to][e.rev].cap));
+                self(self, e.to, std::min(up - res, g[e.to][e.rev].cap));
                 if (d <= 0) continue;
                 g[v][i].cap += d;
                 g[e.to][e.rev].cap -= d;
@@ -1207,7 +1208,7 @@ template <class Cap> struct mf_graph {
         }
         return visited;
     }
-  private:
+private:
     int _n;
     struct _edge {
         int to, rev;
@@ -1218,7 +1219,7 @@ template <class Cap> struct mf_graph {
 };
 
 template <class Cap, class Cost> struct mcf_graph {
-  public:
+public:
     mcf_graph() {}
     mcf_graph(int n) : _n(n), g(n) {}
     int add_edge(int from, int to, Cap cap, Cost cost) {
@@ -1347,7 +1348,7 @@ template <class Cap, class Cost> struct mcf_graph {
         }
         return result;
     }
-  private:
+private:
     int _n;
     struct _edge {
         int to, rev;
@@ -1359,7 +1360,7 @@ template <class Cap, class Cost> struct mcf_graph {
 };
 
 struct scc_graph {
-  public:
+public:
     scc_graph() : internal(0) {}
     scc_graph(int n) : internal(n) {}
     void add_edge(int from, int to) {
@@ -1369,12 +1370,12 @@ struct scc_graph {
         internal.add_edge(from, to);
     }
     std::vector<std::vector<int>> scc() { return internal.scc(); }
-  private:
+private:
     internal::scc_graph internal;
 };
 
 template <class S, S (*op)(S, S), S (*e)()> struct segtree {
-  public:
+public:
     segtree() : segtree(0) {}
     segtree(int n) : segtree(std::vector<S>(n, e())) {}
     segtree(const std::vector<S>& v) : _n(int(v.size())) {
@@ -1462,7 +1463,7 @@ template <class S, S (*op)(S, S), S (*e)()> struct segtree {
         } while ((r & -r) != r);
         return 0;
     }
-  private:
+private:
     int _n, size, log;
     std::vector<S> d;
     void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
@@ -1612,7 +1613,7 @@ std::vector<int> sa_is(const std::vector<int>& s, int upper) {
             rec_s[lms_map[sorted_lms[i]]] = rec_upper;
         }
         auto rec_sa =
-            sa_is<THRESHOLD_NAIVE, THRESHOLD_DOUBLING>(rec_s, rec_upper);
+        sa_is<THRESHOLD_NAIVE, THRESHOLD_DOUBLING>(rec_s, rec_upper);
         for (int i = 0; i < m; i++) {
             sorted_lms[i] = lms[rec_sa[i]];
         }
@@ -1740,6 +1741,7 @@ private:
     std::vector<bool> _answer;
     internal::scc_graph scc;
 };
+}  // namespace atcoder
 
 
 
@@ -1793,7 +1795,7 @@ void ACL_practice_L() {
     }
     
     // 遅延評価セグメント木のセットアップ
-    lazy_segtree<Node, op, e, Act, mapping, composition, id> seg(A);
+    atcoder::lazy_segtree<Node, op, e, Act, mapping, composition, id> seg(A);
     
     // クエリ処理
     while (Q--) {
@@ -1812,6 +1814,8 @@ void ACL_practice_L() {
 int main() {
     ACL_practice_L();
 }
+
+
 
 
 
