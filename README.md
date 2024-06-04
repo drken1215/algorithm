@@ -57,8 +57,8 @@
 
 - (★★☆☆) std::set
 - (★★★☆) セグメント木上の二分探索
+- (★★★★) [64 分木](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
 - (★★★★) van Emde Boas 木
-- (★★★★) 64 分木
 
 ## 永続データ構造
 
