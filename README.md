@@ -625,8 +625,7 @@
 
 ## 入出力
 
-- (★☆☆☆) [デバッグストリーム, chmin, chmax](https://github.com/drken1215/algorithm/blob/master/Others/debug.cpp)
-- (★★★☆) [Fast IO](https://github.com/drken1215/algorithm/blob/master/Others/fast_io.cpp)
+- (★★★★) [Fast IO](https://github.com/drken1215/algorithm/blob/master/Others/fast_io.cpp)
 
 ## グリッド
 

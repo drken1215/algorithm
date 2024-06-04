@@ -12,7 +12,24 @@
 
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
-#include <bits/stdc++.h>
+#define __GLIBCXX_BITSIZE_INT_N_0 128
+#define __GLIBCXX_TYPE_INT_N_0 __int128
+
+// bits だと上記マクロ定義の下で __int128_t 型を使うときに Yosupo Judge 上で CE になる
+// AtCoder 環境では bits でも動く模様
+#include <algorithm>
+#include <array>
+#include <concepts>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <filesystem>
+#include <iterator>
+#include <limits>
+#include <string_view>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 using namespace std;
 
 
@@ -296,7 +313,7 @@ void Yosupo_A_puls_B() {
 // Yosupo Library Checker - Many A + B (128 bit)
 void Yosupo_128_A_puls_B() {
     using mylib::cin, mylib::cout;
-    using i128 = ::__int128_t;
+    using i128 = __int128_t;
 
     int T;
     cin >> T;
@@ -309,7 +326,6 @@ void Yosupo_128_A_puls_B() {
 
 
 int main() {
-    Yosupo_A_puls_B();
-    //Yosupo_128_A_puls_B();
+    //Yosupo_A_puls_B();
+    Yosupo_128_A_puls_B();
 }
-
