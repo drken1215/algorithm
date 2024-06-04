@@ -64,11 +64,10 @@ struct FastSet {
             x /= BASE;
         }
     }
-    bool isin(int x) const {
+    bool count(int x) const {
         return seg[0][x / BASE] >> (x % BASE) & 1;
     }
-    bool operator [] (int x) const { return isin(x); }
-    
+    bool operator [] (int x) const { return count(x); }
     
     // next / prev
     int next(int x) const {
@@ -138,7 +137,7 @@ void Yosupo_Predecessor_Problem() {
         cin >> t >> k;
         if (t == 0) fs.insert(k);
         else if (t == 1) fs.erase(k);
-        else if (t == 2) cout << fs.isin(k) << '\n';
+        else if (t == 2) cout << fs.count(k) << '\n';
         else if (t == 3) cout << fs.next(k) << '\n';
         else cout << fs.prev(k) << '\n';
         
