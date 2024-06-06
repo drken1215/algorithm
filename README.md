@@ -53,10 +53,9 @@
 - (★★★☆) ローリングハッシュ
 - (★★★★) 根付き木のハッシュ
 
-## S に属する k 以上の要素のうちの最小値の取得
+## N 以下の非負整数値の順序つき集合
 
-- (★★☆☆) std::set
-- (★★★☆) セグメント木上の二分探索
+- (★★★☆) [BIT と BIT 上の二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
 - (★★★★) [64 分木](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
 - (★★★★) van Emde Boas 木
 

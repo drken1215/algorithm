@@ -34,7 +34,7 @@ using namespace std;
 
 
 namespace mylib {
-static constexpr int BUF_SIZE = 1 << 17;
+static constexpr int BUF_SIZE = 1 << 17;  // to be set
 
 struct FastRead {
 private:

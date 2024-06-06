@@ -21,7 +21,7 @@ struct FastSet {
     int lowbit(u64 x) const { return (x == 0 ? -1 : __builtin_ctzll(x)); }
     int topbit(u64 x) const { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
     static constexpr u32 BASE = 64;
-    int lim, log;
+    int lim, log, siz;
     vector<vector<u64>> seg;
     
     // constructor
@@ -29,7 +29,7 @@ struct FastSet {
     FastSet(int n) { build(n); }
     template<class F> FastSet(int n, F isin) { build(n, isin); }
     void build(int n) {
-        lim = n;
+        lim = n, siz = 0;
         seg.clear();
         do {
             seg.push_back(vector<u64>((n + BASE - 1) / BASE));
@@ -49,27 +49,36 @@ struct FastSet {
         }
     }
     
-    // insert / erase / exist
+    // getter
+    bool count(int x) const { return seg[0][x / BASE] >> (x % BASE) & 1; }
+    bool operator [] (int x) const { return count(x); }
+    int get_min() const { return next(0); }
+    int get_max() const { return prev(lim); }
+    int size() const { return siz; }
+    
+    // insert, erase
     void insert(int x) {
-        for (int h = 0; h < log; ++h) {
-            seg[h][x / BASE] |= u64(1) << (x % BASE), x /= BASE;
+        if (!count(x)) {
+            ++siz;
+            for (int h = 0; h < log; ++h) {
+                seg[h][x / BASE] |= u64(1) << (x % BASE), x /= BASE;
+            }
         }
     }
     void erase(int x) {
-        u64 y = 0;
-        for (int h = 0; h < log; ++h) {
-            seg[h][x / BASE] &= ~(u64(1) << (x % BASE));
-            seg[h][x / BASE] |= y << (x % BASE);
-            y = bool(seg[h][x / BASE]);
-            x /= BASE;
+        if (count(x)) {
+            --siz;
+            u64 y = 0;
+            for (int h = 0; h < log; ++h) {
+                seg[h][x / BASE] &= ~(u64(1) << (x % BASE));
+                seg[h][x / BASE] |= y << (x % BASE);
+                y = bool(seg[h][x / BASE]);
+                x /= BASE;
+            }
         }
     }
-    bool count(int x) const {
-        return seg[0][x / BASE] >> (x % BASE) & 1;
-    }
-    bool operator [] (int x) const { return count(x); }
     
-    // next / prev
+    // next (including x)
     int next(int x) const {
         assert(x <= lim);
         if (x < 0) x = 0;
@@ -87,8 +96,10 @@ struct FastSet {
             }
             return x;
         }
-        return -1;  // not exist
+        return lim;  // not exist
     }
+    
+    // prev (including x)
     int prev(int x) const {
         assert(x >= -1);
         if (x >= lim) x = lim - 1;
@@ -111,10 +122,8 @@ struct FastSet {
     
     // debug
     friend ostream& operator << (ostream &s, const FastSet &fs) {
-        int x = fs.next(0);
-        while (x != -1) {
+        for (int x = fs.get_min(); x < fs.lim; x = fs.next(x + 1)) {
             s << x << " ";
-            x = fs.next(x + 1);
         }
         return s;
     }
@@ -137,11 +146,14 @@ void Yosupo_Predecessor_Problem() {
         cin >> t >> k;
         if (t == 0) fs.insert(k);
         else if (t == 1) fs.erase(k);
-        else if (t == 2) cout << fs.count(k) << '\n';
-        else if (t == 3) cout << fs.next(k) << '\n';
+        else if (t == 2) cout << (fs.count(k) ? 1 : 0) << '\n';
+        else if (t == 3) {
+            int res = fs.next(k);
+            cout << (res < N ? res : -1) << '\n';
+        }
         else cout << fs.prev(k) << '\n';
         
-        // cout << fs << '\n';
+        //cout << fs << '\n';
     }
 }
 
@@ -152,4 +164,6 @@ int main() {
     
     Yosupo_Predecessor_Problem();
 }
+
+
 
