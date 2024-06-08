@@ -164,6 +164,3 @@ int main() {
     
     Yosupo_Predecessor_Problem();
 }
-
-
-

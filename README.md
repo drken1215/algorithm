@@ -83,20 +83,18 @@
 # 区間系データ構造 (DATA STRUCTURE : SEGMENT)
 セグメント木や BIT など、区間クエリに強いデータ構造の実装です
 
-## セグメント木
+## セグメント木, Binary Indexed 木
 
 - (★★☆☆) [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree.cpp)
 - (★★★☆) [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
-- (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
-- (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
-- (★★★☆) [マージソート木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
+- (★★☆☆) [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree.cpp)
+- (★★★☆) [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_RAQ.cpp)
 - (★★★★) Segment Tree Beats (俗称)
 
-## Binary Indexed 木
-
-- (★★☆☆) [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree.cpp)
-- (★★★☆) [BIT 上二分探索 (k 番目の要素を求める)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_search_on_BIT.cpp)
-- (★★★☆) [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_RAQ.cpp)
+## セグメント木の応用
+- (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
+- (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
+- (★★★☆) [マージソート過程木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
 
 ## 動的・二次元セグメント木
 

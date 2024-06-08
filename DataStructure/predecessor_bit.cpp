@@ -8,6 +8,9 @@
 //   ARC 033 C - データ構造
 //     https://beta.atcoder.jp/contests/arc033/tasks/arc033_3
 //
+//   ABC 356 F - Distance Component Size Query
+//     https://atcoder.jp/contests/abc356/tasks/abc356_f
+//
 
 
 #include <bits/stdc++.h>
@@ -48,7 +51,7 @@ template<class Abel> struct FastMultiSetByBIT {
     
     // [l, r), l and r are 0-indexed
     Abel sum(int l, int r) const {
-        return sum(l) - sum(r);
+        return sum(r) - sum(l);
     }
     
     // insert, erase, count, min, max
@@ -202,4 +205,3 @@ int main() {
     //Yosupo_Predecessor_Problem();
     ARC_033_C();
 }
-
