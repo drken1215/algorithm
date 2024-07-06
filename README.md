@@ -478,6 +478,7 @@
 
 - (★☆☆☆) [m で割って r 余る, x 以上の最小の整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/amari_lower_bound.cpp)
 - (★★☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
+- (★★★☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/kth_root.cpp)
 - (★★★☆) [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Stern_Brocot.cpp)
 
 
