@@ -23,6 +23,9 @@
 //   AtCoder ABC 330 E - Mex and Update (for max_right)
 //     https://atcoder.jp/contests/abc330/tasks/abc330_e
 //
+//   AtCoder ABC 380 E - 1D Bucket Tool (for complex max_right, min_left)
+//     https://atcoder.jp/contests/abc380/tasks/abc380_e
+//
 
 
 /*
@@ -598,6 +601,48 @@ void ABC_330_E() {
 }
 
 
+// AtCoder ABC 380 E - 1D Bucket Tool (for complex max_right, min_left)
+void ABC_380_E() {
+    using pll = pair<long long, long long>;
+    const long long INF = 1LL<<60;
+    long long N, Q, id, col;
+    cin >> N >> Q;
+
+    // 各色が何個ずつあるか
+    vector<long long> num(N, 1);
+    
+    // セグ木を作る
+    const pll identity_monoid = {-INF, INF};  // {最大, 最小}
+    const long long identity_action = -1;
+    auto op = [&](pll x, pll y) { return pll(max(x.first, y.first), min(x.second, y.second)); };
+    auto mapping = [&](long long f, pll x) { return (f != identity_action ? pll(f, f) : x); };
+    auto composition = [&](long long g, long long f) { return (g != identity_action ? g : f); };
+    vector<pll> v(N);
+    for (int i = 0; i < N; i++) v[i] = {i, i};
+    LazySegmentTree<pll, long long> seg(v, op, mapping, composition, identity_monoid, identity_action);
+
+    // クエリ処理
+    while (Q--) {
+        long long type;
+        cin >> type;
+        if (type == 1) {
+            cin >> id >> col;
+            id--, col--;
+            long long cur_col = seg.prod(id, id+1).first;
+            auto check = [&](pll val) -> bool { return val.first == cur_col && val.second == cur_col; };
+            long long left = seg.min_left(check, id), right = seg.max_right(check, id);
+            num[cur_col] -= right - left;
+            num[col] += right - left;
+            seg.apply(left, right, col);
+        } else {
+            cin >> col;
+            col--;
+            cout << num[col] << endl;
+        }
+    }
+}
+
+
 int main() {
     //AOJ_RMQ_RUQ();
     //AOJ_RSQ_RAQ();
@@ -605,5 +650,6 @@ int main() {
     //AOJ_RSQ_RUQ();
     //ACL_Beginner_Contest_E();
     //ABC_322_F();
-    ABC_330_E();
+    //ABC_330_E();
+    ABC_380_E();
 }
