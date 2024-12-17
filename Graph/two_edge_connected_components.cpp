@@ -25,49 +25,96 @@
  */
 
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <set>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+// Edge Class
+template<class T> struct Edge {
+    int from, to;
+    T val;
+    Edge() : from(-1), to(-1), val(-1) { }
+    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& E) {
+        return s << E.from << "->" << E.to;
+    }
+};
 
+// graph class
+template<class T> struct Graph {
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    
+    Graph(int n = 0) : list(n), reversed_list(n) { }
+    void init(int n = 0) {
+        list.assign(n, vector<Edge<T>>());
+        reversed_list.assign(n, vector<Edge<T>>());
+    }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
+    const size_t size() const { return list.size(); }
+    const void clear() {
+        list.clear(), reversed_list.clear();
+    }
+    const void resize(int n) {
+        list.resize(n), reversed_list.resize(n);
+    }
+        
+    void add_edge(int from, int to, T val = -1) {
+        list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+    
+    void add_bidirected_edge(int from, int to, T val = -1) {
+        list[from].push_back(Edge(from, to, val));
+        list[to].push_back(Edge(to, from, val));
+        reversed_list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
 
+    friend ostream &operator << (ostream &s, const Graph &G) {
+        s << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            s << i << " -> ";
+            for (const auto &e : G[i]) s << e.to << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
 
-
-using Edge = pair<int,long long>;
-using Graph = vector<vector<Edge> >;
-
-struct BridgeDecomposition {
+// bridge decomposition
+template<class T> struct BridgeDecomposition {
     // bridge and articulation points
     vector<int> aps; // articulation points
-    vector<pair<int,int> > brs; // brideges
+    vector<pair<int,int>> brs; // brideges
     
     // decomposition
-    vector<vector<int> > scc; // scc[i] := i'th component
+    vector<vector<int>> scc; // scc[i] := i'th component
     vector<int> cmp;          // cmp[v] := which component is v belong
-    Graph newG;               // the tree
+    Graph<T> newG;               // the tree
     
     // intermediate results
     vector<int> seen, ord, low;
+
+    // constructor
+    BridgeDecomposition() { }
+    BridgeDecomposition(const Graph<T> &graph) {
+        solve(graph);
+    }
+    void init(const Graph<T> &graph) {
+        solve(graph);
+    }
     
     // calc low-link
-    void dfs_lowlink(const Graph &G, int v, int p = -1) {
+    void dfs_lowlink(const Graph<T> &G, int v, int p = -1) {
         static int time = 0;
         seen[v] = true;
         ord[v] = low[v] = time++;
         int num_of_child = 0;
         bool exist = false; // for articulation point
         for (auto ch_edge : G[v]) {
-            int ch = ch_edge.first;
+            int ch = ch_edge.to;
             if (seen[ch]) {
                 if (ch != p) low[v] = min(low[v], ord[ch]); // back edge
                 continue;
@@ -83,51 +130,47 @@ struct BridgeDecomposition {
     
     // reconstruct tree
     vector<int> comp;
-    set<pair<int,int> > newEdges;
-    void MakeTreeDFS(const Graph &G, int v, int curcmp) {
+    set<pair<int,int>> newEdges;
+    void MakeTreeDFS(const Graph<T> &G, int v, int curcmp) {
         seen[v] = true;
         cmp[v] = curcmp;
         for (auto e : G[v]) {
-            int to = e.first;
-            auto weight = e.second;
-            
             bool sameComp = true;
-            if (seen[to]) sameComp = false;
-            if (binary_search(brs.begin(), brs.end(), make_pair(v, to))
-                || binary_search(brs.begin(), brs.end(), make_pair(to, v)))
+            if (seen[e.to]) sameComp = false;
+            if (binary_search(brs.begin(), brs.end(), make_pair(v, e.to))
+                || binary_search(brs.begin(), brs.end(), make_pair(e.to, v)))
                 sameComp = false;
             
             if (!sameComp) {
-                int newcmp = cmp[to];
+                int newcmp = cmp[e.to];
                 if (newcmp == -1) continue;
                 if (newcmp != curcmp) {
                     if (!newEdges.count(make_pair(curcmp, newcmp))
                         && !newEdges.count(make_pair(newcmp, curcmp))) {
                         newEdges.insert(make_pair(curcmp, newcmp));
-                        newG[curcmp].push_back(Edge(newcmp, weight));
-                        newG[newcmp].push_back(Edge(curcmp, weight));
+                        newG.add_bidirected_edge(curcmp, newcmp, e.val);
                     }
                 }
             }
-            else MakeTreeDFS(G, to, curcmp);
+            else MakeTreeDFS(G, e.to, curcmp);
         }
         comp.push_back(v);
     }
     
     // main
-    void solve(const Graph &G) {
+    void solve(const Graph<T> &G) {
         // calc low-link
         int N = (int)G.size();
-        seen.assign(N, 0); ord.resize(N); low.resize(N);
-        aps.clear(); brs.clear();
+        seen.assign(N, 0), ord.resize(N), low.resize(N);
+        aps.clear(), brs.clear();
         for (int v = 0; v < N; ++v) if (!seen[v]) dfs_lowlink(G, v);
         sort(brs.begin(), brs.end());
         
         // reconstruct tree
         scc.clear();
-        newG.clear(); newG.resize(N);
+        newG.clear(), newG.resize(N);
         newEdges.clear();
-        seen.assign(N, 0); cmp.assign(N, -1);
+        seen.assign(N, 0), cmp.assign(N, -1);
         int tcmp = 0;
         for (int v = 0; v < N; ++v) {
             if (seen[v]) continue;
@@ -140,30 +183,42 @@ struct BridgeDecomposition {
 };
 
 
-// LCA
-struct LCA {
-    vector<vector<int> > parent; // parent[d][v] := 2^d-th parent of v
-    vector<int> depth;
-    LCA() { }
-    LCA(const Graph &G, int r = 0) { init(G, r); }
-    void init(const Graph &G, int r = 0) {
-        int V = (int)G.size();
-        int h = 1;
-        while ((1<<h) < V) ++h;
-        parent.assign(h, vector<int>(V, -1));
-        depth.assign(V, -1);
-        dfs(G, r, -1, 0);
-        for (int i = 0; i+1 < (int)parent.size(); ++i)
-            for (int v = 0; v < V; ++v)
-                if (parent[i][v] != -1)
-                    parent[i+1][v] = parent[i][parent[i][v]];
+
+//------------------------------//
+// Examples
+//------------------------------//
+
+// ARC 039 D - 旅行会社高橋君
+void ARC_039_D() {
+    int V, E, s, t;
+    cin >> V >> E;
+    Graph<int> original_graph(V);
+    for (int i = 0; i < E; ++i) {
+        cin >> s >> t, s--, t--;
+        original_graph.add_bidirected_edge(s, t, 1);
     }
-    void dfs(const Graph &G, int v, int p, int d) {
+    BridgeDecomposition bd(original_graph);
+
+    // LCA
+    auto G = bd.newG;
+    int h = 1;
+    while ((1<<h) < V) ++h;
+    vector<vector<int>> parent(h, vector<int>(V, -1));
+    vector<int> depth(V, -1);
+
+    auto dfs = [&](auto dfs, int v, int p, int d) -> void {
         parent[0][v] = p;
         depth[v] = d;
-        for (auto e : G[v]) if (e.first != p) dfs(G, e.first, v, d+1);
-    }
-    int get(int u, int v) {
+        for (auto e : G[v]) if (e.to != p) dfs(dfs, e.to, v, d+1);
+    };
+
+    dfs(dfs, 0, -1, 0);
+    for (int i = 0; i+1 < (int)parent.size(); ++i)
+        for (int v = 0; v < V; ++v)
+            if (parent[i][v] != -1)
+                parent[i+1][v] = parent[i][parent[i][v]];
+
+    auto get = [&](int u, int v) -> int {
         if (depth[u] > depth[v]) swap(u, v);
         for (int i = 0; i < (int)parent.size(); ++i)
             if ( (depth[v] - depth[u]) & (1<<i) )
@@ -176,48 +231,28 @@ struct LCA {
             }
         }
         return parent[0][u];
-    }
-    int dist(int u, int v) {
+    };
+
+    auto dist = [&](int u, int v) -> int {
         int lca = get(u, v);
         return abs(depth[u] - depth[lca]) + abs(depth[v] - depth[lca]);
-    }
-};
-
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-int main() {
-    int V, E;
-    cin >> V >> E;
-    Graph G(V);
-    for (int i = 0; i < E; ++i) {
-        int s, t; cin >> s >> t; --s, --t;
-        G[s].push_back(Edge(t, 1));
-        G[t].push_back(Edge(s, 1));
-    }
+    };
     
-    BridgeDecomposition bd;
-    bd.solve(G);
-    
-    /*
-    COUT(bd.brs);
-    COUT(bd.newG);
-    COUT(bd.scc);
-    COUT(bd.cmp);
-    */
-    
-    LCA lca(bd.newG);
-    int Q; cin >> Q;
+    // queries
+    int Q, a, b, c;
+    cin >> Q;
     for (int _ = 0; _ < Q; ++_) {
-        int a, b, c; cin >> a >> b >> c; --a, --b, --c;
-        a = bd.cmp[a]; b = bd.cmp[b]; c = bd.cmp[c];
-        int ab = lca.dist(a, b);
-        int bc = lca.dist(b, c);
-        int ac = lca.dist(a, c);
+        cin >> a >> b >> c, a--, b--, c--;
+        a = bd.cmp[a], b = bd.cmp[b], c = bd.cmp[c];
+        int ab = dist(a, b);
+        int bc = dist(b, c);
+        int ac = dist(a, c);
         if (ab + bc == ac) puts("OK");
         else puts("NG");
     }
+}
+
+
+int main() {
+    ARC_039_D();
 }
