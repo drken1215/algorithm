@@ -12,6 +12,9 @@
 //   ARC 039 D - 旅行会社高橋君
 //     https://arc039.contest.atcoder.jp/tasks/arc039_d
 //
+//   TTPC 2024 DIV1 A - Don't Detect Cycle
+//     https://atcoder.jp/contests/ttpc2024_1/tasks/ttpc2024_1_a
+//
 
 
 /*
