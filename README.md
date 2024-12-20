@@ -225,7 +225,7 @@
 - (★★★☆) [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/Graph/strongly_connected_components.cpp)
 - (★★★☆) [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/Graph/low_link.cpp)
 - (★★★★) [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/Graph/two_edge_connected_components.cpp)
-- (★★★★) 二重頂点連結成分分解 (Block-Cut 木)
+- (★★★★) [二重頂点連結成分分解 (Block-Cut 木)](https://github.com/drken1215/algorithm/blob/master/Graph/biconnected_components.cpp)
 - (★★★★) 三重辺連結成分分解 (SPQR 木)
 
 ## 最短路問題 (基本)
