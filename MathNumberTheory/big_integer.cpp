@@ -14,8 +14,9 @@
 using namespace std;
 
 
-const int DEFAULT_SIZE = 125;
+// Big Integer
 struct bint : vector<long long> {
+    static const int DEFAULT_SIZE = 125;  // DEFAULT_SIZE x BASE_DIGIT 桁を想定
     static const long long BASE = 100000000;
     static const int BASE_DIGIT = 8;
     int sign;
