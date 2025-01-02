@@ -1,5 +1,5 @@
 //
-// Low-Link を用いた橋列挙と、二重辺連結成分分解
+// Low-Link を用いた橋列挙と、二重辺連結成分分解・二重頂点連結成分分解
 //
 // cf.
 //   hos: グラフ探索アルゴリズムとその応用
@@ -9,11 +9,17 @@
 //   Yosupo Library Checker - Two-Edge-Connected Components
 //     https://judge.yosupo.jp/problem/two_edge_connected_components
 //
-//   ARC 039 D - 旅行会社高橋君
+//   Yosupo Library Checker - Biconnected Components
+//     https://judge.yosupo.jp/problem/biconnected_components
+//
+//   ARC 039 D - 旅行会社高橋君（for 二重辺連結成分分解）
 //     https://arc039.contest.atcoder.jp/tasks/arc039_d
 //
-//   TTPC 2024 DIV1 A - Don't Detect Cycle
+//   TTPC 2024 DIV1 A - Don't Detect Cycle（for 橋列挙）
 //     https://atcoder.jp/contests/ttpc2024_1/tasks/ttpc2024_1_a
+//
+//   ARC 045 D - みんな仲良し高橋君（for 二重頂点連結成分分解した Block-Cut 木上の DP）
+//     https://atcoder.jp/contests/arc045/tasks/arc045_d
 //
 
 
@@ -180,6 +186,114 @@ template<class T> struct TwoEdgeConnectedComponentsDecomposition {
     }
 };
 
+// BiConnected Components decomposition
+// block-cut tree (aps: 0, 1, ..., A-1, components: A, A+1, ..., A+C-1)
+// (A: size of aps, C: num of components)
+template<class T> struct BiConnectedComponentsDecomposition {
+    // result
+    LowLink<T> ll;
+    vector<int> id_ap;   // index of the articulation point (size: V)
+    vector<int> id_cc;   // index of the connected component (size: V)
+    vector<vector<int>> groups;   // biconnected components (size: C)
+    vector<vector<int>> tree;     // block-cut tree (size: A + C)
+
+    // intermediate results
+    vector<int> seen, finished;
+    vector<vector<pair<int, int>>> grouped_edges;
+    vector<pair<int, int>> tmp_edges;
+
+    // constructor
+    BiConnectedComponentsDecomposition() { }
+    BiConnectedComponentsDecomposition(const Graph<T> &G) {
+        solve(G);
+    }
+    void init(const Graph<T> &G) {
+        solve(G);
+    }
+
+    // getter, block-cut tree to orignal graph（v: node-id of block-cut tree)
+    int is_ap(int v) const {
+        return (v < ll.aps.size());
+    }
+    int get_ap(int v) const {
+        if (v >= (int)ll.aps.size()) return -1;  // not ap
+        else return ll.aps[v];
+    }
+    int get_size(int v) const {  // including aps
+        if (v < (int)ll.aps.size()) return 1;  // ap
+        else return groups[v - ll.aps.size()].size();
+    }
+    vector<int> get_group(int v) const {
+        if (v < (int)ll.aps.size()) return vector<int>({v});  // ap
+        else return groups[v - ll.aps.size()];
+    }
+
+    // solver
+    void dfs(const Graph<T> &G, int v, int p) {
+        seen[v] = true;
+        if (G[v].empty()) {
+            groups.emplace_back(vector<int>({v}));
+        }
+        for (const auto &e : G[v]) {
+            if (e.to == p) continue;
+            if (!seen[e.to] || ll.ord[e.to] < ll.ord[v]) {
+                tmp_edges.emplace_back(minmax(v, e.to));
+            }
+            if (!seen[e.to]) {
+                dfs(G, e.to, v);
+                if (ll.low[e.to] >= ll.ord[v]) {
+                    groups.emplace_back(vector<int>({v}));
+                    grouped_edges.emplace_back();
+                    int ap = v;
+                    while (!tmp_edges.empty()) {
+                        const auto &e2 = tmp_edges.back();
+                        if (!finished[e2.first] && e2.first != ap) {
+                            groups.back().emplace_back(e2.first);
+                            finished[e2.first] = true;
+                        }
+                        if (!finished[e2.second] && e2.second != ap) {
+                            groups.back().emplace_back(e2.second);
+                            finished[e2.second] = true;
+                        }
+                        grouped_edges.back().emplace_back(e2);
+                        tmp_edges.pop_back();
+                        if (e2.first == min(v, e.to) && e2.second == max(v, e.to)) break;
+                    }
+                }
+            }
+        }
+    }
+
+    void solve(const Graph<T> &G) {
+        ll.init(G);
+        seen.assign(G.size(), false), finished.assign(G.size(), false);
+        for (int v = 0; v < (int)G.size(); v++) {
+            if (!seen[v]) dfs(G, v, -1);
+        }
+        id_ap.assign(G.size(), -1), id_cc.assign(G.size(), -1);
+        for (int i = 0; i < (int)ll.aps.size(); i++) {
+            id_ap[ll.aps[i]] = i;
+        }
+        tree.assign(ll.aps.size() + grouped_edges.size(), vector<int>());
+        vector<int> last(G.size(), -1);
+        for (int i = 0; i < (int)grouped_edges.size(); i++) {
+            vector<int> st;
+            for (auto [u, v] : grouped_edges[i]) {
+                st.push_back(u), st.push_back(v);
+            }
+            for (auto v : st) {
+                if (id_ap[v] == -1) {
+                    id_cc[v] = i + ll.aps.size();
+                } else if (last[v] != i) {
+                    tree[i + ll.aps.size()].push_back(id_ap[v]);
+                    tree[id_ap[v]].push_back(i + ll.aps.size());
+                    last[v] = i;
+                }
+            }
+        }
+    }
+};
+
 
 
 //------------------------------//
@@ -201,6 +315,27 @@ void YosupoLibraryCheckerTwoEdgeConnectedComponents() {
 
     cout << tecc.groups.size() << '\n';
     for (const auto &group : tecc.groups) {
+        cout << group.size();
+        for (auto v : group) cout << " " << v;
+        cout << '\n';
+    }
+}
+
+// Yosupo Library Checker - BiConnected Components
+void YosupoLibraryCheckerBiConnectedComponents() {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    int N, M, a, b;
+    cin >> N >> M;
+    Graph<int> G(N);
+    for (int i = 0; i < M; i++) {
+        cin >> a >> b;
+        G.add_edge(a, b, i);
+    }
+    BiConnectedComponentsDecomposition<int> bcc(G);
+
+    cout << bcc.groups.size() << '\n';
+    for (const auto &group : bcc.groups) {
         cout << group.size();
         for (auto v : group) cout << " " << v;
         cout << '\n';
@@ -342,8 +477,170 @@ void TTPC_2024_DIV1_A() {
 }
 
 
+// Union-Find
+struct UnionFind {
+    // core member
+    vector<int> par, nex;
+
+    // constructor
+    UnionFind() { }
+    UnionFind(int N) : par(N, -1), nex(N) {
+        init(N);
+    }
+    void init(int N) {
+        par.assign(N, -1);
+        nex.resize(N);
+        for (int i = 0; i < N; ++i) nex[i] = i;
+    }
+    
+    // core methods
+    int root(int x) {
+        if (par[x] < 0) return x;
+        else return par[x] = root(par[x]);
+    }
+    
+    bool same(int x, int y) {
+        return root(x) == root(y);
+    }
+    
+    bool merge(int x, int y) {
+        x = root(x), y = root(y);
+        if (x == y) return false;
+        if (par[x] > par[y]) swap(x, y); // merge technique
+        par[x] += par[y];
+        par[y] = x;
+        swap(nex[x], nex[y]);
+        return true;
+    }
+    
+    int size(int x) {
+        return -par[root(x)];
+    }
+    
+    // get group
+    vector<int> group(int x) {
+        vector<int> res({x});
+        while (nex[res.back()] != x) res.push_back(nex[res.back()]);
+        return res;
+    }
+    vector<vector<int>> groups() {
+        vector<vector<int>> member(par.size());
+        for (int v = 0; v < (int)par.size(); ++v) {
+            member[root(v)].push_back(v);
+        }
+        vector<vector<int>> res;
+        for (int v = 0; v < (int)par.size(); ++v) {
+            if (!member[v].empty()) res.push_back(member[v]);
+        }
+        return res;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, UnionFind uf) {
+        const vector<vector<int>> &gs = uf.groups();
+        for (const vector<int> &g : gs) {
+            s << "group: ";
+            for (int v : g) s << v << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
+
+void ARC_045_D() {
+    // 入力
+    int N;
+    cin >> N;
+    vector<int> X(N*2+1), Y(N*2+1);
+    for (int i = 0; i < N*2+1; i++) cin >> X[i] >> Y[i];
+
+    // 横方向
+    using pint = pair<int,int>;
+    vector<vector<pint>> xy(N*2+2), yx(N*2+2);
+    for (int i = 0; i < N*2+1; i++) {
+        xy[X[i]].emplace_back(Y[i], i);
+        yx[Y[i]].emplace_back(X[i], i);
+    }
+    for (int v = 0; v <= N*2+1; v++) {
+        sort(xy[v].begin(), xy[v].end());
+        sort(yx[v].begin(), yx[v].end());
+    }
+
+    // グラフを作る（横・縦に「隣接」「1個飛ばし」のみ辺を張る）
+    Graph<int> G(N*2+1);
+    for (int v = 0; v <= N*2+1; v++) {
+        for (int i = 0; i < xy[v].size(); i++) {
+            if (i+1 < xy[v].size()) G.add_edge(xy[v][i].second, xy[v][i+1].second);
+            if (i+2 < xy[v].size()) G.add_edge(xy[v][i].second, xy[v][i+2].second);
+        }
+        for (int i = 0; i < yx[v].size(); i++) {
+            if (i+1 < yx[v].size()) G.add_edge(yx[v][i].second, yx[v][i+1].second);
+            if (i+2 < yx[v].size()) G.add_edge(yx[v][i].second, yx[v][i+2].second);
+        }
+    }
+
+    // Block-Cut 木の構築
+    BiConnectedComponentsDecomposition<int> bcc(G);
+
+    // グラフ G の各連結成分のサイズを求めて、間接点以外の点の答えを求める
+    UnionFind uf(N*2+1);
+    for (int v = 0; v < N*2+1; v++) for (auto e : G[v]) uf.merge(e.from, e.to);
+    int odd_num = 0;
+    for (int v = 0; v < N*2+1; v++) if (uf.root(v) == v && uf.size(v) % 2 == 1) odd_num++;
+    if (odd_num > 1) {
+        // 奇数サイズの連結成分が複数個ある場合はすべて NG（以降、奇数サイズの連結成分は 1 個とする)
+        for (int v = 0; v < N*2+1; v++) cout << "NG" << endl;
+        return;
+    }
+    vector<bool> res(N*2+1, false);
+    for (int v = 0; v < N*2+1; v++) {
+        // 奇数サイズかつ間接点以外は true (間接点の結果はあとで上書きする)
+        if (uf.size(v) % 2 == 1) {
+            res[v] = true;
+        }
+    }
+
+    // Block-Cut 木上の探索により、間接点の答えを求める
+    auto tree = bcc.tree;
+    vector<bool> seen(tree.size(), false);
+    auto dfs = [&](auto dfs, int v, int p) -> int {
+        seen[v] = true;
+
+        // 奇数サイズの連結成分を二重頂点連結成分分解してできる Block-Cut 木を
+        // 根付き木として探索したとき、各間接点について、
+        // ある子頂点が存在して、それを根とする部分木のサイズが奇数ならば、"NG"
+        int siz = bcc.get_size(v), odd_num = 0;
+        for (auto ch : tree[v]) {
+            if (ch == p) continue;
+            int tmp = dfs(dfs, ch, v) - 1;
+            if (tmp % 2 == 1) odd_num++;
+            siz += tmp;
+        }
+        if (bcc.is_ap(v)) {
+            int apv = bcc.get_ap(v);  // Block-cut 木の頂点 v に対応するもとのグラフの頂点
+            if (uf.size(apv) % 2 == 1 && odd_num > 0) {
+                res[apv] = false;
+            }
+        }
+        return siz;
+    };
+    for (int v = 0; v < tree.size(); v++) {
+        if (seen[v]) continue;
+        dfs(dfs, v, -1);
+    } 
+
+    // 出力
+    for (int v = 0; v < res.size(); v++) {
+        if (res[v]) cout << "OK" << endl;
+        else cout << "NG" << endl;
+    }
+}
+
+
 int main() {
     //YosupoLibraryCheckerTwoEdgeConnectedComponents();
+    //YosupoLibraryCheckerBiConnectedComponents();
     //ARC_039_D();
-    TTPC_2024_DIV1_A();
+    //TTPC_2024_DIV1_A();
+    ARC_045_D();
 }
