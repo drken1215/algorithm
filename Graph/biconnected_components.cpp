@@ -21,6 +21,9 @@
 //   ARC 045 D - みんな仲良し高橋君（for 二重頂点連結成分分解した Block-Cut 木上の DP）
 //     https://atcoder.jp/contests/arc045/tasks/arc045_d
 //
+//   AOJ 3022 Problem J: Cluster Network
+//     https://onlinejudge.u-aizu.ac.jp/problems/3022
+//
 
 
 /*
@@ -211,6 +214,14 @@ template<class T> struct BiConnectedComponentsDecomposition {
         solve(G);
     }
 
+    // getter, original graph to block-cut tree (v: node of orignal graph)
+    int is_ap_original_graph(int v) const {
+        return (id_ap[v] != -1);
+    }
+    int get_id(int v) const {
+        return (id_ap[v] == -1 ? id_cc[v] : id_ap[v]);
+    }
+
     // getter, block-cut tree to orignal graph（v: node-id of block-cut tree)
     int is_ap(int v) const {
         return (v < ll.aps.size());
@@ -224,7 +235,7 @@ template<class T> struct BiConnectedComponentsDecomposition {
         else return groups[v - ll.aps.size()].size();
     }
     vector<int> get_group(int v) const {
-        if (v < (int)ll.aps.size()) return vector<int>({v});  // ap
+        if (v < (int)ll.aps.size()) return vector<int>({ll.aps[v]});  // ap
         else return groups[v - ll.aps.size()];
     }
 
@@ -636,11 +647,63 @@ void ARC_045_D() {
     }
 }
 
+// AOJ 3022 - Cluster Network
+void AOJ_3022() {
+    long long N, M, u, v, all = 0;
+    cin >> N >> M;
+    vector<long long> w(N), res(N, 0);
+    for (int i = 0; i < N; i++) cin >> w[i], all += w[i];
+    Graph<int> G(N);
+    for (int i = 0; i < M; i++) {
+        cin >> u >> v, u--, v--;
+        G.add_edge(u, v), G.add_edge(v, u);
+    }
+
+    // Block-Cut 木上を形成
+    BiConnectedComponentsDecomposition<int> bcc(G);
+
+    // 関節点以外について求める
+    for (int ov = 0; ov < N; ov++) {
+        if (!bcc.is_ap_original_graph(ov)) res[ov] = all - w[ov];
+    }
+
+    // 関節点について求める：Block-Cut 木上の DP
+    auto tree = bcc.tree;
+    vector<long long> sum(tree.size(), 0);
+    for (int v = 0; v < tree.size(); v++) {
+        const auto &group = bcc.get_group(v);
+        for (auto ov : group) sum[v] += w[ov];
+    }
+    auto rec = [&](auto rec, int v, int p) -> long long {
+        const auto &group = bcc.get_group(v);
+        long long ma = 0, all_weight = sum[v];
+        for (auto ch : tree[v]) {
+            if (ch == p) continue;
+            long long sub = rec(rec, ch, v);
+            if (bcc.is_ap(v)) sub -= sum[v];
+            else sub -= sum[ch];
+            ma = max(ma, sub), all_weight += sub;
+        }
+
+        // 関節点について処理する
+        if (bcc.is_ap(v)) {
+            int ov = bcc.get_ap(v);
+            long long rem = all - all_weight;
+            ma = max(ma, rem);
+            res[ov] = ma;
+        }
+        return all_weight;
+    };
+    rec(rec, 0, -1);
+
+    for (auto val : res) cout << val << endl;
+}
 
 int main() {
     //YosupoLibraryCheckerTwoEdgeConnectedComponents();
     //YosupoLibraryCheckerBiConnectedComponents();
     //ARC_039_D();
     //TTPC_2024_DIV1_A();
-    ARC_045_D();
+    //ARC_045_D();
+    AOJ_3022();
 }
