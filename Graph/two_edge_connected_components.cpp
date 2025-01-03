@@ -15,13 +15,16 @@
 //   ARC 039 D - 旅行会社高橋君（for 二重辺連結成分分解）
 //     https://arc039.contest.atcoder.jp/tasks/arc039_d
 //
+//   天下一プログラマーコンテスト2015予選A D - ハシポン（for 二重辺連結成分分解した Bridge-Block 木の考察）
+//     https://atcoder.jp/contests/tenka1-2015-quala/tasks/tenka1_2015_qualA_d
+//
 //   TTPC 2024 DIV1 A - Don't Detect Cycle（for 橋列挙）
 //     https://atcoder.jp/contests/ttpc2024_1/tasks/ttpc2024_1_a
 //
 //   ARC 045 D - みんな仲良し高橋君（for 二重頂点連結成分分解した Block-Cut 木上の DP）
 //     https://atcoder.jp/contests/arc045/tasks/arc045_d
 //
-//   AOJ 3022 Problem J: Cluster Network
+//   AOJ 3022 Problem J: Cluster Network（for 二重頂点連結成分分解した Block-Cut 木上の DP）
 //     https://onlinejudge.u-aizu.ac.jp/problems/3022
 //
 
@@ -157,6 +160,14 @@ template<class T> struct TwoEdgeConnectedComponentsDecomposition {
     }
     void init(const Graph<T> &G) {
         solve(G);
+    }
+
+    // getter, bridge-block tree to orignal graph（v: node-id of bridge-block tree)
+    int get_size(int v) const {
+        return groups[v].size();
+    }
+    vector<int> get_group(int v) const {
+        return groups[v];
     }
 
     // solver
@@ -414,6 +425,48 @@ void ARC_039_D() {
         int ac = dist(a, c);
         if (ab + bc == ac) puts("OK");
         else puts("NG");
+    }
+}
+
+// 天下一プログラマーコンテスト2015予選A D - ハシポン
+void Tenka_2015_A_D() {
+    int N, M, a, b;
+    cin >> N >> M;
+    Graph<int> G(N);
+    for (int i = 0; i < M; i++) {
+        cin >> a >> b;
+        G.add_edge(a, b);
+    }
+    TwoEdgeConnectedComponentsDecomposition<int> tecc(G);
+    auto tree = tecc.tree;
+
+    if (tree.size() == 1) {
+        cout << "IMPOSSIBLE" << endl;
+        return;
+    } else if (tree.size() == 2) {
+        cout << 0 << endl;
+        return;
+    } else if (tree.size() == 3) {
+        bool allone = true;
+        for (auto g : tecc.groups) if (g.size() > 1) allone = false;
+        if (allone) cout << "IMPOSSIBLE" << endl;
+        else cout << 1 << endl;
+        return;
+    }
+
+    int leaf_num = 0;
+    bool exist_length_one_bridge = false;
+    for (int v = 0; v < tree.size(); v++) {
+        if (tree[v].size() == 1) {
+            leaf_num++;
+            int v2 = tree[v][0];
+            if (tree[v2].size() > 2) exist_length_one_bridge = true;
+        }
+    }
+    if (exist_length_one_bridge) {
+        cout << leaf_num / 2 << endl;
+    } else {
+        cout << (leaf_num + 1) / 2 << endl;
     }
 }
 
@@ -703,7 +756,8 @@ int main() {
     //YosupoLibraryCheckerTwoEdgeConnectedComponents();
     //YosupoLibraryCheckerBiConnectedComponents();
     //ARC_039_D();
+    Tenka_2015_A_D();
     //TTPC_2024_DIV1_A();
     //ARC_045_D();
-    AOJ_3022();
+    //AOJ_3022();
 }
