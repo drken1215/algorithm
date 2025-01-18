@@ -23,9 +23,10 @@ template<class mint> struct MintMatrix {
     vector<vector<mint>> val;
     
     // constructors
-    MintMatrix(int H, int W, mint x = 0) : val(H, vector<mint>(W, x)) {}
+    MintMatrix(int H, int W) : val(H, vector<mint>(W)) {}
+    MintMatrix(int H, int W, mint x) : val(H, vector<mint>(W, x)) {}
     MintMatrix(const MintMatrix &mat) : val(mat.val) {}
-    void init(int H, int W, mint x = 0) {
+    void init(int H, int W, mint x) {
         val.assign(H, vector<mint>(W, x));
     }
     void resize(int H, int W) {
@@ -64,7 +65,7 @@ template<class mint> struct MintMatrix {
         assert(width() == r.width());
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
-                val[i][j] += r.val[i][j];
+                val[i][j] = val[i][j] + r.val[i][j];
             }
         }
         return *this;
@@ -74,7 +75,7 @@ template<class mint> struct MintMatrix {
         assert(width() == r.width());
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
-                val[i][j] -= r.val[i][j];
+                val[i][j] = val[i][j] - r.val[i][j];
             }
         }
         return *this;
@@ -82,7 +83,7 @@ template<class mint> struct MintMatrix {
     constexpr MintMatrix& operator *= (const mint &v) {
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < width(); ++j)
-                val[i][j] *= v;
+                val[i][j] = val[i][j] * v;
         return *this;
     }
     constexpr MintMatrix& operator *= (const MintMatrix &r) {
@@ -91,7 +92,7 @@ template<class mint> struct MintMatrix {
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < r.width(); ++j)
                 for (int k = 0; k < width(); ++k)
-                    res[i][j] += val[i][k] * r.val[k][j];
+                    res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
         return (*this) = res;
     }
     constexpr MintMatrix operator + () const { return MintMatrix(*this); }
@@ -104,11 +105,11 @@ template<class mint> struct MintMatrix {
     // pow
     constexpr MintMatrix pow(long long n) const {
         assert(height() == width());
-        MintMatrix<mint> res(height(), width()),  mul(*this);
-        for (int row = 0; row < height(); ++row) res[row][row] = 1;
+        MintMatrix<mint> res(height(), width()), mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = mint(1);
         while (n > 0) {
-            if (n & 1) res *= mul;
-            mul *= mul;
+            if (n & 1) res = res * mul;
+            mul = mul * mul;
             n >>= 1;
         }
         return res;
@@ -196,6 +197,12 @@ template<class mint> struct MintMatrix {
         return mat.det();
     }
 };
+
+
+
+//------------------------------//
+// Examples
+//------------------------------//
 
 // modint
 template<int MOD> struct Fp {
@@ -302,11 +309,6 @@ template<int MOD> struct Fp {
 };
 
 
-
-//------------------------------//
-// Examples
-//------------------------------//
-
 // AtCoder ARC 176 D - Swap Permutation
 void ARC_176_D() {
     const int MOD = 998244353;
@@ -365,7 +367,6 @@ void ARC_176_D() {
     }
     cout << res << endl;
 }
-
 
 // AOJ 3369 Namori Counting (OUPC 2023 day2-D)
 void AOJ_3369() {
