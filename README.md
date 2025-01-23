@@ -193,13 +193,14 @@
 
 ## その他
 
+- (★★☆☆) [垂直二等分線](https://github.com/drken1215/algorithm/blob/master/Geometry/perpendicular_bisector.cpp)
+- (★★★☆) [3 点を通る円](https://github.com/drken1215/algorithm/blob/master/Geometry/circumscribed_circle.cpp)
+- (★★★☆) [アポロニウスの円](https://github.com/drken1215/algorithm/blob/master/Geometry/apollonius.cpp)
 - (★★★☆) [最近点対](https://github.com/drken1215/algorithm/blob/master/Geometry/closest_two_points.cpp)
+- (★★★★) 最小包含円
 - (★★★☆) 線分併合
 - (★★★☆) 線分アレンジメント
-- (★★★☆) 3 点を通る円
-- (★★★☆) [アポロニウスの円](https://github.com/drken1215/algorithm/blob/master/Geometry/apollonius.cpp)
 - (★★★☆) 双対変換
-- (★★★★) 最小包含円
 - (★★★★) kd 木
 
 
