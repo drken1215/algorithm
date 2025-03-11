@@ -205,7 +205,7 @@
 
 
 
-　
+
 <a name="gt"></a>
 # グラフ (GRAPH)
 グラフアルゴリズムです
@@ -418,7 +418,7 @@
 
 - (★★★☆) [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
 - (★★★☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
-- (★★★☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/DP/inversion_number.cpp)
+- (★★★☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
 
 
 　
