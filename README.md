@@ -514,9 +514,10 @@
 
 ## Convex Hull Trick
 
-- (★★★☆) [Convex Hull Trick (傾き単調, クエリも単調)](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_both_monotone.cpp)
-- (★★★☆) [Convex Hull Trick (傾き単調)](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (単調でなくてよい, Li Chao Tree)](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
+- (★★★☆) [Convex Hull Trick (直線, 傾き単調, クエリも単調, O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_both_monotone.cpp)
+- (★★★☆) [Convex Hull Trick (直線, 傾き単調, O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (直線, 単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
+- (★★★★) [Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 
 ## 数理最適化 (Optimization)
 
