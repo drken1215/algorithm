@@ -9,6 +9,9 @@
 //   AtCoder EDPC Z - Frog 3
 //     https://atcoder.jp/contests/dp/tasks/dp_z 
 //
+//   yukicoder No.705 ゴミ拾い Hard
+//     https://yukicoder.me/problems/no/705 
+//
 
 
 #include <bits/stdc++.h>
@@ -119,8 +122,34 @@ void EDPC_Z() {
     cout << res << endl;
 }
 
+// yukicoder No.705 ゴミ拾い Hard
+void yukicoder_705() {
+    int N;
+    cin >> N;
+    vector<long long> A(N), X(N), Y(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    for (int i = 0; i < N; i++) cin >> X[i];
+    for (int i = 0; i < N; i++) cin >> Y[i];
+
+    const long long INF = 1LL<<60;
+    const long long MAX = 110000;
+    vector<long long> dp(N+1, INF);
+    CHT<long long> cht(0, MAX, INF);
+    dp[0] = 0;
+    for (int i = 1; i <= N; i++) {
+        auto func = [&dp, &X, &Y, i](long long x) -> long long {
+            long long dx = abs(x - X[i-1]), dy = abs(Y[i-1]);
+            return dp[i-1] + dx*dx*dx + dy*dy*dy;
+        };
+        cht.insert(func);
+        dp[i] = cht.query(A[i-1]);
+    }
+    cout << dp[N] << endl;
+}
+
 
 int main() {
-    COLOCON_2018_final_C();
+    //COLOCON_2018_final_C();
     //EDPC_Z();
+    yukicoder_705();
 }
