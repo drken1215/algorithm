@@ -12,6 +12,10 @@
 //   yukicoder No.705 ゴミ拾い Hard
 //     https://yukicoder.me/problems/no/705 
 //
+// Reference:
+//     https://codeforces.com/blog/entry/86731
+//     https://yukicoder.me/problems/no/705/editorial
+// 
 
 
 #include <bits/stdc++.h>
