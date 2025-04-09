@@ -5,12 +5,12 @@
 //   COLOCON 2018 Final C - スペースエクスプローラー高橋君
 //     https://beta.atcoder.jp/contests/colopl2018-final-open/tasks/colopl2018_final_c
 //
+//   AtCoder EDPC Z - Frog 3
+//     https://atcoder.jp/contests/dp/tasks/dp_z 
+//
 
 
-#include <iostream>
-#include <vector>
-#include <deque>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -18,11 +18,11 @@ using namespace std;
 /*
     直線の傾きに単調性を仮定しない
     - MIN: クエリ x の取りうる最小値
-    - MAX: クエリ x の取りうる最大値
+    - MAX: クエリ x の取りうる最大値 (a・MAX + b がオーバーフローしないように注意）
     - INF: 最大値
  
-    - insert (a, b): add y = ax + b
-    - query (x): min_i{ l_i->get(x) }
+    - insert (a, b): add y = ax + b, O(log N)
+    - query (x): min_i{ l_i->get(x) }, O(log N)
 */
 template<class T> struct CHT {
     struct Line {
@@ -78,12 +78,48 @@ template<class T> struct CHT {
 // Examples
 //------------------------------//
 
-int main() {
-    long long N; cin >> N;
+
+// COLOCON 2018 Final C - スペースエクスプローラー高橋君
+void COLOCON_2018_final_C() {
+    long long N;
+    cin >> N;
     vector<long long> a(N), res(N);
     for (int i = 0; i < N; ++i) cin >> a[i];
     CHT<long long> cht(0, 210000, 1LL<<60);
     for (long long i = 0; i < N; ++i) cht.insert(-2LL*i, a[i] + i*i);
     for (long long i = 0; i < N; ++i) res[i] = cht.query(i) + i*i;
     for (int i = 0; i < N; ++i) cout << res[i] << endl;
+}
+
+// AtCoder EDPC Z - Frog 3
+void EDPC_Z() {
+    long long N, C;
+    cin >> N >> C;
+    vector<long long> H(N);
+    for (int i = 0; i < N; i++) cin >> H[i];
+
+    const long long INF = 1LL<<60;
+    const long long MAX = 1LL<<40;
+    vector<long long> dp2(N, INF);
+    /*
+    　　dp[i] = min_j(dp[j] + (H[j] - H[i])² + C)
+    　　dp2[i] = dp[i] + H[i]² とすると
+    　　dp2[i] = min_j(-2 H[j] × H[i] + dp2[j]) + 2 H[i]² + C
+    */
+    dp2[0] = H[0] * H[0];
+    CHT<long long> cht(0, MAX, INF);
+    cht.insert(-H[0] * 2, dp2[0]);
+    for (int i = 1; i < N; i++) {
+        long long val = cht.query(H[i]);
+        dp2[i] = min(dp2[i], val + H[i] * H[i] * 2 + C);
+        cht.insert(-H[i] * 2, dp2[i]);
+    }
+    long long res = dp2[N-1] - H[N-1] * H[N-1];
+    cout << res << endl;
+}
+
+
+int main() {
+    //COLOCON_2018_final_C();
+    EDPC_Z();
 }
