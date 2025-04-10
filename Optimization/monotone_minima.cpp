@@ -17,6 +17,9 @@
 //
 //   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
 //     https://codeforces.com/contest/319/problem/C 
+// 
+//   yukicoder No.705 ゴミ拾い Hard
+//     https://yukicoder.me/problems/no/705 
 //
 //
 // Reference:
@@ -123,9 +126,26 @@ void Codeforces_189_C() {
     cout << dp[N-1].first << endl;
 }
 
+// yukicoder No.705 ゴミ拾い Hard
+void yukicoder_705() {
+    int N;
+    cin >> N;
+    vector<long long> A(N), X(N), Y(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    for (int i = 0; i < N; i++) cin >> X[i];
+    for (int i = 0; i < N; i++) cin >> Y[i];
+    auto func = [&](int i, int j) -> long long {
+        long long dx = abs(A[j-1] - X[i]), dy = abs(Y[i]);
+        return dx*dx*dx + dy*dy*dy;
+    };
+    auto res = MonotoneMinimaDD<long long>(N, func);
+    cout << res[N].first << endl;
+}
+
 
 int main() {
-    COLOCON_2018_final_C();
+    //COLOCON_2018_final_C();
     //EDPC_Z();
     //Codeforces_189_C();
+    yukicoder_705();
 }
