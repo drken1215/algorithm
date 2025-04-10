@@ -505,19 +505,27 @@
 - (★★★★) 最適二分探索木 (O(N^2), Monge 性を活かした区間 DP)
 - (★★★★) 最適二分探索木 (O(N log N), Hu-Tucker 法)
 
-## 動的計画法 (DP) の高速化技法
-
-- (★★★★) Slope Trick
-- (★★★★) Monotone Minima
-- (★★★★) Alien DP
-- (★★★★) LARSCH
-
 ## Convex Hull Trick
 
 - (★★★☆) [Convex Hull Trick (直線, 傾き単調, クエリも単調, O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_both_monotone.cpp)
 - (★★★☆) [Convex Hull Trick (直線, 傾き単調, O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線, 単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
 - (★★★★) [Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
+
+
+## Monge 性を活用する DP 高速化技法
+
+- (★★★★) [Monotone 行最小値問題 (Monotone Minima, O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★★) [Monotone 単一始点最短路問題 (D&D Monotone Minima, O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★★) TM 行最小値問題 (SMAWK, O(H + W))
+- (★★★★) TM 単一始点最短路問題 (D&D SMAWK, O(N log N))
+- (★★★★) Monoge 単一始点最短路問題（by noshi's 簡易 LARSCH, O(N log N))
+- (★★★★) Monoge 単一始点最短路問題（by LARSCH, O(N))
+- (★★★★) Aliens DP
+
+## その他の DP 高速化技法
+
+- (★★★★) Slope Trick
 
 ## 数理最適化 (Optimization)
 
