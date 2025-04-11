@@ -41,6 +41,7 @@ template<class Monoid, class Edge> struct ReRooting {
     
     // inner data
     vector<vector<Monoid>> dp;
+    vector<unordered_map<int,int>> ids;
     
     // constructor
     ReRooting() {}
@@ -61,6 +62,7 @@ template<class Monoid, class Edge> struct ReRooting {
         dp[v].assign(G[v].size(), IDENTITY);
         for (int i = 0; i < G[v].size(); ++i) {
             int v2 = GETID(G[v][i]);
+            ids[v][v2] = i;
             if (v2 == p) continue;
             dp[v][i] = rec(v2, v);
             res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
@@ -91,6 +93,7 @@ template<class Monoid, class Edge> struct ReRooting {
     }
     void build() {
         dp.assign(G.size(), vector<Monoid>());
+        ids.assign(G.size(), unordered_map<int,int>());
         int root = 0;
         rec(root, -1);
         rerec(root, -1, IDENTITY);
@@ -103,6 +106,9 @@ template<class Monoid, class Edge> struct ReRooting {
             res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
         }
         return ADDNODE(v, res);
+    }
+    Monoid get(int v, int w) {
+        return dp[v][ids[v][w]];
     }
     
     // dump
@@ -203,5 +209,3 @@ int main() {
     TDPC_V();
     //ABC_348_E();
 }
-
-
