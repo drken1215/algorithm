@@ -515,8 +515,8 @@
 
 ## Monge 性を活用する DP 高速化技法
 
-- (★★★★) [Monotone 行最小値問題 (Monotone Minima, O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★★) [Monotone 単一始点最短路問題 (D&D Monotone Minima, O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★★) TM 行最小値問題 (SMAWK, O(H + W))
 - (★★★★) TM 単一始点最短路問題 (D&D SMAWK, O(N log N))
 - (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, O(N log N))

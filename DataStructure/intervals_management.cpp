@@ -5,14 +5,18 @@
 //   第六回 アルゴリズム実技検定 M - 等しい数
 //     https://atcoder.jp/contests/past202104-open/tasks/past202104_m
 //
+//   RUPC 2018 G - Elevator
+//     https://onlinejudge.u-aizu.ac.jp/problems/2880 
+//
 
 
 #include <bits/stdc++.h>
 using namespace std;
 
 
+// Interval Set
 // T: type of range, VAL: data type
-template<class T, class VAL> struct IntervalSet {
+template<class T, class VAL = long long> struct IntervalSet {
     struct Node {
         T l, r;
         VAL val;
@@ -73,6 +77,12 @@ template<class T, class VAL> struct IntervalSet {
         auto it = S.upper_bound(Node(p, numeric_limits<T>::max(), 0));
         if (it == S.begin()) return it;
         else return prev(it);
+    }
+
+    // is p, q in same interval?
+    constexpr bool same(const T &p, const T &q) {
+        if (!contains(p) || !contains(q)) return false;
+        return get(p) == get(q);
     }
 
     // update [l, r] with value val
@@ -138,6 +148,44 @@ template<class T, class VAL> struct IntervalSet {
     void update(const T &l, const T &r, const VAL &val) {
         update(l, r, val, [](T, T, VAL){}, [](T, T, VAL){});
     }
+    template<class ADDFUNC, class DELFUNC> void update(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
+        update(l, r, VAL(), add, del);
+    }
+    void update(const T &l, const T &r) {
+        update(l, r, VAL(), [](T, T, VAL){}, [](T, T, VAL){});
+    }
+
+    // remove
+    template<class ADDFUNC, class DELFUNC> void remove(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
+        auto it = S.lower_bound(Node(l, 0, VAL()));
+        while (it != S.end() && it->l <= r) {
+            if (it->r <= r) {
+                del(it->l, it->r, it->val);
+                it = S.erase(it);
+            } else {
+                del(it->l, r, it->val);
+                Node node = *it;
+                it = S.erase(it);
+                it = S.emplace_hint(it, r, node.r, node.val);
+            }
+        }
+        if (it != S.begin()) {
+            it = prev(it);
+            if (l < it->r) {
+                if (r < it->r) {
+                    it = S.emplace_hint(next(it), r, it->r, it->val);
+                    it = prev(it);
+                }
+                del(l, min(r, it->r), it->val);
+                Node node = *it;
+                it = S.erase(it);
+                it = S.emplace_hint(it, node.l, l, node.val);
+            }
+        }
+    }
+    void remove(const T &l, const T &r) {
+        remove(l, r, [](T, T, VAL){}, [](T, T, VAL){});
+    }
 
     // debug
     friend ostream& operator << (ostream &s, const IntervalSet &ins) {
@@ -191,7 +239,37 @@ void PAST_6_M() {
     }
 }
 
+// RUPC 2018 G - Elevator
+void RUPC_2018_G() {
+    using fll = array<long long, 4>;
+    int N, M, Q, t, l, r;
+    cin >> N >> M >> Q;
+    vector<fll> qs(M + Q);
+    for (int i = 0; i < M; i++) {
+        cin >> t >> l >> r, l--, r--;
+        qs[i] = fll({-1, t*2+1, l*2, r*2+1});
+    }
+    for (int i = 0; i < Q; i++) {
+        cin >> t >> l >> r, l--, r--;
+        qs[i+M] = fll({i, t*2, l*2, r*2});
+    }
+    sort(qs.begin(), qs.end(), [&](const fll &p, const fll &q) { return p[1] < q[1]; });
+
+    IntervalSet<long long> ins;
+    vector<bool> res(Q, false);
+    for (auto q : qs) {
+        if (q[0] == -1) {
+            ins.update(q[2], q[3]);
+        } else {
+            if (q[2] >= q[3] || ins.same(q[2], q[3])) res[q[0]] = true;
+            else res[q[0]] = false;
+        }
+    }
+    for (int q = 0; q < Q; ++q) cout << (res[q] ? "Yes" : "No") << endl;
+}
+
 
 int main() {
-    PAST_6_M();
+    //PAST_6_M();
+    RUPC_2018_G();
 }
