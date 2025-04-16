@@ -2,20 +2,26 @@
 // 区間 (と値) を Set で管理する構造体
 //
 // verified
-//   第六回 アルゴリズム実技検定 M - 等しい数
+//   第六回 アルゴリズム実技検定 M - 等しい数 (for update)
 //     https://atcoder.jp/contests/past202104-open/tasks/past202104_m
 //
-//   RUPC 2018 G - Elevator
+//   RUPC 2018 G - Elevator (for insert, same)
 //     https://onlinejudge.u-aizu.ac.jp/problems/2880 
 //
-//   AtCoder ABC 255 Ex - Range Harvest Query
+//   AtCoder ABC 255 Ex - Range Harvest Query (for update)
 //     https://atcoder.jp/contests/abc255/tasks/abc255_h 
 //
-//   yukicoder No.674 n連勤
+//   yukicoder No.674 n連勤 (for insert)
 //     https://yukicoder.me/problems/no/674 
 //
-//   AtCoder ABC 330 E - Mex and Update
+//   AtCoder ABC 330 E - Mex and Update (for insert, erase, mex)
 //     https://atcoder.jp/contests/abc330/tasks/abc330_e 
+//
+//   第五回 アルゴリズム実技検定 N - 旅行会社 (for insert, erase, lower_bound)
+//     https://atcoder.jp/contests/past202012-open/tasks/past202012_n
+//
+//   Code Festival 2015 予選 B D - マスと駒と色塗り (for insert, lower_bound)
+//     https://atcoder.jp/contests/code-festival-2015-qualb/tasks/codefestival_2015_qualB_d
 //
 
 
@@ -33,6 +39,9 @@ template<class T, class VAL = long long> struct IntervalSet {
         constexpr bool operator < (const Node &rhs) const {
             if (l != rhs.l) return l < rhs.l;
             else return r < rhs.r;
+        }
+        friend ostream& operator << (ostream &s, const Node &e) {
+            return s << "([" << e.l << ", " << e.r << "): " << e.val << ")";
         }
     };
 
@@ -65,10 +74,12 @@ template<class T, class VAL = long long> struct IntervalSet {
 
     // get the leftist iterator of interval which contains value >= p
     constexpr typename set<Node>::iterator lower_bound(const T &p) {
-        auto it = S.upper_bound(Node(p, numeric_limits<T>::max(), 0));
-        if (it == S.begin()) return it;
-        else return prev(it);
+        auto it = get(p);
+        if (it != S.end()) return it;
+        return S.upper_bound(Node(p, numeric_limits<T>::max(), 0));
     }
+    constexpr typename set<Node>::iterator begin() { return S.begin(); }
+    constexpr typename set<Node>::iterator end() { return S.end(); }
 
     // exist the interval which contains p: true, [l, r): true
     constexpr bool covered(const T &p) {
@@ -397,7 +408,6 @@ template<int MOD> struct Fp {
         return r.inv();
     }
 };
-
 void ABC_255_Ex() {
     const int MOD = 998244353;
     const long long INF = 1LL << 60;
@@ -460,11 +470,85 @@ void ABC_330_E() {
     }
 }
 
+// 第五回 アルゴリズム実技検定 N - 旅行会社
+void PAST_5_N() {
+    const int IN = -2;
+    const int OUT = -1;
+    using tint = array<int, 3>;  // (time, type(0, 1, 2), city)
+    int N, Q;
+    cin >> N >> Q;
+    vector<tint> events;
+    for (int i = 0; i < N-1; i++) {
+        int L, R;
+        cin >> L >> R;
+        L--;
+        events.push_back({L, IN, i});
+        events.push_back({R, OUT, i});
+    }
+    for (int i = 0; i < Q; i++) {
+        int A, B;
+        cin >> A >> B;
+        A--, B--;
+        events.push_back({A, i, B});
+    }
+    sort(events.begin(), events.end());
+
+    IntervalSet<int> ins;
+    vector<int> res(Q);
+    for (auto [time, id, city] : events) {
+        if (id == IN) {
+            ins.insert(city, city+1);
+        } else if (id == OUT) {
+            ins.erase(city, city+1);
+        } else {
+            int ma = city, mi = city;
+            auto it = ins.lower_bound(city);
+            if (it != ins.end()) {
+                if (city >= it->l) ma = max(ma, it->r), mi = min(mi, it->l);
+            }
+            if (it != ins.begin()) {
+                it = prev(it);
+                if (city <= it->r) mi = min(mi, it->l);
+            }
+            res[id] = ma - mi + 1;
+        }
+    }
+    for (auto val : res) cout << val << '\n';
+}
+
+// Code Festival 2015 予選 B D - マスと駒と色塗り (for insert, lower_bound)
+void code_festival_2015_B_D() {
+    long long N, S, C;
+    cin >> N;
+
+    const long long INF = 1LL<<60;
+    IntervalSet<long long> ins;
+    ins.insert(INF, INF*2);
+    while (N--) {
+        cin >> S >> C;
+        S--;
+        long long cur = S;
+        while (C > 0) {
+            auto it = ins.lower_bound(cur);
+            if (cur >= it->l) cur = it->r;
+            else {
+                long long diff = it->l - cur;
+                cur += min(diff, C);
+                C -= min(diff, C);
+            }
+        }
+        ins.insert(S, cur);
+        cout << cur << '\n';
+    }
+}
+
 
 int main() {
     //PAST_6_M();
     //RUPC_2018_G();
     //ABC_255_Ex();
     //yukicoder_674();
-    ABC_330_E();
+    //ABC_330_E();
+    //PAST_5_N();
+    code_festival_2015_B_D();
 }
