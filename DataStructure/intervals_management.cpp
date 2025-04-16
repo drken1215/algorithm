@@ -8,6 +8,15 @@
 //   RUPC 2018 G - Elevator
 //     https://onlinejudge.u-aizu.ac.jp/problems/2880 
 //
+//   AtCoder ABC 255 Ex - Range Harvest Query
+//     https://atcoder.jp/contests/abc255/tasks/abc255_h 
+//
+//   yukicoder No.674 n連勤
+//     https://yukicoder.me/problems/no/674 
+//
+//   AtCoder ABC 330 E - Mex and Update
+//     https://atcoder.jp/contests/abc330/tasks/abc330_e 
+//
 
 
 #include <bits/stdc++.h>
@@ -54,11 +63,31 @@ template<class T, class VAL = long long> struct IntervalSet {
         else return S.end();
     }
 
-    // exist the interval which contains p: true
-    constexpr bool contains(const T &p) {
+    // get the leftist iterator of interval which contains value >= p
+    constexpr typename set<Node>::iterator lower_bound(const T &p) {
+        auto it = S.upper_bound(Node(p, numeric_limits<T>::max(), 0));
+        if (it == S.begin()) return it;
+        else return prev(it);
+    }
+
+    // exist the interval which contains p: true, [l, r): true
+    constexpr bool covered(const T &p) {
         auto it = get(p);
         if (it != S.end()) return true;
         else return false;
+    }
+    constexpr bool covered(const T &l, const T &r) {
+        assert(l <= r);
+        if (l == r) return true;
+        auto it = get(l);
+        if (it != S.end() && r <= it->r) return true;
+        else return false;
+    }
+
+    // is p, q in same interval?
+    constexpr bool same(const T &p, const T &q) {
+        if (!covered(p) || !covered(q)) return false;
+        return get(p) == get(q);
     }
 
     // get the value of interval which contains p
@@ -72,20 +101,16 @@ template<class T, class VAL = long long> struct IntervalSet {
         return get_val(p);
     }
 
-    // get the leftist iterator of interval which contains value >= p
-    constexpr typename set<Node>::iterator lower_bound(const T &p) {
+    // get mex (>= p)
+    constexpr T get_mex(const T &p = 0) {
         auto it = S.upper_bound(Node(p, numeric_limits<T>::max(), 0));
-        if (it == S.begin()) return it;
-        else return prev(it);
+        if (it == S.begin()) return p;
+        it = prev(it); 
+        if (it->l <= p && p < it->r) return it->r;
+        else return p;
     }
 
-    // is p, q in same interval?
-    constexpr bool same(const T &p, const T &q) {
-        if (!contains(p) || !contains(q)) return false;
-        return get(p) == get(q);
-    }
-
-    // update [l, r] with value val
+    // update [l, r) with value val / insert [l, r)
     // del: reflect effects of interval-delete
     // add: reflect effects of interval add
     template<class ADDFUNC, class DELFUNC> void update(T l, T r, const VAL &val, const ADDFUNC &add, const DELFUNC &del) {
@@ -148,17 +173,18 @@ template<class T, class VAL = long long> struct IntervalSet {
     void update(const T &l, const T &r, const VAL &val) {
         update(l, r, val, [](T, T, VAL){}, [](T, T, VAL){});
     }
-    template<class ADDFUNC, class DELFUNC> void update(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
+    template<class ADDFUNC, class DELFUNC> void insert(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
         update(l, r, VAL(), add, del);
     }
-    void update(const T &l, const T &r) {
+    void insert(const T &l, const T &r) {
         update(l, r, VAL(), [](T, T, VAL){}, [](T, T, VAL){});
     }
 
-    // remove
-    template<class ADDFUNC, class DELFUNC> void remove(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
+    // erase [l, r)
+    template<class ADDFUNC, class DELFUNC> void erase(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
         auto it = S.lower_bound(Node(l, 0, VAL()));
         while (it != S.end() && it->l <= r) {
+            if (it->l == r) break;
             if (it->r <= r) {
                 del(it->l, it->r, it->val);
                 it = S.erase(it);
@@ -183,8 +209,8 @@ template<class T, class VAL = long long> struct IntervalSet {
             }
         }
     }
-    void remove(const T &l, const T &r) {
-        remove(l, r, [](T, T, VAL){}, [](T, T, VAL){});
+    void erase(const T &l, const T &r) {
+        erase(l, r, [](T, T, VAL){}, [](T, T, VAL){});
     }
 
     // debug
@@ -259,7 +285,7 @@ void RUPC_2018_G() {
     vector<bool> res(Q, false);
     for (auto q : qs) {
         if (q[0] == -1) {
-            ins.update(q[2], q[3]);
+            ins.insert(q[2], q[3]);
         } else {
             if (q[2] >= q[3] || ins.same(q[2], q[3])) res[q[0]] = true;
             else res[q[0]] = false;
@@ -268,8 +294,177 @@ void RUPC_2018_G() {
     for (int q = 0; q < Q; ++q) cout << (res[q] ? "Yes" : "No") << endl;
 }
 
+// AtCoder ABC 255 Ex - Range Harvest Query
+// modint
+template<int MOD> struct Fp {
+    // inner value
+    long long val;
+    
+    // constructor
+    constexpr Fp() : val(0) { }
+    constexpr Fp(long long v) : val(v % MOD) {
+        if (val < 0) val += MOD;
+    }
+    constexpr long long get() const { return val; }
+    constexpr int get_mod() const { return MOD; }
+    
+    // arithmetic operators
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) {
+        val += r.val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -= (const Fp &r) {
+        val -= r.val;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    constexpr Fp& operator *= (const Fp &r) {
+        val = val * r.val % MOD;
+        return *this;
+    }
+    constexpr Fp& operator /= (const Fp &r) {
+        long long a = r.val, b = MOD, u = 1, v = 0;
+        while (b) {
+            long long t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        val = val * u % MOD;
+        if (val < 0) val += MOD;
+        return *this;
+    }
+    constexpr Fp pow(long long n) const {
+        Fp res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    constexpr Fp inv() const {
+        Fp res(1), div(*this);
+        return res / div;
+    }
+
+    // other operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
+    constexpr Fp& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    constexpr Fp operator ++ (int) const {
+        Fp res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr Fp operator -- (int) const {
+        Fp res = *this;
+        --*this;
+        return res;
+    }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+        is >> x.val;
+        x.val %= MOD;
+        if (x.val < 0) x.val += MOD;
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+        return os << x.val;
+    }
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+        return r.pow(n);
+    }
+    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+        return r.inv();
+    }
+};
+
+void ABC_255_Ex() {
+    const int MOD = 998244353;
+    const long long INF = 1LL << 60;
+    using mint = Fp<MOD>;
+
+    long long N, Q, D, L, R;
+    cin >> N >> Q;
+    mint res = 0;
+    auto add = [&](long long l, long long r, long long val) -> void {};
+    auto del = [&](long long l, long long r, long long val) -> void {
+        res += mint(D - val) * (l + r - 1) * (r - l) / 2;
+    };
+    IntervalSet<long long, long long> ins;
+    ins.update(0, INF, 0);
+    while (Q--) {
+        cin >> D >> L >> R;
+        res = 0;
+        ins.update(L, R+1, D, add, del);
+        cout << res << '\n';
+    }
+}
+
+// yukicoder No.674 n連勤
+void yukicoder_674() {
+    long long D, Q, A, B;
+    cin >> D >> Q;
+    IntervalSet<long long> ins;
+    long long res = 0;
+    while (Q--) {
+        cin >> A >> B;
+        ins.insert(A, B+1);
+        auto it = ins.get(A);
+        long long l = it->l, r = it->r;
+        res = max(res, r - l);
+        cout << res << '\n';
+    }
+}
+
+// AtCoder ABC 330 E - Mex and Update
+void ABC_330_E() {
+    int N, Q, i, x;
+    cin >> N >> Q;
+    vector<int> A(N);
+    map<int, int> mp;
+    IntervalSet<int> ins;
+    for (int i = 0; i < N; i++) {
+        cin >> A[i];
+        mp[A[i]]++;
+        ins.insert(A[i], A[i]+1);
+    }
+    while (Q--) {
+        cin >> i >> x;
+        i--;
+        mp[A[i]]--;
+        if (mp[A[i]] == 0) ins.erase(A[i], A[i]+1);
+        A[i] = x;
+        mp[A[i]]++;
+        ins.insert(A[i], A[i]+1);
+        cout << ins.get_mex() << '\n';
+    }
+}
+
 
 int main() {
     //PAST_6_M();
-    RUPC_2018_G();
+    //RUPC_2018_G();
+    //ABC_255_Ex();
+    //yukicoder_674();
+    ABC_330_E();
 }
