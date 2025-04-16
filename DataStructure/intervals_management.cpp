@@ -23,6 +23,9 @@
 //   Code Festival 2015 予選 B D - マスと駒と色塗り (for insert, lower_bound)
 //     https://atcoder.jp/contests/code-festival-2015-qualb/tasks/codefestival_2015_qualB_d
 //
+//   CPSCO 2019 Session 1 E - Exclusive OR Queries (for insert with del, lower_bound)
+//     https://atcoder.jp/contests/cpsco2019-s1/tasks/cpsco2019_s1_e
+//
 
 
 #include <bits/stdc++.h>
@@ -62,6 +65,10 @@ template<class T, class VAL = long long> struct IntervalSet {
         S = set<Node>(vec.begin(), vec.end());
     }
 
+    // get the basic iterators
+    constexpr typename set<Node>::iterator begin() { return S.begin(); }
+    constexpr typename set<Node>::iterator end() { return S.end(); }
+
     // get the iterator of interval which contains p
     // not exist -> S.end()
     constexpr typename set<Node>::iterator get(const T &p) {
@@ -78,9 +85,7 @@ template<class T, class VAL = long long> struct IntervalSet {
         if (it != S.end()) return it;
         return S.upper_bound(Node(p, numeric_limits<T>::max(), 0));
     }
-    constexpr typename set<Node>::iterator begin() { return S.begin(); }
-    constexpr typename set<Node>::iterator end() { return S.end(); }
-
+    
     // exist the interval which contains p: true, [l, r): true
     constexpr bool covered(const T &p) {
         auto it = get(p);
@@ -542,6 +547,35 @@ void code_festival_2015_B_D() {
     }
 }
 
+// CPSCO 2019 Session 1 E - Exclusive OR Queries
+void cpsco_2019_session_1_E() {
+    long long N, Q, A, L, R, X;
+    cin >> N >> Q;
+    set<long long> se;
+    for (int i = 0; i < N; i++) {
+        cin >> A;
+        if (se.count(A)) se.erase(A);
+        else se.insert(A);
+    }
+    long long res = 0, num = 0;
+    auto add = [&](long long l, long long r, long long val) -> void {};
+    auto del = [&](long long l, long long r, long long val) -> void {
+        for (long long k = l; k < r; k++) res ^= k, num++;
+    };
+    IntervalSet<long long, long long> ins;
+    for (auto val : se) ins.update(val, val+1, 1);
+    while (Q--) {
+        cin >> L >> R >> X;
+        R++;
+        res = 0, num = 0;
+        ins.erase(L, R, add, del);
+        cout << res << '\n';
+        int exist = ins.covered(X);
+        if ((num + exist) % 2 == 1) ins.update(X, X+1, 1);
+        else ins.erase(X, X+1);
+    }
+}
+
 
 int main() {
     //PAST_6_M();
@@ -550,5 +584,6 @@ int main() {
     //yukicoder_674();
     //ABC_330_E();
     //PAST_5_N();
-    code_festival_2015_B_D();
+    //code_festival_2015_B_D();
+    cpsco_2019_session_1_E();
 }
