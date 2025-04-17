@@ -26,6 +26,9 @@
 //   CPSCO 2019 Session 1 E - Exclusive OR Queries (for insert with del, lower_bound)
 //     https://atcoder.jp/contests/cpsco2019-s1/tasks/cpsco2019_s1_e
 //
+//   yukicoder No.3017 交互浴 (for update)
+//     https://yukicoder.me/problems/no/3017 
+//
 
 
 #include <bits/stdc++.h>
@@ -576,6 +579,27 @@ void cpsco_2019_session_1_E() {
     }
 }
 
+// yukicoder No.3017 交互浴
+void yukicoder_3017() {
+    long long N, H;
+    cin >> N;
+
+    long long res = 0;
+    auto add = [&](long long l, long long r, long long val) -> void {
+        res += (r - l) * val;
+    };
+    auto del = [&](long long l, long long r, long long val) -> void {
+        res -= (r - l) * val;
+    };
+    IntervalSet<long long, long long> ins;
+    for (int iter = 0; iter < N; iter++) {
+        cin >> H;
+        if (iter % 2 == 0) ins.update(0, H, 1, add, del);
+        else ins.update(0, H, 0, add, del);
+        cout << res << '\n';
+    }
+}
+
 
 int main() {
     //PAST_6_M();
@@ -585,5 +609,6 @@ int main() {
     //ABC_330_E();
     //PAST_5_N();
     //code_festival_2015_B_D();
-    cpsco_2019_session_1_E();
+    //cpsco_2019_session_1_E();
+    yukicoder_3017();
 }
