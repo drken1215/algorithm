@@ -29,6 +29,9 @@
 //   yukicoder No.3017 交互浴 (for update)
 //     https://yukicoder.me/problems/no/3017 
 //
+//   KUPC 2018 I - League of Kyoto (for insert, erase with add, del)(maybe, the strongest data set for erase)
+//     https://atcoder.jp/contests/kupc2018/tasks/kupc2018_i 
+//
 
 
 #include <bits/stdc++.h>
@@ -137,8 +140,8 @@ template<class T, class VAL = long long> struct IntervalSet {
         while (it != S.end() && it->l <= r) {
             if (it->l == r) {
                 if (it->val ==val) {
-                    del(r, it->r, val);
                     r = it->r;
+                    del(it->l, it->r, it->val);
                     it = S.erase(it);
                 }
                 break;
@@ -152,10 +155,11 @@ template<class T, class VAL = long long> struct IntervalSet {
                     del(it->l, it->r, it->val);
                     it = S.erase(it);
                 } else {
-                    del(it->l, r, it->val);
                     Node node = *it;
+                    del(it->l, it->r, it->val);
                     it = S.erase(it);
                     it = S.emplace_hint(it, r, node.r, node.val);
+                    add(it->l, it->r, it->val);
                 }
             }
         }
@@ -163,31 +167,33 @@ template<class T, class VAL = long long> struct IntervalSet {
             it = prev(it);
             if (it->r == l) {
                 if (it->val == val) {
-                    del(it->l, it->r, it->val);
                     l = it->l;
+                    del(it->l, it->r, it->val);
                     it = S.erase(it);
                 }
             } else if (l < it->r) {
                 if (it->val == val) {
-                    del(it->l, it->r, it->val);
                     l = min(l, it->l);
                     r = max(r, it->r);
+                    del(it->l, it->r, it->val);
                     it = S.erase(it);
                 } else {
                     if (r < it->r) {
                         it = S.emplace_hint(next(it), r, it->r, it->val);
+                        add(it->l, it->r, it->val);
                         it = prev(it);
                     }
-                    del(l, min(r, it->r), it->val);
                     Node node = *it;
+                    del(it->l, it->r, it->val);
                     it = S.erase(it);
                     it = S.emplace_hint(it, node.l, l, node.val);
+                    add(it->l, it->r, it->val);
                 }
             }
         }
         if (it != S.end()) it = next(it);
-        add(l, r, val);
-        S.emplace_hint(it, l, r, val);
+        it = S.emplace_hint(it, l, r, val);
+        add(it->l, it->r, it->val);
     }
     void update(const T &l, const T &r, const VAL &val) {
         update(l, r, val, [](T, T, VAL){}, [](T, T, VAL){});
@@ -202,16 +208,18 @@ template<class T, class VAL = long long> struct IntervalSet {
     // erase [l, r)
     template<class ADDFUNC, class DELFUNC> void erase(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
         auto it = S.lower_bound(Node(l, 0, VAL()));
+        //COUT(*it);
         while (it != S.end() && it->l <= r) {
             if (it->l == r) break;
             if (it->r <= r) {
                 del(it->l, it->r, it->val);
                 it = S.erase(it);
             } else {
-                del(it->l, r, it->val);
                 Node node = *it;
+                del(it->l, it->r, it->val);
                 it = S.erase(it);
                 it = S.emplace_hint(it, r, node.r, node.val);
+                add(it->l, it->r, it->val);
             }
         }
         if (it != S.begin()) {
@@ -219,12 +227,16 @@ template<class T, class VAL = long long> struct IntervalSet {
             if (l < it->r) {
                 if (r < it->r) {
                     it = S.emplace_hint(next(it), r, it->r, it->val);
+                    add(it->l, it->r, it->val);
                     it = prev(it);
                 }
-                del(l, min(r, it->r), it->val);
                 Node node = *it;
+                //COUT(*it);
+                del(it->l, it->r, it->val);
                 it = S.erase(it);
                 it = S.emplace_hint(it, node.l, l, node.val);
+                add(it->l, it->r, it->val);
+                //COUT(*it);
             }
         }
     }
@@ -242,9 +254,9 @@ template<class T, class VAL = long long> struct IntervalSet {
 };
 
 
-//------------------------------//
-// Examples
-//------------------------------//
+/*/////////////////////////////*/
+// Solver
+/*/////////////////////////////*/
 
 // 第六回 アルゴリズム実技検定 M - 等しい数
 void PAST_6_M() {
@@ -561,7 +573,9 @@ void cpsco_2019_session_1_E() {
         else se.insert(A);
     }
     long long res = 0, num = 0;
-    auto add = [&](long long l, long long r, long long val) -> void {};
+    auto add = [&](long long l, long long r, long long val) -> void {
+        for (long long k = l; k < r; k++) res ^= k, num--;
+    };
     auto del = [&](long long l, long long r, long long val) -> void {
         for (long long k = l; k < r; k++) res ^= k, num++;
     };
@@ -600,6 +614,273 @@ void yukicoder_3017() {
     }
 }
 
+// KUPC 2018 I - League of Kyoto
+template<class Monoid, class Action> struct LazySegmentTree {
+    // various function types
+    using FuncMonoid = function<Monoid(Monoid, Monoid)>;
+    using FuncAction = function<Monoid(Action, Monoid)>;
+    using FuncComposition = function<Action(Action, Action)>;
+
+    // core member
+    int N;
+    FuncMonoid OP;
+    FuncAction ACT;
+    FuncComposition COMP;
+    Monoid IDENTITY_MONOID;
+    Action IDENTITY_ACTION;
+    
+    // inner data
+    int log, offset;
+    vector<Monoid> dat;
+    vector<Action> lazy;
+    
+    // constructor
+    LazySegmentTree() {}
+    LazySegmentTree(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+                    const Monoid &identity_monoid, const Action &identity_action) {
+        init(n, op, act, comp, identity_monoid, identity_action);
+    }
+    LazySegmentTree(const vector<Monoid> &v,
+                    const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+                    const Monoid &identity_monoid, const Action &identity_action) {
+        init(v, op, act, comp, identity_monoid, identity_action);
+    }
+    void init(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+              const Monoid &identity_monoid, const Action &identity_action) {
+        N = n, OP = op, ACT = act, COMP = comp;
+        IDENTITY_MONOID = identity_monoid, IDENTITY_ACTION = identity_action;
+        log = 0, offset = 1;
+        while (offset < N) ++log, offset <<= 1;
+        dat.assign(offset * 2, IDENTITY_MONOID);
+        lazy.assign(offset * 2, IDENTITY_ACTION);
+    }
+    void init(const vector<Monoid> &v,
+              const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+              const Monoid &identity_monoid, const Action &identity_action) {
+        init((int)v.size(), op, act, comp, identity_monoid, identity_action);
+        build(v);
+    }
+    void build(const vector<Monoid> &v) {
+        assert(N == (int)v.size());
+        for (int i = 0; i < N; ++i) dat[i + offset] = v[i];
+        for (int k = offset - 1; k > 0; --k) pull_dat(k);
+    }
+    int size() const {
+        return N;
+    }
+    
+    // basic functions for lazy segment tree
+    void pull_dat(int k) {
+        dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
+    }
+    void apply_lazy(int k, const Action &f) {
+        dat[k] = ACT(f, dat[k]);
+        if (k < offset) lazy[k] = COMP(f, lazy[k]);
+    }
+    void push_lazy(int k) {
+        apply_lazy(k * 2, lazy[k]);
+        apply_lazy(k * 2 + 1, lazy[k]);
+        lazy[k] = IDENTITY_ACTION;
+    }
+    void pull_dat_deep(int k) {
+        for (int h = 1; h <= log; ++h) pull_dat(k >> h);
+    }
+    void push_lazy_deep(int k) {
+        for (int h = log; h >= 1; --h) push_lazy(k >> h);
+    }
+    
+    // setter and getter, update A[i], i is 0-indexed, O(log N)
+    void set(int i, const Monoid &v) {
+        assert(0 <= i && i < N);
+        int k = i + offset;
+        push_lazy_deep(k);
+        dat[k] = v;
+        pull_dat_deep(k);
+    }
+    Monoid get(int i) {
+        assert(0 <= i && i < N);
+        int k = i + offset;
+        push_lazy_deep(k);
+        return dat[k];
+    }
+    Monoid operator [] (int i) {
+        return get(i);
+    }
+    
+    // apply f for index i
+    void apply(int i, const Action &f) {
+        assert(0 <= i && i < N);
+        int k = i + offset;
+        push_lazy_deep(k);
+        dat[k] = ACT(f, dat[k]);
+        pull_dat_deep(k);
+    }
+    // apply f for interval [l, r)
+    void apply(int l, int r, const Action &f) {
+        assert(0 <= l && l <= r && r <= N);
+        if (l == r) return;
+        l += offset, r += offset;
+        for (int h = log; h >= 1; --h) {
+            if (((l >> h) << h) != l) push_lazy(l >> h);
+            if (((r >> h) << h) != r) push_lazy((r - 1) >> h);
+        }
+        int original_l = l, original_r = r;
+        for (; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) apply_lazy(l++, f);
+            if (r & 1) apply_lazy(--r, f);
+        }
+        l = original_l, r = original_r;
+        for (int h = 1; h <= log; ++h) {
+            if (((l >> h) << h) != l) pull_dat(l >> h);
+            if (((r >> h) << h) != r) pull_dat((r - 1) >> h);
+        }
+    }
+    
+    // get prod of interval [l, r)
+    Monoid prod(int l, int r) {
+        assert(0 <= l && l <= r && r <= N);
+        if (l == r) return IDENTITY_MONOID;
+        l += offset, r += offset;
+        for (int h = log; h >= 1; --h) {
+            if (((l >> h) << h) != l) push_lazy(l >> h);
+            if (((r >> h) << h) != r) push_lazy(r >> h);
+        }
+        Monoid val_left = IDENTITY_MONOID, val_right = IDENTITY_MONOID;
+        for (; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) val_left = OP(val_left, dat[l++]);
+            if (r & 1) val_right = OP(dat[--r], val_right);
+        }
+        return OP(val_left, val_right);
+    }
+    Monoid all_prod() {
+        return dat[1];
+    }
+    
+    // get max r that f(get(l, r)) = True (0-indexed), O(log N)
+    // f(IDENTITY) need to be True
+    int max_right(const function<bool(Monoid)> f, int l = 0) {
+        if (l == N) return N;
+        l += offset;
+        push_lazy_deep(l);
+        Monoid sum = IDENTITY_MONOID;
+        do {
+            while (l % 2 == 0) l >>= 1;
+            if (!f(OP(sum, dat[l]))) {
+                while (l < offset) {
+                    push_lazy(l);
+                    l = l * 2;
+                    if (f(OP(sum, dat[l]))) {
+                        sum = OP(sum, dat[l]);
+                        ++l;
+                    }
+                }
+                return l - offset;
+            }
+            sum = OP(sum, dat[l]);
+            ++l;
+        } while ((l & -l) != l);  // stop if l = 2^e
+        return N;
+    }
+
+    // get min l that f(get(l, r)) = True (0-indexed), O(log N)
+    // f(IDENTITY) need to be True
+    int min_left(const function<bool(Monoid)> f, int r = -1) {
+        if (r == 0) return 0;
+        if (r == -1) r = N;
+        r += offset;
+        push_lazy_deep(r - 1);
+        Monoid sum = IDENTITY_MONOID;
+        do {
+            --r;
+            while (r > 1 && (r % 2)) r >>= 1;
+            if (!f(OP(dat[r], sum))) {
+                while (r < offset) {
+                    push_lazy(r);
+                    r = r * 2 + 1;
+                    if (f(OP(dat[r], sum))) {
+                        sum = OP(dat[r], sum);
+                        --r;
+                    }
+                }
+                return r + 1 - offset;
+            }
+            sum = OP(dat[r], sum);
+        } while ((r & -r) != r);
+        return 0;
+    }
+    
+    // debug stream
+    friend ostream& operator << (ostream &s, LazySegmentTree seg) {
+        for (int i = 0; i < (int)seg.size(); ++i) {
+            s << seg[i];
+            if (i != (int)seg.size() - 1) s << " ";
+        }
+        return s;
+    }
+    
+    // dump
+    void dump() {
+        for (int i = 0; i <= log; ++i) {
+            for (int j = (1 << i); j < (1 << (i + 1)); ++j) {
+                cout << "{" << dat[j] << "," << lazy[j] << "} ";
+            }
+            cout << endl;
+        }
+    }
+};
+void KUPC_2018_I() {
+    int N, M, Q;
+    cin >> N >> M;
+    vector<int> L(M), R(M), S(M);
+    for (int i = 0; i < M; i++) cin >> L[i] >> R[i] >> S[i], L[i]--;
+    cin >> Q;
+    vector<int> typ(Q), L2(Q), R2(Q);
+    for (int q = 0; q < Q; q++) cin >> typ[q] >> L2[q] >> R2[q], L2[q]--;
+
+    IntervalSet<int> ins;
+    ins.insert(0, N);
+    vector<vector<pair<int,int>>> adds(Q), dels(Q);
+    int q = 0;
+    auto add = [&](int l, int r, int v) -> void { dels[q].emplace_back(l, r); };
+    auto del = [&](int l, int r, int v) -> void { adds[q].emplace_back(l, r); };
+    for (; q < Q; q++) {
+        if (typ[q] == 0) ins.insert(L2[q], R2[q], add, del);
+        else ins.erase(L2[q], R2[q], add, del);
+    }
+
+    auto op = [&](long long p, long long q) -> long long { return max(p, q); };
+    auto mapping = [&](long long f, long long v) -> long long { return v + f; };
+    auto composition = [&](long long g, long long f) -> long long { return f + g; };
+    LazySegmentTree<long long, long long> seg(N, op, mapping, composition, 0, 0);
+    vector<vector<pair<int,int>>> enemy(N);
+    for (int i = 0; i < M; i++) {
+        enemy[L[i]].emplace_back(R[i], S[i]);
+        seg.apply(R[i]-1, N, S[i]);
+    }
+    map<pair<int,int>, long long> score;
+
+    vector<vector<int>> inters(N);
+    for (int q = 0; q < Q; q++) {
+        for (auto [l, r] : adds[q]) inters[l].emplace_back(r);
+        for (auto [l, r] : dels[q]) inters[l].emplace_back(r);
+    }
+    for (int l = 0; l < N; l++) {
+        for (auto r : inters[l]) {
+            score[make_pair(l, r)] = seg.prod(l, r);
+        }
+        for (auto [r, s] : enemy[l]) {
+            seg.apply(r-1, N, -s);
+        }
+    }
+
+    long long res = 0;
+    for (int q = 0; q < Q; q++) {
+        for (auto [l, r] : adds[q]) res += score[make_pair(l, r)];
+        for (auto [l, r] : dels[q]) res -= score[make_pair(l, r)];
+        cout << res << '\n';
+    }
+}
+
 
 int main() {
     //PAST_6_M();
@@ -610,5 +891,6 @@ int main() {
     //PAST_5_N();
     //code_festival_2015_B_D();
     //cpsco_2019_session_1_E();
-    yukicoder_3017();
+    //yukicoder_3017();
+    KUPC_2018_I();
 }
