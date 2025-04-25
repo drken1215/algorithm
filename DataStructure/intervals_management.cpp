@@ -1,5 +1,12 @@
 //
 // 区間 (と値) を Set で管理する構造体
+//   (重要!) add and del should be inverse functions each other
+//
+// why?
+//    {[1, 3), (7, 11)} に対して erase(5, 9) をするときの挙動: 
+//      not: del(7, 9)
+//      but: del(7, 11), add(5, 9)   
+//
 //
 // verified
 //   第六回 アルゴリズム実技検定 M - 等しい数 (for update)
@@ -28,6 +35,9 @@
 //
 //   yukicoder No.3017 交互浴 (for update)
 //     https://yukicoder.me/problems/no/3017 
+//
+//   AtCoder ABC 256 Ex - I like Query Problem
+//     https://atcoder.jp/contests/abc256/tasks/abc256_h 
 //
 //   KUPC 2018 I - League of Kyoto (for insert, erase with add, del)(maybe, the strongest data set for erase)
 //     https://atcoder.jp/contests/kupc2018/tasks/kupc2018_i 
@@ -134,7 +144,8 @@ template<class T, class VAL = long long> struct IntervalSet {
 
     // update [l, r) with value val / insert [l, r)
     // del: reflect effects of interval-delete
-    // add: reflect effects of interval add
+    // add: reflect effects of interval-add
+    // add and del should be reversed operation each other
     template<class ADDFUNC, class DELFUNC> void update(T l, T r, const VAL &val, const ADDFUNC &add, const DELFUNC &del) {
         auto it = S.lower_bound(Node(l, 0, val));
         while (it != S.end() && it->l <= r) {
@@ -206,6 +217,9 @@ template<class T, class VAL = long long> struct IntervalSet {
     }
 
     // erase [l, r)
+    // del: reflect effects of interval-delete
+    // add: reflect effects of interval-add
+    // add and del should be reversed operation each other
     template<class ADDFUNC, class DELFUNC> void erase(T l, T r, const ADDFUNC &add, const DELFUNC &del) {
         auto it = S.lower_bound(Node(l, 0, VAL()));
         //COUT(*it);
@@ -436,7 +450,9 @@ void ABC_255_Ex() {
     long long N, Q, D, L, R;
     cin >> N >> Q;
     mint res = 0;
-    auto add = [&](long long l, long long r, long long val) -> void {};
+    auto add = [&](long long l, long long r, long long val) -> void {
+        res -= mint(D - val) * (l + r - 1) * (r - l) / 2;
+    };
     auto del = [&](long long l, long long r, long long val) -> void {
         res += mint(D - val) * (l + r - 1) * (r - l) / 2;
     };
@@ -611,6 +627,56 @@ void yukicoder_3017() {
         if (iter % 2 == 0) ins.update(0, H, 1, add, del);
         else ins.update(0, H, 0, add, del);
         cout << res << '\n';
+    }
+}
+
+// AtCoder ABC 256 Ex - I like Query Problem
+#include "atcoder/lazysegtree.hpp"
+using ll = long long;
+using pl = pair<ll, ll>;
+pl ti() { return {0, 0}; }
+ll ei() { return -1; }
+pl f(pl a, pl b) { return pl{a.first + b.first, a.second + b.second}; }
+pl g(ll b, pl a) { return b == ei() ? a : pl{a.second * b, a.second}; }
+ll h(ll b, ll a) { return b == ei() ? a : b; }
+using segtree = atcoder::lazy_segtree<pl, f, ti, ll, g, h, ei>;
+void ABC_256_Ex() {
+    int N, Q, type, L, R, x, y;
+    cin >> N >> Q;
+    vector<int> A(N);
+    vector<pl> PA(N);
+    for (int i = 0; i < N; i++) scanf("%d", &A[i]), PA[i] = {A[i], 1};
+    segtree seg(PA);
+    IntervalSet<int, int> ins(A);
+    while (Q--) {
+        cin >> type;
+        if (type == 1) {
+            scanf("%d %d %d", &L, &R, &x);
+            L--;
+            for (int v = L; v < R;) {
+                auto it = ins.lower_bound(v);
+                if (it == ins.end()) break;
+                v = max(v, it->l);
+                if (v >= R) break;
+                int r = min(it->r, R);
+                int before = it->val;
+                int after = before / x;
+                if (after == 0) ins.erase(v, r);
+                else ins.update(v, r, after);
+                seg.apply(v, r, after);
+                v = r;
+            }
+        } else if (type == 2) {
+            scanf("%d %d %d", &L, &R, &y);
+            L--;
+            ins.update(L, R, y);
+            seg.apply(L, R, y);
+        } else {
+            scanf("%d %d", &L, &R);
+            L--;
+            ll res = seg.prod(L, R).first;
+            printf("%lld\n", res);
+        }
     }
 }
 
@@ -892,5 +958,6 @@ int main() {
     //code_festival_2015_B_D();
     //cpsco_2019_session_1_E();
     //yukicoder_3017();
-    KUPC_2018_I();
+    ABC_256_Ex();
+    //KUPC_2018_I();
 }
