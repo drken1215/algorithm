@@ -50,7 +50,6 @@
 
 - (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
 - (★★★☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
-- (★★★☆) ローリングハッシュ
 - (★★★★) 根付き木のハッシュ
 
 ## N 以下の非負整数値の順序つき集合

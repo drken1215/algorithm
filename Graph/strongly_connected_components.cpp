@@ -64,41 +64,47 @@ template<class T> struct Graph {
 
 // strongly connected components decomposition
 template<class T> struct SCC {
-    // input
-    Graph<T> G;
-    
     // results
-    vector<vector<int>> scc;
     vector<int> cmp;
+    vector<vector<int>> groups;
     Graph<T> dag;
     
     // intermediate results
     vector<bool> seen;
     vector<int> vs, rvs;
-    set<pair<int,int>> new_edges;
     
     // constructor
     SCC() { }
-    SCC(const Graph<T> &graph) : G(graph) { }
-    void init(const Graph<T> &graph) { G = graph; }
+    SCC(const Graph<T> &G) { 
+        solve(G);
+    }
+    void init(const Graph<T> &G) { 
+        solve(G);
+    }
 
-    // dfs / rdfs
-    void dfs(int v) {
+    // getter, compressed dag（v: node-id of compressed dag)
+    int get_size(int v) const {
+        return groups[v].size();
+    }
+    vector<int> get_group(int v) const {
+        return groups[v];
+    }
+
+    // solver
+    void dfs(const Graph<T> &G, int v) {
         seen[v] = true;
-        for (const auto &e : G[v]) if (!seen[e.to]) dfs(e.to);
+        for (const auto &e : G[v]) if (!seen[e.to]) dfs(G, e.to);
         vs.push_back(v);
     }
-    void rdfs(int v, int k) {
+    void rdfs(const Graph<T> &G, int v, int k) {
         seen[v] = true;
         cmp[v] = k;
-        for (const auto &e : G.get_rev_edges(v)) if (!seen[e.to]) rdfs(e.to, k);
+        for (const auto &e : G.get_rev_edges(v)) if (!seen[e.to]) rdfs(G, e.to, k);
         rvs.push_back(v);
     }
-
-    // reconstruct
-    void reconstruct() {
-        dag.init((int)scc.size());
-        new_edges.clear();
+    void reconstruct(const Graph<T> &G) {
+        dag.init((int)groups.size());
+        set<pair<int,int>> new_edges;
         for (int i = 0; i < (int)G.size(); ++i) {
             int u = cmp[i];
             for (const auto &e : G[i]) {
@@ -111,30 +117,25 @@ template<class T> struct SCC {
             }
         }
     }
-
-    // main solver
-    vector<vector<int>> find_scc(bool to_reconstruct = true) {
+    void solve(const Graph<T> &G) {
         // first dfs
         seen.assign((int)G.size(), false);
         vs.clear();
-        for (int v = 0; v < (int)G.size(); ++v) if (!seen[v]) dfs(v);
+        for (int v = 0; v < (int)G.size(); ++v) if (!seen[v]) dfs(G, v);
 
         // back dfs
         int k = 0;
-        scc.clear();
+        groups.clear();
         seen.assign((int)G.size(), false);
         cmp.assign((int)G.size(), -1);
         for (int i = (int)G.size()-1; i >= 0; --i) {
             if (!seen[vs[i]]) {
                 rvs.clear();
-                rdfs(vs[i], k++);
-                scc.push_back(rvs);
+                rdfs(G, vs[i], k++);
+                groups.push_back(rvs);
             }
         }
-
-        // reconstruct DAG
-        if (to_reconstruct) reconstruct();
-        return scc;
+        reconstruct(G);
     }
 };
 
@@ -160,12 +161,12 @@ void Yosupo_Strongly_Connected_Components() {
     //cout << G << endl;
     
     // SCC (not build dag)
-    SCC<int> scc_solver(G);
-    const auto &scc = scc_solver.find_scc(false);
+    SCC<int> scc(G);
+    const auto &groups = scc.groups;
     
     // 出力
-    cout << scc.size() << endl;
-    for (const auto &list : scc) {
+    cout << groups.size() << endl;
+    for (const auto &list : groups) {
         cout << list.size();
         for (auto v : list) cout << " " << v;
         cout << endl;
@@ -184,8 +185,7 @@ void AOJ_GRL_3_C() {
     }
     
     // SCC
-    SCC<int> scc_solver(G);
-    const auto &scc = scc_solver.find_scc();
+    SCC<int> scc(G);
     
     // クエリ
     int Q;
@@ -193,14 +193,13 @@ void AOJ_GRL_3_C() {
     while (Q--) {
         int u, v;
         cin >> u >> v;
-        if (scc_solver.cmp[u] == scc_solver.cmp[v]) cout << 1 << endl;
+        if (scc.cmp[u] == scc.cmp[v]) cout << 1 << endl;
         else cout << 0 << endl;
     }
 }
 
 
 int main() {
-    Yosupo_Strongly_Connected_Components();
-    //AOJ_GRL_3_C();
+    //Yosupo_Strongly_Connected_Components();
+    AOJ_GRL_3_C();
 }
-
