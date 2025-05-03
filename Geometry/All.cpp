@@ -246,9 +246,9 @@ template<class DD> DD distance_PL(const Point<DD> &p, const Line<DD> &l) {
     return abs(p - proj(p, l));
 }
 template<class DD> DD distance_PS(const Point<DD> &p, const Line<DD> &s) {
-    Point h = proj(p, s);
-    if (is_inter_PS(h, s)) return abs(p - h);
-    return min(abs(p - s[0]), abs(p - s[1]));
+    if (dot(p - s[0], s[1] - s[0]) < 0) return abs(p - s[0]);
+    else if (dot(p - s[1], s[0] - s[1]) < 0) return abs(p - s[1]);
+    else return abs(p - proj(p, s));
 }
 template<class DD> DD distance_LL(const Line<DD> &l, const Line<DD> &m) {
     if (is_inter_LL(l, m)) return 0;
