@@ -101,6 +101,14 @@ template<class mint> struct MintMatrix {
     constexpr MintMatrix operator - (const MintMatrix &r) const { return MintMatrix(*this) -= r; }
     constexpr MintMatrix operator * (const mint &v) const { return MintMatrix(*this) *= v; }
     constexpr MintMatrix operator * (const MintMatrix &r) const { return MintMatrix(*this) *= r; }
+    constexpr vector<mint> operator * (const vector<mint> &v) const {
+        assert(width() == v.size());
+        vector<mint> res(height(), mint(0));
+        for (int i = 0; i < height(); i++)
+            for (int j = 0; j < width(); j++)
+                res[i] += val[i][j] * v[j];
+        return res;
+    }
     
     // pow
     constexpr MintMatrix pow(long long n) const {
