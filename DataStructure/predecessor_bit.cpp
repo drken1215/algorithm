@@ -139,7 +139,7 @@ template<class Abel> struct FastMultiSetByBIT {
         return min_left([&](Abel x) { return x <= 0; }, r + 1) - 1;
     }
     int prev() const {
-        prev(lim);
+        return prev(lim);
     }
     
     // debug
