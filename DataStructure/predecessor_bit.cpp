@@ -1,5 +1,7 @@
 //
-// BIT 木上の二分探索を用いた Multiset の実装
+// BIT 木上の二分探索を用いた multiset の実装
+//   ・クエリ先読みができる場合に有効
+//   ・正の整数 M (10^7 程度) に対して、M 以下の非負整数を管理する multiset
 //
 // verified:
 //   Yosupo Library Checker - Predecessor Problem
@@ -11,12 +13,18 @@
 //   ABC 356 F - Distance Component Size Query
 //     https://atcoder.jp/contests/abc356/tasks/abc356_f
 //
+//   ARC 197 C - Removal of Multiples
+//     https://atcoder.jp/contests/abc356/tasks/abc356_f
+//
 
 
 #include <bits/stdc++.h>
 using namespace std;
 
 
+// multiset by BIT
+// manage integers x (0 <= x < lim), where lim <= 10^7
+// Abel: type of the number of inserted values (not the tyep of the value)
 template<class Abel> struct FastMultiSetByBIT {
     int topbit(int x) const { return (x == 0 ? -1 : 31 - __builtin_clz(x)); }
     int lowbit(int x) const { return (x == 0 ? -1 : __builtin_ctz(x)); }
@@ -60,7 +68,6 @@ template<class Abel> struct FastMultiSetByBIT {
     Abel count(int x) const { return sum(x, x + 1); }
     Abel count(int l, int r) const { return sum(l, r); }
     Abel size() const { return sum(lim); }
-    bool operator [] (int x) const { return count(x); }
     int get_min() const { return next(); }
     int get_max() const { return prev(); }
 
@@ -125,6 +132,7 @@ template<class Abel> struct FastMultiSetByBIT {
     int get(Abel k, int l = 0) const {
         return max_right([&](Abel x) { return x <= k; }, l);
     }
+    int operator [] (int k) const { return get(k); }
     
     // next (including x)
     int next(int l = 0) const {
@@ -150,7 +158,6 @@ template<class Abel> struct FastMultiSetByBIT {
         return s;
     }
 };
-
 
 
 //------------------------------//
@@ -197,11 +204,29 @@ void ARC_033_C() {
     }
 }
 
+// ARC 197 C - Removal of Multiples
+void ARC_197_C() {
+    const int MAX = 3000000;
+    FastMultiSetByBIT<int> bit(MAX);
+    for (int v = 1; v < MAX; v++) bit.insert(v);
+
+    int Q, A, B;;
+    cin >> Q;
+    for (int i = 0; i < Q; i++) {
+        cin >> A >> B, B--;
+        if (bit.count(A)) {
+            for (int v = A; v < MAX; v += A) bit.erase(v);
+        }
+        cout << bit[B] << '\n';
+    }
+}
+
 
 int main() {
     cin.tie(nullptr);
     ios_base::sync_with_stdio(false);
     
     //Yosupo_Predecessor_Problem();
-    ARC_033_C();
+    //ARC_033_C();
+    ARC_197_C();
 }
