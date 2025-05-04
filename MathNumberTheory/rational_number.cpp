@@ -3,7 +3,10 @@
 //
 // verified
 //   AOJ 1426 Remodeling the Dungeon 2 (ICPC Asia 2024 H)
-//     https://onlinejudge.u-aizu.ac.jp/problems/1462
+//     https://onlinejudge.u-aizu.ac.jp/problems/1464
+//
+//   数学アルゴ本 071 - Linear Programming
+//     https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_bf
 //
 
 
@@ -19,7 +22,8 @@ template<class T> struct frac {
     // constructor
     frac& normalize() {
         if (second < 0) first = -first, second = -second;
-        T d = gcd(abs(first), abs(second));
+        T abs_first = (first >= 0 ? first : -first);
+        T d = gcd(abs_first, second);
         if (d == 0) first = 0, second = 1;
         else first /= d, second /= d;
         return *this;
@@ -91,11 +95,9 @@ template<class T> struct frac {
 };
 
 
-
 //------------------------------//
 // Examples
 //------------------------------//
-
 
 // AOJ 1426 Remodeling the Dungeon 2 (ICPC Asia 2024 H)
 void ICPC_Asia_2024_J() {
@@ -150,47 +152,54 @@ void ICPC_Asia_2024_J() {
     cout << res.first << " " << res.second << endl;
 }
 
+// 数学アルゴ本 071 - Linear Programming
+using i128 = __int128;
+constexpr i128 to_integer(const string &s) {
+    i128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    if (s[0] == '-') res *= -1;
+    return res;
+}
+istream& operator >> (istream &is, i128 &x) {
+    string s;
+    is >> s;
+    x = to_integer(s);
+    return is;
+}
+void MathAlgorithm071() {
+    using FF = frac<i128>;
+    int N;
+    cin >> N;
+    vector<i128> A(N), B(N), C(N);
+    for (int i = 0; i < N; i++) cin >> A[i] >> B[i] >> C[i];
 
-int main() {
-    ICPC_Asia_2024_J();
+    auto check = [&](FF x, FF y) {
+        for (int i = 0; i < N; i++) {
+            if (x * A[i] + y * B[i] > C[i]) return false;
+        }
+        return true;
+    };
+
+    FF res = i128(0);
+    for (int i = 0; i < N; i++) {
+        for (int j = i + 1; j < N; j++) {
+            FF a = A[i], b = B[i], c = A[j], d = B[j], k = C[i], l = C[j];
+
+            if (a * d - b * c == i128(0)) continue;
+            FF det = a * d - b * c;
+            FF x = (d * k - b * l) / det, y = (a * l - c * k) / det;
+            if (check(x, y)) res = max(res, x + y);
+        }
+    }
+    using DD = long double;
+    DD dres = DD(res.first) / res.second;
+    cout << fixed << setprecision(10) << dres << endl;
 }
 
 
-// int main() {
-//     long long T; int N;
-//     cin >> T >> N;
-//     const frac center(1, T); // 45 度打ち出しの場合
-//     using pf = pair<frac,frac>;
-//     vector<pf> upper, lower, middle;
-//     for (int i = 0; i < N; ++i) {
-//         long long x, low, up; cin >> x >> low >> up;
-//         frac flow(low, x * (T-x));
-//         frac fup(up, x * (T-x));
-//         if (fup < center) lower.push_back({flow, fup});
-//         else if (flow > center) upper.push_back({flow, fup});
-//         else middle.push_back({flow, fup});
-//     }
-//     sort(lower.begin(), lower.end(), [](const pf &a, const pf &b) {
-//             return a.second < b.second;});
-//     sort(upper.begin(), upper.end(), [](const pf &a, const pf &b) {
-//             return a.first > b.first;});
-
-//     long double res = 0.0;
-//     frac left = 0, right = 1000100; // right * 10^12/4 がオーバーフローしないように
-//     for (auto inter : lower) {
-//         if (left >= inter.first) continue;
-//         res += cost(inter.second, T);
-//         left = inter.second;
-//     }
-//     for (auto inter : upper) {
-//         if (right <= inter.second) continue;
-//         res += cost(inter.first, T);
-//         right = inter.first;
-//     }
-//     bool remain = false;
-//     for (auto inter : middle) {
-//         if (left < inter.first && inter.second < right) remain = true;
-//     }
-//     if (remain) res += cost(center, T);
-//     cout << fixed << setprecision(20) << res << endl;
-// }
+int main() {
+    //ICPC_Asia_2024_J();
+    MathAlgorithm071();
+}
