@@ -2,11 +2,14 @@
 // 実数行列 (行列累乗と、掃き出し法)
 //
 // verified:
-//   AOJ 2171 Strange Couple
+//   AOJ 2171 Strange Couple (for gauss-jordan)
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2171
 //
-//   AOJ 1328 Find the Outlier
+//   AOJ 1328 Find the Outlier (for gauss-jordan)
 //     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1328
+//
+//   数学アルゴ本 100 - Simulation of Chemicals (for pow)
+//     https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_bv
 //
 
 
@@ -193,6 +196,7 @@ template<class T> struct Matrix {
 // Examples
 //------------------------------//
 
+// AOJ 2171 Strange Couple
 void AOJ_2171() {
     int N, s, t;
     while (cin >> N >> s >> t, N) {
@@ -261,6 +265,7 @@ void AOJ_2171() {
     }
 }
 
+// AOJ 1328 Find the Outlier
 void AOJ_1328() {
     using D = long double;
     EPS = 1e-5;  // set EPS
@@ -310,9 +315,31 @@ void AOJ_1328() {
     }
 }
 
+// 数学アルゴ本 100 - Simulation of Chemicals
+void MathAlgo100() {
+    using DD = long double;
+    int Q;
+    cin >> Q;
+    while (Q--) {
+        DD X, Y, Z;
+        long long T;
+        cin >> X >> Y >> Z >> T;
+
+        Matrix<DD> A(3, 3, 0);
+        A[0][0] = 1.0 - X, A[0][1] = Y;
+        A[1][1] = 1.0 - Y, A[1][2] = Z;
+        A[2][2] = 1.0 - Z, A[2][0] = X;
+        auto P = A.pow(T);
+        vector<DD> ini({1, 1, 1});
+        auto res = P * ini;
+        cout << fixed << setprecision(10);
+        cout << res[0] << " " << res[1] << " " << res[2] << endl;
+    }
+}
+
 
 int main() {
     //AOJ_2171();
-    AOJ_1328();
+    //AOJ_1328();
+    MathAlgo100();
 }
-
