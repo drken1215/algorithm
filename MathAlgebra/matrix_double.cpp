@@ -100,11 +100,20 @@ template<class T> struct Matrix {
     constexpr Matrix operator - (const Matrix &r) const { return Matrix(*this) -= r; }
     constexpr Matrix operator * (T v) const { return Matrix(*this) *= v; }
     constexpr Matrix operator * (const Matrix &r) const { return Matrix(*this) *= r; }
+    constexpr vector<T> operator * (const vector<T> &v) const {
+        assert(width() == v.size());
+        vector<T> res(height(), T(0));
+        for (int i = 0; i < height(); i++)
+            for (int j = 0; j < width(); j++)
+                res[i] += val[i][j] * v[j];
+        return res;
+    }
     
     // pow
     constexpr Matrix pow(long long n) const {
         assert(height() == width());
-        Matrix<T> res(height(), width()),  mul(*this);
+        Matrix<T> res(height(), width()), mul(*this);
+        for (int i = 0; i < height(); i++) res[i][i] = T(1);
         while (n > 0) {
             if (n & 1) res *= mul;
             mul *= mul;
