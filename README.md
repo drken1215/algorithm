@@ -591,7 +591,7 @@
 
 ## 木
 
-- (★★★☆) [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
+- (★★★☆) [木の走査 (部分木サイズ, LCA, Euler tour など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
 - (★★★☆) [木の直径](https://github.com/drken1215/algorithm/blob/master/Tree/diameter.cpp)
 - (★★★☆) 木の重心
 - (★★★★) 木の Distance Frequency Table
