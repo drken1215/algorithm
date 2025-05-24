@@ -27,21 +27,22 @@ using namespace std;
 
 // Sparse Table
 template<class MeetSemiLattice> struct SparseTable {
-    vector<vector<MeetSemiLattice> > dat;
+    vector<vector<MeetSemiLattice>> dat;
     vector<int> height;
     
     SparseTable() { }
     SparseTable(const vector<MeetSemiLattice> &vec) { init(vec); }
     void init(const vector<MeetSemiLattice> &vec) {
         int n = (int)vec.size(), h = 1;
-        while ((1<<h) < n) ++h;
+        while ((1<<h) <= n) ++h;
         dat.assign(h, vector<MeetSemiLattice>(1<<h));
         height.assign(n+1, 0);
         for (int i = 2; i <= n; i++) height[i] = height[i>>1]+1;
         for (int i = 0; i < n; ++i) dat[0][i] = vec[i];
-        for (int i = 1; i < h; ++i)
+        for (int i = 1; i < h; ++i) {
             for (int j = 0; j < n; ++j)
                 dat[i][j] = min(dat[i-1][j], dat[i-1][min(j+(1<<(i-1)),n-1)]);
+        }
     }
     
     MeetSemiLattice get(int a, int b) {
