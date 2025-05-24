@@ -243,7 +243,6 @@
 - (★★★☆) SPFA
 - (★★★★) 補グラフの最短路
 - (★★★★) d-辺最短路
-- (★★★★) Monge グラフ上の d-辺最短路
 
 ## 全域木, 路に関する問題
 
@@ -509,7 +508,7 @@
 
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
-- (★★★★) [Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
+- (★★★★) [一般化 Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 
 
 ## Monge 性を活用する DP 高速化技法
@@ -520,13 +519,14 @@
 - (★★★★) TM 単一始点最短路問題 (D&D SMAWK, O(N log N))
 - (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, O(N log N))
 - (★★★★) Monge 単一始点最短路問題（by LARSCH, O(N))
+- (★★★★) Monge グラフ上の d-辺最短路
 - (★★★★) Aliens DP
 
 ## その他の DP 高速化技法
 
 - (★★★★) Slope Trick
 
-## 数理最適化 (Optimization)
+## 数理最適化
 
 - (★★☆☆) 二次方程式
 - (★★☆☆) 二分探索法 (方程式の解を 1 つ求める)
@@ -591,7 +591,7 @@
 
 ## 木
 
-- (★★★☆) [木の走査 (部分木サイズ, LCA など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
+- (★★★☆) [木の走査 (部分木サイズ, LCA, Euler tour など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
 - (★★★☆) [木の直径](https://github.com/drken1215/algorithm/blob/master/Tree/diameter.cpp)
 - (★★★☆) 木の重心
 - (★★★★) 木の Distance Frequency Table
