@@ -17,7 +17,7 @@
 using namespace std;
 
 
-// Run Tree
+// Run Tree (including Euler Tour)
 template<class Graph = vector<vector<int>>> struct RunTree {
     // id[v][w] := the index of node w in G[v]
     vector<unordered_map<int, int>> id;
@@ -128,12 +128,13 @@ template<class Graph = vector<vector<int>>> struct RunTree {
                 p_index = i;
                 continue;
             }
-            e_id[ch * 2] = ord;
+            e_id[ch * 2] = ord - 1;
             int s = rec(G, ch, v, d+1, ord);
             num[v][i] = s;
             sum += s;
+            tour[ord] = v;
             v_t_id[v] = ord;
-            e_id[ch * 2 + 1] = ord;
+            e_id[ch * 2 + 1] = ord - 1;
             ord++;
         }
         if (p_index != -1) num[v][p_index] = (int)G.size() - sum;

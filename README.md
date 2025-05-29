@@ -611,8 +611,7 @@
 
 ## 木上のクエリ処理
 
-- (★★★☆) [Euler Tour (頂点上のクエリ)](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour_on_nodes.cpp)
-- (★★★☆) [Euler Tour (辺上のクエリ)](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour_on_edges.cpp)
+- (★★★☆) [Euler Tour](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour.cpp)
 - (★★★☆) [HL 分解](https://github.com/drken1215/algorithm/blob/master/Tree/heavy_light_decomposition.cpp)
 - (★★★☆) [重心分解](https://github.com/drken1215/algorithm/blob/master/Tree/tree_centroid_decomposition.cpp)
 - (★★★☆) DSU on Tree
