@@ -5,6 +5,9 @@
 //   ABC 406 F - Compare Tree Weights
 //     https://atcoder.jp/contests/abc406/tasks/abc406_f
 //
+//   ABC 294 G - Distance Queries on a Tree
+//     https://atcoder.jp/contests/abc294/tasks/abc294_g
+//
 //   AOJ 2667 Tree
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2667
 //
@@ -143,7 +146,6 @@ template<class Graph = vector<vector<int>>> struct RunTree {
 // Examples
 //------------------------------//
 
-
 // ABC 406 F - Compare Tree Weights
 template <class Abel> struct BIT {
     Abel UNITY_SUM = 0;
@@ -154,6 +156,9 @@ template <class Abel> struct BIT {
     void init(int n) {
         dat.assign(n, UNITY_SUM);
     }
+    int size() const {
+        return (int)dat.size();
+    }
     
     // a is 0-indexed
     inline void add(int a, Abel x) {
@@ -161,24 +166,24 @@ template <class Abel> struct BIT {
             dat[i] = dat[i] + x;
     }
     
-    // [0, a), a is 0-indexed
-    inline Abel sum(int a) {
+    // [0, a), a is 0-indexed, [a, b), a and b are 0-indexed
+    inline Abel sum(int a) const {
         Abel res = UNITY_SUM;
         for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
             res = res + dat[i];
         return res;
     }
-    
-    // [a, b), a and b are 0-indexed
-    inline Abel sum(int a, int b) {
+    inline Abel sum(int a, int b) const {
         return sum(b) - sum(a);
+    }
+    inline Abel operator [] (int i) const {
+        return sum(i, i + 1);
     }
     
     // debug
-    void print() {
-        for (int i = 0; i < (int)dat.size(); ++i)
-            cout << sum(i, i + 1) << ",";
-        cout << endl;
+    friend ostream& operator << (ostream &s, const BIT &bit) {
+        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
+        return s;
     }
 };
 
@@ -216,6 +221,49 @@ void ABC_406_F() {
             long long res = abs(uv - vu);
             cout << res << '\n';
         } 
+    }
+}
+
+
+// ABC 294 G - Distance Queries on a Tree
+void ABC_294_G() {
+    long long N, Q, typ;
+    cin >> N;
+    vector<vector<int>> G(N);
+    vector<array<long long, 3>> edges(N-1);
+    for (int i = 0; i < N-1; i++) {
+        long long u, v, w;
+        cin >> u >> v >> w, u--, v--;
+        G[u].emplace_back(v), G[v].emplace_back(u);
+        edges[i] = array<long long, 3>({u, v, w});
+    }
+    RunTree rt(G);
+    BIT<long long> bit(N * 2);
+    for (auto [u, v, w] : edges) {
+        if (rt.depth[u] > rt.depth[v]) swap(u, v);
+        bit.add(rt.e(v, false), w);
+        bit.add(rt.e(v, true), -w);
+    }
+
+    cin >> Q;
+    while (Q--) {
+        cin >> typ;
+        if (typ == 1) {
+            long long i, w;
+            cin >> i >> w, i--;
+            auto [u, v, pw] = edges[i];
+            if (rt.depth[u] > rt.depth[v]) swap(u, v);
+            int e1 = rt.e(v, false), e2 = rt.e(v, true);
+            bit.add(e1, w - bit[e1]);
+            bit.add(e2, -w - bit[e2]);
+        } else {
+            int u, v;
+            cin >> u >> v, u--, v--;
+            int l = rt.get_lca(u, v);
+            long long res = bit.sum(0, rt.vs(u)) + bit.sum(0, rt.vs(v)) 
+                - bit.sum(0, rt.vs(l)) * 2;
+            cout << res << '\n';
+        }
     }
 }
 
@@ -480,5 +528,6 @@ void AOJ_2667() {
 
 int main () {
     //ABC_406_F();
-    AOJ_2667();
+    ABC_294_G();
+    //AOJ_2667();
 }
