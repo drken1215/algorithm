@@ -64,9 +64,9 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     int vt(int v) { return v_t_id[v]; }
 
     // get edge-id of (pv, v) in Euler tour
-    int e(int v, bool root_to_leaf = true) {
+    int e(int v, bool leaf_to_root = false) {
         assert(v != root);
-        if (root_to_leaf) return e_id[v * 2];
+        if (!leaf_to_root) return e_id[v * 2];
         else return e_id[v * 2 + 1];
     }
     int e(int u, int v) {
@@ -137,7 +137,6 @@ template<class Graph = vector<vector<int>>> struct RunTree {
         return sum;
     }
 };
-
 
 
 //------------------------------//
@@ -455,8 +454,8 @@ void AOJ_2667() {
     auto fl = [&](long long d, long long e) { return d + e; };
     LazySegmentTree<Node, long long> seg(N*2, fm, fa, fl, Node(0, 0), 0);
     for (int v = 1; v < N; v++) {
-        seg.set(rt.e(v, true), Node(0, 1));
-        seg.set(rt.e(v, false), Node(0, -1));
+        seg.set(rt.e(v, false), Node(0, 1));
+        seg.set(rt.e(v, true), Node(0, -1));
     }
     
     for (int q = 0; q < Q; ++q) {

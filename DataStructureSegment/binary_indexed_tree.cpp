@@ -22,6 +22,9 @@ template <class Abel> struct BIT {
     void init(int n) {
         dat.assign(n, UNITY_SUM);
     }
+    int size() const {
+        return (int)dat.size();
+    }
     
     // a is 0-indexed
     inline void add(int a, Abel x) {
@@ -29,27 +32,26 @@ template <class Abel> struct BIT {
             dat[i] = dat[i] + x;
     }
     
-    // [0, a), a is 0-indexed
-    inline Abel sum(int a) {
+    // [0, a), a is 0-indexed, [a, b), a and b are 0-indexed
+    inline Abel sum(int a) const {
         Abel res = UNITY_SUM;
         for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
             res = res + dat[i];
         return res;
     }
-    
-    // [a, b), a and b are 0-indexed
-    inline Abel sum(int a, int b) {
+    inline Abel sum(int a, int b) const {
         return sum(b) - sum(a);
+    }
+    inline Abel operator [] (int i) const {
+        return sum(i, i + 1);
     }
     
     // debug
-    void print() {
-        for (int i = 0; i < (int)dat.size(); ++i)
-            cout << sum(i, i + 1) << ",";
-        cout << endl;
+    friend ostream& operator << (ostream &s, const BIT &bit) {
+        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
+        return s;
     }
 };
-
 
 
 //------------------------------//
