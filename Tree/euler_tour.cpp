@@ -11,6 +11,19 @@
 //   AOJ 2667 Tree
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2667
 //
+//   ABC 133 F - Colorful Tree
+//     https://atcoder.jp/contests/abc133/tasks/abc133_f
+//
+
+/*
+    ・頂点の行きがけ順の取得：vs(v)
+    ・頂点の帰りがけ順の取得：vt(v)
+    ・辺 (p(v), v) の取得：e(v, false)（p(v) は v の親)
+    ・辺 (v, p(v)) の取得：e(v, true)（p(v) は v の親)
+    ・パス 0-v クエリ：区間 [0, vs(v)) への処理
+    ・v-部分木 クエリ：区間 [vs(v), vt(v) + 1) への処理
+*/
+
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -65,6 +78,7 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     // get first / last id of node v in Euler tour
     int vs(int v) { return v_s_id[v]; }
     int vt(int v) { return v_t_id[v]; }
+    int get_v(int id) { return tour[id]; }
 
     // get edge-id of (pv, v) in Euler tour
     int e(int v, bool leaf_to_root = false) {
@@ -75,6 +89,9 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     int e(int u, int v) {
         if (depth[u] < depth[v]) return e(v);
         else return e(u, false);
+    }
+    pair<int, int> get_e(int id) { 
+        return make_pair(tour[id], tour[id + 1]);
     }
 
     // lca(u, v)
@@ -526,8 +543,49 @@ void AOJ_2667() {
 }
 
 
+// ABC 133 F - Colorful Tree
+void ABC_133_F() {
+    using pint = pair<int, int>;
+    using fll = array<long long, 4>;
+    int N, Q, a, b, c, d, u, v, w;
+    cin >> N >> Q;
+    vector<vector<int>> G(N);
+    vector<fll> edges(N-1);
+    for (int i = 0; i < N-1; i++) {
+        cin >> a >> b >> c >> d, a--, b--, c--;
+        G[a].emplace_back(b), G[b].emplace_back(a);
+        edges[i] = fll({a, b, c, d});
+    }
+    RunTree rt(G);
+    vector<long long> col(N * 2 + 1), num(N * 2 + 1), val(N * 2 + 1);
+    for (auto [u, v, c, d] : edges) {
+        if (rt.depth[u] > rt.depth[v]) swap(u, v);
+        int e1 = rt.e(v, false), e2 = rt.e(v, true);
+        col[e1] = col[e2] = c, num[e1] = 1, num[e2] = -1, val[e1] = d, val[e2] = -d;
+    }
+    vector<vector<fll>> qs(N * 2 + 1);
+    for (int qid = 0; qid < Q; qid++) {
+        cin >> c >> w >> u >> v, c--, u--, v--;
+        long long l = rt.get_lca(u, v);
+        qs[rt.vs(u)].emplace_back(fll({c, w, 1, qid}));
+        qs[rt.vs(v)].emplace_back(fll({c, w, 1, qid}));
+        qs[rt.vs(l)].emplace_back(fll({c, w, -2, qid}));
+    }
+    long long sum = 0;
+    vector<long long> res(Q, 0), cnum(N+1, 0), csum(N+1, 0);
+    for (int id = 0; id < N * 2; id++) {
+        sum += val[id], cnum[col[id]] += num[id], csum[col[id]] += val[id];
+        for (auto [c, w, factor, qid] : qs[id+1]) {
+            res[qid] += (sum - csum[c] + cnum[c] * w) * factor;
+        }
+    }
+    for (int qid = 0; qid < Q; qid++) cout << res[qid] << '\n';
+}
+
+
 int main () {
     //ABC_406_F();
-    ABC_294_G();
+    //ABC_294_G();
     //AOJ_2667();
+    ABC_133_F();
 }

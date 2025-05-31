@@ -66,6 +66,7 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     // get first / last id of node v in Euler tour
     int vs(int v) { return v_s_id[v]; }
     int vt(int v) { return v_t_id[v]; }
+    int get_v(int id) { return tour[id]; }
 
     // get edge-id of (pv, v) in Euler tour
     int e(int v, bool leaf_to_root = false) {
@@ -76,6 +77,9 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     int e(int u, int v) {
         if (depth[u] < depth[v]) return e(v);
         else return e(u, false);
+    }
+    pair<int, int> get_e(int id) { 
+        return make_pair(tour[id], tour[id + 1]);
     }
 
     // lca(u, v)
