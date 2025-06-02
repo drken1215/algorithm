@@ -5,9 +5,25 @@
 //   ABC 406 F - Compare Tree Weights
 //     https://atcoder.jp/contests/abc406/tasks/abc406_f
 //
+//   ABC 294 G - Distance Queries on a Tree
+//     https://atcoder.jp/contests/abc294/tasks/abc294_g
+//
 //   AOJ 2667 Tree
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2667
 //
+//   ABC 133 F - Colorful Tree
+//     https://atcoder.jp/contests/abc133/tasks/abc133_f
+//
+
+/*
+    ・頂点の行きがけ順の取得：vs(v)
+    ・頂点の帰りがけ順の取得：vt(v)
+    ・辺 (p(v), v) の取得：e(v, false)（p(v) は v の親)
+    ・辺 (v, p(v)) の取得：e(v, true)（p(v) は v の親)
+    ・パス 0-v クエリ：区間 [0, vs(v)) への処理
+    ・v-部分木 クエリ：区間 [vs(v), vt(v) + 1) への処理
+*/
+
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -62,6 +78,7 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     // get first / last id of node v in Euler tour
     int vs(int v) { return v_s_id[v]; }
     int vt(int v) { return v_t_id[v]; }
+    int get_v(int id) { return tour[id]; }
 
     // get edge-id of (pv, v) in Euler tour
     int e(int v, bool leaf_to_root = false) {
@@ -72,6 +89,9 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     int e(int u, int v) {
         if (depth[u] < depth[v]) return e(v);
         else return e(u, false);
+    }
+    pair<int, int> get_e(int id) { 
+        return make_pair(tour[id], tour[id + 1]);
     }
 
     // lca(u, v)
@@ -143,7 +163,6 @@ template<class Graph = vector<vector<int>>> struct RunTree {
 // Examples
 //------------------------------//
 
-
 // ABC 406 F - Compare Tree Weights
 template <class Abel> struct BIT {
     Abel UNITY_SUM = 0;
@@ -154,6 +173,9 @@ template <class Abel> struct BIT {
     void init(int n) {
         dat.assign(n, UNITY_SUM);
     }
+    int size() const {
+        return (int)dat.size();
+    }
     
     // a is 0-indexed
     inline void add(int a, Abel x) {
@@ -161,24 +183,24 @@ template <class Abel> struct BIT {
             dat[i] = dat[i] + x;
     }
     
-    // [0, a), a is 0-indexed
-    inline Abel sum(int a) {
+    // [0, a), a is 0-indexed, [a, b), a and b are 0-indexed
+    inline Abel sum(int a) const {
         Abel res = UNITY_SUM;
         for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
             res = res + dat[i];
         return res;
     }
-    
-    // [a, b), a and b are 0-indexed
-    inline Abel sum(int a, int b) {
+    inline Abel sum(int a, int b) const {
         return sum(b) - sum(a);
+    }
+    inline Abel operator [] (int i) const {
+        return sum(i, i + 1);
     }
     
     // debug
-    void print() {
-        for (int i = 0; i < (int)dat.size(); ++i)
-            cout << sum(i, i + 1) << ",";
-        cout << endl;
+    friend ostream& operator << (ostream &s, const BIT &bit) {
+        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
+        return s;
     }
 };
 
@@ -216,6 +238,49 @@ void ABC_406_F() {
             long long res = abs(uv - vu);
             cout << res << '\n';
         } 
+    }
+}
+
+
+// ABC 294 G - Distance Queries on a Tree
+void ABC_294_G() {
+    long long N, Q, typ;
+    cin >> N;
+    vector<vector<int>> G(N);
+    vector<array<long long, 3>> edges(N-1);
+    for (int i = 0; i < N-1; i++) {
+        long long u, v, w;
+        cin >> u >> v >> w, u--, v--;
+        G[u].emplace_back(v), G[v].emplace_back(u);
+        edges[i] = array<long long, 3>({u, v, w});
+    }
+    RunTree rt(G);
+    BIT<long long> bit(N * 2);
+    for (auto [u, v, w] : edges) {
+        if (rt.depth[u] > rt.depth[v]) swap(u, v);
+        bit.add(rt.e(v, false), w);
+        bit.add(rt.e(v, true), -w);
+    }
+
+    cin >> Q;
+    while (Q--) {
+        cin >> typ;
+        if (typ == 1) {
+            long long i, w;
+            cin >> i >> w, i--;
+            auto [u, v, pw] = edges[i];
+            if (rt.depth[u] > rt.depth[v]) swap(u, v);
+            int e1 = rt.e(v, false), e2 = rt.e(v, true);
+            bit.add(e1, w - bit[e1]);
+            bit.add(e2, -w - bit[e2]);
+        } else {
+            int u, v;
+            cin >> u >> v, u--, v--;
+            int l = rt.get_lca(u, v);
+            long long res = bit.sum(0, rt.vs(u)) + bit.sum(0, rt.vs(v)) 
+                - bit.sum(0, rt.vs(l)) * 2;
+            cout << res << '\n';
+        }
     }
 }
 
@@ -478,7 +543,49 @@ void AOJ_2667() {
 }
 
 
+// ABC 133 F - Colorful Tree
+void ABC_133_F() {
+    using pint = pair<int, int>;
+    using fll = array<long long, 4>;
+    int N, Q, a, b, c, d, u, v, w;
+    cin >> N >> Q;
+    vector<vector<int>> G(N);
+    vector<fll> edges(N-1);
+    for (int i = 0; i < N-1; i++) {
+        cin >> a >> b >> c >> d, a--, b--, c--;
+        G[a].emplace_back(b), G[b].emplace_back(a);
+        edges[i] = fll({a, b, c, d});
+    }
+    RunTree rt(G);
+    vector<long long> col(N * 2 + 1), num(N * 2 + 1), val(N * 2 + 1);
+    for (auto [u, v, c, d] : edges) {
+        if (rt.depth[u] > rt.depth[v]) swap(u, v);
+        int e1 = rt.e(v, false), e2 = rt.e(v, true);
+        col[e1] = col[e2] = c, num[e1] = 1, num[e2] = -1, val[e1] = d, val[e2] = -d;
+    }
+    vector<vector<fll>> qs(N * 2 + 1);
+    for (int qid = 0; qid < Q; qid++) {
+        cin >> c >> w >> u >> v, c--, u--, v--;
+        long long l = rt.get_lca(u, v);
+        qs[rt.vs(u)].emplace_back(fll({c, w, 1, qid}));
+        qs[rt.vs(v)].emplace_back(fll({c, w, 1, qid}));
+        qs[rt.vs(l)].emplace_back(fll({c, w, -2, qid}));
+    }
+    long long sum = 0;
+    vector<long long> res(Q, 0), cnum(N+1, 0), csum(N+1, 0);
+    for (int id = 0; id < N * 2; id++) {
+        sum += val[id], cnum[col[id]] += num[id], csum[col[id]] += val[id];
+        for (auto [c, w, factor, qid] : qs[id+1]) {
+            res[qid] += (sum - csum[c] + cnum[c] * w) * factor;
+        }
+    }
+    for (int qid = 0; qid < Q; qid++) cout << res[qid] << '\n';
+}
+
+
 int main () {
     //ABC_406_F();
-    AOJ_2667();
+    //ABC_294_G();
+    //AOJ_2667();
+    ABC_133_F();
 }
