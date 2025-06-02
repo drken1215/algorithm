@@ -11,6 +11,9 @@
 //   AOJ 3369 (?) Namori Counting (OUPC 2023 day2-D)
 //     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2023Day2/problems/D
 //
+//   ARC 199 B - Adjacent Replace
+//     https://atcoder.jp/contests/arc199/tasks/arc199_b
+//
 
 
 #include <bits/stdc++.h>
@@ -162,9 +165,23 @@ template<class mint> struct MintMatrix {
         }
         return rank;
     }
+    constexpr int gauss_jordan(int not_sweep_width, vector<int> &core) {
+        core.clear();
+        int rank = 0;
+        for (int col = 0; col < width(); ++col) {
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
+            if (pivot == -1) continue;
+            core.push_back(col);
+            sweep(rank++, col, pivot);
+        }
+        return rank;
+    }
     friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
         return mat.gauss_jordan(not_sweep_width);
     }
+
+    // find one solution
     friend constexpr int linear_equation
     (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res) {
         // extend
@@ -186,6 +203,41 @@ template<class mint> struct MintMatrix {
     friend constexpr int linear_equation(const MintMatrix<mint> &mat, const vector<mint> &b) {
         vector<mint> res;
         return linear_equation(mat, b, res);
+    }
+
+    // find all solutions
+    friend int linear_equation
+    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
+        // extend
+        MintMatrix<mint> A(mat.height(), mat.width() + 1);
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
+            A[i].back() = b[i];
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(1, core);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) {
+            if (A[row].back() != 0) return -1;
+        }
+
+        // construct the core solution
+        res.assign(mat.width(), mint(0));
+        for (int i = 0; i < (int)core.size(); i++) res[core[i]] = A[i].back();
+    
+        // construct the all solutions
+        zeros.clear();
+        vector<bool> use(mat.width(), 0);
+        for (auto c : core) use[c] = true;
+        for (int j = 0; j < mat.width(); j++) {
+            if (use[j]) continue;
+            vector<mint> zero(mat.width(), mint(0));
+            zero[j] = mint(1);
+            for (int i = 0; i < (int)core.size(); i++) zero[core[i]] = -A[i][j];
+            zeros.push_back(zero);
+        }
+        return rank;
     }
     
     // determinant
@@ -487,9 +539,131 @@ void TCO_2013_Round2_A() {
 }
 
 
-int main() {
-    ARC_176_D();
-    //AOJ_3369();
-    //TCO_2013_Round2_A();
+//ARC 199 B - Adjacent Replace
+void solve() {
+    using mint = Fp<2>;
+    auto construct = [&](vector<int> need) -> vector<int> {
+        int N = need.size();
+        vector<int> res;
+        while (true) {
+            bool finish = true;
+            if (need[0] == 0) finish = false;
+            for (int i = 1; i < N; i++) if (need[i] == 1) finish = false;
+            if (finish) break;
+
+            // (1, 1, ...) と (..., 1, 1) の解消
+            if (need[0] == 1 && need[1] == 1) {
+                if (need[2] <= 0) {
+                    res.push_back(1);
+                    need[0] = 1, need[1] = 0;
+                } else {
+                    res.push_back(2), res.push_back(1);
+                    need[0] = 1, need[1] = 0, need[2] = 0;
+                }
+            }
+            if (need[N-1] == 1 && need[N-2] == 1) {
+                if (need[N-3] <= 0) {
+                    res.push_back(N-1);
+                    need[N-1] = 1, need[N-2] = 0;
+                } else {
+                    res.push_back(N-2), res.push_back(N-1);
+                    need[N-1] = 1, need[N-2] = 0, need[N-3] = 0;
+                }
+            }
+
+            // routine
+            for (int i = 0; i+1 < N; i++) {
+                if (need[i] == -1 && need[i+1] == -1) continue;
+                if (need[i] == 1 && need[i+1] == 1) {
+                    int j = i;
+                    while (j < N && need[j] == need[i]) j++;
+                    for (int k = j-2; k >= i; k--) {
+                        res.push_back(k+1);
+                        need[k+1] = 0;
+                    }
+                } else if (need[i] <= 0 && need[i+1] <= 0) {
+                    res.push_back(i+1), res.push_back(i+1);
+                    need[i] = need[i+1] = -1;
+                } else if (need[i] == -1 && need[i+1] == 1) {
+                    res.push_back(i+1);
+                    need[i] = 1, need[i+1] = 0;
+                } else if (i+2 < N && need[i] == 0 && need[i+1] == 1 && need[i+2] == -1) {
+                    res.push_back(i+2), res.push_back(i+1), res.push_back(i+1), 
+                    res.push_back(i+2), res.push_back(i+1);
+                    need[i] = 1, need[i+1] = 0, need[i+2] = 0;
+                }
+            }
+        }
+        return res;
+    };
+
+    long long N, K;
+    cin >> N >> K;
+    vector<long long> A(N);
+    MintMatrix<mint> M(60, N);
+    vector<mint> v(60, 0);
+    for (int i = 0; i < N; i++) {
+        cin >> A[i];
+        for (int d = 0; d < 60; d++) if (A[i] >> d & 1) M[d][i] = 1;
+    }
+    for (int d = 0; d < 60; d++) if (K >> d & 1) v[d] = 1;
+
+    // find solutions
+    vector<mint> ans;
+    vector<vector<mint>> zeros;
+    int rank = linear_equation(M, v, ans, zeros);
+    if (rank == -1) {
+        cout << "No" << endl;
+        return;
+    }
+    bool exist = false;
+    vector<int> need(N, 0);
+    for (long long bit = 0; bit < (1LL<<zeros.size()); bit++) {
+        vector<mint> tmp = ans;
+        for (int i = 0; i < zeros.size(); i++) {
+            if (bit >> i & 1) for (int j = 0; j < tmp.size(); j++) tmp[j] += zeros[i][j];
+        }
+        bool ok = false;
+        for (int i = 0; i + 1 < tmp.size(); i++) if (tmp[i] == tmp[i+1]) ok = true;
+        if (ok) {
+            exist = true;
+            for (int i = 0; i < N; i++) need[i] = tmp[i].val;
+            break;
+        }
+    }
+    if (!exist) {
+        cout << "No" << endl;
+        return;
+    }
+
+    auto check = [&](const vector<int> &res) -> bool {
+        if (res.size() > 10000) return false;
+        for (int i = 0; i < res.size(); i++) {
+            int id = res[i];
+            if (id < 1 || id > N - 1) return false;
+            id--;
+            long long x = A[id] ^ A[id + 1];
+            A[id] = x, A[id + 1] = x;
+        }
+        return (A[0] == K);
+    };
+
+    auto res = construct(need);
+    cout << "Yes" << endl;
+    cout << res.size() << endl;
+    for (auto val : res) cout << val << " ";
+    cout << endl;
+}
+void ARC_199_B() {
+    int T;
+    cin >> T;
+    while (T--) solve();
 }
 
+
+int main() {
+    //ARC_176_D();
+    //AOJ_3369();
+    //TCO_2013_Round2_A();
+    ARC_199_B();
+}
