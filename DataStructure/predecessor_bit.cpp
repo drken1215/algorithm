@@ -16,6 +16,9 @@
 //   ARC 197 C - Removal of Multiples
 //     https://atcoder.jp/contests/abc356/tasks/abc356_f
 //
+//   ABC 229 G - Longest Y
+//     https://atcoder.jp/contests/abc229/tasks/abc229_g
+//
 
 
 #include <bits/stdc++.h>
@@ -63,14 +66,15 @@ template<class Abel> struct FastMultiSetByBIT {
     }
     
     // insert, erase, count, min, max
-    void insert(int x) { add(x, 1); }
-    void erase(int x) { if (count(x)) add(x, -1); }
+    void insert(int x, Abel num = 1) { add(x, num); }
+    void erase(int x, Abel num = 1) { add(x, -min(num, count(x))); }
+    void clear() { dat.assign(lim, IDENTITY); }
     Abel count(int x) const { return sum(x, x + 1); }
     Abel count(int l, int r) const { return sum(l, r); }
     Abel size() const { return sum(lim); }
     int get_min() const { return next(); }
     int get_max() const { return prev(); }
-
+    
     // get max r s.t. check(sum(l, r)) = True (0-indexed), O(log N)
     // check(IDENTITY) must be True
     int max_right(const function<bool(Abel)> check, int l = 0) const {
@@ -221,6 +225,57 @@ void ARC_197_C() {
     }
 }
 
+// ABC 229 G - Longest Y
+void ABC_229_G() {
+    using ll = long long;
+    string S;
+    ll K;
+    cin >> S >> K;
+    vector<ll> vs;
+    for (int i = 0; i < S.size(); i++) if (S[i] == 'Y') vs.push_back(i - (int)vs.size());
+    if (vs.size() <= 1) {
+        cout << vs.size() << endl;
+        return;
+    }
+
+    const int MAX = 210000;
+    FastMultiSetByBIT<ll> se(MAX);
+    auto solve = [&](ll x) -> ll {
+        ll pre_sum = 0, suf_sum = 0, pre_num = x/2, suf_num = x - x/2;
+        se.clear();
+        for (int i = 0; i < x/2; i++) {
+            se.insert(vs[i]);
+            pre_sum += vs[i];
+        }
+        for (int i = x/2; i < x; i++) {
+            se.insert(vs[i]);
+            suf_sum += vs[i];
+        }
+        ll med = se[x/2];
+        ll sum = (med * pre_num - pre_sum) + (suf_sum - med * suf_num);
+        ll res = sum;
+        for (int i = x; i < vs.size(); i++) {
+            ll pre_before = se[0], pre_after = se[x/2];
+            ll suf_before = se[x/2];
+            se.insert(vs[i]), se.erase(vs[i-x]);
+            ll suf_after = se[x-1];
+            pre_sum -= pre_before, pre_sum += pre_after;
+            suf_sum -= suf_before, suf_sum += suf_after;
+            med = se[x/2];
+            sum = (med * pre_num - pre_sum) + (suf_sum - med * suf_num);
+            res = min(res, sum);
+        }
+        return res;
+    };
+    ll low = -1, high = (ll)vs.size() + 1;
+    while (high - low > 1) {
+        ll x = (high + low) / 2;
+        if (solve(x) <= K) low = x;
+        else high = x;
+    }
+    cout << low << endl;
+}
+
 
 int main() {
     cin.tie(nullptr);
@@ -228,5 +283,6 @@ int main() {
     
     //Yosupo_Predecessor_Problem();
     //ARC_033_C();
-    ARC_197_C();
+    //ARC_197_C();
+    ABC_229_G();
 }
