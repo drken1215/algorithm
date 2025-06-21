@@ -21,9 +21,17 @@
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
-
 　
+
+# コードテンプレート
+
+- [コンテスト用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_contest.cpp)
+
+
+
+
 <a name="ds"></a>
+
 # データ構造 (DATA STRUCTURE)
 各種データ構造の実装です
 
@@ -78,8 +86,8 @@
 
 
 
-　 
 <a name="dss"></a>
+
 # 区間系データ構造 (DATA STRUCTURE : SEGMENT)
 セグメント木や BIT など、区間クエリに強いデータ構造の実装です
 

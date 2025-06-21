@@ -25,24 +25,16 @@ template<int MOD> struct Fp {
     constexpr Fp(long long v) : val(v % MOD) {
         if (val < 0) val += MOD;
     }
-    
-    // getter
-    constexpr long long get() const {
-        return val;
-    }
-    constexpr int get_mod() const {
-        return MOD;
-    }
-    
-    // comparison operators
-    constexpr bool operator == (const Fp &r) const {
-        return this->val == r.val;
-    }
-    constexpr bool operator != (const Fp &r) const {
-        return this->val != r.val;
-    }
+    constexpr long long get() const { return val; }
+    constexpr int get_mod() const { return MOD; }
     
     // arithmetic operators
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
     constexpr Fp& operator += (const Fp &r) {
         val += r.val;
         if (val >= MOD) val -= MOD;
@@ -68,45 +60,6 @@ template<int MOD> struct Fp {
         if (val < 0) val += MOD;
         return *this;
     }
-    constexpr Fp operator + () const { return Fp(*this); }
-    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
-    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
-    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
-    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
-    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
-    
-    // other operators
-    constexpr Fp& operator ++ () {
-        ++val;
-        if (val >= MOD) val -= MOD;
-        return *this;
-    }
-    constexpr Fp& operator -- () {
-        if (val == 0) val += MOD;
-        --val;
-        return *this;
-    }
-    constexpr Fp operator ++ (int) {
-        Fp res = *this;
-        ++*this;
-        return res;
-    }
-    constexpr Fp operator -- (int) {
-        Fp res = *this;
-        --*this;
-        return res;
-    }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
-        is >> x.val;
-        x.val %= MOD;
-        if (x.val < 0) x.val += MOD;
-        return is;
-    }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
-        return os << x.val;
-    }
-    
-    // other functions
     constexpr Fp pow(long long n) const {
         Fp res(1), mul(*this);
         while (n > 0) {
@@ -119,6 +72,55 @@ template<int MOD> struct Fp {
     constexpr Fp inv() const {
         Fp res(1), div(*this);
         return res / div;
+    }
+
+    // other operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
+    constexpr bool operator < (const Fp &r) const {
+        return this->val < r.val;
+    }
+    constexpr bool operator > (const Fp &r) const {
+        return this->val > r.val;
+    }
+    constexpr bool operator <= (const Fp &r) const {
+        return this->val <= r.val;
+    }
+    constexpr bool operator >= (const Fp &r) const {
+        return this->val >= r.val;
+    }
+    constexpr Fp& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    constexpr Fp& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    constexpr Fp operator ++ (int) const {
+        Fp res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr Fp operator -- (int) const {
+        Fp res = *this;
+        --*this;
+        return res;
+    }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+        is >> x.val;
+        x.val %= MOD;
+        if (x.val < 0) x.val += MOD;
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+        return os << x.val;
     }
     friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
         return r.pow(n);
