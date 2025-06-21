@@ -1,4 +1,4 @@
-// all codes (above main function)
+// code template is in https://github.com/drken1215/algorithm/blob/master/template_contest.cpp
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
 
