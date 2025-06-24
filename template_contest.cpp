@@ -1500,10 +1500,10 @@ struct UnionFind {
         return root(x) == root(y);
     }
     
-    bool merge(int x, int y) {
+    bool merge(int x, int y, bool merge_technique = true) {
         x = root(x), y = root(y);
         if (x == y) return false;
-        if (par[x] > par[y]) swap(x, y); // merge technique
+        if (merge_technique) if (par[x] > par[y]) swap(x, y); // merge technique
         par[x] += par[y];
         par[y] = x;
         swap(nex[x], nex[y]);
