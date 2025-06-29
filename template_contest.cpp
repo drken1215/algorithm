@@ -54,7 +54,11 @@ template<class T> ostream& operator << (ostream &s, set<T> P)
 { for (auto it : P) { s << "<" << it << "> "; } return s; }
 template<class T> ostream& operator << (ostream &s, multiset<T> P)
 { for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, unordered_set<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
 template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 
 
@@ -2119,7 +2123,7 @@ template<class Monoid> struct SegmentTree {
         dat[k] = v;
         while (k >>= 1) pull(k);
     }
-    Monoid get(int i) {
+    Monoid get(int i) const {
         assert(0 <= i && i < N);
         return dat[i + offset];
     }
@@ -2437,16 +2441,16 @@ template<class T> auto seg_op_min = [](T p, T q) { return min(p, q); };
 template<class T> auto seg_op_max = [](T p, T q) { return max(p, q); };
 template<class T> auto seg_op_min_with_index = [](pair<T,int> p, pair<T,int> q) { return min(p, q); };
 template<class T> auto seg_op_max_with_index = [](pair<T,int> p, pair<T,int> q) { return max(p, q); };
-template<class T> SegmentTree<T> range_min() {
+template<class T> SegmentTree<T> RangeMin() {
     return SegmentTree<T>(seg_op_min<T>, numeric_limits<T>::max()/2);
 }
-template<class Monoid> SegmentTree<Monoid> range_max() {
+template<class Monoid> SegmentTree<Monoid> RangeMax() {
     return SegmentTree<Monoid>(seg_op_max<Monoid>, -numeric_limits<Monoid>::max()/2);
 }
-template<class Monoid> SegmentTree<pair<Monoid,int>> range_min_with_index() {
+template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMinWithIndex() {
     return SegmentTree<Monoid>(seg_op_min_with_index<Monoid>, {numeric_limits<Monoid>::max()/2, -1});
 }
-template<class Monoid> SegmentTree<pair<Monoid,int>> range_max_with_index() {
+template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMaxWithIndex() {
     return SegmentTree<Monoid>(seg_op_max_with_index<Monoid>, {-numeric_limits<Monoid>::max()/2, -1});
 }
 
@@ -2476,47 +2480,47 @@ template<class Action> auto seg_comp_change = [](Action g, Action f) {
 template<class Action> auto seg_comp_add = [](Action g, Action f) {
     return g + f;
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> range_change_range_min() {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMin() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_min<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
         numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> range_change_range_max() {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMax() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_max<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
         -numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> range_change_range_min_with_index() {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeChangeRangeMinWithIndex() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_min_with_index<Monoid>, seg_act_change_with_index<Monoid, Action>, seg_comp_change<Action>,
         make_pair(numeric_limits<Monoid>::max()/2 -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> range_change_range_max_with_index() {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeChangeRangeMaxWithIndex() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_max_with_index<Monoid>, seg_act_change_with_index<Monoid, Action>, seg_comp_change<Action>,
         make_pair(-numeric_limits<Monoid>::max()/2 -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> range_add_range_min() {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMin() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_min<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
         numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> range_add_range_max() {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMax() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_max<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
         -numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> range_add_range_min_with_index() {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMinWithIndex() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_min_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
         make_pair(numeric_limits<Monoid>::max()/2, -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> range_add_range_max_with_index() {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMaxWithIndex() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_max_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
         make_pair(-numeric_limits<Monoid>::max()/2, -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Action> range_change_range_sum() {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Action> RangeChangeRangeSum() {
     return LazySegmentTree<Monoid, Action>(
         seg_op_add_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
         make_pair(Monoid(0), 1), -1);
