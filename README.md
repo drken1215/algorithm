@@ -21,12 +21,6 @@
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
-　
-
-# コードテンプレート
-
-- [コンテスト用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_contest.cpp)
-
 
 
 　
@@ -658,7 +652,17 @@
 - (★★★☆) 四面体 (AOJ 2060)
 
 
+
+
 　
+
+# コードテンプレート
+
+- [コンテスト用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_contest.cpp)
+
+
+　
+
 # License
 These codes are licensed under CC0.
 [![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png "CC0")](http://creativecommons.org/publicdomain/zero/1.0/deed.ja)

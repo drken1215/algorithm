@@ -1,40 +1,27 @@
 //
 // Fast IO
 //
+// references:
+//   maspy: [Library Checker] Many A + B
+//     https://maspypy.com/library-checker-many-a-b
+//
+//   Al.Cash: Fast and furious C++ I/O
+//     https://codeforces.com/blog/entry/45835
+//
 // verified:
 //   Yosupo Library Checker - Many A + B
 //     https://judge.yosupo.jp/problem/many_aplusb
-//
-//   Yosupo Library Checker - Many A + B (128 bit)
-//     https://judge.yosupo.jp/problem/many_aplusb_128bit
 //
 
 
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
-#define __GLIBCXX_BITSIZE_INT_N_0 128
-#define __GLIBCXX_TYPE_INT_N_0 __int128
-
-// bits だと上記マクロ定義の下で __int128_t 型を使うときに Yosupo Judge 上で CE になる
-// AtCoder 環境では bits でも動く模様
-#include <algorithm>
-#include <array>
-#include <concepts>
-#include <cstdint>
-#include <cstdio>
-#include <cstring>
-#include <filesystem>
-#include <iterator>
-#include <limits>
-#include <string_view>
-#include <tuple>
-#include <type_traits>
-#include <utility>
+#include <bits/stdc++.h>
 using namespace std;
 
 
 namespace mylib {
-static constexpr int BUF_SIZE = 1 << 17;  // to be set
+static constexpr int BUF_SIZE = 1 << 17;
 
 struct FastRead {
 private:
@@ -311,21 +298,20 @@ void Yosupo_A_puls_B() {
 }
 
 // Yosupo Library Checker - Many A + B (128 bit)
-void Yosupo_128_A_puls_B() {
-    using mylib::cin, mylib::cout;
-    using i128 = __int128_t;
-
-    int T;
-    cin >> T;
-    for (int t = 0; t < T; ++t) {
-        i128 a, b;
-        cin >> a >> b;
-        cout << a + b << '\n';
-    }
-}
+//void Yosupo_128_A_puls_B() {
+//    using mylib::cin, mylib::cout;
+//
+//    int T;
+//    cin >> T;
+//    for (int t = 0; t < T; ++t) {
+//        __int128 a, b;
+//        cin >> a >> b;
+//        cout << a + b << '\n';
+//    }
+//}
 
 
 int main() {
-    //Yosupo_A_puls_B();
-    Yosupo_128_A_puls_B();
+    Yosupo_A_puls_B();
+    //Yosupo_128_A_puls_B();
 }
