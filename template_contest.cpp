@@ -645,7 +645,7 @@ template<class mint> struct MintMatrix {
     constexpr int find_pivot(int cur_rank, int col) const {
         int pivot = -1;
         for (int row = cur_rank; row < height(); ++row) {
-            if (val[row][col] != 0) {
+            if (val[row][col] != mint(0)) {
                 pivot = row;
                 break;
             }
@@ -659,7 +659,7 @@ template<class mint> struct MintMatrix {
             val[cur_rank][col2] *= ifac;
         }
         for (int row = 0; row < height(); ++row) {
-            if (row != cur_rank && val[row][col] != 0) {
+            if (row != cur_rank && val[row][col] != mint(0)) {
                 auto fac = val[row][col];
                 for (int col2 = 0; col2 < width(); ++col2) {
                     val[row][col2] -= val[cur_rank][col2] * fac;
@@ -756,7 +756,7 @@ template<class mint> struct MintMatrix {
     constexpr mint det() const {
         MintMatrix<mint> A(*this);
         int rank = 0;
-        mint res = 1;
+        mint res = mint(1);
         for (int col = 0; col < width(); ++col) {
             int pivot = A.find_pivot(rank, col);
             if (pivot == -1) return mint(0);
