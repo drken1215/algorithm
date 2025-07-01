@@ -68,16 +68,13 @@ template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,
 // Fast IO
 /*///////////////////////////////////////////////////////*/
 
-namespace mylib {
 static constexpr int BUF_SIZE = 1 << 17;
 
 struct FastRead {
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
-    char *begin_;
-    char *end_;
-    char *ptr_;
+    char *begin_, *end_, *ptr_;
 
     // reader
     void skip_space() {
@@ -91,7 +88,7 @@ private:
     }
     
     // parser
-    template<unsigned_integral T> void parse(T &x) {
+    template<typename T> void parse(T &x) {
         common_type_t<T, uint64_t> x2 = 0;
         while (true) {
             uint64_t v;
@@ -135,8 +132,12 @@ public:
     FastRead() : FastRead(stdin) {}
     explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
     explicit FastRead(FILE *stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { read(); }
-    ~FastRead() { if (stream_ != stdin) fclose(stream_); }
+    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { 
+        read(); 
+    }
+    ~FastRead() { 
+        if (stream_ != stdin) fclose(stream_); 
+    }
     FastRead(const FastRead&) = delete;
     FastRead &operator = (const FastRead&) = delete;
     
@@ -185,9 +186,7 @@ class FastWrite {
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
-    char *begin_;
-    char *end_;
-    char *ptr_;
+    char *begin_, *end_, *ptr_;
     
     // preparation
     template <class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
@@ -246,7 +245,7 @@ private:
         le4(x / POW10<uint64_t>[N - 4]);
         w4<N - 4>(x % POW10<uint64_t>[N - 4]);
     }
-    void write(unsigned_integral auto x) {
+    template<typename T> void write(T x) {
         write<4>(x);
     }
     void write(__uint128_t x) {
@@ -311,20 +310,16 @@ public:
     }
     template <char End = '\n', char Sep = ' ', class T, class... Ts>
     void ln(T&& x, Ts&&... xs) {
-        (*this)(forward<T>(x));
+        (*this)(std::forward<T>(x));
         if constexpr (sizeof...(Ts) == 0) {
             *ptr_++ = End;
         } else {
             *ptr_++ = Sep;
-            ln<End, Sep>(forward<Ts>(xs)...);
+            ln<End, Sep>(std::forward<Ts>(xs)...);
         }
     }
     template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
 };
-
-mylib::FastRead cin;
-mylib::FastWrite cout;
-} // namespace mylib
 
 
 /*///////////////////////////////////////////////////////*/
