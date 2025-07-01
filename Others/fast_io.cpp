@@ -20,7 +20,6 @@
 using namespace std;
 
 
-namespace mylib {
 static constexpr int BUF_SIZE = 1 << 17;
 
 struct FastRead {
@@ -263,20 +262,16 @@ public:
     }
     template <char End = '\n', char Sep = ' ', class T, class... Ts>
     void ln(T&& x, Ts&&... xs) {
-        (*this)(forward<T>(x));
+        (*this)(std::forward<T>(x));
         if constexpr (sizeof...(Ts) == 0) {
             *ptr_++ = End;
         } else {
             *ptr_++ = Sep;
-            ln<End, Sep>(forward<Ts>(xs)...);
+            ln<End, Sep>(std::forward<Ts>(xs)...);
         }
     }
     template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
 };
-
-mylib::FastRead cin;
-mylib::FastWrite cout;
-} // namespace mylib
 
 
 
@@ -286,32 +281,34 @@ mylib::FastWrite cout;
 
 // Yosupo Library Checker - Many A + B
 void Yosupo_A_puls_B() {
-    using mylib::cin, mylib::cout;
+    FastRead Read;
+    FastWrite Write;
     
     int T;
-    cin >> T;
+    Read(T);
     for (int t = 0; t < T; ++t) {
         unsigned long long a, b;
-        cin >> a >> b;
-        cout << a + b << '\n';
+        Read(a, b);
+        Write.ln(a + b);
     }
 }
 
 // Yosupo Library Checker - Many A + B (128 bit)
-//void Yosupo_128_A_puls_B() {
-//    using mylib::cin, mylib::cout;
-//
-//    int T;
-//    cin >> T;
-//    for (int t = 0; t < T; ++t) {
-//        __int128 a, b;
-//        cin >> a >> b;
-//        cout << a + b << '\n';
-//    }
-//}
+void Yosupo_128_A_puls_B() {
+    FastRead Read;
+    FastWrite Write;
+
+    int T;
+    Read(T);
+    for (int t = 0; t < T; ++t) {
+        __int128 a, b;
+        Read(a, b);
+        Write.ln(a + b);
+    }
+}
 
 
 int main() {
-    Yosupo_A_puls_B();
-    //Yosupo_128_A_puls_B();
+    //Yosupo_A_puls_B();
+    Yosupo_128_A_puls_B();
 }

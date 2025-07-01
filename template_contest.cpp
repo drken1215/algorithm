@@ -21,6 +21,8 @@ using vll = vector<long long>;
 using ll = long long;
 using u32 = unsigned int;
 using u64 = unsigned long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
 template <class T>
 using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
@@ -407,7 +409,6 @@ uint64_t kth_root(uint64_t N, uint64_t K) {
 }
 
 // int 128
-using i128 = __int128;
 constexpr i128 to_integer(const string &s) {
     i128 res = 0;
     for (auto c : s) {
