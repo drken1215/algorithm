@@ -26,9 +26,7 @@ struct FastRead {
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
-    char *begin_;
-    char *end_;
-    char *ptr_;
+    char *begin_, *end_, *ptr_;
 
     // reader
     void skip_space() {
@@ -42,7 +40,7 @@ private:
     }
     
     // parser
-    template<unsigned_integral T> void parse(T &x) {
+    template<typename T> void parse(T &x) {
         common_type_t<T, uint64_t> x2 = 0;
         while (true) {
             uint64_t v;
@@ -86,8 +84,12 @@ public:
     FastRead() : FastRead(stdin) {}
     explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
     explicit FastRead(FILE *stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { read(); }
-    ~FastRead() { if (stream_ != stdin) fclose(stream_); }
+    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { 
+        read(); 
+    }
+    ~FastRead() { 
+        if (stream_ != stdin) fclose(stream_); 
+    }
     FastRead(const FastRead&) = delete;
     FastRead &operator = (const FastRead&) = delete;
     
@@ -136,9 +138,7 @@ class FastWrite {
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
-    char *begin_;
-    char *end_;
-    char *ptr_;
+    char *begin_, *end_, *ptr_;
     
     // preparation
     template <class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
@@ -197,7 +197,7 @@ private:
         le4(x / POW10<uint64_t>[N - 4]);
         w4<N - 4>(x % POW10<uint64_t>[N - 4]);
     }
-    void write(unsigned_integral auto x) {
+    template<typename T> void write(T x) {
         write<4>(x);
     }
     void write(__uint128_t x) {
@@ -287,21 +287,7 @@ void Yosupo_A_puls_B() {
     int T;
     Read(T);
     for (int t = 0; t < T; ++t) {
-        unsigned long long a, b;
-        Read(a, b);
-        Write.ln(a + b);
-    }
-}
-
-// Yosupo Library Checker - Many A + B (128 bit)
-void Yosupo_128_A_puls_B() {
-    FastRead Read;
-    FastWrite Write;
-
-    int T;
-    Read(T);
-    for (int t = 0; t < T; ++t) {
-        __int128 a, b;
+        long long a, b;
         Read(a, b);
         Write.ln(a + b);
     }
@@ -309,6 +295,5 @@ void Yosupo_128_A_puls_B() {
 
 
 int main() {
-    //Yosupo_A_puls_B();
-    Yosupo_128_A_puls_B();
+    Yosupo_A_puls_B();
 }
