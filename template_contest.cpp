@@ -2794,7 +2794,8 @@ template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Act
 int main() {
     cin.tie(nullptr);
     ios_base::sync_with_stdio(false);
-    // using mylib::cin, mylib::cout;
-
+    // FastRead Read
+    // FastWrite Write
+    
     
 }
