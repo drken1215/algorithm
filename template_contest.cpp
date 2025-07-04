@@ -68,9 +68,9 @@ template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,
 // Fast IO
 /*///////////////////////////////////////////////////////*/
 
-static constexpr int BUF_SIZE = 1 << 17;
-
 struct FastRead {
+    static constexpr int BUF_SIZE = 1 << 17;
+
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
@@ -183,6 +183,8 @@ public:
 };
 
 class FastWrite {
+    static constexpr int BUF_SIZE = 1 << 17;
+
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
