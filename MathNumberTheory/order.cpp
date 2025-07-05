@@ -15,29 +15,6 @@
 using namespace std;
 
 
-// mod_pow, mod_inv
-template<class T> T mod_pow(T a, T n, T m) {
-    T res = 1;
-    while (n > 0) {
-        if (n % 2 == 1) res = res * a % m;
-        a = a * a % m;
-        n >>= 1;
-    }
-    return res;
-};
-
-template<class T> T mod_inv(T a, T m) {
-    T b = m, u = 1, v = 0;
-    while (b > 0) {
-        T t = a / b;
-        a -= t * b, swap(a, b);
-        u -= t * v, swap(u, v);
-    }
-    u %= m;
-    if (u < 0) u += m;
-    return u;
-};
-
 // montgomery modint (MOD < 2^62, MOD is odd)
 struct MontgomeryModInt64 {
     using mint = MontgomeryModInt64;
@@ -347,4 +324,3 @@ int main() {
     ABC_335_G();
     //AOJ_3062();
 }
-
