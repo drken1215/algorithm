@@ -406,7 +406,7 @@ uint64_t kth_root(uint64_t N, uint64_t K) {
 }
 
 // int 128
-constexpr i128 to_integer(const string &s) {
+i128 to_integer(const string &s) {
     i128 res = 0;
     for (auto c : s) {
          if (isdigit(c)) res = res * 10 + (c - '0');
@@ -442,79 +442,7 @@ ostream& operator << (ostream &os, const i128 &x) {
 
 
 /*/////////////////////////////*/
-// eratostenes
-/*/////////////////////////////*/
-
-// isprime[n] := is n prime?
-// mebius[n] := mebius value of n
-// min_factor[n] := the min prime-factor of n
-// euler[n] := euler function value of n
-struct Eratos {
-    vector<int> primes;
-    vector<bool> isprime;
-    vector<int> mebius, min_factor, euler;
-
-    // constructor, getter
-    Eratos(int MAX) : primes(),
-                      isprime(MAX+1, true),
-                      mebius(MAX+1, 1),
-                      min_factor(MAX+1, -1),
-                      euler(MAX+1) {
-        isprime[0] = isprime[1] = false;
-        min_factor[0] = 0, min_factor[1] = 1;
-        for (int i = 1; i <= MAX; i++) euler[i] = i;
-        for (int i = 2; i <= MAX; ++i) {
-            if (!isprime[i]) continue;
-            primes.push_back(i);
-            mebius[i] = -1;
-            min_factor[i] = i;
-            euler[i] = i - 1;
-            for (int j = i*2; j <= MAX; j += i) {
-                isprime[j] = false;
-                if ((j / i) % i == 0) mebius[j] = 0;
-                else mebius[j] = -mebius[j];
-                if (min_factor[j] == -1) min_factor[j] = i;
-                euler[j] /= i, euler[j] *= i - 1;
-            }
-        }
-    }
-
-    // prime factorization
-    vector<pair<int,int>> prime_factors(int n) {
-        vector<pair<int,int> > res;
-        while (n != 1) {
-            int prime = min_factor[n];
-            int exp = 0;
-            while (min_factor[n] == prime) {
-                ++exp;
-                n /= prime;
-            }
-            res.push_back(make_pair(prime, exp));
-        }
-        return res;
-    }
-
-    // enumerate divisors
-    vector<int> divisors(int n) {
-        vector<int> res({1});
-        auto pf = prime_factors(n);
-        for (auto p : pf) {
-            int n = (int)res.size();
-            for (int i = 0; i < n; ++i) {
-                int v = 1;
-                for (int j = 0; j < p.second; ++j) {
-                    v *= p.first;
-                    res.push_back(res[i] * v);
-                }
-            }
-        }
-        return res;
-    }
-};
-
-
-/*/////////////////////////////*/
-// modint, FPS
+// modint
 /*/////////////////////////////*/
 
 // modint
