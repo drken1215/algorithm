@@ -716,6 +716,367 @@ struct DynamicModint {
 };
 int DynamicModint::MOD;
 
+// montgomery modint (MOD < 2^62, MOD is odd)
+struct MontgomeryModInt64 {
+    using mint = MontgomeryModInt64;
+    using u64 = uint64_t;
+    using u128 = __uint128_t;
+    
+    // static menber
+    static u64 MOD;
+    static u64 INV_MOD;  // INV_MOD * MOD ≡ 1 (mod 2^64)
+    static u64 T128;  // 2^128 (mod MOD)
+    
+    // inner value
+    u64 val;
+    
+    // constructor
+    MontgomeryModInt64() : val(0) { }
+    MontgomeryModInt64(long long v) : val(reduce((u128(v) + MOD) * T128)) { }
+    u64 get() const {
+        u64 res = reduce(val);
+        return res >= MOD ? res - MOD : res;
+    }
+    
+    // mod getter and setter
+    static u64 get_mod() { return MOD; }
+    static void set_mod(u64 mod) {
+        assert(mod < (1LL << 62));
+        assert((mod & 1));
+        MOD = mod;
+        T128 = -u128(mod) % mod;
+        INV_MOD = get_inv_mod();
+    }
+    static u64 get_inv_mod() {
+        u64 res = MOD;
+        for (int i = 0; i < 5; ++i) res *= 2 - MOD * res;
+        return res;
+    }
+    static u64 reduce(const u128 &v) {
+        return (v + u128(u64(v) * u64(-INV_MOD)) * MOD) >> 64;
+    }
+    
+    // arithmetic operators
+    mint operator + () const { return mint(*this); }
+    mint operator - () const { return mint() - mint(*this); }
+    mint operator + (const mint &r) const { return mint(*this) += r; }
+    mint operator - (const mint &r) const { return mint(*this) -= r; }
+    mint operator * (const mint &r) const { return mint(*this) *= r; }
+    mint operator / (const mint &r) const { return mint(*this) /= r; }
+    mint& operator += (const mint &r) {
+        if ((val += r.val) >= 2 * MOD) val -= 2 * MOD;
+        return *this;
+    }
+    mint& operator -= (const mint &r) {
+        if ((val += 2 * MOD - r.val) >= 2 * MOD) val -= 2 * MOD;
+        return *this;
+    }
+    mint& operator *= (const mint &r) {
+        val = reduce(u128(val) * r.val);
+        return *this;
+    }
+    mint& operator /= (const mint &r) {
+        *this *= r.inv();
+        return *this;
+    }
+    mint inv() const { return pow(MOD - 2); }
+    mint pow(u128 n) const {
+        mint res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+
+    // other operators
+    bool operator == (const mint &r) const {
+        return (val >= MOD ? val - MOD : val) == (r.val >= MOD ? r.val - MOD : r.val);
+    }
+    bool operator != (const mint &r) const {
+        return (val >= MOD ? val - MOD : val) != (r.val >= MOD ? r.val - MOD : r.val);
+    }
+    mint& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    mint& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    mint operator ++ (int) {
+        mint res = *this;
+        ++*this;
+        return res;
+    }
+    mint operator -- (int) {
+        mint res = *this;
+        --*this;
+        return res;
+    }
+    friend istream& operator >> (istream &is, mint &x) {
+        long long t;
+        is >> t;
+        x = mint(t);
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const mint &x) {
+        return os << x.get();
+    }
+    friend mint pow(const mint &r, long long n) {
+        return r.pow(n);
+    }
+    friend mint inv(const mint &r) {
+        return r.inv();
+    }
+};
+
+typename MontgomeryModInt64::u64
+MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
+
+
+/*/////////////////////////////*/
+// Prime
+/*/////////////////////////////*/
+
+// isprime[n] := is n prime?
+// mebius[n] := mebius value of n
+// min_factor[n] := the min prime-factor of n
+// euler[n] := euler function value of n
+struct Eratos {
+    vector<int> primes;
+    vector<bool> isprime;
+    vector<int> mebius, min_factor, euler;
+
+    // constructor, getter
+    Eratos(int MAX) : primes(),
+                      isprime(MAX+1, true),
+                      mebius(MAX+1, 1),
+                      min_factor(MAX+1, -1),
+                      euler(MAX+1) {
+        isprime[0] = isprime[1] = false;
+        min_factor[0] = 0, min_factor[1] = 1;
+        for (int i = 1; i <= MAX; i++) euler[i] = i;
+        for (int i = 2; i <= MAX; ++i) {
+            if (!isprime[i]) continue;
+            primes.push_back(i);
+            mebius[i] = -1;
+            min_factor[i] = i;
+            euler[i] = i - 1;
+            for (int j = i*2; j <= MAX; j += i) {
+                isprime[j] = false;
+                if ((j / i) % i == 0) mebius[j] = 0;
+                else mebius[j] = -mebius[j];
+                if (min_factor[j] == -1) min_factor[j] = i;
+                euler[j] /= i, euler[j] *= i - 1;
+            }
+        }
+    }
+
+    // prime factorization
+    vector<pair<int,int>> prime_factors(int n) {
+        vector<pair<int,int> > res;
+        while (n != 1) {
+            int prime = min_factor[n];
+            int exp = 0;
+            while (min_factor[n] == prime) {
+                ++exp;
+                n /= prime;
+            }
+            res.push_back(make_pair(prime, exp));
+        }
+        return res;
+    }
+
+    // enumerate divisors
+    vector<int> divisors(int n) {
+        vector<int> res({1});
+        auto pf = prime_factors(n);
+        for (auto p : pf) {
+            int n = (int)res.size();
+            for (int i = 0; i < n; ++i) {
+                int v = 1;
+                for (int j = 0; j < p.second; ++j) {
+                    v *= p.first;
+                    res.push_back(res[i] * v);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+// Miller-Rabin
+bool MillerRabin(long long N, const vector<long long> &A) {
+    assert(N % 2 == 1);
+    assert(N < (1LL<<62));
+    using mint = MontgomeryModInt64;
+    mint::set_mod(N);
+    
+    long long s = 0, d = N - 1;
+    while (d % 2 == 0) {
+        ++s;
+        d >>= 1;
+    }
+    for (auto a : A) {
+        if (N <= a) return true;
+        mint x = mint(a).pow(d);
+        if (x != 1) {
+            long long t;
+            for (t = 0; t < s; ++t) {
+                if (x == N - 1) break;
+                x *= x;
+            }
+            if (t == s) return false;
+        }
+    }
+    return true;
+}
+
+bool is_prime(long long N) {
+    if (N <= 1) return false;
+    else if (N == 2) return true;
+    else if (N % 2 == 0) return false;
+    else if (N < 4759123141LL)
+        return MillerRabin(N, {2, 7, 61});
+    else
+        return MillerRabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
+}
+
+// Pollard's Rho
+unsigned int xor_shift_rng() {
+    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
+    unsigned int tt = (tx^(tx<<11));
+    tx = ty, ty = tz, tz = tw;
+    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
+}
+
+long long pollard(long long N) {
+    if (N % 2 == 0) return 2;
+    if (is_prime(N)) return N;
+    
+    assert(N < (1LL<<62));
+    using mint = MontgomeryModInt64;
+    mint::set_mod(N);
+    
+    long long step = 0;
+    while (true) {
+        mint r = xor_shift_rng();  // random r
+        auto f = [&](mint x) -> mint { return x * x + r; };
+        mint x = ++step, y = f(x);
+        while (true) {
+            long long p = gcd((y - x).get(), N);
+            if (p == 0 || p == N) break;
+            if (p != 1) return p;
+            x = f(x);
+            y = f(f(y));
+        }
+    }
+}
+
+vector<long long> pollard_prime_factorize(long long N) {
+    if (N == 1) return {};
+    long long p = pollard(N);
+    if (p == N) return {p};
+    vector<long long> left = pollard_prime_factorize(p);
+    vector<long long> right = pollard_prime_factorize(N / p);
+    if (left.size() > right.size()) swap(left, right);
+    left.insert(left.end(), right.begin(), right.end());
+    sort(left.begin(), left.end());
+    return left;
+}
+
+vector<pair<long long, long long>> prime_factorize(long long N) {
+    vector<pair<long long, long long>> res;
+    const auto &prs = pollard_prime_factorize(N);
+    long long prev = -1, num = 0;
+    for (const auto &pr : prs) {
+        if (pr == prev) ++num;
+        else {
+            if (prev != -1) res.emplace_back(prev, num);
+            prev = pr, num = 1;
+        }
+    }
+    if (prev != -1) res.emplace_back(prev, num);
+    return res;
+}
+
+// calc min primitive root
+long long calc_primitive_root(long long p) {
+    if (p == 1) return -1;
+    if (p == 2) return 1;
+    if (p == 998244353) return 3;
+    if (p == 167772161) return 3;
+    if (p == 469762049) return 3;
+    if (p == 754974721) return 11;
+    
+    const auto &pftmp = pollard_prime_factorize(p - 1);
+    vector<long long> pf;
+    for (auto q : pftmp) {
+        if (pf.empty() || pf.back() != q) pf.push_back(q);
+    }
+    
+    using mint = MontgomeryModInt64;
+    mint::set_mod(p);
+    for (long long g = 2; g < p; ++g) {
+        bool ok = true;
+        for (auto q : pf) {
+            if (mint(g).pow((p - 1) / q) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+    return -1;
+}
+
+// various methods mod prime P
+struct PrimeProcessor {
+    using mint = MontgomeryModInt64;
+    
+    // input prime
+    long long prime;
+    vector<pair<long long, long long>> pf;  // prime factorization of p-1
+    
+    // constructors
+    PrimeProcessor() {}
+    PrimeProcessor(long long p) : prime(p) {
+        init(p);
+    }
+    
+    // initializer
+    void init(long long p) {
+        assert(is_prime(p));
+        prime = p;
+        if (p % 2 == 1) {
+            assert(p < (1LL<<62));
+            prime = p;
+            pf = prime_factorize(prime - 1);
+            mint::set_mod(prime);
+        }
+    }
+    
+    // min: x s.t. a^x \equiv 1 (mod prime)
+    long long calc_order(long long a) {
+        assert(a != 0);
+        if (prime == 2) return 1;
+        long long res = prime - 1;
+        for (const auto &[p, num] : pf) {
+            while (res % p == 0 && mint(a).pow(res / p) == 1) res /= p;
+        }
+        return res;
+    }
+};
+
+
+/*/////////////////////////////*/
+// FPS
+/*/////////////////////////////*/
+
 // FPS
 namespace NTT {
     long long modpow(long long a, long long n, int mod) {
@@ -2630,17 +2991,17 @@ template<class T> auto seg_op_min = [](T p, T q) { return min(p, q); };
 template<class T> auto seg_op_max = [](T p, T q) { return max(p, q); };
 template<class T> auto seg_op_min_with_index = [](pair<T,int> p, pair<T,int> q) { return min(p, q); };
 template<class T> auto seg_op_max_with_index = [](pair<T,int> p, pair<T,int> q) { return max(p, q); };
-template<class T> SegmentTree<T> RangeMin(int N = 0) {
-    return SegmentTree<T>(N, seg_op_min<T>, numeric_limits<T>::max()/2);
+template<class T> SegmentTree<T> RangeMin() {
+    return SegmentTree<T>(seg_op_min<T>, numeric_limits<T>::max()/2);
 }
-template<class Monoid> SegmentTree<Monoid> RangeMax(int N = 0) {
-    return SegmentTree<Monoid>(N, seg_op_max<Monoid>, -numeric_limits<Monoid>::max()/2);
+template<class Monoid> SegmentTree<Monoid> RangeMax() {
+    return SegmentTree<Monoid>(seg_op_max<Monoid>, -numeric_limits<Monoid>::max()/2);
 }
-template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMinWithIndex(int N = 0) {
-    return SegmentTree<Monoid>(N, seg_op_min_with_index<Monoid>, {numeric_limits<Monoid>::max()/2, -1});
+template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMinWithIndex() {
+    return SegmentTree<Monoid>(seg_op_min_with_index<Monoid>, {numeric_limits<Monoid>::max()/2, -1});
 }
-template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMaxWithIndex(int N = 0) {
-    return SegmentTree<Monoid>(N, seg_op_max_with_index<Monoid>, {-numeric_limits<Monoid>::max()/2, -1});
+template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMaxWithIndex() {
+    return SegmentTree<Monoid>(seg_op_max_with_index<Monoid>, {-numeric_limits<Monoid>::max()/2, -1});
 }
 
 // various lazy segment trees
@@ -2669,51 +3030,52 @@ template<class Action> auto seg_comp_change = [](Action g, Action f) {
 template<class Action> auto seg_comp_add = [](Action g, Action f) {
     return g + f;
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMin(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMin() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_min<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
+        seg_op_min<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
         numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMax(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMax() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_max<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
+        seg_op_max<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
         -numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeChangeRangeMinWithIndex(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeChangeRangeMinWithIndex() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_min_with_index<Monoid>, seg_act_change_with_index<Monoid, Action>, seg_comp_change<Action>,
+        seg_op_min_with_index<Monoid>, seg_act_change_with_index<Monoid, Action>, seg_comp_change<Action>,
         make_pair(numeric_limits<Monoid>::max()/2 -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeChangeRangeMaxWithIndex(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeChangeRangeMaxWithIndex() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_max_with_index<Monoid>, seg_act_change_with_index<Monoid, Action>, seg_comp_change<Action>,
+        seg_op_max_with_index<Monoid>, seg_act_change_with_index<Monoid, Action>, seg_comp_change<Action>,
         make_pair(-numeric_limits<Monoid>::max()/2 -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMin(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMin() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_min<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
+        seg_op_min<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
         numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMax(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMax() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_max<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
+        seg_op_max<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
         -numeric_limits<Monoid>::max()/2, -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMinWithIndex(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMinWithIndex() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_min_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
+        seg_op_min_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
         make_pair(numeric_limits<Monoid>::max()/2, -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMaxWithIndex(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMaxWithIndex() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_max_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
+        seg_op_max_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
         make_pair(-numeric_limits<Monoid>::max()/2, -1), -1);
 };
-template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Action> RangeChangeRangeSum(int N = 0) {
+template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Action> RangeChangeRangeSum() {
     return LazySegmentTree<Monoid, Action>(
-        N, seg_op_add_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
+        seg_op_add_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
         make_pair(Monoid(0), 1), -1);
 };
+
 
 
 /*/////////////////////////////*/
@@ -2726,5 +3088,5 @@ int main() {
     // FastRead Read
     // FastWrite Write
     
-
+    
 }
