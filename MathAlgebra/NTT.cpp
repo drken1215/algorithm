@@ -291,7 +291,7 @@ template<class T> struct BiCoef {
     }
     constexpr void init(int n) noexcept {
         fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].getmod();
+        int MOD = fact_[0].get_mod();
         for(int i = 2; i < n; i++){
             fact_[i] = fact_[i-1] * i;
             inv_[i] = -inv_[MOD%i] * (MOD/i);
@@ -341,7 +341,7 @@ int main() {
         int n = it.second;
         vector<mint> pol(n/2+1, 1);
         for (int i = 0; i <= n/2; ++i) {
-            pol[i] = bc.fact(n) * bc.finv(n - i*2) * bc.finv(i) / modpow(mint(2), i);
+            pol[i] = bc.fact(n) * bc.finv(n - i*2) * bc.finv(i) / mod_pow(mint(2), i);
         }
         que.push({pol.size(), pol});
     }
@@ -355,7 +355,7 @@ int main() {
 
     mint res = 0;
     for (int k = 0; k < func.size(); ++k) {
-        mint fac = bc.fact(N*2 - k*2) * bc.finv(N-k) / modpow(mint(2), N-k);
+        mint fac = bc.fact(N*2 - k*2) * bc.finv(N-k) / mod_pow(mint(2), N-k);
         if (k % 2 == 0) res += func[k] * fac;
         else res -= func[k] * fac;
     }

@@ -336,33 +336,35 @@ const vector<int> dy = {0, 1, 0, -1};
 const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
 const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
 
-// bit
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(u32 x) { return __builtin_popcount(x); }
-int popcnt(ll x) { return __builtin_popcountll(x); }
-int popcnt(u64 x) { return __builtin_popcountll(x); }
+// min non-negative i such that n <= 2^i
+int ceil_pow2(int n) {
+    int i = 0;
+    while ((1U << i) < (unsigned int)(n)) i++;
+    return i;
+}
 
-// xor128による乱数生成、周期は2^128-1
-unsigned int randInt() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
+// num of i such that (x & (1 << i)) != 0
+int popcnt(int x) { return __builtin_popcount(x); }
+int popcnt(unsigned int x) { return __builtin_popcount(x); }
+int popcnt(long long x) { return __builtin_popcountll(x); }
+int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
+
+// min non-negative i such that (x & (1 << i)) != 0
+int bsf(int x) { return __builtin_ctz(x); }
+int bsf(unsigned int x) { return __builtin_ctz(x); }
+int bsf(long long x) { return __builtin_ctzll(x); }
+int bsf(unsigned long long x) { return __builtin_ctzll(x); }
+constexpr int bsf_constexpr(unsigned int x) {
+    int i = 0;
+    while (!(x & (1 << i))) i++;
+    return i;
 }
-int randInt(int minv, int maxv) {
-    return randInt() % (maxv - minv + 1) + minv;
-}
-ll randll(ll minv, ll maxv) {
-    ll a = randInt(), b = randInt();
-    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
-}
-template<class T> void shuffle(vector<T>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
-        int k = randInt() % (i + 1);
-        swap(vec[i], vec[k]);
-    }
-}
+
+// max non-negative i such that (x & (1 << i)) != 0
+int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
+int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
+int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
+int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
 
 // floor, ceil
 template<class T> T floor(T a, T b) {
@@ -403,6 +405,28 @@ uint64_t kth_root(uint64_t N, uint64_t K) {
     else res = pow(N, nextafter(1 / double(K), 0));
     while (power(res + 1, K) <= N) ++res;
     return res;
+}
+
+// xor128による乱数生成、周期は2^128-1
+unsigned int randInt() {
+    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
+    unsigned int tt = (tx^(tx<<11));
+    tx = ty; ty = tz; tz = tw;
+    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
+}
+int randInt(int minv, int maxv) {
+    return randInt() % (maxv - minv + 1) + minv;
+}
+long long randInt(long long minv, long long maxv) {
+    long long a = randInt(), b = randInt();
+    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
+}
+template<class T> void shuffle(vector<T>& vec) {
+    int n = vec.size();
+    for (int i = n - 1; i > 0; --i) {
+        int k = randInt() % (i + 1);
+        swap(vec[i], vec[k]);
+    }
 }
 
 // int 128
