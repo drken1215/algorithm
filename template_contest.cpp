@@ -5,6 +5,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
+/*///////////////////////////////////////////////////////*/
+// Utility
+/*///////////////////////////////////////////////////////*/
+
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
 template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
 
@@ -62,6 +67,137 @@ template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+// 4-neighbor
+const vector<int> dx = {1, 0, -1, 0};
+const vector<int> dy = {0, 1, 0, -1};
+
+// 8-neighbor
+const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
+
+// min non-negative i such that n <= 2^i
+int ceil_pow2(int n) {
+    int i = 0;
+    while ((1U << i) < (unsigned int)(n)) i++;
+    return i;
+}
+
+// num of i such that (x & (1 << i)) != 0
+int popcnt(int x) { return __builtin_popcount(x); }
+int popcnt(unsigned int x) { return __builtin_popcount(x); }
+int popcnt(long long x) { return __builtin_popcountll(x); }
+int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
+
+// min non-negative i such that (x & (1 << i)) != 0
+int bsf(int x) { return __builtin_ctz(x); }
+int bsf(unsigned int x) { return __builtin_ctz(x); }
+int bsf(long long x) { return __builtin_ctzll(x); }
+int bsf(unsigned long long x) { return __builtin_ctzll(x); }
+
+// max non-negative i such that (x & (1 << i)) != 0
+int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
+int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
+int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
+int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
+
+// floor, ceil
+template<class T> T floor(T a, T b) {
+    if (a % b == 0 || a >= 0) return a / b;
+    else return -((-a) / b) - 1;
+}
+template<class T> T ceil(T x, T y) {
+    return floor(x + y - 1, y);
+}
+
+// kth root
+// N < 2^64, K <= 64
+uint64_t kth_root(uint64_t N, uint64_t K) {
+    assert(K >= 1);
+    if (N <= 1 || K == 1) return N;
+    if (K >= 64) return 1;
+    if (N == uint64_t(-1)) --N;
+    
+    auto mul = [&](uint64_t x, uint64_t y) -> uint64_t {
+        if (x < UINT_MAX && y < UINT_MAX) return x * y;
+        if (x == uint64_t(-1) || y == uint64_t(-1)) return uint64_t(-1);
+        return (x <= uint64_t(-1) / y ? x * y : uint64_t(-1));
+    };
+    auto power = [&](uint64_t x, uint64_t k) -> uint64_t {
+        if (k == 0) return 1ULL;
+        uint64_t res = 1ULL;
+        while (k) {
+            if (k & 1) res = mul(res, x);
+            x = mul(x, x);
+            k >>= 1;
+        }
+        return res;
+    };
+    
+    uint64_t res;
+    if (K == 2) res = sqrtl(N) - 1;
+    else if (K == 3) res = cbrt(N) - 1;
+    else res = pow(N, nextafter(1 / double(K), 0));
+    while (power(res + 1, K) <= N) ++res;
+    return res;
+}
+
+// xor128による乱数生成、周期は2^128-1
+unsigned int randInt() {
+    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
+    unsigned int tt = (tx^(tx<<11));
+    tx = ty; ty = tz; tz = tw;
+    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
+}
+int randInt(int minv, int maxv) {
+    return randInt() % (maxv - minv + 1) + minv;
+}
+long long randInt(long long minv, long long maxv) {
+    long long a = randInt(), b = randInt();
+    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
+}
+template<class T> void shuffle(vector<T>& vec) {
+    int n = vec.size();
+    for (int i = n - 1; i > 0; --i) {
+        int k = randInt() % (i + 1);
+        swap(vec[i], vec[k]);
+    }
+}
+
+// int 128
+i128 to_integer(const string &s) {
+    i128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    if (s[0] == '-') res *= -1;
+    return res;
+}
+istream& operator >> (istream &is, i128 &x) {
+    string s;
+    is >> s;
+    x = to_integer(s);
+    return is;
+}
+ostream& operator << (ostream &os, const i128 &x) {
+    i128 ax = (x >= 0 ? x : -x);
+    char buffer[128];
+    char *d = end(buffer);
+    do {
+         --d;
+        *d = "0123456789"[ax % 10];
+        ax /= 10;
+    } while (ax != 0);
+    if (x < 0) {
+        --d;
+        *d = '-';
+    }
+    int len = end(buffer) - d;
+    if (os.rdbuf()->sputn(d, len) != len) {
+        os.setstate(ios_base::badbit);
+    }
+    return os;
+}
 
 
 /*///////////////////////////////////////////////////////*/
@@ -322,147 +458,6 @@ public:
     }
     template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
 };
-
-
-/*///////////////////////////////////////////////////////*/
-// Utility
-/*///////////////////////////////////////////////////////*/
-
-// 4-neighbor
-const vector<int> dx = {1, 0, -1, 0};
-const vector<int> dy = {0, 1, 0, -1};
-
-// 8-neighbor
-const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
-
-// min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
-    return i;
-}
-
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-
-// min non-negative i such that (x & (1 << i)) != 0
-int bsf(int x) { return __builtin_ctz(x); }
-int bsf(unsigned int x) { return __builtin_ctz(x); }
-int bsf(long long x) { return __builtin_ctzll(x); }
-int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-constexpr int bsf_constexpr(unsigned int x) {
-    int i = 0;
-    while (!(x & (1 << i))) i++;
-    return i;
-}
-
-// max non-negative i such that (x & (1 << i)) != 0
-int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
-int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
-int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
-int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
-
-// floor, ceil
-template<class T> T floor(T a, T b) {
-    if (a % b == 0 || a >= 0) return a / b;
-    else return -((-a) / b) - 1;
-}
-template<class T> T ceil(T x, T y) {
-    return floor(x + y - 1, y);
-}
-
-// kth root
-// N < 2^64, K <= 64
-uint64_t kth_root(uint64_t N, uint64_t K) {
-    assert(K >= 1);
-    if (N <= 1 || K == 1) return N;
-    if (K >= 64) return 1;
-    if (N == uint64_t(-1)) --N;
-    
-    auto mul = [&](uint64_t x, uint64_t y) -> uint64_t {
-        if (x < UINT_MAX && y < UINT_MAX) return x * y;
-        if (x == uint64_t(-1) || y == uint64_t(-1)) return uint64_t(-1);
-        return (x <= uint64_t(-1) / y ? x * y : uint64_t(-1));
-    };
-    auto power = [&](uint64_t x, uint64_t k) -> uint64_t {
-        if (k == 0) return 1ULL;
-        uint64_t res = 1ULL;
-        while (k) {
-            if (k & 1) res = mul(res, x);
-            x = mul(x, x);
-            k >>= 1;
-        }
-        return res;
-    };
-    
-    uint64_t res;
-    if (K == 2) res = sqrtl(N) - 1;
-    else if (K == 3) res = cbrt(N) - 1;
-    else res = pow(N, nextafter(1 / double(K), 0));
-    while (power(res + 1, K) <= N) ++res;
-    return res;
-}
-
-// xor128による乱数生成、周期は2^128-1
-unsigned int randInt() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-int randInt(int minv, int maxv) {
-    return randInt() % (maxv - minv + 1) + minv;
-}
-long long randInt(long long minv, long long maxv) {
-    long long a = randInt(), b = randInt();
-    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
-}
-template<class T> void shuffle(vector<T>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
-        int k = randInt() % (i + 1);
-        swap(vec[i], vec[k]);
-    }
-}
-
-// int 128
-i128 to_integer(const string &s) {
-    i128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    if (s[0] == '-') res *= -1;
-    return res;
-}
-istream& operator >> (istream &is, i128 &x) {
-    string s;
-    is >> s;
-    x = to_integer(s);
-    return is;
-}
-ostream& operator << (ostream &os, const i128 &x) {
-    i128 ax = (x >= 0 ? x : -x);
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
-}
 
 
 /*/////////////////////////////*/
