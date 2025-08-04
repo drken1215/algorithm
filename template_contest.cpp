@@ -464,54 +464,114 @@ public:
 // modint
 /*/////////////////////////////*/
 
+// mod pow
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
+    T_VAL res = 1;
+    while (n > 0) {
+        if (n % 2 == 1) res = res * a % m;
+        a = a * a % m;
+        n >>= 1;
+    }
+    return res;
+}
+
+// mod inv
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
+    T_VAL b = m, u = 1, v = 0;
+    while (b > 0) {
+        T_VAL t = a / b;
+        a -= t * b, swap(a, b);
+        u -= t * v, swap(u, v);
+    }
+    u %= m;
+    if (u < 0) u += m;
+    return u;
+}
+
+// calc primitive root
+constexpr int calc_primitive_root(long long m) {
+    if (m == 1) return -1;
+    if (m == 2) return 1;
+    if (m == 998244353) return 3;
+    if (m == 167772161) return 3;
+    if (m == 469762049) return 3;
+    if (m == 754974721) return 11;
+    
+    long long divs[20] = {};
+    divs[0] = 2;
+    long long cnt = 1;
+    long long x = (m - 1) / 2;
+    while (x % 2 == 0) x /= 2;
+    for (long long i = 3; i * i <= x; i += 2) {
+        if (x % i == 0) {
+            divs[cnt++] = i;
+            while (x % i == 0) x /= i;
+        }
+    }
+    if (x > 1) divs[cnt++] = x;
+    for (long long g = 2; ; g++) {
+        bool ok = true;
+        for (int i = 0; i < cnt; i++) {
+            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
+
 // modint
-template<int MOD> struct Fp {
+template<int MOD = 998244353, bool PRIME = true> struct Fp {
     // inner value
-    long long val;
+    unsigned int val;
     
     // constructor
     constexpr Fp() : val(0) { }
-    constexpr Fp(long long v) : val(v % MOD) {
-        if (val < 0) val += MOD;
+    template<std::signed_integral T> constexpr Fp(T v) {
+        long long tmp = (long long)(v % (long long)(get_umod()));
+        if (tmp < 0) tmp += get_umod();
+        val = (unsigned int)(tmp);
+    }
+    template<std::unsigned_integral T> constexpr Fp(T v) {
+        val = (unsigned int)(v % get_umod());
     }
     constexpr long long get() const { return val; }
-    constexpr int get_mod() const { return MOD; }
+    constexpr static int get_mod() { return MOD; }
+    constexpr static unsigned int get_umod() { return MOD; }
     
     // arithmetic operators
     constexpr Fp operator + () const { return Fp(*this); }
-    constexpr Fp operator - () const { return Fp(0) - Fp(*this); }
+    constexpr Fp operator - () const { return Fp() - Fp(*this); }
     constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
     constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
     constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
     constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
     constexpr Fp& operator += (const Fp &r) {
         val += r.val;
-        if (val >= MOD) val -= MOD;
+        if (val >= get_umod()) val -= get_umod();
         return *this;
     }
     constexpr Fp& operator -= (const Fp &r) {
         val -= r.val;
-        if (val < 0) val += MOD;
+        if (val >= get_umod()) val += get_umod();
         return *this;
     }
     constexpr Fp& operator *= (const Fp &r) {
-        val = val * r.val % MOD;
+        unsigned long long tmp = val;
+        tmp *= r.val;
+        val = (unsigned int)(tmp % get_umod());
         return *this;
     }
     constexpr Fp& operator /= (const Fp &r) {
-        long long a = r.val, b = MOD, u = 1, v = 0;
-        while (b) {
-            long long t = a / b;
-            a -= t * b, swap(a, b);
-            u -= t * v, swap(u, v);
-        }
-        val = val * u % MOD;
-        if (val < 0) val += MOD;
-        return *this;
+        return *this = *this * r.inv(); 
     }
     constexpr Fp pow(long long n) const {
+        assert(n >= 0);
         Fp res(1), mul(*this);
-        while (n > 0) {
+        while (n) {
             if (n & 1) res *= mul;
             mul *= mul;
             n >>= 1;
@@ -519,8 +579,13 @@ template<int MOD> struct Fp {
         return res;
     }
     constexpr Fp inv() const {
-        Fp res(1), div(*this);
-        return res / div;
+        if (PRIME) {
+            assert(val);
+            return pow(get_umod() - 2);
+        } else {
+            assert(val);
+            return mod_inv((long long)(val), get_umod());
+        }
     }
 
     // other operators
@@ -544,11 +609,11 @@ template<int MOD> struct Fp {
     }
     constexpr Fp& operator ++ () {
         ++val;
-        if (val >= MOD) val -= MOD;
+        if (val == get_umod()) val = 0;
         return *this;
     }
     constexpr Fp& operator -- () {
-        if (val == 0) val += MOD;
+        if (val == 0) val = get_umod();
         --val;
         return *this;
     }
@@ -563,9 +628,11 @@ template<int MOD> struct Fp {
         return res;
     }
     friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
-        is >> x.val;
-        x.val %= MOD;
-        if (x.val < 0) x.val += MOD;
+        long long tmp = 1;
+        is >> tmp;
+        tmp = tmp % (long long)(get_umod());
+        if (tmp < 0) tmp += get_umod();
+        x.val = (unsigned int)(tmp);
         return is;
     }
     friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
@@ -621,52 +688,53 @@ struct DynamicModint {
     static int MOD;
     
     // inner value
-    long long val;
+    unsigned int val;
     
     // constructor
     DynamicModint() : val(0) { }
-    DynamicModint(long long v) : val(v % MOD) {
-        if (val < 0) val += MOD;
+    template<std::signed_integral T> DynamicModint(T v) {
+        long long tmp = (long long)(v % (long long)(get_umod()));
+        if (tmp < 0) tmp += get_umod();
+        val = (unsigned int)(tmp);
+    }
+    template<std::unsigned_integral T> DynamicModint(T v) {
+        val = (unsigned int)(v % get_umod());
     }
     long long get() const { return val; }
     static int get_mod() { return MOD; }
+    static unsigned int get_umod() { return MOD; }
     static void set_mod(int mod) { MOD = mod; }
     
     // arithmetic operators
     mint operator + () const { return mint(*this); }
-    mint operator - () const { return mint(0) - mint(*this); }
+    mint operator - () const { return mint() - mint(*this); }
     mint operator + (const mint &r) const { return mint(*this) += r; }
     mint operator - (const mint &r) const { return mint(*this) -= r; }
     mint operator * (const mint &r) const { return mint(*this) *= r; }
     mint operator / (const mint &r) const { return mint(*this) /= r; }
     mint& operator += (const mint &r) {
         val += r.val;
-        if (val >= MOD) val -= MOD;
+        if (val >= get_umod()) val -= get_umod();
         return *this;
     }
     mint& operator -= (const mint &r) {
         val -= r.val;
-        if (val < 0) val += MOD;
+        if (val >= get_umod()) val += get_umod();
         return *this;
     }
     mint& operator *= (const mint &r) {
-        val = val * r.val % MOD;
+        unsigned long long tmp = val;
+        tmp *= r.val;
+        val = (unsigned int)(tmp % get_umod());
         return *this;
     }
     mint& operator /= (const mint &r) {
-        long long a = r.val, b = MOD, u = 1, v = 0;
-        while (b) {
-            long long t = a / b;
-            a -= t * b, swap(a, b);
-            u -= t * v, swap(u, v);
-        }
-        val = val * u % MOD;
-        if (val < 0) val += MOD;
-        return *this;
+        return *this = *this * r.inv(); 
     }
     mint pow(long long n) const {
+        assert(n >= 0);
         mint res(1), mul(*this);
-        while (n > 0) {
+        while (n) {
             if (n & 1) res *= mul;
             mul *= mul;
             n >>= 1;
@@ -674,8 +742,8 @@ struct DynamicModint {
         return res;
     }
     mint inv() const {
-        mint res(1), div(*this);
-        return res / div;
+        assert(val);
+        return mod_inv((long long)(val), get_umod());
     }
 
     // other operators
@@ -699,11 +767,11 @@ struct DynamicModint {
     }
     mint& operator ++ () {
         ++val;
-        if (val >= MOD) val -= MOD;
+        if (val == get_umod()) val = 0;
         return *this;
     }
     mint& operator -- () {
-        if (val == 0) val += MOD;
+        if (val == 0) val = get_umod();
         --val;
         return *this;
     }
@@ -718,9 +786,11 @@ struct DynamicModint {
         return res;
     }
     friend istream& operator >> (istream &is, mint &x) {
-        is >> x.val;
-        x.val %= x.get_mod();
-        if (x.val < 0) x.val += x.get_mod();
+        long long tmp = 1;
+        is >> tmp;
+        tmp = tmp % (long long)(get_umod());
+        if (tmp < 0) tmp += get_umod();
+        x.val = (unsigned int)(tmp);
         return is;
     }
     friend ostream& operator << (ostream &os, const mint &x) {
@@ -735,6 +805,258 @@ struct DynamicModint {
 };
 int DynamicModint::MOD;
 
+
+/*/////////////////////////////*/
+// NTT
+/*/////////////////////////////*/
+
+// NTT setup
+template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
+struct ntt_setup {
+    static constexpr int bsf_constexpr(unsigned int x) {
+        int i = 0;
+        while (!(x & (1 << i))) i++;
+        return i;
+    };
+
+    static constexpr int rank = bsf_constexpr(MOD - 1);
+    array<mint, rank + 1> root, iroot;  // root[i]^(2^i) = 1, root[i] * iroot[i] = 1
+    array<mint, max(0, rank - 1)> rate2, irate2;
+    array<mint, max(0, rank - 2)> rate3, irate3;
+
+    ntt_setup() {
+        root[rank] = mint(g).pow((MOD - 1) >> rank);
+        iroot[rank] = root[rank].inv();
+        for (int i = rank - 1; i >= 0; i--) {
+            root[i] = root[i + 1] * root[i + 1];
+            iroot[i] = iroot[i + 1] * iroot[i + 1];
+        }
+        mint prod = 1, iprod = 1;
+        for (int i = 0; i < rank - 1; i++) {
+            rate2[i] = root[i + 2] * prod;
+            irate2[i] = iroot[i + 2] * iprod;
+            prod *= iroot[i + 2];
+            iprod *= root[i + 2];
+        }
+        prod = 1, iprod = 1;
+        for (int i = 0; i < rank - 2; i++) {
+            rate3[i] = root[i + 3] * prod;
+            irate3[i] = iroot[i + 3] * iprod;
+            prod *= iroot[i + 3];
+            iprod *= root[i + 3];
+        }
+    }
+};
+
+// NTT transformation
+template<class mint, int MOD = mint::get_mod()> 
+void ntt_trans(vector<mint> &v) {
+    int n = (int)v.size();
+    int h = ceil_pow2(n);
+    static const ntt_setup<mint> setup;
+
+    int len = 0;
+    while (len < h) {
+        if (h - len == 1) {
+            int p = 1 << (h - len - 1);
+            mint rot = 1;
+            for (int s = 0; s < (1 << len); s++) {
+                int offset = s << (h - len);
+                for (int i = 0; i < p; i++) {
+                    auto l = v[i + offset];
+                    auto r = v[i + offset + p] * rot;
+                    v[i + offset] = l + r;
+                    v[i + offset + p] = l - r;
+                }
+                if (s + 1 != (1 << len)) {
+                    rot *= setup.rate2[bsf(~(unsigned int)(s))];
+                }
+            }
+            len++;
+        } else {
+            int p = 1 << (h - len - 2);
+            mint rot = 1, imag = setup.root[2];
+            for (int s = 0; s < (1 << len); s++) {
+                mint rot2 = rot * rot, rot3 = rot2 * rot;
+                int offset = s << (h - len);
+                for (int i = 0; i < p; i++) {
+                    auto mod2 = 1ULL * MOD * MOD;
+                    auto a0 = 1ULL * v[i + offset].val;
+                    auto a1 = 1ULL * v[i + offset + p].val * rot.val;
+                    auto a2 = 1ULL * v[i + offset + p * 2].val * rot2.val;
+                    auto a3 = 1ULL * v[i + offset + p * 3].val * rot3.val;
+                    auto tmp = 1ULL * mint(a1 + mod2 - a3).val * imag.val;
+                    auto na2 = mod2 - a2;
+                    v[i + offset] = a0 + a2 + a1 + a3;
+                    v[i + offset + p] = a0 + a2 + (mod2 * 2 - (a1 + a3));
+                    v[i + offset + p * 2] = a0 + na2 + tmp;
+                    v[i + offset + p * 3] = a0 + na2 + (mod2 - tmp);
+                }
+                if (s + 1 != (1 << len)) {
+                    rot *= setup.rate3[bsf(~(unsigned int)(s))];
+                }
+            }
+            len += 2;
+        }
+    }
+}
+
+// NTT inv-transformation
+template<class mint, int MOD = mint::get_mod()> 
+void ntt_trans_inv(vector<mint> &v) {
+    int n = (int)v.size();
+    int h = ceil_pow2(n);
+    static const ntt_setup<mint> setup;
+
+    int len = h;
+    while (len) {
+        if (len == 1) {
+            int p = 1 << (h - len);
+            mint irot = 1;
+            for (int s = 0; s < (1 << (len - 1)); s++) {
+                int offset = s << (h - len + 1);
+                for (int i = 0; i < p; i++) {
+                    auto l = v[i + offset];
+                    auto r = v[i + offset + p];
+                    v[i + offset] = l + r;
+                    v[i + offset + p] = (unsigned long long)((long long)(MOD) + l.val - r.val) * irot.val;
+                }
+                if (s + 1 != (1 << (len - 1))) {
+                    irot *= setup.irate2[bsf(~(unsigned int)(s))];
+                }
+            }
+            len--;
+        } else {
+            int p = 1 << (h - len);
+            mint irot = 1, iimag = setup.iroot[2];
+            for (int s = 0; s < (1 << (len - 2)); s++) {
+                mint irot2 = irot * irot, irot3 = irot2 * irot;
+                int offset = s << (h - len + 2);
+                for (int i = 0; i < p; i++) {
+                    auto a0 = 1ULL * v[i + offset].val;
+                    auto a1 = 1ULL * v[i + offset + p].val;
+                    auto a2 = 1ULL * v[i + offset + p * 2].val;
+                    auto a3 = 1ULL * v[i + offset + p * 3].val;
+                    auto tmp = 1ULL * mint((MOD + a2 - a3) * iimag.val).val;
+                    v[i + offset] = a0 + a1 + a2 + a3;
+                    v[i + offset + p] = (a0 + (MOD - a1) + tmp) * irot.val;
+                    v[i + offset + p * 2] = (a0 + a1 + (MOD - a2) + (MOD - a3)) * irot2.val;
+                    v[i + offset + p * 3] = (a0 + (MOD - a1) + (MOD - tmp)) * irot3.val;
+                }
+                if (s + 1 != (1 << (len - 2))) {
+                    irot *= setup.irate3[bsf(~(unsigned int)(s))];
+                }
+            }
+            len -= 2;
+        }
+    }
+}
+
+// naive convolution
+template<class T>
+vector<T> sub_convolution_naive(const vector<T> &a, const vector<T> &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    vector<T> res(n + m - 1);
+    if (n < m) {
+        for (int j = 0; j < m; j++) for (int i = 0; i < n; i++) res[i + j] += a[i] * b[j];
+    } else {
+        for (int i = 0; i < n; i++) for (int j = 0; j < m; j++) res[i + j] += a[i] * b[j];
+    }
+    return res;
+}
+
+// ntt convolution
+template<class mint>
+vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
+    int MOD = mint::get_mod();
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
+    int z = (int)bit_ceil((unsigned int)(n + m - 1));
+    assert((MOD - 1) % z == 0);
+    a.resize(z), b.resize(z);
+    ntt_trans(a), ntt_trans(b);
+    for (int i = 0; i < z; i++) a[i] *= b[i];
+    ntt_trans_inv(a);
+    a.resize(n + m - 1);
+    mint iz = mint(z).inv();
+    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
+    return a;
+}
+
+// convolution in general mod
+template<class mint>
+vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
+    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
+    if constexpr (std::is_same_v<mint, Fp<998244353>>) return sub_convolution_ntt(a, b);
+
+    static constexpr int MOD0 = 754974721;  // 2^24
+    static constexpr int MOD1 = 167772161;  // 2^25
+    static constexpr int MOD2 = 469762049;  // 2^26
+    using mint0 = Fp<MOD0>;
+    using mint1 = Fp<MOD1>;
+    using mint2 = Fp<MOD2>;
+    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
+    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
+    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+
+    vector<mint0> a0(n, 0), b0(m, 0);
+    vector<mint1> a1(n, 0), b1(m, 0);
+    vector<mint2> a2(n, 0), b2(m, 0);
+    for (int i = 0; i < n; ++i) a0[i] = a[i].val, a1[i] = a[i].val, a2[i] = a[i].val;
+    for (int i = 0; i < m; ++i) b0[i] = b[i].val, b1[i] = b[i].val, b2[i] = b[i].val;
+    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
+    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
+    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
+
+    vector<mint> res(n + m - 1);
+    mint mod0 = MOD0, mod01 = mod0 * MOD1;
+    for (int i = 0; i < n + m - 1; ++i) {
+        unsigned int y0 = c0[i].val;
+        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
+        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
+        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    }
+    return res;
+}
+
+// convolution long long
+template<class T>
+vector<T> convolution_ll(const vector<T> &a, const vector<T> &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
+    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
+
+    static constexpr int MOD0 = 754974721;  // 2^24
+    static constexpr int MOD1 = 167772161;  // 2^25
+    static constexpr int MOD2 = 469762049;  // 2^26
+    using mint0 = Fp<MOD0>;
+    using mint1 = Fp<MOD1>;
+    using mint2 = Fp<MOD2>;
+    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
+    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
+    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+
+    vector<mint0> a0(n, 0), b0(m, 0);
+    vector<mint1> a1(n, 0), b1(m, 0);
+    vector<mint2> a2(n, 0), b2(m, 0);
+    for (int i = 0; i < n; ++i) a0[i] = a[i], a1[i] = a[i], a2[i] = a[i];
+    for (int i = 0; i < m; ++i) b0[i] = b[i], b1[i] = b[i], b2[i] = b[i];
+    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
+    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
+    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
+
+    vector<T> res(n + m - 1);
+    T mod0 = MOD0, mod01 = mod0 * MOD1;
+    for (int i = 0; i < n + m - 1; ++i) {
+        unsigned int y0 = c0[i].val;
+        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
+        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
+        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    }
+    return res;
+}
 
 
 /*/////////////////////////////*/
