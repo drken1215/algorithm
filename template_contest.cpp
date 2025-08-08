@@ -617,12 +617,12 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         --val;
         return *this;
     }
-    constexpr Fp operator ++ (int) const {
+    constexpr Fp operator ++ (int) {
         Fp res = *this;
         ++*this;
         return res;
     }
-    constexpr Fp operator -- (int) const {
+    constexpr Fp operator -- (int) {
         Fp res = *this;
         --*this;
         return res;

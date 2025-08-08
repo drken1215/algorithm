@@ -21,116 +21,31 @@
 using namespace std;
 
 
-// dynamic modint
-struct DynamicModint {
-    using mint = DynamicModint;
-    
-    // static menber
-    static int MOD;
-    
-    // inner value
-    long long val;
-    
-    // constructor
-    DynamicModint() : val(0) { }
-    DynamicModint(long long v) : val(v % MOD) {
-        if (val < 0) val += MOD;
+// mod pow
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
+    T_VAL res = 1;
+    while (n > 0) {
+        if (n % 2 == 1) res = res * a % m;
+        a = a * a % m;
+        n >>= 1;
     }
-    long long get() const { return val; }
-    static int get_mod() { return MOD; }
-    static void set_mod(int mod) { MOD = mod; }
-    
-    // arithmetic operators
-    mint operator + () const { return mint(*this); }
-    mint operator - () const { return mint(0) - mint(*this); }
-    mint operator + (const mint &r) const { return mint(*this) += r; }
-    mint operator - (const mint &r) const { return mint(*this) -= r; }
-    mint operator * (const mint &r) const { return mint(*this) *= r; }
-    mint operator / (const mint &r) const { return mint(*this) /= r; }
-    mint& operator += (const mint &r) {
-        val += r.val;
-        if (val >= MOD) val -= MOD;
-        return *this;
-    }
-    mint& operator -= (const mint &r) {
-        val -= r.val;
-        if (val < 0) val += MOD;
-        return *this;
-    }
-    mint& operator *= (const mint &r) {
-        val = val * r.val % MOD;
-        return *this;
-    }
-    mint& operator /= (const mint &r) {
-        long long a = r.val, b = MOD, u = 1, v = 0;
-        while (b) {
-            long long t = a / b;
-            a -= t * b, swap(a, b);
-            u -= t * v, swap(u, v);
-        }
-        val = val * u % MOD;
-        if (val < 0) val += MOD;
-        return *this;
-    }
-    mint pow(long long n) const {
-        mint res(1), mul(*this);
-        while (n > 0) {
-            if (n & 1) res *= mul;
-            mul *= mul;
-            n >>= 1;
-        }
-        return res;
-    }
-    mint inv() const {
-        mint res(1), div(*this);
-        return res / div;
-    }
+    return res;
+}
 
-    // other operators
-    bool operator == (const mint &r) const {
-        return this->val == r.val;
+// mod inv
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
+    T_VAL b = m, u = 1, v = 0;
+    while (b > 0) {
+        T_VAL t = a / b;
+        a -= t * b, swap(a, b);
+        u -= t * v, swap(u, v);
     }
-    bool operator != (const mint &r) const {
-        return this->val != r.val;
-    }
-    mint& operator ++ () {
-        ++val;
-        if (val >= MOD) val -= MOD;
-        return *this;
-    }
-    mint& operator -- () {
-        if (val == 0) val += MOD;
-        --val;
-        return *this;
-    }
-    mint operator ++ (int) {
-        mint res = *this;
-        ++*this;
-        return res;
-    }
-    mint operator -- (int) {
-        mint res = *this;
-        --*this;
-        return res;
-    }
-    friend istream& operator >> (istream &is, mint &x) {
-        is >> x.val;
-        x.val %= x.get_mod();
-        if (x.val < 0) x.val += x.get_mod();
-        return is;
-    }
-    friend ostream& operator << (ostream &os, const mint &x) {
-        return os << x.val;
-    }
-    friend mint pow(const mint &r, long long n) {
-        return r.pow(n);
-    }
-    friend mint inv(const mint &r) {
-        return r.inv();
-    }
-};
-
-int DynamicModint::MOD;
+    u %= m;
+    if (u < 0) u += m;
+    return u;
+}
 
 // Binomial coefficient
 template<class mint> struct BiCoef {
@@ -165,6 +80,131 @@ template<class mint> struct BiCoef {
         return finv_[n];
     }
 };
+
+// dynamic modint
+struct DynamicModint {
+    using mint = DynamicModint;
+    
+    // static menber
+    static int MOD;
+    
+    // inner value
+    unsigned int val;
+    
+    // constructor
+    DynamicModint() : val(0) { }
+    template<std::signed_integral T> DynamicModint(T v) {
+        long long tmp = (long long)(v % (long long)(get_umod()));
+        if (tmp < 0) tmp += get_umod();
+        val = (unsigned int)(tmp);
+    }
+    template<std::unsigned_integral T> DynamicModint(T v) {
+        val = (unsigned int)(v % get_umod());
+    }
+    long long get() const { return val; }
+    static int get_mod() { return MOD; }
+    static unsigned int get_umod() { return MOD; }
+    static void set_mod(int mod) { MOD = mod; }
+    
+    // arithmetic operators
+    mint operator + () const { return mint(*this); }
+    mint operator - () const { return mint() - mint(*this); }
+    mint operator + (const mint &r) const { return mint(*this) += r; }
+    mint operator - (const mint &r) const { return mint(*this) -= r; }
+    mint operator * (const mint &r) const { return mint(*this) *= r; }
+    mint operator / (const mint &r) const { return mint(*this) /= r; }
+    mint& operator += (const mint &r) {
+        val += r.val;
+        if (val >= get_umod()) val -= get_umod();
+        return *this;
+    }
+    mint& operator -= (const mint &r) {
+        val -= r.val;
+        if (val >= get_umod()) val += get_umod();
+        return *this;
+    }
+    mint& operator *= (const mint &r) {
+        unsigned long long tmp = val;
+        tmp *= r.val;
+        val = (unsigned int)(tmp % get_umod());
+        return *this;
+    }
+    mint& operator /= (const mint &r) {
+        return *this = *this * r.inv(); 
+    }
+    mint pow(long long n) const {
+        assert(n >= 0);
+        mint res(1), mul(*this);
+        while (n) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    mint inv() const {
+        assert(val);
+        return mod_inv((long long)(val), get_umod());
+    }
+
+    // other operators
+    bool operator == (const mint &r) const {
+        return this->val == r.val;
+    }
+    bool operator != (const mint &r) const {
+        return this->val != r.val;
+    }
+    bool operator < (const mint &r) const {
+        return this->val < r.val;
+    }
+    bool operator > (const mint &r) const {
+        return this->val > r.val;
+    }
+    bool operator <= (const mint &r) const {
+        return this->val <= r.val;
+    }
+    bool operator >= (const mint &r) const {
+        return this->val >= r.val;
+    }
+    mint& operator ++ () {
+        ++val;
+        if (val == get_umod()) val = 0;
+        return *this;
+    }
+    mint& operator -- () {
+        if (val == 0) val = get_umod();
+        --val;
+        return *this;
+    }
+    mint operator ++ (int) {
+        mint res = *this;
+        ++*this;
+        return res;
+    }
+    mint operator -- (int) {
+        mint res = *this;
+        --*this;
+        return res;
+    }
+    friend istream& operator >> (istream &is, mint &x) {
+        long long tmp = 1;
+        is >> tmp;
+        tmp = tmp % (long long)(get_umod());
+        if (tmp < 0) tmp += get_umod();
+        x.val = (unsigned int)(tmp);
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const mint &x) {
+        return os << x.val;
+    }
+    friend mint pow(const mint &r, long long n) {
+        return r.pow(n);
+    }
+    friend mint inv(const mint &r) {
+        return r.inv();
+    }
+};
+int DynamicModint::MOD;
 
 
 
@@ -239,8 +279,8 @@ void ARC_096_E() {
     cout << res << endl;
 }
 
+
 int main() {
     Yosupo_Binomial_Coefficient();
     //ARC_096_E();
 }
-
