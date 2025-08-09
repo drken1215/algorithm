@@ -331,7 +331,6 @@
 - (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
 - (★★★★) [任意 mod 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
-- (★★★★) [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_gcd_convolution.cpp)
 - (★★★★) Karatsuba 法
 
 ## 多項式 (Polynomial)
@@ -454,11 +453,12 @@
 - (★★★★) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
 - (★★★★) N 以下の素数の個数 (O(N^2/3))
 
-## エラトステネスの篩
+## エラトステネスの篩、GCD Convollution
 
 - (★☆☆☆) [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - (★★☆☆) [エラトステネスの区間篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes_segment.cpp)
 - (★★★☆) [高速素因数分解, 約数列挙, メビウス関数 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
+- (★★★★) [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
 - (★★★★) 線形篩
 - (★★★★) アトキンの篩
 
