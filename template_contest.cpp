@@ -490,39 +490,6 @@ constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
     return u;
 }
 
-// calc primitive root
-constexpr int calc_primitive_root(long long m) {
-    if (m == 1) return -1;
-    if (m == 2) return 1;
-    if (m == 998244353) return 3;
-    if (m == 167772161) return 3;
-    if (m == 469762049) return 3;
-    if (m == 754974721) return 11;
-    
-    long long divs[20] = {};
-    divs[0] = 2;
-    long long cnt = 1;
-    long long x = (m - 1) / 2;
-    while (x % 2 == 0) x /= 2;
-    for (long long i = 3; i * i <= x; i += 2) {
-        if (x % i == 0) {
-            divs[cnt++] = i;
-            while (x % i == 0) x /= i;
-        }
-    }
-    if (x > 1) divs[cnt++] = x;
-    for (long long g = 2; ; g++) {
-        bool ok = true;
-        for (int i = 0; i < cnt; i++) {
-            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
-                ok = false;
-                break;
-            }
-        }
-        if (ok) return g;
-    }
-}
-
 // modint
 template<int MOD = 998244353, bool PRIME = true> struct Fp {
     // inner value
@@ -643,40 +610,6 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
     }
     friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
         return r.inv();
-    }
-};
-
-// Binomial coefficient
-template<class mint> struct BiCoef {
-    vector<mint> fact_, inv_, finv_;
-    constexpr BiCoef() {}
-    constexpr BiCoef(int n) : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-        init(n);
-    }
-    constexpr void init(int n) {
-        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].get_mod();
-        for(int i = 2; i < n; i++){
-            fact_[i] = fact_[i-1] * i;
-            inv_[i] = -inv_[MOD%i] * (MOD/i);
-            finv_[i] = finv_[i-1] * inv_[i];
-        }
-    }
-    constexpr mint com(int n, int k) const {
-        if (n < k || n < 0 || k < 0) return 0;
-        return fact_[n] * finv_[k] * finv_[n-k];
-    }
-    constexpr mint fact(int n) const {
-        if (n < 0) return 0;
-        return fact_[n];
-    }
-    constexpr mint inv(int n) const {
-        if (n < 0) return 0;
-        return inv_[n];
-    }
-    constexpr mint finv(int n) const {
-        if (n < 0) return 0;
-        return finv_[n];
     }
 };
 
@@ -805,10 +738,77 @@ struct DynamicModint {
 };
 int DynamicModint::MOD;
 
+// Binomial coefficient
+template<class mint> struct BiCoef {
+    vector<mint> fact_, inv_, finv_;
+    constexpr BiCoef() {}
+    constexpr BiCoef(int n) : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
+        init(n);
+    }
+    constexpr void init(int n) {
+        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
+        int MOD = fact_[0].get_mod();
+        for(int i = 2; i < n; i++){
+            fact_[i] = fact_[i-1] * i;
+            inv_[i] = -inv_[MOD%i] * (MOD/i);
+            finv_[i] = finv_[i-1] * inv_[i];
+        }
+    }
+    constexpr mint com(int n, int k) const {
+        if (n < k || n < 0 || k < 0) return 0;
+        return fact_[n] * finv_[k] * finv_[n-k];
+    }
+    constexpr mint fact(int n) const {
+        if (n < 0) return 0;
+        return fact_[n];
+    }
+    constexpr mint inv(int n) const {
+        if (n < 0) return 0;
+        return inv_[n];
+    }
+    constexpr mint finv(int n) const {
+        if (n < 0) return 0;
+        return finv_[n];
+    }
+};
+
 
 /*/////////////////////////////*/
 // NTT
 /*/////////////////////////////*/
+
+// calc primitive root
+constexpr int calc_primitive_root(long long m) {
+    if (m == 1) return -1;
+    if (m == 2) return 1;
+    if (m == 998244353) return 3;
+    if (m == 167772161) return 3;
+    if (m == 469762049) return 3;
+    if (m == 754974721) return 11;
+    
+    long long divs[20] = {};
+    divs[0] = 2;
+    long long cnt = 1;
+    long long x = (m - 1) / 2;
+    while (x % 2 == 0) x /= 2;
+    for (long long i = 3; i * i <= x; i += 2) {
+        if (x % i == 0) {
+            divs[cnt++] = i;
+            while (x % i == 0) x /= i;
+        }
+    }
+    if (x > 1) divs[cnt++] = x;
+    for (long long g = 2; ; g++) {
+        bool ok = true;
+        for (int i = 0; i < cnt; i++) {
+            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>

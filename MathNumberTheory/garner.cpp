@@ -16,33 +16,60 @@
 */
 
 
-#include <iostream>
-#include <vector>
-#include <bitset>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-const long long MOD = 1000000007;
-
-// 最大公約数
-long long GCD(long long a, long long b) {
-    if (b == 0) return a;
-    else return GCD(b, a % b);
+// safe mod
+template<class T_VAL, class T_MOD>
+constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
+    assert(m > 0);
+    a %= m;
+    if (a < 0) a += m;
+    return a;
 }
 
-// Garner のアルゴリズムの前処理
-long long PreGarner(vector<long long> &b, vector<long long> &m, long long MOD) {
-    long long res = 1;
+// mod pow
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
+    assert(m > 0);
+    T_VAL res = 1;
+    while (n > 0) {
+        if (n % 2 == 1) res = res * a % m;
+        a = a * a % m;
+        n >>= 1;
+    }
+    return res;
+}
+
+// mod inv
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
+    assert(m > 0);
+    T_VAL b = m, u = 1, v = 0;
+    while (b > 0) {
+        T_VAL t = a / b;
+        a -= t * b, swap(a, b);
+        u -= t * v, swap(u, v);
+    }
+    u %= m;
+    if (u < 0) u += m;
+    return u;
+}
+
+// Garner's algorithm
+// if m is not coprime, call this function first
+template<class T_VAL, class T_MOD>
+T_VAL preGarner(vector<T_VAL> &b, vector<T_VAL> &m, T_MOD MOD) {
+    T_VAL res = 1;
     for (int i = 0; i < (int)b.size(); ++i) {
         for (int j = 0; j < i; ++j) {
-            long long g = GCD(m[i], m[j]);
+            T_VAL g = gcd(m[i], m[j]);
             if ((b[i] - b[j]) % g != 0) return -1;
-            m[i] /= g;
-            m[j] /= g;
-            long long gi = GCD(m[i], g);
-            long long gj = g/gi;
+            m[i] /= g, m[j] /= g;
+            T_VAL gi = gcd(m[i], g), gj = g/gi;
             do {
-                g = GCD(gi, gj);
+                g = gcd(gi, gj);
                 gi *= g, gj /= g;
             } while (g != 1);
             m[i] *= gi, m[j] *= gj;
@@ -53,63 +80,68 @@ long long PreGarner(vector<long long> &b, vector<long long> &m, long long MOD) {
     return res;
 }
 
-// 負の数にも対応した mod (a = -11 とかでも OK)
-inline long long mod(long long a, long long m) {
-    long long res = a % m;
-    if (res < 0) res += m;
-    return res;
-}
-
-// 拡張 Euclid の互除法
-long long extGCD(long long a, long long b, long long &p, long long &q) {
-    if (b == 0) { p = 1; q = 0; return a; }
-    long long d = extGCD(b, a%b, q, p);
-    q -= a/b * p;
-    return d;
-}
-
-// 逆元計算 (ここでは a と m が互いに素であることが必要)
-long long modinv(long long a, long long m) {
-    long long x, y;
-    extGCD(a, m, x, y);
-    return mod(x, m); // 気持ち的には x % m だが、x が負かもしれないので
-}
-
-// Garner のアルゴリズム, x%MOD, LCM%MOD を求める (m は互いに素でなければならない)
+// x (%MOD), LCM (%MOD) を求める (m must be coprime)
 // for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
 //      coeffs[k] = m[0]m[1]...m[k-1]
 //      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
-long long Garner(vector<long long> b, vector<long long> m, long long MOD) {
-    m.push_back(MOD); // banpei
-    vector<long long> coeffs((int)m.size(), 1);
-    vector<long long> constants((int)m.size(), 0);
-    for (int k = 0; k < (int)b.size(); ++k) {
-        long long t = mod((b[k] - constants[k]) * modinv(coeffs[k], m[k]), m[k]);
-        for (int i = k+1; i < (int)m.size(); ++i) {
-            (constants[i] += t * coeffs[i]) %= m[i];
-            (coeffs[i] *= m[k]) %= m[i];
+template<class T_VAL, class T_MOD>
+T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
+    assert(b.size() == m.size());
+    int num = (int)m.size();
+    vector<T_VAL> coeffs(num + 1, T_VAL(1)), constants(num + 1, T_VAL(0));
+    for (int k = 0; k < num; k++) {
+        T_VAL t = safe_mod(safe_mod(b[k] - constants[k], m[k]) * mod_inv(coeffs[k], m[k]), m[k]);
+        for (int i = k + 1; i < num; i++) {
+            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
+            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
+        }
+        constants.back() += t * coeffs.back();
+        coeffs.back() *= m[k];
+    }
+    return constants.back();
+}
+
+template<class T_VAL, class T_MOD>
+T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
+    assert(b.size() == m.size());
+    assert(MOD > 0);
+    int num = (int)m.size();
+    vector<T_VAL> coeffs(num + 1, T_VAL(1)), constants(num + 1, T_VAL(0));
+    m.emplace_back(MOD);  // banpei
+    for (int k = 0; k < num; k++) {
+        T_VAL t = safe_mod(safe_mod(b[k] - constants[k], m[k]) * mod_inv(coeffs[k], m[k]), m[k]);
+        for (int i = k + 1; i < num + 1; i++) {
+            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
+            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
         }
     }
     return constants.back();
 }
 
 
-
 //------------------------------//
 // Examples
 //------------------------------//
 
-int main() {
-    int N; cin >> N;
+// yukicoder 0187 中華風 (Hard)
+void yukicoder_0187() {
+    int N; 
+    cin >> N;
     vector<long long> b(N), m(N);
     bool exist_non_zero = false;
     for (int i = 0; i < N; ++i) {
         cin >> b[i] >> m[i];
         if (b[i]) exist_non_zero = true;
     }
-    long long lcm = PreGarner(b, m, MOD);
+    const int MOD = 1000000007;
+    long long lcm = preGarner(b, m, MOD);
     
     if (!exist_non_zero) cout << lcm << endl;
     else if (lcm == -1) cout << -1 << endl;
     else cout << Garner(b, m, MOD) << endl;
+}
+
+
+int main() {
+    yukicoder_0187();
 }
