@@ -1,9 +1,9 @@
 //
-// 任意 mod の畳み込み
+// mod 2^64 畳み込み
 //
 // verified:
-//   Yosupo Judge - Convolution (mod 1,000,000,007)
-//     https://judge.yosupo.jp/problem/convolution_mod_1000000007
+//   Yosupo Judge - Convolution (Mod 2^64)
+//     https://judge.yosupo.jp/problem/convolution_mod_2_64 
 //
 
 
@@ -189,6 +189,38 @@ istream& operator >> (istream &is, i128 &x) {
 }
 ostream& operator << (ostream &os, const i128 &x) {
     i128 ax = (x >= 0 ? x : -x);
+    char buffer[128];
+    char *d = end(buffer);
+    do {
+         --d;
+        *d = "0123456789"[ax % 10];
+        ax /= 10;
+    } while (ax != 0);
+    if (x < 0) {
+        --d;
+        *d = '-';
+    }
+    int len = end(buffer) - d;
+    if (os.rdbuf()->sputn(d, len) != len) {
+        os.setstate(ios_base::badbit);
+    }
+    return os;
+}
+u128 to_uinteger(const string &s) {
+    u128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    return res;
+}
+istream& operator >> (istream &is, u128 &x) {
+    string s;
+    is >> s;
+    x = to_uinteger(s);
+    return is;
+}
+ostream& operator << (ostream &os, const u128 &x) {
+    u128 ax = x;
     char buffer[128];
     char *d = end(buffer);
     do {
@@ -472,9 +504,19 @@ public:
 // modint
 /*/////////////////////////////*/
 
+// safe mod
+template<class T_VAL, class T_MOD>
+constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
+    assert(m > 0);
+    a %= m;
+    if (a < 0) a += m;
+    return a;
+}
+
 // mod pow
 template<class T_VAL, class T_MOD>
 constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
+    assert(m > 0);
     T_VAL res = 1;
     while (n > 0) {
         if (n % 2 == 1) res = res * a % m;
@@ -487,6 +529,7 @@ constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
 // mod inv
 template<class T_VAL, class T_MOD>
 constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
+    assert(m > 0);
     T_VAL b = m, u = 1, v = 0;
     while (b > 0) {
         T_VAL t = a / b;
@@ -496,39 +539,6 @@ constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
     u %= m;
     if (u < 0) u += m;
     return u;
-}
-
-// calc primitive root
-constexpr int calc_primitive_root(long long m) {
-    if (m == 1) return -1;
-    if (m == 2) return 1;
-    if (m == 998244353) return 3;
-    if (m == 167772161) return 3;
-    if (m == 469762049) return 3;
-    if (m == 754974721) return 11;
-    
-    long long divs[20] = {};
-    divs[0] = 2;
-    long long cnt = 1;
-    long long x = (m - 1) / 2;
-    while (x % 2 == 0) x /= 2;
-    for (long long i = 3; i * i <= x; i += 2) {
-        if (x % i == 0) {
-            divs[cnt++] = i;
-            while (x % i == 0) x /= i;
-        }
-    }
-    if (x > 1) divs[cnt++] = x;
-    for (long long g = 2; ; g++) {
-        bool ok = true;
-        for (int i = 0; i < cnt; i++) {
-            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
-                ok = false;
-                break;
-            }
-        }
-        if (ok) return g;
-    }
 }
 
 // modint
@@ -625,12 +635,12 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         --val;
         return *this;
     }
-    constexpr Fp operator ++ (int) const {
+    constexpr Fp operator ++ (int) {
         Fp res = *this;
         ++*this;
         return res;
     }
-    constexpr Fp operator -- (int) const {
+    constexpr Fp operator -- (int) {
         Fp res = *this;
         --*this;
         return res;
@@ -651,40 +661,6 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
     }
     friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
         return r.inv();
-    }
-};
-
-// Binomial coefficient
-template<class mint> struct BiCoef {
-    vector<mint> fact_, inv_, finv_;
-    constexpr BiCoef() {}
-    constexpr BiCoef(int n) : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-        init(n);
-    }
-    constexpr void init(int n) {
-        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].get_mod();
-        for(int i = 2; i < n; i++){
-            fact_[i] = fact_[i-1] * i;
-            inv_[i] = -inv_[MOD%i] * (MOD/i);
-            finv_[i] = finv_[i-1] * inv_[i];
-        }
-    }
-    constexpr mint com(int n, int k) const {
-        if (n < k || n < 0 || k < 0) return 0;
-        return fact_[n] * finv_[k] * finv_[n-k];
-    }
-    constexpr mint fact(int n) const {
-        if (n < 0) return 0;
-        return fact_[n];
-    }
-    constexpr mint inv(int n) const {
-        if (n < 0) return 0;
-        return inv_[n];
-    }
-    constexpr mint finv(int n) const {
-        if (n < 0) return 0;
-        return finv_[n];
     }
 };
 
@@ -813,10 +789,153 @@ struct DynamicModint {
 };
 int DynamicModint::MOD;
 
+// Binomial coefficient
+template<class mint> struct BiCoef {
+    vector<mint> fact_, inv_, finv_;
+    constexpr BiCoef() {}
+    constexpr BiCoef(int n) : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
+        init(n);
+    }
+    constexpr void init(int n) {
+        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
+        int MOD = fact_[0].get_mod();
+        for(int i = 2; i < n; i++){
+            fact_[i] = fact_[i-1] * i;
+            inv_[i] = -inv_[MOD%i] * (MOD/i);
+            finv_[i] = finv_[i-1] * inv_[i];
+        }
+    }
+    constexpr mint com(int n, int k) const {
+        if (n < k || n < 0 || k < 0) return 0;
+        return fact_[n] * finv_[k] * finv_[n-k];
+    }
+    constexpr mint fact(int n) const {
+        if (n < 0) return 0;
+        return fact_[n];
+    }
+    constexpr mint inv(int n) const {
+        if (n < 0) return 0;
+        return inv_[n];
+    }
+    constexpr mint finv(int n) const {
+        if (n < 0) return 0;
+        return finv_[n];
+    }
+};
+
+// Garner's algorithm
+// if m is not coprime, call this function first
+template<class T_VAL>
+bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
+    assert(b.size() == m.size());
+    T_VAL res = 1;
+    for (int i = 0; i < (int)b.size(); i++) {
+        for (int j = 0; j < i; ++j) {
+            T_VAL g = gcd(m[i], m[j]);
+            if ((b[i] - b[j]) % g != 0) return false;
+            m[i] /= g, m[j] /= g;
+            T_VAL gi = gcd(m[i], g), gj = g/gi;
+            do {
+                g = gcd(gi, gj);
+                gi *= g, gj /= g;
+            } while (g != 1);
+            m[i] *= gi, m[j] *= gj;
+            b[i] %= m[i], b[j] %= m[j];
+        }
+    }
+    vector<T_VAL> b2, m2;
+    for (int i = 0; i < (int)b.size(); i++) {
+        if (m[i] == 1) continue;
+        b2.emplace_back(b[i]), m2.emplace_back(m[i]);
+    }
+    b = b2, m = m2;
+    return true;
+}
+
+// find x (%MOD), LCM (%MOD) (m must be coprime)
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+template<class T_VAL>
+T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
+    assert(b.size() == m.size());
+    using mint = DynamicModint;
+    int num = (int)m.size();
+    T_VAL res = 0, lcm = 1;
+    vector<long long> coeffs(num, 1), constants(num, 0);
+    for (int k = 0; k < num; k++) {
+        mint::set_mod(m[k]);
+        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
+        for (int i = k + 1; i < num; i++) {
+            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
+            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
+        }
+        res += t * lcm;
+        lcm *= m[k];
+    }
+    return res;
+}
+
+template<class T_VAL, class T_MOD>
+T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
+    assert(b.size() == m.size());
+    assert(MOD > 0);
+    using mint = DynamicModint;
+    int num = (int)m.size();
+    T_VAL res = 0, lcm = 1;
+    vector<long long> coeffs(num, 1), constants(num, 0);
+    for (int k = 0; k < num; k++) {
+        mint::set_mod(m[k]);
+        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
+        for (int i = k + 1; i < num; i++) {
+            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
+            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
+        }
+        res = safe_mod(res + t * lcm, MOD);
+        lcm = safe_mod(lcm * m[k], MOD);
+    }
+    return res;
+}
+
 
 /*/////////////////////////////*/
 // NTT
 /*/////////////////////////////*/
+
+// calc primitive root
+constexpr int calc_primitive_root(long long m) {
+    if (m == 1) return -1;
+    if (m == 2) return 1;
+    if (m == 998244353) return 3;
+    if (m == 167772161) return 3;
+    if (m == 469762049) return 3;
+    if (m == 754974721) return 11;
+    if (m == 645922817) return 3;
+    if (m == 897581057) return 3;
+    
+    long long divs[20] = {};
+    divs[0] = 2;
+    long long cnt = 1;
+    long long x = (m - 1) / 2;
+    while (x % 2 == 0) x /= 2;
+    for (long long i = 3; i * i <= x; i += 2) {
+        if (x % i == 0) {
+            divs[cnt++] = i;
+            while (x % i == 0) x /= i;
+        }
+    }
+    if (x > 1) divs[cnt++] = x;
+    for (long long g = 2; ; g++) {
+        bool ok = true;
+        for (int i = 0; i < cnt; i++) {
+            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
@@ -991,77 +1110,59 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     return a;
 }
 
-// convolution in general mod
-template<class mint>
-vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
+// convolution long long (especially, mod 2^64)
+vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, const vector<unsigned long long> &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
     if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
-    if constexpr (std::is_same_v<mint, Fp<998244353>>) return sub_convolution_ntt(a, b);
 
     static constexpr int MOD0 = 754974721;  // 2^24
     static constexpr int MOD1 = 167772161;  // 2^25
     static constexpr int MOD2 = 469762049;  // 2^26
+    static constexpr int MOD3 = 998244353;  // 2^23
+    static constexpr int MOD4 = 645922817;  // 2^23
+    static constexpr int MOD5 = 897581057;  // 2^23
     using mint0 = Fp<MOD0>;
     using mint1 = Fp<MOD1>;
     using mint2 = Fp<MOD2>;
-    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
-    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
-    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+    using mint3 = Fp<MOD3>;
+    using mint4 = Fp<MOD4>;
+    using mint5 = Fp<MOD5>;
 
     vector<mint0> a0(n, 0), b0(m, 0);
     vector<mint1> a1(n, 0), b1(m, 0);
     vector<mint2> a2(n, 0), b2(m, 0);
-    for (int i = 0; i < n; ++i) a0[i] = a[i].val, a1[i] = a[i].val, a2[i] = a[i].val;
-    for (int i = 0; i < m; ++i) b0[i] = b[i].val, b1[i] = b[i].val, b2[i] = b[i].val;
-    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
-    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
-    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
-
-    vector<mint> res(n + m - 1);
-    mint mod0 = MOD0, mod01 = mod0 * MOD1;
-    for (int i = 0; i < n + m - 1; ++i) {
-        unsigned int y0 = c0[i].val;
-        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
-        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    vector<mint3> a3(n, 0), b3(m, 0);
+    vector<mint4> a4(n, 0), b4(m, 0);
+    vector<mint5> a5(n, 0), b5(m, 0);
+    for (int i = 0; i < n; ++i) {
+        a0[i] = a[i] % MOD0;
+        a1[i] = a[i] % MOD1;
+        a2[i] = a[i] % MOD2;
+        a3[i] = a[i] % MOD3;
+        a4[i] = a[i] % MOD4;
+        a5[i] = a[i] % MOD5;
     }
-    return res;
-}
-
-// convolution long long
-template<class T>
-vector<T> convolution_ll(const vector<T> &a, const vector<T> &b) {
-    int n = (int)a.size(), m = (int)b.size();
-    if (!n || !m) return {};
-    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
-
-    static constexpr int MOD0 = 754974721;  // 2^24
-    static constexpr int MOD1 = 167772161;  // 2^25
-    static constexpr int MOD2 = 469762049;  // 2^26
-    using mint0 = Fp<MOD0>;
-    using mint1 = Fp<MOD1>;
-    using mint2 = Fp<MOD2>;
-    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
-    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
-    static const mint2 imod01 = 187290749; // imod1 / MOD0;
-
-    vector<mint0> a0(n, 0), b0(m, 0);
-    vector<mint1> a1(n, 0), b1(m, 0);
-    vector<mint2> a2(n, 0), b2(m, 0);
-    for (int i = 0; i < n; ++i) a0[i] = a[i], a1[i] = a[i], a2[i] = a[i];
-    for (int i = 0; i < m; ++i) b0[i] = b[i], b1[i] = b[i], b2[i] = b[i];
+    for (int i = 0; i < m; ++i) {
+        b0[i] = b[i] % MOD0;
+        b1[i] = b[i] % MOD1;
+        b2[i] = b[i] % MOD2;
+        b3[i] = b[i] % MOD3;
+        b4[i] = b[i] % MOD4;
+        b5[i] = b[i] % MOD5;
+    }
     auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
     auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
     auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
+    auto c3 = sub_convolution_ntt(std::move(a3), std::move(b3));
+    auto c4 = sub_convolution_ntt(std::move(a4), std::move(b4));
+    auto c5 = sub_convolution_ntt(std::move(a5), std::move(b5));
 
-    vector<T> res(n + m - 1);
-    T mod0 = MOD0, mod01 = mod0 * MOD1;
-    for (int i = 0; i < n + m - 1; ++i) {
-        unsigned int y0 = c0[i].val;
-        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
-        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    vector<unsigned long long> res(n + m - 1);
+    for (int i = 0; i < n + m - 1; i++) {
+        vector<unsigned long long> rems = {c0[i].val, c1[i].val, c2[i].val, c3[i].val, c4[i].val, c5[i].val};
+        vector<unsigned long long> mods = {MOD0, MOD1, MOD2, MOD3, MOD4, MOD5};
+        res[i] = Garner(rems, mods);
     }
     return res;
 }
@@ -1071,18 +1172,15 @@ vector<T> convolution_ll(const vector<T> &a, const vector<T> &b) {
 // Examples
 /*/////////////////////////////*/
 
-void Yosupo_Convolution_1000000007() {
-    const int MOD = 1000000007;
-    using mint = Fp<MOD>;
-    
+void Yosupo_Convolution_2_64() {
     int N, M;
     cin >> N >> M;
 
-    vector<mint> a(N), b(M);
+    vector<u64> a(N), b(M);
     for (int i = 0; i < N; ++i) cin >> a[i];
     for (int i = 0; i < M; ++i) cin >> b[i];
     
-    auto c = convolution(a, b);
+    auto c = convolution_ull(a, b);
     
     for (int i = 0; i < c.size(); ++i) cout << c[i] << " ";
     cout << endl;
@@ -1090,5 +1188,5 @@ void Yosupo_Convolution_1000000007() {
 
 
 int main() {
-    Yosupo_Convolution_1000000007();
+    Yosupo_Convolution_2_64();
 }

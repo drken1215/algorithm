@@ -330,7 +330,8 @@
 
 - (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
-- (★★★★) [任意 mod 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
+- (★★★★) [任意 mod 畳み込み (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
+- (★★★★) [mod 2^64 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_mod_2_64.cpp)
 - (★★★★) Karatsuba 法
 
 ## 多項式 (Polynomial)

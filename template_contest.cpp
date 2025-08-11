@@ -198,6 +198,38 @@ ostream& operator << (ostream &os, const i128 &x) {
     }
     return os;
 }
+u128 to_uinteger(const string &s) {
+    u128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    return res;
+}
+istream& operator >> (istream &is, u128 &x) {
+    string s;
+    is >> s;
+    x = to_uinteger(s);
+    return is;
+}
+ostream& operator << (ostream &os, const u128 &x) {
+    u128 ax = x;
+    char buffer[128];
+    char *d = end(buffer);
+    do {
+         --d;
+        *d = "0123456789"[ax % 10];
+        ax /= 10;
+    } while (ax != 0);
+    if (x < 0) {
+        --d;
+        *d = '-';
+    }
+    int len = end(buffer) - d;
+    if (os.rdbuf()->sputn(d, len) != len) {
+        os.setstate(ios_base::badbit);
+    }
+    return os;
+}
 
 
 /*///////////////////////////////////////////////////////*/
@@ -463,6 +495,15 @@ public:
 /*/////////////////////////////*/
 // modint
 /*/////////////////////////////*/
+
+// safe mod
+template<class T_VAL, class T_MOD>
+constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
+    assert(m > 0);
+    a %= m;
+    if (a < 0) a += m;
+    return a;
+}
 
 // mod pow
 template<class T_VAL, class T_MOD>
@@ -772,6 +813,80 @@ template<class mint> struct BiCoef {
     }
 };
 
+// Garner's algorithm
+// if m is not coprime, call this function first
+template<class T_VAL>
+bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
+    assert(b.size() == m.size());
+    T_VAL res = 1;
+    for (int i = 0; i < (int)b.size(); i++) {
+        for (int j = 0; j < i; ++j) {
+            T_VAL g = gcd(m[i], m[j]);
+            if ((b[i] - b[j]) % g != 0) return false;
+            m[i] /= g, m[j] /= g;
+            T_VAL gi = gcd(m[i], g), gj = g/gi;
+            do {
+                g = gcd(gi, gj);
+                gi *= g, gj /= g;
+            } while (g != 1);
+            m[i] *= gi, m[j] *= gj;
+            b[i] %= m[i], b[j] %= m[j];
+        }
+    }
+    vector<T_VAL> b2, m2;
+    for (int i = 0; i < (int)b.size(); i++) {
+        if (m[i] == 1) continue;
+        b2.emplace_back(b[i]), m2.emplace_back(m[i]);
+    }
+    b = b2, m = m2;
+    return true;
+}
+
+// find x (%MOD), LCM (%MOD) (m must be coprime)
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+template<class T_VAL>
+T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
+    assert(b.size() == m.size());
+    using mint = DynamicModint;
+    int num = (int)m.size();
+    T_VAL res = 0, lcm = 1;
+    vector<long long> coeffs(num, 1), constants(num, 0);
+    for (int k = 0; k < num; k++) {
+        mint::set_mod(m[k]);
+        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
+        for (int i = k + 1; i < num; i++) {
+            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
+            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
+        }
+        res += t * lcm;
+        lcm *= m[k];
+    }
+    return res;
+}
+
+template<class T_VAL, class T_MOD>
+T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
+    assert(b.size() == m.size());
+    assert(MOD > 0);
+    using mint = DynamicModint;
+    int num = (int)m.size();
+    T_VAL res = 0, lcm = 1;
+    vector<long long> coeffs(num, 1), constants(num, 0);
+    for (int k = 0; k < num; k++) {
+        mint::set_mod(m[k]);
+        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
+        for (int i = k + 1; i < num; i++) {
+            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
+            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
+        }
+        res = safe_mod(res + t * lcm, MOD);
+        lcm = safe_mod(lcm * m[k], MOD);
+    }
+    return res;
+}
+
 
 /*/////////////////////////////*/
 // NTT
@@ -785,6 +900,8 @@ constexpr int calc_primitive_root(long long m) {
     if (m == 167772161) return 3;
     if (m == 469762049) return 3;
     if (m == 754974721) return 11;
+    if (m == 645922817) return 3;
+    if (m == 897581057) return 3;
     
     long long divs[20] = {};
     divs[0] = 2;
@@ -1021,9 +1138,8 @@ vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
     return res;
 }
 
-// convolution long long
-template<class T>
-vector<T> convolution_ll(const vector<T> &a, const vector<T> &b) {
+// convolution unsigned long long (especially, mod 2^64)
+vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, const vector<unsigned long long> &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
     if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
@@ -1031,29 +1147,50 @@ vector<T> convolution_ll(const vector<T> &a, const vector<T> &b) {
     static constexpr int MOD0 = 754974721;  // 2^24
     static constexpr int MOD1 = 167772161;  // 2^25
     static constexpr int MOD2 = 469762049;  // 2^26
+    static constexpr int MOD3 = 998244353;  // 2^23
+    static constexpr int MOD4 = 645922817;  // 2^23
+    static constexpr int MOD5 = 897581057;  // 2^23
     using mint0 = Fp<MOD0>;
     using mint1 = Fp<MOD1>;
     using mint2 = Fp<MOD2>;
-    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
-    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
-    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+    using mint3 = Fp<MOD3>;
+    using mint4 = Fp<MOD4>;
+    using mint5 = Fp<MOD5>;
 
     vector<mint0> a0(n, 0), b0(m, 0);
     vector<mint1> a1(n, 0), b1(m, 0);
     vector<mint2> a2(n, 0), b2(m, 0);
-    for (int i = 0; i < n; ++i) a0[i] = a[i], a1[i] = a[i], a2[i] = a[i];
-    for (int i = 0; i < m; ++i) b0[i] = b[i], b1[i] = b[i], b2[i] = b[i];
+    vector<mint3> a3(n, 0), b3(m, 0);
+    vector<mint4> a4(n, 0), b4(m, 0);
+    vector<mint5> a5(n, 0), b5(m, 0);
+    for (int i = 0; i < n; ++i) {
+        a0[i] = a[i] % MOD0;
+        a1[i] = a[i] % MOD1;
+        a2[i] = a[i] % MOD2;
+        a3[i] = a[i] % MOD3;
+        a4[i] = a[i] % MOD4;
+        a5[i] = a[i] % MOD5;
+    }
+    for (int i = 0; i < m; ++i) {
+        b0[i] = b[i] % MOD0;
+        b1[i] = b[i] % MOD1;
+        b2[i] = b[i] % MOD2;
+        b3[i] = b[i] % MOD3;
+        b4[i] = b[i] % MOD4;
+        b5[i] = b[i] % MOD5;
+    }
     auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
     auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
     auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
+    auto c3 = sub_convolution_ntt(std::move(a3), std::move(b3));
+    auto c4 = sub_convolution_ntt(std::move(a4), std::move(b4));
+    auto c5 = sub_convolution_ntt(std::move(a5), std::move(b5));
 
-    vector<T> res(n + m - 1);
-    T mod0 = MOD0, mod01 = mod0 * MOD1;
-    for (int i = 0; i < n + m - 1; ++i) {
-        unsigned int y0 = c0[i].val;
-        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
-        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    vector<unsigned long long> res(n + m - 1);
+    for (int i = 0; i < n + m - 1; i++) {
+        vector<unsigned long long> rems = {c0[i].val, c1[i].val, c2[i].val, c3[i].val, c4[i].val, c5[i].val};
+        vector<unsigned long long> mods = {MOD0, MOD1, MOD2, MOD3, MOD4, MOD5};
+        res[i] = Garner(rems, mods);
     }
     return res;
 }
