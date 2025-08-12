@@ -1,9 +1,9 @@
 //
-// Inv of FPS (Formal Power Series)
+// Exp of FPS (Formal Power Series)
 //
 // verified:
-//   Yosupo Judge - Inv of Formal Power Series
-//     https://judge.yosupo.jp/problem/inv_of_formal_power_series
+//   Yosupo Judge - Exp of Formal Power Series
+//     https://judge.yosupo.jp/problem/exp_of_formal_power_series
 //
 
 
@@ -1077,6 +1077,8 @@ void ntt_trans_inv(vector<mint> &v) {
             len -= 2;
         }
     }
+    mint in = mint(n).inv();
+    for (int i = 0; i < n; i++) v[i] *= in;
 }
 
 // naive convolution
@@ -1105,8 +1107,6 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     for (int i = 0; i < z; i++) a[i] *= b[i];
     ntt_trans_inv(a);
     a.resize(n + m - 1);
-    mint iz = mint(z).inv();
-    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
     return a;
 }
 
@@ -1352,12 +1352,10 @@ template<typename mint> struct FPS : vector<mint> {
             ntt_trans(g), ntt_trans(h);
             for (int i = 0; i < d * 2; i++) g[i] *= h[i];
             ntt_trans_inv(g);
-            for (int i = d; i < d * 2; i++) g[i] *= iv;
             for (int i = 0; i < d; i++) g[i] = 0;
             ntt_trans(g);
             for (int i = 0; i < d * 2; i++) g[i] *= h[i];
             ntt_trans_inv(g);
-            for (int i = 0; i < d * 2; i++) g[i] *= iv;
             for (int i = d; i < min(deg, d * 2); i++) res[i] = -g[i];
         }
         return res.pre(deg);
