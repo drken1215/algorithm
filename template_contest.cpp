@@ -1067,6 +1067,8 @@ void ntt_trans_inv(vector<mint> &v) {
             len -= 2;
         }
     }
+    mint in = mint(n).inv();
+    for (int i = 0; i < n; i++) v[i] *= in;
 }
 
 // naive convolution
@@ -1095,8 +1097,6 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     for (int i = 0; i < z; i++) a[i] *= b[i];
     ntt_trans_inv(a);
     a.resize(n + m - 1);
-    mint iz = mint(z).inv();
-    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
     return a;
 }
 
@@ -1138,7 +1138,7 @@ vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
     return res;
 }
 
-// convolution unsigned long long (especially, mod 2^64)
+// convolution long long (especially, mod 2^64)
 vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, const vector<unsigned long long> &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
