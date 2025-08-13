@@ -1,5 +1,5 @@
 //
-// Pow of FPS (Formal Power Series)
+// Sqrt of FPS (Formal Power Series)
 //
 // verified:
 //   Yosupo Judge - Sqrt of Formal Power Series
