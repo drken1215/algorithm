@@ -1,9 +1,9 @@
 //
-// Inv of FPS (Formal Power Series)
+// Pow of FPS (Formal Power Series)
 //
 // verified:
-//   Yosupo Judge - Inv of Formal Power Series
-//     https://judge.yosupo.jp/problem/inv_of_formal_power_series
+//   Yosupo Judge - Pow of Formal Power Series
+//     https://judge.yosupo.jp/problem/pow_of_formal_power_series
 //
 
 
@@ -1077,6 +1077,8 @@ void ntt_trans_inv(vector<mint> &v) {
             len -= 2;
         }
     }
+    mint in = mint(n).inv();
+    for (int i = 0; i < n; i++) v[i] *= in;
 }
 
 // naive convolution
@@ -1105,8 +1107,6 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     for (int i = 0; i < z; i++) a[i] *= b[i];
     ntt_trans_inv(a);
     a.resize(n + m - 1);
-    mint iz = mint(z).inv();
-    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
     return a;
 }
 
@@ -1277,7 +1277,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     constexpr FPS& operator /= (const mint &v) {
         assert(v != 0);
-        mint iv = modinv(v);
+        mint iv = v.inv();
         for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
         return *this;
     }
@@ -1325,6 +1325,7 @@ template<typename mint> struct FPS : vector<mint> {
     // df/dx
     constexpr FPS diff() const {
         int n = (int)this->size();
+        if (n <= 0) return FPS();
         FPS res(n-1);
         for (int i = 1; i < n; ++i) res[i-1] = (*this)[i] * i;
         return res;
@@ -1340,7 +1341,7 @@ template<typename mint> struct FPS : vector<mint> {
     
     // inv(f), f[0] must not be 0
     constexpr FPS inv(int deg) const {
-        assert((*this)[0] != 0);
+        assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(deg);
         res[0] = mint(1) / (*this)[0];
@@ -1352,12 +1353,10 @@ template<typename mint> struct FPS : vector<mint> {
             ntt_trans(g), ntt_trans(h);
             for (int i = 0; i < d * 2; i++) g[i] *= h[i];
             ntt_trans_inv(g);
-            for (int i = d; i < d * 2; i++) g[i] *= iv;
             for (int i = 0; i < d; i++) g[i] = 0;
             ntt_trans(g);
             for (int i = 0; i < d * 2; i++) g[i] *= h[i];
             ntt_trans_inv(g);
-            for (int i = 0; i < d * 2; i++) g[i] *= iv;
             for (int i = d; i < min(deg, d * 2); i++) res[i] = -g[i];
         }
         return res.pre(deg);
@@ -1368,10 +1367,8 @@ template<typename mint> struct FPS : vector<mint> {
     
     // log(f) = \int f'/f dx, f[0] must be 1
     constexpr FPS log(int deg) const {
-        assert((*this)[0] == 1);
-        FPS res = (diff() * inv(deg)).integral();
-        res.resize(deg);
-        return res;
+        assert(this->size() >= 1 && (*this)[0] == 1);
+        return ((diff() * inv(deg)).pre(deg - 1)).integral();
     }
     constexpr FPS log() const {
         return log((int)this->size());
@@ -1379,13 +1376,74 @@ template<typename mint> struct FPS : vector<mint> {
     
     // exp(f), f[0] must be 0
     constexpr FPS exp(int deg) const {
-        assert((*this)[0] == 0);
-        FPS res(1, 1);
-        for (int i = 1; i < deg; i <<= 1) {
-            res = res * (pre(i << 1) - res.log(i << 1) + 1).pre(i << 1);
+        assert(this->size() == 0 || (*this)[0] == 0);
+        if (deg < 0) deg = (int)this->size();
+
+        FPS fiv;
+        fiv.reserve(deg + 1);
+        fiv.emplace_back(mint(0));
+        fiv.emplace_back(mint(1));
+
+        auto inplace_integral = [&](FPS &F) -> void {
+            const int n = (int)F.size();
+            auto mod = mint::get_mod();
+            while ((int)fiv.size() <= n) {
+                int i = fiv.size();
+                fiv.emplace_back((-fiv[mod % i]) * (mod / i));
+            }
+            F.insert(begin(F), mint(0));
+            for (int i = 1; i <= n; i++) F[i] *= fiv[i];
+        };
+
+        auto inplace_diff = [](FPS &F) -> void {
+            if (F.empty()) return;
+            F.erase(begin(F));
+            mint coef = 1;
+            for (int i = 0; i < (int)F.size(); i++) {
+                F[i] *= coef;
+                coef++;
+            }
+        };
+
+        FPS b{1, (1 < (int)this->size() ? (*this)[1] : 0)}, c{1}, z1, z2{1, 1};
+        for (int m = 2; m < deg; m <<= 1) {
+            auto y = b;
+            y.resize(m * 2);
+            ntt_trans(y);
+            z1 = z2;
+            FPS z(m);
+            for (int i = 0; i < m; i++) z[i] = y[i] * z1[i];
+            ntt_trans_inv(z);
+            fill(begin(z), begin(z) + m / 2, mint(0));
+            ntt_trans(z);
+            for (int i = 0; i < m; i++) z[i] *= -z1[i];
+            ntt_trans_inv(z);
+            c.insert(end(c), begin(z) + m / 2, end(z));
+            z2 = c;
+            z2.resize(m * 2);
+            ntt_trans(z2);
+            FPS x(begin(*this), begin(*this) + min((int)this->size(), m));
+            inplace_diff(x);
+            x.emplace_back(mint(0));
+            ntt_trans(x);
+            for (int i = 0; i < m; i++) x[i] *= y[i];
+            ntt_trans_inv(x);
+            x -= b.diff();
+            x.resize(m * 2);
+            for (int i = 0; i < m - 1; i++) x[m + i] = x[i], x[i] = mint(0);
+            ntt_trans(x);
+            for (int i = 0; i < m * 2; i++) x[i] *= z2[i];
+            ntt_trans_inv(x);
+            x.pop_back();
+            inplace_integral(x);
+            for (int i = m; i < min((int)this->size(), m * 2); i++) x[i] += (*this)[i];
+            fill(begin(x), begin(x) + m, mint(0));
+            ntt_trans(x);
+            for (int i = 0; i < m * 2; i++) x[i] *= y[i];
+            ntt_trans_inv(x);
+            b.insert(end(b), begin(x) + m, end(x));
         }
-        res.resize(deg);
-        return res;
+        return FPS(begin(b), begin(b) + deg);
     }
     constexpr FPS exp() const {
         return exp((int)this->size());
@@ -1393,6 +1451,8 @@ template<typename mint> struct FPS : vector<mint> {
     
     // pow(f) = exp(e * log f)
     constexpr FPS pow(long long e, int deg) const {
+        if (deg < 0) deg = (int)this->size();
+        if (deg == 0) return FPS();
         if (e == 0) {
             FPS res(deg, 0);
             res[0] = 1;
@@ -1446,21 +1506,22 @@ template<typename mint> struct FPS : vector<mint> {
 // Examples
 /*/////////////////////////////*/
 
-void Yosupo_inv_of_formal_power_series() {
+void Yosupo_pow_of_formal_power_series() {
     FastRead Read; FastWrite Write;
 
     const int MOD = 998244353;
     using mint = Fp<MOD>;
     int N;
-    Read(N);
+    long long M;
+    Read(N, M);
     FPS<mint> a(N);
     for (int i = 0; i < N; ++i) Read(a[i].val);
-    auto res = inv(a);
+    auto res = pow(a, M);
     REP(i, res.size()) Write(res[i].val), Write(' ');
     Write('\n');
 }
 
 
 int main() {
-    Yosupo_inv_of_formal_power_series();
+    Yosupo_pow_of_formal_power_series();
 }

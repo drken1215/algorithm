@@ -1,14 +1,11 @@
 //
-// Inv of FPS (Formal Power Series)
+// Pow of FPS (Formal Power Series)
 //
 // verified:
-//   Yosupo Judge - Inv of Formal Power Series
-//     https://judge.yosupo.jp/problem/inv_of_formal_power_series
+//   Yosupo Judge - Sqrt of Formal Power Series
+//     https://judge.yosupo.jp/problem/sqrt_of_formal_power_series
 //
 
-
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -516,7 +513,6 @@ constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
 // mod pow
 template<class T_VAL, class T_MOD>
 constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
-    assert(m > 0);
     T_VAL res = 1;
     while (n > 0) {
         if (n % 2 == 1) res = res * a % m;
@@ -529,7 +525,6 @@ constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
 // mod inv
 template<class T_VAL, class T_MOD>
 constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
-    assert(m > 0);
     T_VAL b = m, u = 1, v = 0;
     while (b > 0) {
         T_VAL t = a / b;
@@ -899,8 +894,291 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
 
 
 /*/////////////////////////////*/
-// NTT
+// Prime
 /*/////////////////////////////*/
+
+// isprime[n] := is n prime?
+// mebius[n] := mebius value of n
+// min_factor[n] := the min prime-factor of n
+// euler[n] := euler function value of n
+struct Eratos {
+    vector<int> primes;
+    vector<bool> isprime;
+    vector<int> mebius, min_factor, euler;
+
+    // constructor, getter
+    Eratos(int MAX) : primes(),
+                      isprime(MAX+1, true),
+                      mebius(MAX+1, 1),
+                      min_factor(MAX+1, -1),
+                      euler(MAX+1) {
+        isprime[0] = isprime[1] = false;
+        min_factor[0] = 0, min_factor[1] = 1;
+        for (int i = 1; i <= MAX; i++) euler[i] = i;
+        for (int i = 2; i <= MAX; ++i) {
+            if (!isprime[i]) continue;
+            primes.push_back(i);
+            mebius[i] = -1;
+            min_factor[i] = i;
+            euler[i] = i - 1;
+            for (int j = i*2; j <= MAX; j += i) {
+                isprime[j] = false;
+                if ((j / i) % i == 0) mebius[j] = 0;
+                else mebius[j] = -mebius[j];
+                if (min_factor[j] == -1) min_factor[j] = i;
+                euler[j] /= i, euler[j] *= i - 1;
+            }
+        }
+    }
+
+    // prime factorization
+    vector<pair<int,int>> prime_factors(int n) {
+        vector<pair<int,int> > res;
+        while (n != 1) {
+            int prime = min_factor[n];
+            int exp = 0;
+            while (min_factor[n] == prime) {
+                ++exp;
+                n /= prime;
+            }
+            res.push_back(make_pair(prime, exp));
+        }
+        return res;
+    }
+
+    // enumerate divisors
+    vector<int> divisors(int n) {
+        vector<int> res({1});
+        auto pf = prime_factors(n);
+        for (auto p : pf) {
+            int n = (int)res.size();
+            for (int i = 0; i < n; ++i) {
+                int v = 1;
+                for (int j = 0; j < p.second; ++j) {
+                    v *= p.first;
+                    res.push_back(res[i] * v);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+// montgomery modint (MOD < 2^62, MOD is odd)
+struct MontgomeryModInt64 {
+    using mint = MontgomeryModInt64;
+    using u64 = uint64_t;
+    using u128 = __uint128_t;
+    
+    // static menber
+    static u64 MOD;
+    static u64 INV_MOD;  // INV_MOD * MOD ≡ 1 (mod 2^64)
+    static u64 T128;  // 2^128 (mod MOD)
+    
+    // inner value
+    u64 val;
+    
+    // constructor
+    MontgomeryModInt64() : val(0) { }
+    MontgomeryModInt64(long long v) : val(reduce((u128(v) + MOD) * T128)) { }
+    u64 get() const {
+        u64 res = reduce(val);
+        return res >= MOD ? res - MOD : res;
+    }
+    
+    // mod getter and setter
+    static u64 get_mod() { return MOD; }
+    static void set_mod(u64 mod) {
+        assert(mod < (1LL << 62));
+        assert((mod & 1));
+        MOD = mod;
+        T128 = -u128(mod) % mod;
+        INV_MOD = get_inv_mod();
+    }
+    static u64 get_inv_mod() {
+        u64 res = MOD;
+        for (int i = 0; i < 5; ++i) res *= 2 - MOD * res;
+        return res;
+    }
+    static u64 reduce(const u128 &v) {
+        return (v + u128(u64(v) * u64(-INV_MOD)) * MOD) >> 64;
+    }
+    
+    // arithmetic operators
+    mint operator + () const { return mint(*this); }
+    mint operator - () const { return mint() - mint(*this); }
+    mint operator + (const mint &r) const { return mint(*this) += r; }
+    mint operator - (const mint &r) const { return mint(*this) -= r; }
+    mint operator * (const mint &r) const { return mint(*this) *= r; }
+    mint operator / (const mint &r) const { return mint(*this) /= r; }
+    mint& operator += (const mint &r) {
+        if ((val += r.val) >= 2 * MOD) val -= 2 * MOD;
+        return *this;
+    }
+    mint& operator -= (const mint &r) {
+        if ((val += 2 * MOD - r.val) >= 2 * MOD) val -= 2 * MOD;
+        return *this;
+    }
+    mint& operator *= (const mint &r) {
+        val = reduce(u128(val) * r.val);
+        return *this;
+    }
+    mint& operator /= (const mint &r) {
+        *this *= r.inv();
+        return *this;
+    }
+    mint inv() const { return pow(MOD - 2); }
+    mint pow(u128 n) const {
+        mint res(1), mul(*this);
+        while (n > 0) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+
+    // other operators
+    bool operator == (const mint &r) const {
+        return (val >= MOD ? val - MOD : val) == (r.val >= MOD ? r.val - MOD : r.val);
+    }
+    bool operator != (const mint &r) const {
+        return (val >= MOD ? val - MOD : val) != (r.val >= MOD ? r.val - MOD : r.val);
+    }
+    mint& operator ++ () {
+        ++val;
+        if (val >= MOD) val -= MOD;
+        return *this;
+    }
+    mint& operator -- () {
+        if (val == 0) val += MOD;
+        --val;
+        return *this;
+    }
+    mint operator ++ (int) {
+        mint res = *this;
+        ++*this;
+        return res;
+    }
+    mint operator -- (int) {
+        mint res = *this;
+        --*this;
+        return res;
+    }
+    friend istream& operator >> (istream &is, mint &x) {
+        long long t;
+        is >> t;
+        x = mint(t);
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const mint &x) {
+        return os << x.get();
+    }
+    friend mint pow(const mint &r, long long n) {
+        return r.pow(n);
+    }
+    friend mint inv(const mint &r) {
+        return r.inv();
+    }
+};
+
+typename MontgomeryModInt64::u64
+MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
+
+// Miller-Rabin
+bool MillerRabin(long long N, const vector<long long> &A) {
+    assert(N % 2 == 1);
+    assert(N < (1LL<<62));
+    using mint = MontgomeryModInt64;
+    mint::set_mod(N);
+    
+    long long s = 0, d = N - 1;
+    while (d % 2 == 0) {
+        ++s;
+        d >>= 1;
+    }
+    for (auto a : A) {
+        if (N <= a) return true;
+        mint x = mint(a).pow(d);
+        if (x != 1) {
+            long long t;
+            for (t = 0; t < s; ++t) {
+                if (x == N - 1) break;
+                x *= x;
+            }
+            if (t == s) return false;
+        }
+    }
+    return true;
+}
+
+bool is_prime(long long N) {
+    if (N <= 1) return false;
+    else if (N == 2) return true;
+    else if (N % 2 == 0) return false;
+    else if (N < 4759123141LL)
+        return MillerRabin(N, {2, 7, 61});
+    else
+        return MillerRabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
+}
+
+// Pollard's Rho
+unsigned int xor_shift_rng() {
+    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
+    unsigned int tt = (tx^(tx<<11));
+    tx = ty, ty = tz, tz = tw;
+    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
+}
+
+long long pollard(long long N) {
+    if (N % 2 == 0) return 2;
+    if (is_prime(N)) return N;
+    
+    assert(N < (1LL<<62));
+    using mint = MontgomeryModInt64;
+    mint::set_mod(N);
+    
+    long long step = 0;
+    while (true) {
+        mint r = xor_shift_rng();  // random r
+        auto f = [&](mint x) -> mint { return x * x + r; };
+        mint x = ++step, y = f(x);
+        while (true) {
+            long long p = gcd((y - x).get(), N);
+            if (p == 0 || p == N) break;
+            if (p != 1) return p;
+            x = f(x);
+            y = f(f(y));
+        }
+    }
+}
+
+vector<long long> pollard_prime_factorize(long long N) {
+    if (N == 1) return {};
+    long long p = pollard(N);
+    if (p == N) return {p};
+    vector<long long> left = pollard_prime_factorize(p);
+    vector<long long> right = pollard_prime_factorize(N / p);
+    if (left.size() > right.size()) swap(left, right);
+    left.insert(left.end(), right.begin(), right.end());
+    sort(left.begin(), left.end());
+    return left;
+}
+
+vector<pair<long long, long long>> prime_factorize(long long N) {
+    vector<pair<long long, long long>> res;
+    const auto &prs = pollard_prime_factorize(N);
+    long long prev = -1, num = 0;
+    for (const auto &pr : prs) {
+        if (pr == prev) ++num;
+        else {
+            if (prev != -1) res.emplace_back(prev, num);
+            prev = pr, num = 1;
+        }
+    }
+    if (prev != -1) res.emplace_back(prev, num);
+    return res;
+}
 
 // calc primitive root
 constexpr int calc_primitive_root(long long m) {
@@ -936,6 +1214,82 @@ constexpr int calc_primitive_root(long long m) {
         if (ok) return g;
     }
 }
+
+// various methods mod prime P
+struct PrimeProcessor {
+    using mint = MontgomeryModInt64;
+    
+    // input prime
+    long long prime;
+    vector<pair<long long, long long>> pf;  // prime factorization of p-1
+    
+    // constructors
+    PrimeProcessor() {}
+    PrimeProcessor(long long p) : prime(p) {
+        init(p);
+    }
+    
+    // initializer
+    void init(long long p) {
+        assert(is_prime(p));
+        prime = p;
+        if (p % 2 == 1) {
+            assert(p < (1LL<<62));
+            prime = p;
+            pf = prime_factorize(prime - 1);
+            mint::set_mod(prime);
+        }
+    }
+    
+    // min: x s.t. a^x \equiv 1 (mod prime)
+    long long calc_order(long long a) {
+        assert(a != 0);
+        if (prime == 2) return 1;
+        long long res = prime - 1;
+        for (const auto &[p, num] : pf) {
+            while (res % p == 0 && mint(a).pow(res / p) == 1) res /= p;
+        }
+        return res;
+    }
+};
+
+// mod sqrt
+template<class T_VAL, class T_MOD>
+T_VAL mod_sqrt(T_VAL a, T_MOD p) {
+    a = safe_mod(a, p);
+    if (a <= 1) return a;
+    using mint = DynamicModint;
+    mint::set_mod(p);
+    if (mint(a).pow((p - 1) >> 1) != 1) return T_VAL(-1);
+    mint b = 1, one = 1;
+    while (b.pow((p - 1) >> 1) == 1) b++;
+    T_VAL m = p - 1, e = 0;
+    while (m % 2 == 0) m >>= 1, e++;
+    mint x = mint(a).pow((m - 1) >> 1);
+    mint y = mint(a) * x * x;
+    x *= a;
+    mint z = mint(b).pow(m);
+    while (y != 1) {
+        T_VAL j = 0;
+        mint t = y;
+        while (t != one) {
+            j++;
+            t *= t;
+        }
+        z = z.pow(T_VAL(1) << (e - j - 1));
+        x *= z, z *= z, y *= z;
+        e = j;
+    }
+    T_VAL res = x.val;
+    if (res * 2 > p) res = p - res;
+    return res;
+}
+
+
+
+/*/////////////////////////////*/
+// NTT
+/*/////////////////////////////*/
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
@@ -1077,6 +1431,8 @@ void ntt_trans_inv(vector<mint> &v) {
             len -= 2;
         }
     }
+    mint in = mint(n).inv();
+    for (int i = 0; i < n; i++) v[i] *= in;
 }
 
 // naive convolution
@@ -1105,8 +1461,6 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     for (int i = 0; i < z; i++) a[i] *= b[i];
     ntt_trans_inv(a);
     a.resize(n + m - 1);
-    mint iz = mint(z).inv();
-    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
     return a;
 }
 
@@ -1277,7 +1631,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     constexpr FPS& operator /= (const mint &v) {
         assert(v != 0);
-        mint iv = modinv(v);
+        mint iv = v.inv();
         for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
         return *this;
     }
@@ -1325,6 +1679,7 @@ template<typename mint> struct FPS : vector<mint> {
     // df/dx
     constexpr FPS diff() const {
         int n = (int)this->size();
+        if (n <= 0) return FPS();
         FPS res(n-1);
         for (int i = 1; i < n; ++i) res[i-1] = (*this)[i] * i;
         return res;
@@ -1340,7 +1695,7 @@ template<typename mint> struct FPS : vector<mint> {
     
     // inv(f), f[0] must not be 0
     constexpr FPS inv(int deg) const {
-        assert((*this)[0] != 0);
+        assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(deg);
         res[0] = mint(1) / (*this)[0];
@@ -1352,12 +1707,10 @@ template<typename mint> struct FPS : vector<mint> {
             ntt_trans(g), ntt_trans(h);
             for (int i = 0; i < d * 2; i++) g[i] *= h[i];
             ntt_trans_inv(g);
-            for (int i = d; i < d * 2; i++) g[i] *= iv;
             for (int i = 0; i < d; i++) g[i] = 0;
             ntt_trans(g);
             for (int i = 0; i < d * 2; i++) g[i] *= h[i];
             ntt_trans_inv(g);
-            for (int i = 0; i < d * 2; i++) g[i] *= iv;
             for (int i = d; i < min(deg, d * 2); i++) res[i] = -g[i];
         }
         return res.pre(deg);
@@ -1368,10 +1721,8 @@ template<typename mint> struct FPS : vector<mint> {
     
     // log(f) = \int f'/f dx, f[0] must be 1
     constexpr FPS log(int deg) const {
-        assert((*this)[0] == 1);
-        FPS res = (diff() * inv(deg)).integral();
-        res.resize(deg);
-        return res;
+        assert(this->size() >= 1 && (*this)[0] == 1);
+        return ((diff() * inv(deg)).pre(deg - 1)).integral();
     }
     constexpr FPS log() const {
         return log((int)this->size());
@@ -1379,13 +1730,74 @@ template<typename mint> struct FPS : vector<mint> {
     
     // exp(f), f[0] must be 0
     constexpr FPS exp(int deg) const {
-        assert((*this)[0] == 0);
-        FPS res(1, 1);
-        for (int i = 1; i < deg; i <<= 1) {
-            res = res * (pre(i << 1) - res.log(i << 1) + 1).pre(i << 1);
+        assert(this->size() == 0 || (*this)[0] == 0);
+        if (deg < 0) deg = (int)this->size();
+
+        FPS fiv;
+        fiv.reserve(deg + 1);
+        fiv.emplace_back(mint(0));
+        fiv.emplace_back(mint(1));
+
+        auto inplace_integral = [&](FPS &F) -> void {
+            const int n = (int)F.size();
+            auto mod = mint::get_mod();
+            while ((int)fiv.size() <= n) {
+                int i = fiv.size();
+                fiv.emplace_back((-fiv[mod % i]) * (mod / i));
+            }
+            F.insert(begin(F), mint(0));
+            for (int i = 1; i <= n; i++) F[i] *= fiv[i];
+        };
+
+        auto inplace_diff = [](FPS &F) -> void {
+            if (F.empty()) return;
+            F.erase(begin(F));
+            mint coef = 1;
+            for (int i = 0; i < (int)F.size(); i++) {
+                F[i] *= coef;
+                coef++;
+            }
+        };
+
+        FPS b{1, (1 < (int)this->size() ? (*this)[1] : 0)}, c{1}, z1, z2{1, 1};
+        for (int m = 2; m < deg; m <<= 1) {
+            auto y = b;
+            y.resize(m * 2);
+            ntt_trans(y);
+            z1 = z2;
+            FPS z(m);
+            for (int i = 0; i < m; i++) z[i] = y[i] * z1[i];
+            ntt_trans_inv(z);
+            fill(begin(z), begin(z) + m / 2, mint(0));
+            ntt_trans(z);
+            for (int i = 0; i < m; i++) z[i] *= -z1[i];
+            ntt_trans_inv(z);
+            c.insert(end(c), begin(z) + m / 2, end(z));
+            z2 = c;
+            z2.resize(m * 2);
+            ntt_trans(z2);
+            FPS x(begin(*this), begin(*this) + min((int)this->size(), m));
+            inplace_diff(x);
+            x.emplace_back(mint(0));
+            ntt_trans(x);
+            for (int i = 0; i < m; i++) x[i] *= y[i];
+            ntt_trans_inv(x);
+            x -= b.diff();
+            x.resize(m * 2);
+            for (int i = 0; i < m - 1; i++) x[m + i] = x[i], x[i] = mint(0);
+            ntt_trans(x);
+            for (int i = 0; i < m * 2; i++) x[i] *= z2[i];
+            ntt_trans_inv(x);
+            x.pop_back();
+            inplace_integral(x);
+            for (int i = m; i < min((int)this->size(), m * 2); i++) x[i] += (*this)[i];
+            fill(begin(x), begin(x) + m, mint(0));
+            ntt_trans(x);
+            for (int i = 0; i < m * 2; i++) x[i] *= y[i];
+            ntt_trans_inv(x);
+            b.insert(end(b), begin(x) + m, end(x));
         }
-        res.resize(deg);
-        return res;
+        return FPS(begin(b), begin(b) + deg);
     }
     constexpr FPS exp() const {
         return exp((int)this->size());
@@ -1393,6 +1805,8 @@ template<typename mint> struct FPS : vector<mint> {
     
     // pow(f) = exp(e * log f)
     constexpr FPS pow(long long e, int deg) const {
+        if (deg < 0) deg = (int)this->size();
+        if (deg == 0) return FPS();
         if (e == 0) {
             FPS res(deg, 0);
             res[0] = 1;
@@ -1410,20 +1824,37 @@ template<typename mint> struct FPS : vector<mint> {
         return pow(e, (int)this->size());
     }
     
-    // sqrt(f), f[0] must be 1
-    constexpr FPS sqrt_base(int deg) const {
-        assert((*this)[0] == 1);
-        mint inv2 = mint(1) / 2;
-        FPS res(1, 1);
-        for (int i = 1; i < deg; i <<= 1) {
-            res = (res + pre(i << 1) * res.inv(i << 1)).pre(i << 1);
-            for (mint &x : res) x *= inv2;
+    // sqrt(f)
+    constexpr FPS sqrt(int deg) const {
+        if (deg < 0) deg = (int)this->size();
+        if ((int)this->size() == 0) return FPS(deg, 0);
+        if ((*this)[0] == mint(0)) {
+            for (int i = 1; i < (int)this->size(); i++) {
+                if ((*this)[i] != mint(0)) {
+                    if (i & 1) return FPS();
+                    if (deg - i / 2 <= 0) return FPS(deg, 0);
+                    auto res = ((*this) >> i).sqrt(deg - i / 2);
+                    if (res.empty()) return FPS();
+                    res = res << (i / 2);
+                    if ((int)res.size() < deg) res.resize(deg, mint(0));
+                    return res;
+                }
+            }
+            return FPS(deg, 0);
+        }
+        long long sqr = mod_sqrt<long long>((*this)[0].val, mint::get_mod());
+        if (sqr == -1) return FPS();
+        assert((*this)[0].val == sqr * sqr % mint::get_mod());
+        FPS res = {mint(sqr)};
+        mint iv2 = mint(2).inv();
+        for (int d = 1; d < deg; d <<= 1) {
+            res = (res + pre(d << 1) * res.inv(d << 1)).pre(d << 1) * iv2;
         }
         res.resize(deg);
         return res;
     }
-    constexpr FPS sqrt_base() const {
-        return sqrt_base((int)this->size());
+    constexpr FPS sqrt() const {
+        return sqrt((int)this->size());
     }
     
     // friend operators
@@ -1437,8 +1868,8 @@ template<typename mint> struct FPS : vector<mint> {
     friend constexpr FPS exp(const FPS &f) { return f.exp((int)f.size()); }
     friend constexpr FPS pow(const FPS &f, long long e, int deg) { return f.pow(e, deg); }
     friend constexpr FPS pow(const FPS &f, long long e) { return f.pow(e, (int)f.size()); }
-    friend constexpr FPS sqrt_base(const FPS &f, int deg) { return f.sqrt_base(deg); }
-    friend constexpr FPS sqrt_base(const FPS &f) { return f.sqrt_base((int)f.size()); }
+    friend constexpr FPS sqrt(const FPS &f, int deg) { return f.sqrt(deg); }
+    friend constexpr FPS sqrt(const FPS &f) { return f.sqrt((int)f.size()); }
 };
 
 
@@ -1446,7 +1877,21 @@ template<typename mint> struct FPS : vector<mint> {
 // Examples
 /*/////////////////////////////*/
 
-void Yosupo_inv_of_formal_power_series() {
+// Library Checker - Sqrt MOD
+void Yosupo_sqrt_mod() {
+    FastRead Read; FastWrite Write;
+    int T;
+    Read(T);
+    while (T--) {
+        long long Y, P;
+        Read(Y, P);
+        long long res = mod_sqrt(Y, P);
+        Write(res), Write('\n');
+    }
+}
+
+// Library Checker - Sqrt of FPS
+void Yosupo_sqrt_of_formal_power_series() {
     FastRead Read; FastWrite Write;
 
     const int MOD = 998244353;
@@ -1455,12 +1900,14 @@ void Yosupo_inv_of_formal_power_series() {
     Read(N);
     FPS<mint> a(N);
     for (int i = 0; i < N; ++i) Read(a[i].val);
-    auto res = inv(a);
-    REP(i, res.size()) Write(res[i].val), Write(' ');
+    auto res = sqrt(a);
+    if (res.empty()) Write("-1");
+    else REP(i, res.size()) Write(res[i].val), Write(' ');
     Write('\n');
 }
 
 
 int main() {
-    Yosupo_inv_of_formal_power_series();
+    //Yosupo_sqrt_mod();
+    Yosupo_sqrt_of_formal_power_series();
 }

@@ -466,12 +466,12 @@
 
 ## 方程式
 
-- (★★★☆) 一次合同方程式
 - (★★★☆) [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
 - (★★★☆) [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
 - (★★★☆) [離散対数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_log.cpp)
 - (★★★★) [ペル方程式](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Pell_equation.cpp)
-- (★★★★) 平方剰余 (Tonelli–Shanks 法)
+- (★★★★) [平方剰余 (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_sqrt.cpp)
+- (★★★★) [Kth Root (MOD) (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_kth_root.cpp)
 
 ## さまざまな数
 
