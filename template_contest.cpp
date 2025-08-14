@@ -6,9 +6,9 @@
 using namespace std;
 
 
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 // Utility
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
 template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
@@ -232,9 +232,9 @@ ostream& operator << (ostream &os, const u128 &x) {
 }
 
 
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 // Fast IO
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 
 struct FastRead {
     static constexpr int BUF_SIZE = 1 << 17;
@@ -492,9 +492,9 @@ public:
 };
 
 
-/*/////////////////////////////*/
-// modint
-/*/////////////////////////////*/
+//------------------------------//
+// mod algorithms
+//------------------------------//
 
 // safe mod
 template<class T_VAL, class T_MOD>
@@ -888,9 +888,9 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Prime
-/*/////////////////////////////*/
+//------------------------------//
 
 // isprime[n] := is n prime?
 // mebius[n] := mebius value of n
@@ -1282,9 +1282,9 @@ T_VAL mod_sqrt(T_VAL a, T_MOD p) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // NTT
-/*/////////////////////////////*/
+//------------------------------//
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
@@ -1555,9 +1555,9 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // FPS
-/*/////////////////////////////*/
+//------------------------------//
 
 // Formal Power Series
 template<typename mint> struct FPS : vector<mint> {
@@ -1689,7 +1689,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     
     // inv(f), f[0] must not be 0
-    constexpr FPS inv(int deg) const {
+    constexpr FPS inv_ntt_friendly(int deg) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(deg);
@@ -1710,6 +1710,17 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return res.pre(deg);
     }
+    constexpr FPS inv(int deg) const {
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+        assert(this->size() >= 1 && (*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        FPS res({mint(1) / (*this)[0]});
+        for (int d = 1; d < deg; d <<= 1) {
+            res = (res + res - res * res * pre(d << 1)).pre(d << 1);
+        }
+        res.resize(deg);
+        return res;
+    }
     constexpr FPS inv() const {
         return inv((int)this->size());
     }
@@ -1724,7 +1735,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     
     // exp(f), f[0] must be 0
-    constexpr FPS exp(int deg) const {
+    constexpr FPS exp_ntt_friendly(int deg) const {
         assert(this->size() == 0 || (*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
 
@@ -1793,6 +1804,16 @@ template<typename mint> struct FPS : vector<mint> {
             b.insert(end(b), begin(x) + m, end(x));
         }
         return FPS(begin(b), begin(b) + deg);
+    }
+    constexpr FPS exp(int deg) const {
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
+        assert(this->size() == 0 || (*this)[0] == 0);
+        FPS res(1, 1);
+        for (int d = 1; d < deg; d <<= 1) {
+            res = res * (pre(d << 1) - res.log(d << 1) + 1).pre(d << 1);
+        }
+        res.resize(deg);
+        return res;
     }
     constexpr FPS exp() const {
         return exp((int)this->size());
@@ -1868,9 +1889,9 @@ template<typename mint> struct FPS : vector<mint> {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Matrix
-/*/////////////////////////////*/
+//------------------------------//
 
 // matrix
 template<class mint> struct MintMatrix {
@@ -2111,9 +2132,9 @@ template<class mint> struct MintMatrix {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Flow
-/*/////////////////////////////*/
+//------------------------------//
 
 // edge class (for network-flow)
 template<class FLOWTYPE> struct FlowEdge {
@@ -2540,139 +2561,9 @@ struct HopcroftKarp {
 };
 
 
-/*/////////////////////////////*/
-// Tree
-/*/////////////////////////////*/
-
-// Run Tree (including Euler Tour)
-template<class Graph = vector<vector<int>>> struct RunTree {
-    // id[v][w] := the index of node w in G[v]
-    vector<unordered_map<int, int>> id;
-
-    // num[v][i] := the size of subtree of G[v][i] with parent v
-    vector<vector<long long>> num;
-    
-    // for finding lca
-    int root;
-    vector<vector<int>> parent;
-    vector<int> depth;
-
-    // Euler tour
-    vector<int> tour; // the node-number of i-th element of Euler-tour
-    vector<int> v_s_id, v_t_id; // the index of Euler-tour of node v
-    vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root))
-
-    // constructor
-    RunTree() {}
-    RunTree(const Graph &G, int root = 0) : root(root) {
-        init(G, root);
-    }
-    
-    // init
-    void init(const Graph &G, int root = 0) {
-        int N = (int)G.size();
-        id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
-        for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
-        int h = 1, ord = 0;
-        while ((1<<h) < N) h++;
-        parent.assign(h, vector<int>(N, -1)), depth.resize(N);
-        tour.resize(N*2-1), v_s_id.resize(N), v_t_id.resize(N), e_id.resize(N*2);
-        rec(G, root, -1, 0, ord);
-        for (int i = 0; i+1 < (int)parent.size(); ++i) {
-            for (int v = 0; v < N; v++)
-                if (parent[i][v] != -1)
-                    parent[i+1][v] = parent[i][parent[i][v]];
-        }
-    }
-
-    // get_size(u, v) := the size of subtree v with parent u
-    long long get_size(int u, int v) {
-        return num[u][id[u][v]];
-    }
-
-    // get first / last id of node v in Euler tour
-    int vs(int v) { return v_s_id[v]; }
-    int vt(int v) { return v_t_id[v]; }
-
-    // get edge-id of (pv, v) in Euler tour
-    int e(int v, bool leaf_to_root = false) {
-        assert(v != root);
-        if (!leaf_to_root) return e_id[v * 2];
-        else return e_id[v * 2 + 1];
-    }
-    int e(int u, int v) {
-        if (depth[u] < depth[v]) return e(v);
-        else return e(u, false);
-    }
-
-    // lca(u, v)
-    int get_lca(int u, int v) {
-        if (depth[u] > depth[v]) swap(u, v);
-        for (int i = 0; i < (int)parent.size(); i++) {
-            if ((depth[v] - depth[u]) & (1<<i))
-                v = parent[i][v];
-        }
-        if (u == v) return u;
-        for (int i = (int)parent.size()-1; i >= 0; i--) {
-            if (parent[i][u] != parent[i][v]) {
-                u = parent[i][u];
-                v = parent[i][v];
-            }
-        }
-        return parent[0][u];
-    }
-
-    // dist(u, v)
-    long long get_dist(int u, int v) {
-        int lca = get_lca(u, v);
-        return depth[u] + depth[v] - depth[lca]*2;
-    }
-
-    // get_parent(v, p) := the parent of v directed for p
-    int get_parent(int v, int p) {
-        if (v == p) return -1;
-        int lca = get_lca(v, p);
-        if (lca != v) return parent[0][v];
-        for (int i = (int)parent.size()-1; i >= 0; i--) {
-            if (parent[i][p] != -1 && depth[parent[i][p]] > depth[v]) {
-                p = parent[i][p];
-            }
-        }
-        return p;
-    }
-    
-    // rec
-    int rec(const Graph &G, int v, int p, int d, int &ord) {
-        int p_index = -1;
-        int sum = 1;
-        parent[0][v] = p, depth[v] = d;
-        tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
-        ord++;
-        for (int i = 0; i < (int)G[v].size(); i++) {
-            int ch = G[v][i];
-            id[v][ch] = i;
-            if (ch == p) {
-                p_index = i;
-                continue;
-            }
-            e_id[ch * 2] = ord - 1;
-            int s = rec(G, ch, v, d+1, ord);
-            num[v][i] = s;
-            sum += s;
-            tour[ord] = v;
-            v_t_id[v] = ord;
-            e_id[ch * 2 + 1] = ord - 1;
-            ord++;
-        }
-        if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
-        return sum;
-    }
-};
-
-
-/*/////////////////////////////*/
+//------------------------------//
 // Union-Find
-/*/////////////////////////////*/
+//------------------------------//
 
 // Union-Find
 struct UnionFind {
@@ -2745,9 +2636,9 @@ struct UnionFind {
 };
 
 
-/*/////////////////////////////////*/
+//------------------------------//
 // Sparse Table, Binary Indexed Tree
-/*/////////////////////////////////*/
+//------------------------------//
 
 // BIT
 template <class Abel> struct BIT {
@@ -3010,9 +2901,9 @@ template<class MeetSemiLattice> struct SparseTable {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Segment Tree
-/*/////////////////////////////*/
+//------------------------------//
 
 // Segment Tree
 template<class Monoid> struct SegmentTree {
@@ -3483,9 +3374,139 @@ template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Act
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
+// Tree
+//------------------------------//
+
+// Run Tree (including Euler Tour)
+template<class Graph = vector<vector<int>>> struct RunTree {
+    // id[v][w] := the index of node w in G[v]
+    vector<unordered_map<int, int>> id;
+
+    // num[v][i] := the size of subtree of G[v][i] with parent v
+    vector<vector<long long>> num;
+    
+    // for finding lca
+    int root;
+    vector<vector<int>> parent;
+    vector<int> depth;
+
+    // Euler tour
+    vector<int> tour; // the node-number of i-th element of Euler-tour
+    vector<int> v_s_id, v_t_id; // the index of Euler-tour of node v
+    vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root))
+
+    // constructor
+    RunTree() {}
+    RunTree(const Graph &G, int root = 0) : root(root) {
+        init(G, root);
+    }
+    
+    // init
+    void init(const Graph &G, int root = 0) {
+        int N = (int)G.size();
+        id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
+        for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
+        int h = 1, ord = 0;
+        while ((1<<h) < N) h++;
+        parent.assign(h, vector<int>(N, -1)), depth.resize(N);
+        tour.resize(N*2-1), v_s_id.resize(N), v_t_id.resize(N), e_id.resize(N*2);
+        rec(G, root, -1, 0, ord);
+        for (int i = 0; i+1 < (int)parent.size(); ++i) {
+            for (int v = 0; v < N; v++)
+                if (parent[i][v] != -1)
+                    parent[i+1][v] = parent[i][parent[i][v]];
+        }
+    }
+
+    // get_size(u, v) := the size of subtree v with parent u
+    long long get_size(int u, int v) {
+        return num[u][id[u][v]];
+    }
+
+    // get first / last id of node v in Euler tour
+    int vs(int v) { return v_s_id[v]; }
+    int vt(int v) { return v_t_id[v]; }
+
+    // get edge-id of (pv, v) in Euler tour
+    int e(int v, bool leaf_to_root = false) {
+        assert(v != root);
+        if (!leaf_to_root) return e_id[v * 2];
+        else return e_id[v * 2 + 1];
+    }
+    int e(int u, int v) {
+        if (depth[u] < depth[v]) return e(v);
+        else return e(u, false);
+    }
+
+    // lca(u, v)
+    int get_lca(int u, int v) {
+        if (depth[u] > depth[v]) swap(u, v);
+        for (int i = 0; i < (int)parent.size(); i++) {
+            if ((depth[v] - depth[u]) & (1<<i))
+                v = parent[i][v];
+        }
+        if (u == v) return u;
+        for (int i = (int)parent.size()-1; i >= 0; i--) {
+            if (parent[i][u] != parent[i][v]) {
+                u = parent[i][u];
+                v = parent[i][v];
+            }
+        }
+        return parent[0][u];
+    }
+
+    // dist(u, v)
+    long long get_dist(int u, int v) {
+        int lca = get_lca(u, v);
+        return depth[u] + depth[v] - depth[lca]*2;
+    }
+
+    // get_parent(v, p) := the parent of v directed for p
+    int get_parent(int v, int p) {
+        if (v == p) return -1;
+        int lca = get_lca(v, p);
+        if (lca != v) return parent[0][v];
+        for (int i = (int)parent.size()-1; i >= 0; i--) {
+            if (parent[i][p] != -1 && depth[parent[i][p]] > depth[v]) {
+                p = parent[i][p];
+            }
+        }
+        return p;
+    }
+    
+    // rec
+    int rec(const Graph &G, int v, int p, int d, int &ord) {
+        int p_index = -1;
+        int sum = 1;
+        parent[0][v] = p, depth[v] = d;
+        tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
+        ord++;
+        for (int i = 0; i < (int)G[v].size(); i++) {
+            int ch = G[v][i];
+            id[v][ch] = i;
+            if (ch == p) {
+                p_index = i;
+                continue;
+            }
+            e_id[ch * 2] = ord - 1;
+            int s = rec(G, ch, v, d+1, ord);
+            num[v][i] = s;
+            sum += s;
+            tour[ord] = v;
+            v_t_id[v] = ord;
+            e_id[ch * 2 + 1] = ord - 1;
+            ord++;
+        }
+        if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
+        return sum;
+    }
+};
+
+
+//------------------------------//
 // Solver
-/*/////////////////////////////*/
+//------------------------------//
 
 int main() {
     cin.tie(nullptr);
