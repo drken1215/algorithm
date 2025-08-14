@@ -336,9 +336,9 @@
 
 ## 形式的冪級数 (FPS)、多項式 (Polynomial)
 
-- (★★★★) [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
-- (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/inv_formal_power_series.cpp)
-- (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/exp_formal_power_series.cpp)
+- (★★★★) [形式的冪級数：全部乗せ (NTT-friendly MOD)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
+- (★★★★) [Inv of FPS (NTT-friendly MOD)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/inv_formal_power_series.cpp)
+- (★★★★) [Exp of FPS (NTT-friendly MOD)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/exp_formal_power_series.cpp)
 - (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/log_formal_power_series.cpp)
 - (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/pow_formal_power_series.cpp)
 - (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/sqrt_formal_power_series.cpp)
