@@ -189,7 +189,6 @@
 - (★★★★) ボロノイ図 (単純ver, O(N log N))
 - (★★★★) ドロネーの三角形分割 (期待値 O(N^2))
 
-
 ## 三次元幾何
 
 - (★★★★) [三次元幾何一式](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements_3D.cpp)
