@@ -79,7 +79,7 @@
 - (★★★★) Dynamic Connectivity
 
 
-
+　
 
 <a name="dss"></a>
 
@@ -206,7 +206,7 @@
 - (★★★★) kd 木
 
 
-
+　
 
 <a name="gt"></a>
 # グラフ (GRAPH)
@@ -265,6 +265,7 @@
 
 
 　
+　
 <a name="gnf"></a>
 # ネットワークフロー (GRAPH : NETWORK FLOW)
 グラフネットワークフロー関連のアルゴリズムです
@@ -306,6 +307,7 @@
 
 
 　
+
 <a name="ma"></a>
 # 代数 (MATH : ALGEBRA)
 行列計算など代数的計算に関するアルゴリズムです
@@ -495,6 +497,7 @@
 
 
 　
+
 <a name="opt"></a>
 # 最適化, 探索 (OPTIMIZATION, SEARCH)
 最適化や探索に関するアルゴリズムです
@@ -563,6 +566,7 @@
 
 
 　
+
 <a name="st"></a>
 # 文字列 (String)
 文字列アルゴリズムです
@@ -597,6 +601,7 @@
 
 
 　
+
 <a name="tr"></a>
 # 木 (Tree)
 木上のクエリに答えるデータ構造や、木に関する問題を解くアルゴリズムの実装です
@@ -658,7 +663,6 @@
 - (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - (★★☆☆) [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
 - (★★★☆) 四面体 (AOJ 2060)
-
 
 
 
