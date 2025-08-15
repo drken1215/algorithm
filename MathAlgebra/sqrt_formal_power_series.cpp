@@ -7,13 +7,16 @@
 //
 
 
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+
 #include <bits/stdc++.h>
 using namespace std;
 
 
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 // Utility
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
 template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
@@ -237,9 +240,9 @@ ostream& operator << (ostream &os, const u128 &x) {
 }
 
 
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 // Fast IO
-/*///////////////////////////////////////////////////////*/
+//------------------------------//
 
 struct FastRead {
     static constexpr int BUF_SIZE = 1 << 17;
@@ -497,9 +500,9 @@ public:
 };
 
 
-/*/////////////////////////////*/
-// modint
-/*/////////////////////////////*/
+//------------------------------//
+// mod algorithms
+//------------------------------//
 
 // safe mod
 template<class T_VAL, class T_MOD>
@@ -893,9 +896,9 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Prime
-/*/////////////////////////////*/
+//------------------------------//
 
 // isprime[n] := is n prime?
 // mebius[n] := mebius value of n
@@ -1287,9 +1290,9 @@ T_VAL mod_sqrt(T_VAL a, T_MOD p) {
 
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // NTT
-/*/////////////////////////////*/
+//------------------------------//
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
@@ -1560,9 +1563,9 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 }
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // FPS
-/*/////////////////////////////*/
+//------------------------------//
 
 // Formal Power Series
 template<typename mint> struct FPS : vector<mint> {
@@ -1694,7 +1697,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     
     // inv(f), f[0] must not be 0
-    constexpr FPS inv(int deg) const {
+    constexpr FPS inv_ntt_friendly(int deg) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(deg);
@@ -1715,6 +1718,17 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return res.pre(deg);
     }
+    constexpr FPS inv(int deg) const {
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+        assert(this->size() >= 1 && (*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        FPS res({mint(1) / (*this)[0]});
+        for (int d = 1; d < deg; d <<= 1) {
+            res = (res + res - res * res * pre(d << 1)).pre(d << 1);
+        }
+        res.resize(deg);
+        return res;
+    }
     constexpr FPS inv() const {
         return inv((int)this->size());
     }
@@ -1729,7 +1743,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     
     // exp(f), f[0] must be 0
-    constexpr FPS exp(int deg) const {
+    constexpr FPS exp_ntt_friendly(int deg) const {
         assert(this->size() == 0 || (*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
 
@@ -1798,6 +1812,16 @@ template<typename mint> struct FPS : vector<mint> {
             b.insert(end(b), begin(x) + m, end(x));
         }
         return FPS(begin(b), begin(b) + deg);
+    }
+    constexpr FPS exp(int deg) const {
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
+        assert(this->size() == 0 || (*this)[0] == 0);
+        FPS res(1, 1);
+        for (int d = 1; d < deg; d <<= 1) {
+            res = res * (pre(d << 1) - res.log(d << 1) + 1).pre(d << 1);
+        }
+        res.resize(deg);
+        return res;
     }
     constexpr FPS exp() const {
         return exp((int)this->size());
@@ -1873,9 +1897,9 @@ template<typename mint> struct FPS : vector<mint> {
 };
 
 
-/*/////////////////////////////*/
+//------------------------------//
 // Examples
-/*/////////////////////////////*/
+//------------------------------//
 
 // Library Checker - Sqrt MOD
 void Yosupo_sqrt_mod() {

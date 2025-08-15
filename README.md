@@ -334,25 +334,32 @@
 - (★★★★) [mod 2^64 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_mod_2_64.cpp)
 - (★★★★) Karatsuba 法
 
-## 形式的冪級数 (FPS)、多項式 (Polynomial)
+## 形式的冪級数 (FPS)
 
-- (★★★★) [形式的冪級数：全部乗せ (NTT-friendly MOD)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
-- (★★★★) [Inv of FPS (NTT-friendly MOD)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/inv_formal_power_series.cpp)
-- (★★★★) [Exp of FPS (NTT-friendly MOD)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/exp_formal_power_series.cpp)
+- (★★★★) [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/formal_power_series.cpp)
+- (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/inv_formal_power_series.cpp)
+- (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/exp_formal_power_series.cpp)
 - (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/log_formal_power_series.cpp)
 - (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/pow_formal_power_series.cpp)
 - (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/sqrt_formal_power_series.cpp)
+- (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/power_projection.cpp)
+- (★★★★) [FPS の合成](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
+- (★★★★) [FPS の逆関数](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
+
+## Sparse な形式的冪級数 (FPS)
+
+- (★★★★) Sparse な形式的冪級数
+
+
+## FPS、多項式のアルゴリズム
+
+- (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - (★★★☆) [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
 - (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
-- (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - (★★★☆) [Polynomial Taylor Shift](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
 - (★★★★) 多項式補間
 - (★★★★) 多項式 GCD
-- (★★★★) Sparse な形式的冪級数
-- (★★★★) Fiduccia 法 (高速きたまさ法)
 - (★★★★) Berlekamp-Massey 法
-- (★★★★) 関数の合成
-- (★★★★) 逆関数
 
 ## さまざまな和
 

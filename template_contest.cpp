@@ -1888,6 +1888,62 @@ template<typename mint> struct FPS : vector<mint> {
     friend constexpr FPS sqrt(const FPS &f) { return f.sqrt((int)f.size()); }
 };
 
+// composition of FPS, calc g(f(x))
+template<typename mint>
+FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg) {
+    auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
+        if (n == 0) {
+            FPS<mint> T{begin(Q), begin(Q) + k};
+            T.emplace_back(mint(1));
+            FPS<mint> u = g * T.rev().inv().rev();
+            FPS<mint> P(h * k);
+            for (int i = 0; i < (int)g.size(); i++) P[k - i - 1] = u[i + k];
+            return P;
+        }
+        FPS<mint> nQ(h * k * 4), nR(h * k * 2);
+        for (int i = 0; i < k; i++) {
+            copy(begin(Q) + i * h, begin(Q) + i * h + n + 1, begin(nQ) + i * h * 2);
+        }
+        nQ[h * k * 2] += 1;
+        ntt_trans(nQ);
+        for (int i = 0; i < h * k * 4; i += 2) swap(nQ[i], nQ[i + 1]);
+        for (int i = 0; i < h * k * 2; i++) nR[i] = nQ[i * 2] * nQ[i * 2 + 1];
+        ntt_trans_inv(nR);
+        nR[0] -= 1;
+        Q.assign(h * k, 0);
+        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
+            Q[i * h / 2 + j] = nR[i * h + j];
+        }
+        auto P = rec(rec, Q, n / 2, h / 2, k * 2);
+        FPS<mint> nP(h * k * 4);
+        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
+            nP[i * h * 2 + j * 2 + n % 2] = P[i * h / 2 + j];
+        }
+        ntt_trans(nP);
+        for (int i = 1; i < h * k * 4; i <<= 1) reverse(begin(nQ) + i, begin(nQ) + i * 2);
+        for (int i = 0; i < h * k * 4; i++) nP[i] *= nQ[i];
+        ntt_trans_inv(nP);
+        P.assign(h * k, 0);
+        for (int i = 0; i < k; i++) {
+            copy(begin(nP) + i * h * 2, begin(nP) + i * h * 2 + n + 1, begin(P) + i * h);
+        }
+        return P;
+    };
+    if (deg == -1) deg = max((int)f.size(), (int)g.size());
+    f.resize(deg), g.resize(deg);
+    int n = (int)f.size() - 1, h = 1, k = 1;
+    while (h < n + 1) h *= 2;
+    FPS<mint> Q(h * k);
+    for (int i = 0; i <= n; i++) Q[i] = -f[i];
+    FPS<mint> P = rec(rec, Q, n, h, k);
+    return P.pre(n + 1).rev();
+}
+
+template<typename mint>
+FPS<mint> composition(FPS<mint> g, FPS<mint> f) {
+    return composition(g, f, max(f.size(), g.size()));
+}
+
 
 //------------------------------//
 // Matrix
