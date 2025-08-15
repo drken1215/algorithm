@@ -20,45 +20,6 @@
 using namespace std;
 
 
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PB push_back
-#define MP make_pair
-#define MT make_tuple
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 3> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 4> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << ", " << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, unordered_set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-
-
 // safe mod
 template<class T_VAL, class T_MOD>
 constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
@@ -221,7 +182,12 @@ struct DynamicModint {
 };
 int DynamicModint::MOD;
 
+
 // Garner's algorithm
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+
 // if m is not coprime, call this function first
 template<class T_VAL>
 bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
@@ -251,9 +217,6 @@ bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
 }
 
 // find x (%MOD), LCM (%MOD) (m must be coprime)
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
 template<class T_VAL>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     assert(b.size() == m.size());
@@ -274,6 +237,7 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     return res;
 }
 
+// find x, LCM (m must be coprime)
 template<class T_VAL, class T_MOD>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
     assert(b.size() == m.size());

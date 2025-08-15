@@ -813,7 +813,12 @@ template<class mint> struct BiCoef {
     }
 };
 
+
 // Garner's algorithm
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+
 // if m is not coprime, call this function first
 template<class T_VAL>
 bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
@@ -843,9 +848,6 @@ bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
 }
 
 // find x (%MOD), LCM (%MOD) (m must be coprime)
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
 template<class T_VAL>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     assert(b.size() == m.size());
@@ -866,6 +868,7 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     return res;
 }
 
+// find x, LCM (m must be coprime)
 template<class T_VAL, class T_MOD>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
     assert(b.size() == m.size());
