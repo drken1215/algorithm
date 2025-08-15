@@ -344,13 +344,12 @@
 - (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/pow_formal_power_series.cpp)
 - (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/sqrt_formal_power_series.cpp)
 - (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/power_projection.cpp)
-- (★★★★) [FPS の合成](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
-- (★★★★) [FPS の逆関数](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
+- (★★★★) [FPS の合成 (Kinoshita-Li 法, O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
+- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
 
 ## Sparse な形式的冪級数 (FPS)
 
 - (★★★★) Sparse な形式的冪級数
-
 
 ## FPS、多項式のアルゴリズム
 

@@ -813,12 +813,7 @@ template<class mint> struct BiCoef {
     }
 };
 
-
 // Garner's algorithm
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
-
 // if m is not coprime, call this function first
 template<class T_VAL>
 bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
@@ -848,6 +843,9 @@ bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
 }
 
 // find x (%MOD), LCM (%MOD) (m must be coprime)
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
 template<class T_VAL>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     assert(b.size() == m.size());
@@ -868,7 +866,6 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     return res;
 }
 
-// find x, LCM (m must be coprime)
 template<class T_VAL, class T_MOD>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
     assert(b.size() == m.size());
@@ -1284,7 +1281,6 @@ T_VAL mod_sqrt(T_VAL a, T_MOD p) {
 }
 
 
-
 //------------------------------//
 // NTT
 //------------------------------//
@@ -1563,7 +1559,7 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 //------------------------------//
 
 // Formal Power Series
-template<typename mint> struct FPS : vector<mint> {
+template<class mint> struct FPS : vector<mint> {
     using vector<mint>::vector;
  
     // constructor
@@ -1692,7 +1688,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     
     // inv(f), f[0] must not be 0
-    constexpr FPS inv_ntt_friendly(int deg) const {
+    constexpr FPS inv_ntt_friendly(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(deg);
@@ -1713,7 +1709,7 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return res.pre(deg);
     }
-    constexpr FPS inv(int deg) const {
+    constexpr FPS inv(int deg = -1) const {
         if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
@@ -1724,21 +1720,16 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS inv() const {
-        return inv((int)this->size());
-    }
     
     // log(f) = \int f'/f dx, f[0] must be 1
-    constexpr FPS log(int deg) const {
+    constexpr FPS log(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] == 1);
+        if (deg < 0) deg = (int)this->size();
         return ((diff() * inv(deg)).pre(deg - 1)).integral();
-    }
-    constexpr FPS log() const {
-        return log((int)this->size());
     }
     
     // exp(f), f[0] must be 0
-    constexpr FPS exp_ntt_friendly(int deg) const {
+    constexpr FPS exp_ntt_friendly(int deg = -1) const {
         assert(this->size() == 0 || (*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
 
@@ -1808,9 +1799,10 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return FPS(begin(b), begin(b) + deg);
     }
-    constexpr FPS exp(int deg) const {
+    constexpr FPS exp(int deg = -1) const {
         if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
         assert(this->size() == 0 || (*this)[0] == 0);
+        if (deg < 0) deg = (int)this->size();
         FPS res(1, 1);
         for (int d = 1; d < deg; d <<= 1) {
             res = res * (pre(d << 1) - res.log(d << 1) + 1).pre(d << 1);
@@ -1818,12 +1810,9 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS exp() const {
-        return exp((int)this->size());
-    }
     
     // pow(f) = exp(e * log f)
-    constexpr FPS pow(long long e, int deg) const {
+    constexpr FPS pow(long long e, int deg = -1) const {
         if (deg < 0) deg = (int)this->size();
         if (deg == 0) return FPS();
         if (e == 0) {
@@ -1839,12 +1828,9 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS pow(long long e) const {
-        return pow(e, (int)this->size());
-    }
     
     // sqrt(f)
-    constexpr FPS sqrt(int deg) const {
+    constexpr FPS sqrt(int deg = -1) const {
         if (deg < 0) deg = (int)this->size();
         if ((int)this->size() == 0) return FPS(deg, 0);
         if ((*this)[0] == mint(0)) {
@@ -1872,28 +1858,20 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS sqrt() const {
-        return sqrt((int)this->size());
-    }
     
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
     friend constexpr FPS integral(const FPS &f) { return f.integral(); }
-    friend constexpr FPS inv(const FPS &f, int deg) { return f.inv(deg); }
-    friend constexpr FPS inv(const FPS &f) { return f.inv((int)f.size()); }
-    friend constexpr FPS log(const FPS &f, int deg) { return f.log(deg); }
-    friend constexpr FPS log(const FPS &f) { return f.log((int)f.size()); }
-    friend constexpr FPS exp(const FPS &f, int deg) { return f.exp(deg); }
-    friend constexpr FPS exp(const FPS &f) { return f.exp((int)f.size()); }
-    friend constexpr FPS pow(const FPS &f, long long e, int deg) { return f.pow(e, deg); }
-    friend constexpr FPS pow(const FPS &f, long long e) { return f.pow(e, (int)f.size()); }
-    friend constexpr FPS sqrt(const FPS &f, int deg) { return f.sqrt(deg); }
-    friend constexpr FPS sqrt(const FPS &f) { return f.sqrt((int)f.size()); }
+    friend constexpr FPS inv(const FPS &f, int deg = -1) { return f.inv(deg); }
+    friend constexpr FPS log(const FPS &f, int deg = -1) { return f.log(deg); }
+    friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
+    friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
+    friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
 };
 
 // composition of FPS, calc g(f(x))
-template<typename mint>
-FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg) {
+template<class mint>
+FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
     auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
         if (n == 0) {
             FPS<mint> T{begin(Q), begin(Q) + k};
@@ -1942,9 +1920,102 @@ FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg) {
     return P.pre(n + 1).rev();
 }
 
-template<typename mint>
-FPS<mint> composition(FPS<mint> g, FPS<mint> f) {
-    return composition(g, f, max(f.size(), g.size()));
+// Power Projection
+// for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
+template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
+FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
+    int n = (int)f.size() - 1, k = 1, h = 1;
+    g.resize(n + 1);
+    if (m < 0) m = n;
+    while (h < n + 1) h <<= 1;
+    FPS<mint> P((n + 1) * k), Q((n + 1) * k), nP, nQ, buf, buf2;
+    for (int i = 0; i <= n; i++) P[i * k] = g[i];
+    for (int i = 0; i <= n; i++) Q[i * k] = -f[i];
+    Q[0]++;
+    mint iv2 = mint(2).inv();
+    while (n) {
+        mint w = mint(pr).pow((MOD - 1) / (2 * k)), iw = w.inv();
+        buf2.resize(k);
+        auto ntt_doubling = [&]() {
+            copy(begin(buf), end(buf), begin(buf2));
+            ntt_trans_inv(buf2);
+            mint c = 1;
+            for (int i = 0; i < k; i++) buf2[i] *= c, c *= w;
+            ntt_trans(buf2);
+            copy(begin(buf2), end(buf2), back_inserter(buf));
+        };
+        nP.clear(), nQ.clear();
+        for (int i = 0; i <= n; i++) {
+            buf.resize(k);
+            copy(begin(P) + i * k, begin(P) + (i + 1) * k, begin(buf));
+            ntt_doubling();
+            copy(begin(buf), end(buf), back_inserter(nP));
+            buf.resize(k);
+            copy(begin(Q) + i * k, begin(Q) + (i + 1) * k, begin(buf));
+            if (i == 0) {
+                for (int j = 0; j < k; j++) buf[j]--;
+                ntt_doubling();
+                for (int j = 0; j < k; j++) buf[j]++;
+                for (int j = 0; j < k; j++) buf[k + j]--;
+            } else {
+                ntt_doubling();
+            }
+            copy(begin(buf), end(buf), back_inserter(nQ));
+        }
+        nP.resize(h * 2 * k * 2), nQ.resize(h * 2 * k * 2);
+        FPS<mint> p(h * 2), q(h * 2);
+        w = mint(pr).pow((MOD - 1) / (h * 2)), iw = w.inv();
+        vector<int> btr;
+        if (n % 2) {
+            btr.resize(h);
+            for (int i = 0, lg = bsf(h); i < h; i++) {
+                btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (lg - 1));
+            }
+        }
+        for (int j = 0; j < k * 2; j++) {
+            p.assign(h * 2, 0), q.assign(h * 2, 0);
+            for (int i = 0; i < h; i++) p[i] = nP[i * k * 2 + j], q[i] = nQ[i * k * 2 + j];
+            ntt_trans(p), ntt_trans(q);
+            for (int i = 0; i < h * 2; i += 2) swap(q[i], q[i + 1]);
+            for (int i = 0; i < h * 2; i++) p[i] *= q[i];
+            for (int i = 0; i < h; i++) q[i] = q[i * 2] * q[i * 2 + 1];
+            if (n & 1) {
+                mint c = iv2;
+                buf.resize(h);
+                for (int i : btr) buf[i] = (p[i * 2] - p[i * 2 + 1]) * c, c *= iw;
+                swap(p, buf);
+            } else {
+                for (int i = 0; i < h; i++) p[i] = (p[i * 2] + p[i * 2 + 1]) * iv2;
+            }
+            p.resize(h), q.resize(h);
+            ntt_trans_inv(p), ntt_trans_inv(q);
+            for (int i = 0; i < h; i++) nP[i * k * 2 + j] = p[i];
+            for (int i = 0; i < h; i++) nQ[i * k * 2 + j] = q[i];
+        }
+        nP.resize((n / 2 + 1) * k * 2), nQ.resize((n / 2 + 1) * k * 2);
+        swap(P, nP), swap(Q, nQ);
+        n /= 2, h /= 2, k *= 2;
+    }
+    FPS<mint> S{begin(P), begin(P) + k}, T{begin(Q), begin(Q) + k};
+    ntt_trans_inv(S), ntt_trans_inv(T);
+    T[0]--;
+    if (T[0] == 0) return S.rev().pre(m + 1);
+    else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
+}
+
+// find g s.t. f(g(x)) ≡ x (mod x^{deg})
+template<class mint>
+FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
+    assert((int)f.size() >= 2 && f[1] != 0);
+    if (deg == -1) deg = (int)f.size();
+    if (deg < 2) return FPS<mint>{0, f[1].inv()}.pre(deg);
+    int n = deg - 1;
+    FPS<mint> h = power_projection(f) * n;
+    for (int k = 1; k <= n; k++) h[k] /= k;
+    h = h.rev(), h *= h[0].inv();
+    FPS<mint> g = (h.log() * mint(-n).inv()).exp();
+    g *= f[1].inv();
+    return (g << 1).pre(deg);
 }
 
 
