@@ -1289,7 +1289,6 @@ T_VAL mod_sqrt(T_VAL a, T_MOD p) {
 }
 
 
-
 //------------------------------//
 // NTT
 //------------------------------//
@@ -1568,7 +1567,8 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 //------------------------------//
 
 // Formal Power Series
-template<typename mint> struct FPS : vector<mint> {
+template<class mint> struct FPS : vector<mint> {
+    static const int SPARSE_BOARDER = 50;
     using vector<mint>::vector;
  
     // constructor
@@ -1586,6 +1586,19 @@ template<typename mint> struct FPS : vector<mint> {
     constexpr FPS& normalize() {
         while (!this->empty() && this->back() == 0) this->pop_back();
         return *this;
+    }
+    constexpr mint eval(const mint &v) {
+        mint res = 0;
+        for (int i = (int)this->size()-1; i >= 0; --i) {
+            res *= v;
+            res += (*this)[i];
+        }
+        return res;
+    }
+    constexpr int count_terms() const {
+        int res = 0;
+        for (int i = 0; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) res++;
+        return res;
     }
  
     // basic operator
@@ -1669,14 +1682,6 @@ template<typename mint> struct FPS : vector<mint> {
         res.insert(res.end(), begin(*this) + x, end(*this));
         return *this = res;
     }
-    constexpr mint eval(const mint &v) {
-        mint res = 0;
-        for (int i = (int)this->size()-1; i >= 0; --i) {
-            res *= v;
-            res += (*this)[i];
-        }
-        return res;
-    }
 
     // advanced operation
     // df/dx
@@ -1697,7 +1702,7 @@ template<typename mint> struct FPS : vector<mint> {
     }
     
     // inv(f), f[0] must not be 0
-    constexpr FPS inv_ntt_friendly(int deg) const {
+    constexpr FPS inv_ntt_friendly(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(deg);
@@ -1718,9 +1723,29 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return res.pre(deg);
     }
-    constexpr FPS inv(int deg) const {
-        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+    constexpr FPS inv_sparse(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i, (*this)[i]);
+        }
+        vector<mint> res(deg);
+        res[0] = (*this)[0].inv();
+        for (int i = 1; i < deg; i++) {
+            mint r = 0;
+            for (auto &&[k, val] : dat) {
+                if (k > i) break;
+                r -= val * res[i - k];
+            }
+            res[i] = r * res[0];
+        }
+        return res;
+    }
+    constexpr FPS inv(int deg = -1) const {
+        assert(this->size() >= 1 && (*this)[0] != 0);
+        if (count_terms() <= SPARSE_BOARDER) return inv_sparse(deg);
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
         if (deg < 0) deg = (int)this->size();
         FPS res({mint(1) / (*this)[0]});
         for (int d = 1; d < deg; d <<= 1) {
@@ -1729,22 +1754,18 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS inv() const {
-        return inv((int)this->size());
-    }
     
     // log(f) = \int f'/f dx, f[0] must be 1
-    constexpr FPS log(int deg) const {
+    constexpr FPS log(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] == 1);
+        if (deg < 0) deg = (int)this->size();
         return ((diff() * inv(deg)).pre(deg - 1)).integral();
-    }
-    constexpr FPS log() const {
-        return log((int)this->size());
     }
     
     // exp(f), f[0] must be 0
-    constexpr FPS exp_ntt_friendly(int deg) const {
-        assert(this->size() == 0 || (*this)[0] == 0);
+    constexpr FPS exp_ntt_friendly(int deg = -1) const {
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
 
         FPS fiv;
@@ -1813,9 +1834,32 @@ template<typename mint> struct FPS : vector<mint> {
         }
         return FPS(begin(b), begin(b) + deg);
     }
-    constexpr FPS exp(int deg) const {
+    constexpr FPS exp_sparse(int deg = -1) const {
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
+        if (deg < 0) deg = (int)this->size();
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i - 1, (*this)[i] * i);
+        }
+        vector<mint> res(deg);
+        res[0] = 1;
+        for (int i = 1; i < deg; i++) {
+            mint r = 0;
+            for (auto &&[k, val] : dat) {
+                if (k > i - 1) break;
+                r += val * res[i - k - 1];
+            }
+            res[i] = r * mint(i).inv();
+        }
+        return res;
+    }
+    constexpr FPS exp(int deg = -1) const {
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
+        if (count_terms() <= SPARSE_BOARDER) return exp_sparse(deg);
         if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
-        assert(this->size() == 0 || (*this)[0] == 0);
+        if (deg < 0) deg = (int)this->size();
         FPS res(1, 1);
         for (int d = 1; d < deg; d <<= 1) {
             res = res * (pre(d << 1) - res.log(d << 1) + 1).pre(d << 1);
@@ -1823,12 +1867,9 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS exp() const {
-        return exp((int)this->size());
-    }
     
     // pow(f) = exp(e * log f)
-    constexpr FPS pow(long long e, int deg) const {
+    constexpr FPS pow(long long e, int deg = -1) const {
         if (deg < 0) deg = (int)this->size();
         if (deg == 0) return FPS();
         if (e == 0) {
@@ -1844,12 +1885,9 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS pow(long long e) const {
-        return pow(e, (int)this->size());
-    }
     
     // sqrt(f)
-    constexpr FPS sqrt(int deg) const {
+    constexpr FPS sqrt(int deg = -1) const {
         if (deg < 0) deg = (int)this->size();
         if ((int)this->size() == 0) return FPS(deg, 0);
         if ((*this)[0] == mint(0)) {
@@ -1877,23 +1915,15 @@ template<typename mint> struct FPS : vector<mint> {
         res.resize(deg);
         return res;
     }
-    constexpr FPS sqrt() const {
-        return sqrt((int)this->size());
-    }
     
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
     friend constexpr FPS integral(const FPS &f) { return f.integral(); }
-    friend constexpr FPS inv(const FPS &f, int deg) { return f.inv(deg); }
-    friend constexpr FPS inv(const FPS &f) { return f.inv((int)f.size()); }
-    friend constexpr FPS log(const FPS &f, int deg) { return f.log(deg); }
-    friend constexpr FPS log(const FPS &f) { return f.log((int)f.size()); }
-    friend constexpr FPS exp(const FPS &f, int deg) { return f.exp(deg); }
-    friend constexpr FPS exp(const FPS &f) { return f.exp((int)f.size()); }
-    friend constexpr FPS pow(const FPS &f, long long e, int deg) { return f.pow(e, deg); }
-    friend constexpr FPS pow(const FPS &f, long long e) { return f.pow(e, (int)f.size()); }
-    friend constexpr FPS sqrt(const FPS &f, int deg) { return f.sqrt(deg); }
-    friend constexpr FPS sqrt(const FPS &f) { return f.sqrt((int)f.size()); }
+    friend constexpr FPS inv(const FPS &f, int deg = -1) { return f.inv(deg); }
+    friend constexpr FPS log(const FPS &f, int deg = -1) { return f.log(deg); }
+    friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
+    friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
+    friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
 };
 
 

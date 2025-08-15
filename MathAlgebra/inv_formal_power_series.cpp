@@ -1,8 +1,8 @@
 //
-// Ixp of FPS (Formal Power Series)
+// Inv of FPS (Formal Power Series)
 //
 // verified:
-//   Yosupo Judge - Ixp of Formal Power Series
+//   Yosupo Judge - Inv of Formal Power Series
 //     https://judge.yosupo.jp/problem/inv_of_formal_power_series
 //
 
