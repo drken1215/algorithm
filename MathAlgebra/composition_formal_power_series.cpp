@@ -1,5 +1,5 @@
 //
-// FPS の合成
+// FPS の合成 (Kinoshita-Li 法, O(N (log N)^2))
 //
 // verified:
 //   Yosupo Library Checker - Composition of Formal Power Series (Large)

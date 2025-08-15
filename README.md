@@ -349,7 +349,11 @@
 
 ## Sparse な形式的冪級数 (FPS)
 
-- (★★★★) Sparse な形式的冪級数
+- (★★★★) [Inv of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/inv_sparse_formal_power_series.cpp)
+- (★★★★) [Exp of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/exp_sparse_formal_power_series.cpp)
+- (★★★★) [Log of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/log_sparse_formal_power_series.cpp)
+- (★★★★) [Pow of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/pow_sparse_formal_power_series.cpp)
+- (★★★★) [Sart of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/sqrt_sparse_formal_power_series.cpp)
 
 ## FPS、多項式のアルゴリズム
 
@@ -462,7 +466,7 @@
 - (★★★★) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
 - (★★★★) N 以下の素数の個数 (O(N^2/3))
 
-## エラトステネスの篩、GCD Convollution
+## エラトステネスの篩、GCD Convolution
 
 - (★☆☆☆) [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - (★★☆☆) [エラトステネスの区間篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes_segment.cpp)

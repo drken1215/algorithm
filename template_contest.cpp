@@ -1560,6 +1560,7 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 
 // Formal Power Series
 template<class mint> struct FPS : vector<mint> {
+    static const int SPARSE_BOARDER = 50;
     using vector<mint>::vector;
  
     // constructor
@@ -1577,6 +1578,19 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS& normalize() {
         while (!this->empty() && this->back() == 0) this->pop_back();
         return *this;
+    }
+    constexpr mint eval(const mint &v) {
+        mint res = 0;
+        for (int i = (int)this->size()-1; i >= 0; --i) {
+            res *= v;
+            res += (*this)[i];
+        }
+        return res;
+    }
+    constexpr int count_terms() const {
+        int res = 0;
+        for (int i = 0; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) res++;
+        return res;
     }
  
     // basic operator
@@ -1660,14 +1674,6 @@ template<class mint> struct FPS : vector<mint> {
         res.insert(res.end(), begin(*this) + x, end(*this));
         return *this = res;
     }
-    constexpr mint eval(const mint &v) {
-        mint res = 0;
-        for (int i = (int)this->size()-1; i >= 0; --i) {
-            res *= v;
-            res += (*this)[i];
-        }
-        return res;
-    }
 
     // advanced operation
     // df/dx
@@ -1709,9 +1715,29 @@ template<class mint> struct FPS : vector<mint> {
         }
         return res.pre(deg);
     }
-    constexpr FPS inv(int deg = -1) const {
-        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+    constexpr FPS inv_sparse(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i, (*this)[i]);
+        }
+        vector<mint> res(deg);
+        res[0] = (*this)[0].inv();
+        for (int i = 1; i < deg; i++) {
+            mint r = 0;
+            for (auto &&[k, val] : dat) {
+                if (k > i) break;
+                r -= val * res[i - k];
+            }
+            res[i] = r * res[0];
+        }
+        return res;
+    }
+    constexpr FPS inv(int deg = -1) const {
+        assert(this->size() >= 1 && (*this)[0] != 0);
+        if (count_terms() <= SPARSE_BOARDER) return inv_sparse(deg);
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
         if (deg < 0) deg = (int)this->size();
         FPS res({mint(1) / (*this)[0]});
         for (int d = 1; d < deg; d <<= 1) {
@@ -1869,7 +1895,7 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
 };
 
-// composition of FPS, calc g(f(x))
+// composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
 FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
     auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
@@ -1920,7 +1946,7 @@ FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
     return P.pre(n + 1).rev();
 }
 
-// Power Projection
+// Power Projection, O(N (log N)^2)
 // for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
 template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
 FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
@@ -2003,7 +2029,7 @@ FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
     else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
 }
 
-// find g s.t. f(g(x)) ≡ x (mod x^{deg})
+// find g s.t. f(g(x)) ≡ x (mod x^{deg}), O(N (log N)^2)
 template<class mint>
 FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
     assert((int)f.size() >= 2 && f[1] != 0);
