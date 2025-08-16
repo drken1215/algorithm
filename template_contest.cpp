@@ -1756,7 +1756,8 @@ template<class mint> struct FPS : vector<mint> {
     
     // exp(f), f[0] must be 0
     constexpr FPS exp_ntt_friendly(int deg = -1) const {
-        assert(this->size() == 0 || (*this)[0] == 0);
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
 
         FPS fiv;
@@ -1825,9 +1826,31 @@ template<class mint> struct FPS : vector<mint> {
         }
         return FPS(begin(b), begin(b) + deg);
     }
+    constexpr FPS exp_sparse(int deg = -1) const {
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
+        if (deg < 0) deg = (int)this->size();
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i - 1, (*this)[i] * i);
+        }
+        vector<mint> res(deg);
+        res[0] = 1;
+        for (int i = 1; i < deg; i++) {
+            mint r = 0;
+            for (auto &&[k, val] : dat) {
+                if (k > i - 1) break;
+                r += val * res[i - k - 1];
+            }
+            res[i] = r * mint(i).inv();
+        }
+        return res;
+    }
     constexpr FPS exp(int deg = -1) const {
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
+        if (count_terms() <= SPARSE_BOARDER) return exp_sparse(deg);
         if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
-        assert(this->size() == 0 || (*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(1, 1);
         for (int d = 1; d < deg; d <<= 1) {
