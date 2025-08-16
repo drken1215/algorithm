@@ -379,8 +379,8 @@ private:
     char *begin_, *end_, *ptr_;
     
     // preparation
-    template <class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
-    template <class T> static constexpr auto POW10 = [] {
+    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
+    template<class T> static constexpr auto POW10 = [] {
         array<T, DIGITS<T>> ret;
         ret[0] = 1;
         for (int i = 1; i < DIGITS<T>; ++i) {
@@ -1599,7 +1599,7 @@ template<class mint> struct FPS : vector<mint> {
         while (!this->empty() && this->back() == 0) this->pop_back();
         return *this;
     }
-    constexpr mint eval(const mint &v) {
+    constexpr mint eval(const mint &v) const {
         mint res = 0;
         for (int i = (int)this->size()-1; i >= 0; --i) {
             res *= v;
@@ -2025,6 +2025,21 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS sqrt_sparse_constant1(int deg) const {
         return pow_sparse_constant1(mint(2).inv(), deg);
     }
+
+    // polynomial taylor shift
+    constexpr FPS taylor_shift(long long c) const {
+        int N = (int)this->size() - 1;
+        BiCoef<mint> bc(N + 1);
+        FPS<mint> p(N + 1), q(N + 1);
+        for (int i = 0; i <= N; i++) {
+            p[i] = (*this)[i] * bc.fact(i);
+            q[N - i] = mint(c).pow(i) * bc.finv(i);
+        }
+        FPS<mint> pq = p * q;
+        FPS<mint> res(N + 1);
+        for (int i = 0; i <= N; i++) res[i] = pq[i + N] * bc.finv(i);
+        return res;
+    }
     
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
@@ -2034,7 +2049,30 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
     friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
     friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
+    friend constexpr FPS taylor_shift(const FPS &f, long long c) { return f.taylor_shift(c); }
 };
+
+// find f(x)^n mod g(x)
+template<class mint, class T_VAL = long long> 
+FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
+    assert(!mod.empty());
+    auto iv = mod.rev().inv();
+    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
+        if (pol.size() < mod.size()) return FPS<mint>();
+        int deg = (int)pol.size() - (int)mod.size() + 1;
+        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
+    };
+    FPS<mint> res{1}, b(f);
+    while (e) {
+        if (e & 1) res *= b, res -= calc_quo(res) * mod;
+        b *= b;
+        b -= calc_quo(b) * mod;
+        e >>= 1;
+        assert(b.size() + 1 <= mod.size());
+        assert(res.size() + 1 <= mod.size());
+    }
+    return res;
+}
 
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
@@ -2183,6 +2221,139 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
     FPS<mint> g = (h.log() * mint(-n).inv()).exp();
     g *= f[1].inv();
     return (g << 1).pre(deg);
+}
+
+
+//------------------------------//
+// Polynomial Algorithms
+//------------------------------//
+
+// polynomial gcd, O(N(log N)^2)
+template<class mint>
+struct MatrixFPS22 {
+    FPS<mint> a00, a01, a10, a11;
+    MatrixFPS22() {}
+    MatrixFPS22(const FPS<mint> &a00, const FPS<mint> &a01, const FPS<mint> &a10, const FPS<mint> &a11)
+        : a00(a00), a01(a01), a10(a10), a11(a11) {}
+
+    MatrixFPS22 &operator *= (const MatrixFPS22 &r) {
+        FPS<mint> A00 = a00 * r.a00 + a01 * r.a10;
+        FPS<mint> A01 = a00 * r.a01 + a01 * r.a11;
+        FPS<mint> A10 = a10 * r.a00 + a11 * r.a10;
+        FPS<mint> A11 = a10 * r.a01 + a11 * r.a11;
+        swap(A00, a00), swap(A01, a01), swap(A10, a10), swap(A11, a11);
+        return *this;
+    }
+    static MatrixFPS22 get_identity() { 
+        return MatrixFPS22(FPS<mint>{mint(1)}, FPS<mint>(), FPS<mint>(), FPS<mint>{mint(1)});
+    }
+    MatrixFPS22 operator * (const MatrixFPS22 &r) const { return MatrixFPS22(*this) *= r; }
+};
+
+template<class mint> pair<FPS<mint>, FPS<mint>> operator * (
+const MatrixFPS22<mint> &m, const pair<FPS<mint>, FPS<mint>> &a) {
+    FPS<mint> b0 = m.a00 * a.first + m.a01 * a.second;
+    FPS<mint> b1 = m.a10 * a.first + m.a11 * a.second;
+    return {b0, b1};
+}
+
+template<class mint> MatrixFPS22<mint> mat_poly_half_gcd(pair<FPS<mint>, FPS<mint>> p) {
+    auto naive_gcd = [](MatrixFPS22<mint> &m, pair<FPS<mint>, FPS<mint>> &p) -> void {
+        FPS<mint> q = p.first / p.second, r = p.first - p.second * q;
+        FPS<mint> b10 = m.a00 - m.a10 * q, b11 = m.a01 - m.a11 * q;
+        swap(b10, m.a10), swap(b11, m.a11), swap(b10, m.a00), swap(b11, m.a01);
+        p = {p.second, r};
+    };
+    int N = p.first.size(), M = p.second.size(), K = (N + 1) / 2;
+    if (M <= K) return MatrixFPS22<mint>::get_identity();
+    MatrixFPS22<mint> m1 = mat_poly_half_gcd(make_pair(p.first >> K, p.second >> K));
+    p = m1 * p;
+    if ((int)p.second.size() <= K) return m1;
+    naive_gcd(m1, p);
+    if ((int)p.second.size() <= K) return m1;
+    int j = K * 2 - (int)p.first.size() + 1;
+    p.first >>= j, p.second >>= j;
+    return mat_poly_half_gcd(p) * m1;
+}
+
+template<class mint> MatrixFPS22<mint> mat_poly_gcd(const FPS<mint> &a, const FPS<mint> &b) {
+    auto naive_gcd = [](MatrixFPS22<mint> &m, pair<FPS<mint>, FPS<mint>> &p) -> void {
+        FPS<mint> q = p.first / p.second, r = p.first - p.second * q;
+        FPS<mint> b10 = m.a00 - m.a10 * q, b11 = m.a01 - m.a11 * q;
+        swap(b10, m.a10), swap(b11, m.a11), swap(b10, m.a00), swap(b11, m.a01);
+        p = {p.second, r};
+    };
+    pair<FPS<mint>, FPS<mint>> p{a, b};
+    p.first.normalize(), p.second.normalize();
+    int N = (int)p.first.size(), M = (int)p.second.size();
+    if (N < M) {
+        MatrixFPS22<mint> mat = mat_poly_gcd(p.second, p.first);
+        swap(mat.a00, mat.a01);
+        swap(mat.a10, mat.a11);
+        return mat;
+    }
+    MatrixFPS22<mint> res = MatrixFPS22<mint>::get_identity();
+    while (true) {
+        MatrixFPS22<mint> m1 = mat_poly_half_gcd(p);
+        p = m1 * p;
+        if (p.second.empty()) return m1 * res;
+        naive_gcd(m1, p);
+        if (p.second.empty()) return m1 * res;
+        res = m1 * res;
+    }
+}
+
+// find gcd(a(x), b(x)), O(N(log N)^2)
+template<class mint> FPS<mint> poly_gcd(const FPS<mint> &a, const FPS<mint> &b) {
+    pair<FPS<mint>, FPS<mint>> p(a, b);
+    MatrixFPS22<mint> m = mat_poly_gcd(a, b);
+    p = m * p;
+    if (!p.first.empty()) {
+        mint coef = p.first.back().inv();
+        for (auto &x : p.first) x *= coef;
+    }
+    return p.first;
+}
+
+// find {a^{-1}, exist: true, not: false}, O(N(log N)^2)
+template<class mint> pair<FPS<mint>, bool> poly_inv(const FPS<mint> &a, const FPS<mint> &mod) {
+    pair<FPS<mint>, FPS<mint>> p(a, mod);
+    MatrixFPS22<mint> m = mat_poly_gcd(a, mod);
+    FPS<mint> g = (m * p).first;
+    if (g.size() != 1) return {FPS<mint>(), false};
+    pair<FPS<mint>, FPS<mint>> x(FPS<mint>({mint(1)}), mod);
+    return {((m * x).first % mod) * g[0].inv(), true};
+}
+
+// find root, O(N(log N)^2 + N log N log p + n(log n)^2 log p)
+template<class mint> vector<mint> find_polynomial_roots(const FPS<mint> &f) {
+    int p = mint::get_mod();
+    vector<mint> res;
+    if (p == 2) {
+        for (int r = 0; r < 2; r++) if (f.eval(r) == 0) res.emplace_back(r);
+        return res;
+    }
+    auto rec = [&](auto &&rec, const FPS<mint> &F) -> void {
+        if (F.size() == 1) return;
+        if (F.size() == 2) {
+            mint r = (-F[0]) / F[1];
+            res.emplace_back(r);
+            return;
+        }
+        FPS<mint> g{randInt(0, p - 1), 1};
+        FPS<mint> h = mod_pow(g, (p - 1) / 2, F);
+        if (h.empty()) return rec(rec, F);
+        h[0]--;
+        auto f1 = poly_gcd(F, h);
+        auto f2 = F / f1;
+        rec(rec, f1), rec(rec, f2);
+    };
+    FPS<mint> x{0, 1};
+    FPS<mint> g = mod_pow(x, p, f) - x;
+    g = poly_gcd(f, g);
+    rec(rec, g);
+    sort(res.begin(), res.end());
+    return res;
 }
 
 
