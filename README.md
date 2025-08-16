@@ -317,6 +317,7 @@
 - (★★★☆) [行列累乗, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [行列累乗, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [行列累乗, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
+- (★★★★) [特性多項式の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
 - (★★★★) [det(M0 + M1x) の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_linear_expression.cpp)
 - (★★★★) Black Box Linear Algebra
 
@@ -333,7 +334,6 @@
 - (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
 - (★★★★) [任意 mod 畳み込み (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
 - (★★★★) [mod 2^64 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_mod_2_64.cpp)
-- (★★★★) Karatsuba 法
 
 ## 形式的冪級数 (FPS)
 
@@ -364,13 +364,13 @@
 
 - (★★★☆) [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
 - (★★★★) [f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mod_pow.cpp)
-- (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★☆) [Polynomial Taylor Shift (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
 - (★★★★) [Multipoint Evaluation (O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation.cpp)
-- (★★★★) [Multipoint Evaluation (等比数列のとき) (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation_in_geometric_sequence.cpp)
+- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation_in_geometric_sequence.cpp)
 - (★★★★) [多項式補間 (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation.cpp)
 - (★★★★) [多項式補間 (等比数列のとき) (O(N log N)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
 - (★★★★) [多項式の評価点シフト (O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_shift_sampling.cpp)
+- (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★★) [多項式 GCD (by half-gcd) (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
 - (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_root_finding.cpp)
 
@@ -380,6 +380,8 @@
 - (★★★★) Bk = Σ{i=0}^{n-1} i^k を係数とする多項式
 - (★★★★) Σ{i=0}^{n-1} r^i i^d
 - (★★★★) Σ{i=0}^{∞} r^i i^d
+- (★★★★) Karatsuba 法
+
 
 
 　
@@ -397,11 +399,11 @@
 ## さまざまな数
 
 - (★★☆☆) [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
+- (★★★☆) [カタラン数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/catalan_number.cpp)
 - (★★★☆) [分割数 P(N, K) (O(NK))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
 - (★★★★) [分割数 P(N) (O(N√N))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
 - (★★★☆) スターリング数
 - (★★★☆) ベル数
-- (★★★☆) [カタラン数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/catalan_number.cpp)
 - (★★★☆) ベルヌーイ数
 - (★★★☆) モンモール数
 

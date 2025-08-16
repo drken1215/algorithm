@@ -1,13 +1,9 @@
 //
-// 多項式 (Fp 体係数) の Taylor Shift, O(N log N)
-//   多項式 f(x) が与えられて、f(x + c) の各係数を求める
+// Polynomial Interpolation, O(N(log N)^2)
 //
 // verified:
-//   Yosupo Library Checker - Polynomial Taylor Shift
-//     https://judge.yosupo.jp/problem/polynomial_taylor_shift
-//
-//   AGC 005 F - Many Easy Problems
-//     https://atcoder.jp/contests/agc005/tasks/agc005_f
+//   Yosupo Library Checker - Polynomial Interpolation
+//     https://judge.yosupo.jp/problem/polynomial_interpolation
 //
 
 
@@ -371,8 +367,8 @@ private:
     char *begin_, *end_, *ptr_;
     
     // preparation
-    template <class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
-    template <class T> static constexpr auto POW10 = [] {
+    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
+    template<class T> static constexpr auto POW10 = [] {
         array<T, DIGITS<T>> ret;
         ret[0] = 1;
         for (int i = 1; i < DIGITS<T>; ++i) {
@@ -825,7 +821,24 @@ template<class mint> struct BiCoef {
     }
 };
 
+// all inverse
+template<class mint> vector<mint> all_inverse(vector<mint> &v) {
+    for (auto &&vi : v) assert(v != mint(0));
+    int N = (int)v.size();
+    vector<mint> res(N + 1, mint(1));
+    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
+    mint t = res.back().inv();
+    res.pop_back();
+    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
+    return res;
+}
+
+
 // Garner's algorithm
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+
 // if m is not coprime, call this function first
 template<class T_VAL>
 bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
@@ -855,9 +868,6 @@ bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
 }
 
 // find x (%MOD), LCM (%MOD) (m must be coprime)
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
 template<class T_VAL>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     assert(b.size() == m.size());
@@ -878,6 +888,7 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     return res;
 }
 
+// find x, LCM (m must be coprime)
 template<class T_VAL, class T_MOD>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
     assert(b.size() == m.size());
@@ -1591,7 +1602,7 @@ template<class mint> struct FPS : vector<mint> {
         while (!this->empty() && this->back() == 0) this->pop_back();
         return *this;
     }
-    constexpr mint eval(const mint &v) {
+    constexpr mint eval(const mint &v) const {
         mint res = 0;
         for (int i = (int)this->size()-1; i >= 0; --i) {
             res *= v;
@@ -2195,53 +2206,139 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
 
 
 //------------------------------//
+// Polynomial Algorithms
+//------------------------------//
+
+// find f(x)^n mod g(x)
+template<class mint, class T_VAL = long long> 
+FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
+    assert(!mod.empty());
+    auto iv = mod.rev().inv();
+    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
+        if (pol.size() < mod.size()) return FPS<mint>();
+        int deg = (int)pol.size() - (int)mod.size() + 1;
+        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
+    };
+    FPS<mint> res{1}, b(f);
+    while (e) {
+        if (e & 1) res *= b, res -= calc_quo(res) * mod;
+        b *= b;
+        b -= calc_quo(b) * mod;
+        e >>= 1;
+        assert(b.size() + 1 <= mod.size());
+        assert(res.size() + 1 <= mod.size());
+    }
+    return res;
+}
+
+// middle product 
+// c[i] = sum_j a[i+j]b[j] (deg(a) = n, deg(b) = m -> deg(c) = n-m)
+template<class mint>
+FPS<mint> middle_product(const FPS<mint> &a, const FPS<mint> &b) {
+    assert(a.size() >= b.size());
+    if (b.empty()) return FPS<mint>((int)a.size() - (int)b.size() + 1);
+    int N = 1;
+    while (N < (int)a.size()) N <<= 1;
+    FPS<mint> fa(N), fb(N);
+    copy(a.begin(), a.end(), fa.begin());
+    copy(b.rbegin(), b.rend(), fb.begin());
+    fa *= fb;
+    fa.resize(a.size());
+    fa.erase(fa.begin(), fa.begin() + (int)b.size() - 1);
+    return fa;
+}
+
+// multipoint evaluation, polynomial interpolation
+template<class mint> struct SubproductTree {
+    // inner data
+    int num_points, siz;
+    vector<FPS<mint>> tree;
+
+    // constructor
+    SubproductTree() {}
+    SubproductTree(const vector<mint> &x) {
+        num_points = (int)x.size();
+        siz = 1;
+        while (siz < num_points) siz <<= 1;
+        tree.resize(siz * 2);
+        for (int i = 0; i < siz; i++) tree[siz + i] = {1, (i < num_points ? -x[i] : 0)};
+        for (int i = siz - 1; i >= 1; i--) tree[i] = tree[i * 2] * tree[i * 2 + 1];
+    }
+
+    // multipoint evaluation
+    vector<mint> eval(FPS<mint> f) {
+        int N = (int)f.size();
+        if (N == 0) return vector<mint>(num_points, mint(0));
+        f.resize(N * 2 - 1);
+        vector<FPS<mint>> g(siz * 2);
+        g[1] = tree[1];
+        g[1].resize(N);
+        g[1] = inv(g[1]);
+        g[1] = middle_product(f, g[1]);
+        g[1].resize(siz);
+        for (int i = 1; i < siz; i++) {
+            g[i * 2] = middle_product(g[i], tree[i * 2 + 1]);
+            g[i * 2 + 1] = middle_product(g[i], tree[i * 2]);
+        }
+        vector<mint> res(num_points);
+        for (int i = 0; i < num_points; i++) res[i] = g[siz + i][0];
+        return res;
+    }
+
+    // polynomial interpolation
+    FPS<mint> interpolate(const vector<mint> &y) {
+        assert((int)y.size() == num_points);
+        vector<mint> p(num_points);
+        for (int i = 0; i < num_points; i++) p[i] = tree[1][num_points - i - 1] * (i + 1);
+        p = eval(p);
+        vector<FPS<mint>> t(siz * 2);
+        for (int i = 0; i < siz; i++) t[siz + i] = {(i < num_points ? y[i] / p[i] : 0)};
+        for (int i = siz - 1; i >= 1; i--) {
+            t[i] = t[i * 2] * tree[i * 2 + 1];
+            auto rt = t[i * 2 + 1] * tree[i * 2];
+            for (int k = 0; k < (int)t[i].size(); k++) t[i][k] += rt[k];
+        }
+        t[1].resize(num_points);
+        reverse(t[1].begin(), t[1].end());
+        return t[1];
+    }
+};
+
+// multipoint evaluation, polynomial interpolation
+template<class mint>
+vector<mint> multipoint_eval(const FPS<mint> &f, const vector<mint> &x) {
+    if (x.empty()) return {};
+    SubproductTree<mint> st(x);
+    return st.eval(f);
+}
+template<class mint>
+FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
+    assert(x.size() == y.size());
+    if (x.empty()) return {};
+    SubproductTree<mint> st(x);
+    return st.interpolate(y);
+}
+
+
+//------------------------------//
 // Examples
 //------------------------------//
 
-// Yosupo Library Checker - Polynomial Taylor Shift
-void Yosupo_Polynomial_Taylor_Shift() {
+// Yosupo Library Checker - Polynomial Interpolation
+void Yosupo_Polynomial_Interpolation() {
     FastRead Read; FastWrite Write;
-
     using mint = Fp<>;
-    long long N, c;
-    Read(N, c);
-    FPS<mint> a(N);
-    for (int i = 0; i < N; i++) Read(a[i].val);
-    auto res = taylor_shift(a, c);
+    int N;
+    Read(N);
+    vector<mint> x(N), y(N);
+    for (int i = 0; i < N; i++) Read(x[i].val);
+    for (int i = 0; i < N; i++) Read(y[i].val);
+    auto res = interpolate(x, y);
     for (int i = 0; i < res.size(); i++) Write(res[i].val), Write(' ');
     Write('\n');
 }
 
-// AGC 005 F - Many Easy Problems
-void AGC_005_F() {
-    const int MOD = 924844033;
-    using mint = Fp<MOD>;
-    int N, a, b;
-    cin >> N;
-    BiCoef<mint> bc(N + 1);
-    vector<vector<int>> G(N);
-    for (int i = 0; i < N-1; ++i) {
-        cin >> a >> b, --a, --b;
-        G[a].push_back(b), G[b].push_back(a);
-    }
-    FPS<mint> f(N+1, 0);
-    vector<int> si(N, 1);
-    auto rec = [&](auto &&rec, int v, int p = -1) -> void {
-        for (auto ch : G[v]) {
-            if (ch == p) continue;
-            rec(rec, ch, v);
-            f[si[ch]]++;
-            si[v] += si[ch];
-        }
-        f[N - si[v]]++;
-    };
-    rec(rec, 0);
-    FPS<mint> g = taylor_shift(f, 1);
-    for (int k = 1; k <= N; ++k) cout << bc.com(N, k) * N - g[k] << '\n';
-}
-
 
 int main() {
-    //Yosupo_Polynomial_Taylor_Shift();
-    AGC_005_F();
+    Yosupo_Polynomial_Interpolation();
 }
