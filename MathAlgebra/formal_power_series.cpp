@@ -1580,6 +1580,7 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 
 // Formal Power Series
 template<class mint> struct FPS : vector<mint> {
+    static const int SPARSE_BOARDER = 50;
     using vector<mint>::vector;
  
     // constructor
@@ -1597,6 +1598,19 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS& normalize() {
         while (!this->empty() && this->back() == 0) this->pop_back();
         return *this;
+    }
+    constexpr mint eval(const mint &v) {
+        mint res = 0;
+        for (int i = (int)this->size()-1; i >= 0; --i) {
+            res *= v;
+            res += (*this)[i];
+        }
+        return res;
+    }
+    constexpr int count_terms() const {
+        int res = 0;
+        for (int i = 0; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) res++;
+        return res;
     }
  
     // basic operator
@@ -1680,14 +1694,6 @@ template<class mint> struct FPS : vector<mint> {
         res.insert(res.end(), begin(*this) + x, end(*this));
         return *this = res;
     }
-    constexpr mint eval(const mint &v) {
-        mint res = 0;
-        for (int i = (int)this->size()-1; i >= 0; --i) {
-            res *= v;
-            res += (*this)[i];
-        }
-        return res;
-    }
 
     // advanced operation
     // df/dx
@@ -1708,6 +1714,18 @@ template<class mint> struct FPS : vector<mint> {
     }
     
     // inv(f), f[0] must not be 0
+    constexpr FPS inv(int deg = -1) const {
+        if (count_terms() <= SPARSE_BOARDER) return inv_sparse(deg);
+        assert(this->size() >= 1 && (*this)[0] != 0);
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+        if (deg < 0) deg = (int)this->size();
+        FPS res({mint(1) / (*this)[0]});
+        for (int d = 1; d < deg; d <<= 1) {
+            res = (res + res - res * res * pre(d << 1)).pre(d << 1);
+        }
+        res.resize(deg);
+        return res;
+    }
     constexpr FPS inv_ntt_friendly(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
@@ -1729,28 +1747,71 @@ template<class mint> struct FPS : vector<mint> {
         }
         return res.pre(deg);
     }
-    constexpr FPS inv(int deg = -1) const {
-        if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+    constexpr FPS inv_sparse(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
-        FPS res({mint(1) / (*this)[0]});
-        for (int d = 1; d < deg; d <<= 1) {
-            res = (res + res - res * res * pre(d << 1)).pre(d << 1);
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i, (*this)[i]);
         }
-        res.resize(deg);
+        vector<mint> res(deg);
+        res[0] = (*this)[0].inv();
+        for (int i = 1; i < deg; i++) {
+            mint r = 0;
+            for (auto &&[k, val] : dat) {
+                if (k > i) break;
+                r -= val * res[i - k];
+            }
+            res[i] = r * res[0];
+        }
         return res;
     }
     
     // log(f) = \int f'/f dx, f[0] must be 1
     constexpr FPS log(int deg = -1) const {
         assert(this->size() >= 1 && (*this)[0] == 1);
+        if (count_terms() <= SPARSE_BOARDER) return log_sparse(deg);
         if (deg < 0) deg = (int)this->size();
         return ((diff() * inv(deg)).pre(deg - 1)).integral();
     }
+    constexpr FPS log_sparse(int deg = -1) const {
+        assert(this->size() >= 1 && (*this)[0] == 1);
+        if (deg < 0) deg = (int)this->size();
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i, (*this)[i]);
+        }
+        BiCoef<mint> bc(deg);
+        vector<mint> res(deg), tmp(deg);
+        for (int i = 0; i < deg - 1; i++) {
+            mint r = mint(i + 1) * (*this)[i + 1];
+            for (auto &&[k, val] : dat) {
+                if (k > i) break;
+                r -= val * tmp[i - k];
+            }
+            tmp[i] = r;
+            res[i + 1] = r * bc.inv(i + 1);
+        }
+        return res;
+    }
     
     // exp(f), f[0] must be 0
+    constexpr FPS exp(int deg = -1) const {
+        if (count_terms() <= SPARSE_BOARDER) return exp_sparse(deg);
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
+        if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
+        if (deg < 0) deg = (int)this->size();
+        FPS res(1, 1);
+        for (int d = 1; d < deg; d <<= 1) {
+            res = res * (pre(d << 1) - res.log(d << 1) + 1).pre(d << 1);
+        }
+        res.resize(deg);
+        return res;
+    }
     constexpr FPS exp_ntt_friendly(int deg = -1) const {
-        assert(this->size() == 0 || (*this)[0] == 0);
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
 
         FPS fiv;
@@ -1819,20 +1880,32 @@ template<class mint> struct FPS : vector<mint> {
         }
         return FPS(begin(b), begin(b) + deg);
     }
-    constexpr FPS exp(int deg = -1) const {
-        if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
-        assert(this->size() == 0 || (*this)[0] == 0);
+    constexpr FPS exp_sparse(int deg = -1) const {
+        if ((int)this->size() == 0) return {mint(1)};
+        assert((*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
-        FPS res(1, 1);
-        for (int d = 1; d < deg; d <<= 1) {
-            res = res * (pre(d << 1) - res.log(d << 1) + 1).pre(d << 1);
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i - 1, (*this)[i] * i);
         }
-        res.resize(deg);
+        BiCoef<mint> bc(deg);
+        vector<mint> res(deg);
+        res[0] = 1;
+        for (int i = 1; i < deg; i++) {
+            mint r = 0;
+            for (auto &&[k, val] : dat) {
+                if (k > i - 1) break;
+                r += val * res[i - k - 1];
+            }
+            res[i] = r * bc.inv(i);
+        }
         return res;
     }
     
     // pow(f) = exp(e * log f)
     constexpr FPS pow(long long e, int deg = -1) const {
+        if (count_terms() <= SPARSE_BOARDER) return pow_sparse(e, deg);
+        assert(e >= 0);
         if (deg < 0) deg = (int)this->size();
         if (deg == 0) return FPS();
         if (e == 0) {
@@ -1840,12 +1913,58 @@ template<class mint> struct FPS : vector<mint> {
             res[0] = 1;
             return res;
         }
-        long long i = 0;
-        while (i < (int)this->size() && (*this)[i] == 0) ++i;
-        if (i == (int)this->size() || i > (deg - 1) / e) return FPS(deg, 0);
-        mint k = (*this)[i];
-        FPS res = ((((*this) >> i) / k).log(deg) * e).exp(deg) * mint(k).pow(e) << (e * i);
+        long long ord = 0;
+        while (ord < (int)this->size() && (*this)[ord] == 0) ord++;
+        if (ord == (int)this->size() || ord > (deg - 1) / e) return FPS(deg, 0);
+        mint k = (*this)[ord];
+        FPS res = ((((*this) >> ord) / k).log(deg) * e).exp(deg) * mint(k).pow(e) << (e * ord);
         res.resize(deg);
+        return res;
+    }
+    constexpr FPS pow_sparse(long long e, int deg = -1) const {
+        assert(e >= 0);
+        if (deg < 0) deg = (int)this->size();
+        if (deg == 0) return FPS();
+        if (e == 0) {
+            FPS res(deg, 0);
+            res[0] = 1;
+            return res;
+        }
+        long long ord = 0;
+        while (ord < (int)this->size() && (*this)[ord] == 0) ord++;
+        if (ord == (int)this->size() || ord > (deg - 1) / e) return FPS(deg, 0);
+        if ((*this)[0] == 1) return pow_sparse_constant1(e, deg);
+        auto f = (*this);
+        rotate(f.begin(), f.begin() + ord, f.end());
+        mint con = f[0], icon = f[0].inv();
+        for (int i = 0; i < deg; i++) f[i] *= icon;
+        auto res = f.pow_sparse_constant1(e, deg);
+        int ord2 = e * ord;
+        rotate(res.begin(), res.begin() + (deg - ord2), res.end());
+        fill(res.begin(), res.begin() + ord2, mint(0));
+        mint pw = con.pow(e);
+        for (int i = ord2; i < deg; i++) res[i] *= pw;
+        return res;
+    }
+    constexpr FPS pow_sparse_constant1(mint e, int deg = -1) const {
+        assert(e != 0 && (int)this->size() > 0 && (*this)[0] == 1);
+        if (deg < 0) deg = (int)this->size();
+        vector<pair<int, mint>> dat;
+        for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
+            dat.emplace_back(i, (*this)[i]);
+        }
+        BiCoef<mint> bc(deg);
+        vector<mint> res(deg);
+        res[0] = 1;
+        for (int i = 0; i < deg - 1; i++) {
+            mint &r = res[i + 1];
+            for (auto &&[k, val] : dat) {
+                if (k > i + 1) break;
+                mint t = val * res[i - k + 1];
+                r += t * (mint(k) * e - mint(i - k + 1));
+            }
+            r *= bc.inv(i + 1);
+        }
         return res;
     }
     
@@ -1867,6 +1986,7 @@ template<class mint> struct FPS : vector<mint> {
             }
             return FPS(deg, 0);
         }
+        if (count_terms() <= SPARSE_BOARDER) return sqrt_sparse(deg);
         long long sqr = mod_sqrt<long long>((*this)[0].val, mint::get_mod());
         if (sqr == -1) return FPS();
         assert((*this)[0].val == sqr * sqr % mint::get_mod());
@@ -1877,6 +1997,18 @@ template<class mint> struct FPS : vector<mint> {
         }
         res.resize(deg);
         return res;
+    }
+    constexpr FPS sqrt_sparse(int deg) const {
+        assert((int)this->size() > 0 && (*this)[0] != 0);
+        mint con = (*this)[0], icon = con.inv();
+        long long sqr = mod_sqrt<long long>(con.val, mint::get_mod());
+        if (sqr == -1) return FPS();
+        assert(con.val == sqr * sqr % mint::get_mod());
+        auto res = (*this) * icon;
+        return res.sqrt_sparse_constant1(deg) * sqr;
+    }
+    constexpr FPS sqrt_sparse_constant1(int deg) const {
+        return pow_sparse_constant1(mint(2).inv(), deg);
     }
     
     // friend operators
