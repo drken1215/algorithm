@@ -363,6 +363,7 @@
 ## 多項式のアルゴリズム
 
 - (★★★☆) [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
+- (★★★★) [f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mod_pow.cpp)
 - (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★☆) [Polynomial Taylor Shift (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
 - (★★★★) [Multipoint Evaluation (O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation.cpp)
