@@ -368,10 +368,6 @@
 - (★★★★) 多項式補間
 - (★★★★) 多項式 GCD
 
-## FPS アルゴリズムの活用
-
-
-
 ## さまざまな和
 
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/floor_sum.cpp)
@@ -534,7 +530,6 @@
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
 - (★★★★) [一般化 Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
-
 
 ## Monge 性を活用する DP 高速化技法
 
