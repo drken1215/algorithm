@@ -1716,8 +1716,8 @@ template<class mint> struct FPS : vector<mint> {
     // inv(f), f[0] must not be 0
     constexpr FPS inv(int deg = -1) const {
         if (count_terms() <= SPARSE_BOARDER) return inv_sparse(deg);
-        assert(this->size() >= 1 && (*this)[0] != 0);
         if constexpr (std::is_same_v<mint, Fp<998244353>>) return inv_ntt_friendly(deg);
+        assert(this->size() >= 1 && (*this)[0] != 0);
         if (deg < 0) deg = (int)this->size();
         FPS res({mint(1) / (*this)[0]});
         for (int d = 1; d < deg; d <<= 1) {
@@ -1797,10 +1797,10 @@ template<class mint> struct FPS : vector<mint> {
     
     // exp(f), f[0] must be 0
     constexpr FPS exp(int deg = -1) const {
-        if (count_terms() <= SPARSE_BOARDER) return exp_sparse(deg);
         if ((int)this->size() == 0) return {mint(1)};
-        assert((*this)[0] == 0);
+        if (count_terms() <= SPARSE_BOARDER) return exp_sparse(deg);
         if constexpr (std::is_same_v<mint, Fp<998244353>>) return exp_ntt_friendly(deg);
+        assert((*this)[0] == 0);
         if (deg < 0) deg = (int)this->size();
         FPS res(1, 1);
         for (int d = 1; d < deg; d <<= 1) {
@@ -1947,7 +1947,7 @@ template<class mint> struct FPS : vector<mint> {
         return res;
     }
     constexpr FPS pow_sparse_constant1(mint e, int deg = -1) const {
-        assert(e != 0 && (int)this->size() > 0 && (*this)[0] == 1);
+        assert((int)this->size() > 0 && (*this)[0] == 1);
         if (deg < 0) deg = (int)this->size();
         vector<pair<int, mint>> dat;
         for (int i = 1; i < (int)this->size(); i++) if ((*this)[i] != mint(0)) {
@@ -1970,6 +1970,7 @@ template<class mint> struct FPS : vector<mint> {
     
     // sqrt(f)
     constexpr FPS sqrt(int deg = -1) const {
+        if (count_terms() <= SPARSE_BOARDER) return sqrt_sparse(deg);
         if (deg < 0) deg = (int)this->size();
         if ((int)this->size() == 0) return FPS(deg, 0);
         if ((*this)[0] == mint(0)) {
@@ -1986,7 +1987,6 @@ template<class mint> struct FPS : vector<mint> {
             }
             return FPS(deg, 0);
         }
-        if (count_terms() <= SPARSE_BOARDER) return sqrt_sparse(deg);
         long long sqr = mod_sqrt<long long>((*this)[0].val, mint::get_mod());
         if (sqr == -1) return FPS();
         assert((*this)[0].val == sqr * sqr % mint::get_mod());
@@ -1999,7 +1999,22 @@ template<class mint> struct FPS : vector<mint> {
         return res;
     }
     constexpr FPS sqrt_sparse(int deg) const {
-        assert((int)this->size() > 0 && (*this)[0] != 0);
+        if (deg < 0) deg = (int)this->size();
+        if ((int)this->size() == 0) return FPS(deg, 0);
+        if ((*this)[0] == mint(0)) {
+            for (int i = 1; i < (int)this->size(); i++) {
+                if ((*this)[i] != mint(0)) {
+                    if (i & 1) return FPS();
+                    if (deg - i / 2 <= 0) return FPS(deg, 0);
+                    auto res = ((*this) >> i).sqrt_sparse(deg - i / 2);
+                    if (res.empty()) return FPS();
+                    res = res << (i / 2);
+                    if ((int)res.size() < deg) res.resize(deg, mint(0));
+                    return res;
+                }
+            }
+            return FPS(deg, 0);
+        }
         mint con = (*this)[0], icon = con.inv();
         long long sqr = mod_sqrt<long long>(con.val, mint::get_mod());
         if (sqr == -1) return FPS();
