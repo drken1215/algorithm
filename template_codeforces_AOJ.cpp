@@ -2032,28 +2032,6 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS taylor_shift(const FPS &f, long long c) { return f.taylor_shift(c); }
 };
 
-// find f(x)^n mod g(x)
-template<class mint, class T_VAL = long long> 
-FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
-    assert(!mod.empty());
-    auto iv = mod.rev().inv();
-    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
-        if (pol.size() < mod.size()) return FPS<mint>();
-        int deg = (int)pol.size() - (int)mod.size() + 1;
-        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
-    };
-    FPS<mint> res{1}, b(f);
-    while (e) {
-        if (e & 1) res *= b, res -= calc_quo(res) * mod;
-        b *= b;
-        b -= calc_quo(b) * mod;
-        e >>= 1;
-        assert(b.size() + 1 <= mod.size());
-        assert(res.size() + 1 <= mod.size());
-    }
-    return res;
-}
-
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
 FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
@@ -2201,6 +2179,28 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
     FPS<mint> g = (h.log() * mint(-n).inv()).exp();
     g *= f[1].inv();
     return (g << 1).pre(deg);
+}
+
+// find f(x)^n mod g(x)
+template<class mint, class T_VAL = long long> 
+FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
+    assert(!mod.empty());
+    auto iv = mod.rev().inv();
+    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
+        if (pol.size() < mod.size()) return FPS<mint>();
+        int deg = (int)pol.size() - (int)mod.size() + 1;
+        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
+    };
+    FPS<mint> res{1}, b(f);
+    while (e) {
+        if (e & 1) res *= b, res -= calc_quo(res) * mod;
+        b *= b;
+        b -= calc_quo(b) * mod;
+        e >>= 1;
+        assert(b.size() + 1 <= mod.size());
+        assert(res.size() + 1 <= mod.size());
+    }
+    return res;
 }
 
 

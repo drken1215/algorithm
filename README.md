@@ -682,6 +682,7 @@
 # コードテンプレート
 
 - [コンテスト用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_contest.cpp)
+- [コンテスト用のコードテンプレート（Codeforces, AOJ に対応した短縮版)](https://github.com/drken1215/algorithm/blob/master/template_codeforces_AOJ.cpp)
 
 
 　
