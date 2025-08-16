@@ -355,15 +355,18 @@
 - (★★★★) [Pow of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/pow_sparse_formal_power_series.cpp)
 - (★★★★) [Sart of Sparse FPS](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/sqrt_sparse_formal_power_series.cpp)
 
-## FPS、多項式のアルゴリズム
+## FPS のアルゴリズム
 
 - (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
+- (★★★★) Berlekamp-Massey 法
+
+## 多項式のアルゴリズム
+
 - (★★★☆) [多項式の乗算 (by NTT, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mul.cpp)
 - (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★☆) [Polynomial Taylor Shift](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
 - (★★★★) 多項式補間
 - (★★★★) 多項式 GCD
-- (★★★★) Berlekamp-Massey 法
 
 ## FPS アルゴリズムの活用
 
