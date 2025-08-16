@@ -833,7 +833,24 @@ template<class mint> struct BiCoef {
     }
 };
 
+// all inverse
+template<class mint> vector<mint> all_inverse(vector<mint> &v) {
+    for (auto &&vi : v) assert(v != mint(0));
+    int N = (int)v.size();
+    vector<mint> res(N + 1, mint(1));
+    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
+    mint t = res.back().inv();
+    res.pop_back();
+    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
+    return res;
+}
+
+
 // Garner's algorithm
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+
 // if m is not coprime, call this function first
 template<class T_VAL>
 bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
@@ -863,9 +880,6 @@ bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
 }
 
 // find x (%MOD), LCM (%MOD) (m must be coprime)
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
 template<class T_VAL>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     assert(b.size() == m.size());
@@ -886,6 +900,7 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     return res;
 }
 
+// find x, LCM (m must be coprime)
 template<class T_VAL, class T_MOD>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
     assert(b.size() == m.size());
@@ -2052,26 +2067,27 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS taylor_shift(const FPS &f, long long c) { return f.taylor_shift(c); }
 };
 
-// find f(x)^n mod g(x)
-template<class mint, class T_VAL = long long> 
-FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
-    assert(!mod.empty());
-    auto iv = mod.rev().inv();
-    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
-        if (pol.size() < mod.size()) return FPS<mint>();
-        int deg = (int)pol.size() - (int)mod.size() + 1;
-        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
-    };
-    FPS<mint> res{1}, b(f);
-    while (e) {
-        if (e & 1) res *= b, res -= calc_quo(res) * mod;
-        b *= b;
-        b -= calc_quo(b) * mod;
-        e >>= 1;
-        assert(b.size() + 1 <= mod.size());
-        assert(res.size() + 1 <= mod.size());
+// Bostan-Mori
+// find [x^N] P(x)/Q(x), O(K log K log N)
+// deg(Q(x)) = K, deg(P(x)) < K
+template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
+    assert(!P.empty() && !Q.empty());
+    if (N == 0 || Q.size() == 1) return P[0] / Q[0];
+    
+    int qdeg = (int)Q.size();
+    FPS<mint> P2{P}, minusQ{Q};
+    P2.resize(qdeg - 1);
+    for (int i = 1; i < (int)Q.size(); i += 2) minusQ[i] = -minusQ[i];
+    P2 *= minusQ;
+    FPS<mint> Q2 = Q * minusQ;
+    FPS<mint> S(qdeg - 1), T(qdeg);
+    for (int i = 0; i < (int)S.size(); ++i) {
+        S[i] = (N % 2 == 0 ? P2[i * 2] : P2[i * 2 + 1]);
     }
-    return res;
+    for (int i = 0; i < (int)T.size(); ++i) {
+        T[i] = Q2[i * 2];
+    }
+    return BostanMori(S, T, N >> 1);
 }
 
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
@@ -2228,6 +2244,116 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
 // Polynomial Algorithms
 //------------------------------//
 
+// find f(x)^n mod g(x)
+template<class mint, class T_VAL = long long> 
+FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
+    assert(!mod.empty());
+    auto iv = mod.rev().inv();
+    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
+        if (pol.size() < mod.size()) return FPS<mint>();
+        int deg = (int)pol.size() - (int)mod.size() + 1;
+        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
+    };
+    FPS<mint> res{1}, b(f);
+    while (e) {
+        if (e & 1) res *= b, res -= calc_quo(res) * mod;
+        b *= b;
+        b -= calc_quo(b) * mod;
+        e >>= 1;
+        assert(b.size() + 1 <= mod.size());
+        assert(res.size() + 1 <= mod.size());
+    }
+    return res;
+}
+
+// middle product 
+// c[i] = sum_j a[i+j]b[j] (deg(a) = n, deg(b) = m -> deg(c) = n-m)
+template<class mint>
+FPS<mint> middle_product(const FPS<mint> &a, const FPS<mint> &b) {
+    assert(a.size() >= b.size());
+    if (b.empty()) return FPS<mint>((int)a.size() - (int)b.size() + 1);
+    int N = 1;
+    while (N < (int)a.size()) N <<= 1;
+    FPS<mint> fa(N), fb(N);
+    copy(a.begin(), a.end(), fa.begin());
+    copy(b.rbegin(), b.rend(), fb.begin());
+    fa *= fb;
+    fa.resize(a.size());
+    fa.erase(fa.begin(), fa.begin() + (int)b.size() - 1);
+    return fa;
+}
+
+// multipoint evaluation, polynomial interpolation
+template<class mint> struct SubproductTree {
+    // inner data
+    int num_points, siz;
+    vector<FPS<mint>> tree;
+
+    // constructor
+    SubproductTree() {}
+    SubproductTree(const vector<mint> &x) {
+        num_points = (int)x.size();
+        siz = 1;
+        while (siz < num_points) siz <<= 1;
+        tree.resize(siz * 2);
+        for (int i = 0; i < siz; i++) tree[siz + i] = {1, (i < num_points ? -x[i] : 0)};
+        for (int i = siz - 1; i >= 1; i--) tree[i] = tree[i * 2] * tree[i * 2 + 1];
+    }
+
+    // multipoint evaluation
+    vector<mint> eval(FPS<mint> f) {
+        int N = (int)f.size();
+        if (N == 0) return vector<mint>(num_points, mint(0));
+        f.resize(N * 2 - 1);
+        vector<FPS<mint>> g(siz * 2);
+        g[1] = tree[1];
+        g[1].resize(N);
+        g[1] = inv(g[1]);
+        g[1] = middle_product(f, g[1]);
+        g[1].resize(siz);
+        for (int i = 1; i < siz; i++) {
+            g[i * 2] = middle_product(g[i], tree[i * 2 + 1]);
+            g[i * 2 + 1] = middle_product(g[i], tree[i * 2]);
+        }
+        vector<mint> res(num_points);
+        for (int i = 0; i < num_points; i++) res[i] = g[siz + i][0];
+        return res;
+    }
+
+    // polynomial interpolation
+    FPS<mint> interpolate(const vector<mint> &y) {
+        assert((int)y.size() == num_points);
+        vector<mint> p(num_points);
+        for (int i = 0; i < num_points; i++) p[i] = tree[1][num_points - i - 1] * (i + 1);
+        p = eval(p);
+        vector<FPS<mint>> t(siz * 2);
+        for (int i = 0; i < siz; i++) t[siz + i] = {(i < num_points ? y[i] / p[i] : 0)};
+        for (int i = siz - 1; i >= 1; i--) {
+            t[i] = t[i * 2] * tree[i * 2 + 1];
+            auto rt = t[i * 2 + 1] * tree[i * 2];
+            for (int k = 0; k < (int)t[i].size(); k++) t[i][k] += rt[k];
+        }
+        t[1].resize(num_points);
+        reverse(t[1].begin(), t[1].end());
+        return t[1];
+    }
+};
+
+// multipoint evaluation, polynomial interpolation
+template<class mint>
+vector<mint> multipoint_eval(const FPS<mint> &f, const vector<mint> &x) {
+    if (x.empty()) return {};
+    SubproductTree<mint> st(x);
+    return st.eval(f);
+}
+template<class mint>
+FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
+    assert(x.size() == y.size());
+    if (x.empty()) return {};
+    SubproductTree<mint> st(x);
+    return st.interpolate(y);
+}
+
 // polynomial gcd, O(N(log N)^2)
 template<class mint>
 struct MatrixFPS22 {
@@ -2355,35 +2481,6 @@ template<class mint> vector<mint> find_polynomial_roots(const FPS<mint> &f) {
     sort(res.begin(), res.end());
     return res;
 }
-
-
-//------------------------------//
-// Polynomial, FPS algorithms
-//------------------------------//
-
-// Bostan-Mori
-// find [x^N] P(x)/Q(x), O(K log K log N)
-// deg(Q(x)) = K, deg(P(x)) < K
-template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
-    assert(!P.empty() && !Q.empty());
-    if (N == 0 || Q.size() == 1) return P[0] / Q[0];
-    
-    int qdeg = (int)Q.size();
-    FPS<mint> P2{P}, minusQ{Q};
-    P2.resize(qdeg - 1);
-    for (int i = 1; i < (int)Q.size(); i += 2) minusQ[i] = -minusQ[i];
-    P2 *= minusQ;
-    FPS<mint> Q2 = Q * minusQ;
-    FPS<mint> S(qdeg - 1), T(qdeg);
-    for (int i = 0; i < (int)S.size(); ++i) {
-        S[i] = (N % 2 == 0 ? P2[i * 2] : P2[i * 2 + 1]);
-    }
-    for (int i = 0; i < (int)T.size(); ++i) {
-        T[i] = Q2[i * 2];
-    }
-    return BostanMori(S, T, N >> 1);
-}
-
 
 
 //------------------------------//
