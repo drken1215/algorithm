@@ -834,7 +834,7 @@ template<class mint> struct BiCoef {
 };
 
 // all inverse
-template<class mint> vector<mint> all_inverse(vector<mint> &v) {
+template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
     for (auto &&vi : v) assert(vi != mint(0));
     int N = (int)v.size();
     vector<mint> res(N + 1, mint(1));
@@ -1595,7 +1595,7 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 
 // Formal Power Series
 template<class mint> struct FPS : vector<mint> {
-    static const int SPARSE_BOARDER = 50;
+    static const int SPARSE_BOARDER = 60;
     using vector<mint>::vector;
  
     // constructor
@@ -2396,8 +2396,6 @@ vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
     int N = (int)y.size();
     if (N == 0) return FPS<mint>();
     if (N == 1) return {y[0]};
-
-    // prod_[1,i] (1 - r^k)
     auto Y = y;
     mint ir = r.inv(), ia = a.inv();
     FPS<mint> po(N + N - 1, 1), po2(N + N - 1, 1), ipo(N + N - 1, 1), ipo2(N + N - 1, 1);
@@ -2407,8 +2405,6 @@ vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
     for (int i = 1; i < N; i++) S[i] = S[i - 1] * (mint(1) - po[i]);
     vector<mint> iS = all_inverse(S);
     mint sn = S[N - 1] * (mint(1) - po[N]);
-
-    // sum_i Y[i] / (1 - r^i x)
     for (int i = 0; i < N; i++) {
         Y[i] = Y[i] * po2[N - i - 1] * ipo2[N - 1] * iS[i] * iS[N - i - 1];
         if (i & 1) Y[i] = -Y[i];
@@ -2416,8 +2412,6 @@ vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
     for (int i = 0; i < N; i++) Y[i] *= ipo2[i];
     FPS<mint> f = middle_product(po2, Y);
     for (int i = 0; i < N; i++) f[i] *= ipo2[i];
-
-    // prod (1 - r^i x)
     FPS<mint> g(N, mint(1));
     for (int i = 1; i < N; i++) {
         g[i] = po2[i] * sn * iS[i] * iS[N - i];
@@ -2429,6 +2423,48 @@ vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
     mint p = 1;
     for (int i = 0; i < N; i++) f[i] *= p, p *= ia;
     return f;
+}
+
+// shift of sampling points
+// input y[i] = f(i) (i = 0, 1, ..., N-1)
+// output f[c], f[c+1], ..., f[c+M-1]
+template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y, const mint &c, int M = -1) {
+    int N = (int)y.size();
+    if (M == -1) M = N;
+    int T = c.val;
+    if (T < N) {
+        FPS<mint> res(M);
+        int ptr = 0;
+        for (int i = T; i < N && ptr < M; i++) res[ptr++] = y[i];
+        if (N < T + M) {
+            auto suffix = shift_of_sampling_points(y, mint(N), M - ptr);
+            for (int i = N; i < T + M; i++) res[ptr++] = suffix[i - N];
+        }
+        return res;
+    }
+    if (T + M > mint::get_mod()) {
+        auto prefix = shift_of_sampling_points(y, mint(T), mint::get_mod() - T);
+        auto suffix = shift_of_sampling_points(y, mint(0), M - (int)prefix.size());
+        copy(begin(suffix), end(suffix), back_inserter(prefix));
+        return prefix;
+    }
+    BiCoef<mint> bc(N);
+    FPS<mint> res(M), d(N), h(M + N - 1);
+    for (int i = 0; i < N; i++) {
+        d[i] = bc.finv(i) * bc.finv(N - i - 1) * y[i];
+        if ((N - i - 1) & 1) d[i] = -d[i];
+    }
+    for (int i = 0; i < M + N - 1; i++) h[i] = mint(T - N + i + 1);
+    h = all_inverse(h);
+    auto dh = d * h;
+    mint cur = T;
+    for (int i = 1; i < N; i++) cur *= T - i;
+    for (int i = 0; i < M; i++) {
+        res[i] = cur * dh[N + i - 1];
+        cur *= T + i + 1;
+        cur *= h[i];
+    }
+    return res;
 }
 
 // polynomial gcd, O(N(log N)^2)

@@ -1,10 +1,9 @@
 //
-// 多項式の除算 (by FPS), O(N log N)
-// 　　係数は p を素数として Fp 体を想定
+// Shift of Sampling Points of Polynomial, O((N + M)log(N + M)
 //
 // verified:
-//   Library Checker - Division of Polynomials
-//     https://judge.yosupo.jp/problem/division_of_polynomials
+//   Yosupo Library Checker - Shift of Sampling Points of Polynomial
+//     https://judge.yosupo.jp/problem/shift_of_sampling_points_of_polynomial
 //
 
 
@@ -368,8 +367,8 @@ private:
     char *begin_, *end_, *ptr_;
     
     // preparation
-    template <class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
-    template <class T> static constexpr auto POW10 = [] {
+    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
+    template<class T> static constexpr auto POW10 = [] {
         array<T, DIGITS<T>> ret;
         ret[0] = 1;
         for (int i = 1; i < DIGITS<T>; ++i) {
@@ -822,7 +821,24 @@ template<class mint> struct BiCoef {
     }
 };
 
+// all inverse
+template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
+    for (auto &&vi : v) assert(vi != mint(0));
+    int N = (int)v.size();
+    vector<mint> res(N + 1, mint(1));
+    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
+    mint t = res.back().inv();
+    res.pop_back();
+    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
+    return res;
+}
+
+
 // Garner's algorithm
+// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
+//      coeffs[k] = m[0]m[1]...m[k-1]
+//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
+
 // if m is not coprime, call this function first
 template<class T_VAL>
 bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
@@ -852,9 +868,6 @@ bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
 }
 
 // find x (%MOD), LCM (%MOD) (m must be coprime)
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
 template<class T_VAL>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     assert(b.size() == m.size());
@@ -875,6 +888,7 @@ T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
     return res;
 }
 
+// find x, LCM (m must be coprime)
 template<class T_VAL, class T_MOD>
 T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
     assert(b.size() == m.size());
@@ -1569,7 +1583,7 @@ vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, 
 
 // Formal Power Series
 template<class mint> struct FPS : vector<mint> {
-    static const int SPARSE_BOARDER = 50;
+    static const int SPARSE_BOARDER = 60;
     using vector<mint>::vector;
  
     // constructor
@@ -1588,7 +1602,7 @@ template<class mint> struct FPS : vector<mint> {
         while (!this->empty() && this->back() == 0) this->pop_back();
         return *this;
     }
-    constexpr mint eval(const mint &v) {
+    constexpr mint eval(const mint &v) const {
         mint res = 0;
         for (int i = (int)this->size()-1; i >= 0; --i) {
             res *= v;
@@ -2014,6 +2028,21 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS sqrt_sparse_constant1(int deg) const {
         return pow_sparse_constant1(mint(2).inv(), deg);
     }
+
+    // polynomial taylor shift
+    constexpr FPS taylor_shift(long long c) const {
+        int N = (int)this->size() - 1;
+        BiCoef<mint> bc(N + 1);
+        FPS<mint> p(N + 1), q(N + 1);
+        for (int i = 0; i <= N; i++) {
+            p[i] = (*this)[i] * bc.fact(i);
+            q[N - i] = mint(c).pow(i) * bc.finv(i);
+        }
+        FPS<mint> pq = p * q;
+        FPS<mint> res(N + 1);
+        for (int i = 0; i <= N; i++) res[i] = pq[i + N] * bc.finv(i);
+        return res;
+    }
     
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
@@ -2023,7 +2052,31 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
     friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
     friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
+    friend constexpr FPS taylor_shift(const FPS &f, long long c) { return f.taylor_shift(c); }
 };
+
+// Bostan-Mori
+// find [x^N] P(x)/Q(x), O(K log K log N)
+// deg(Q(x)) = K, deg(P(x)) < K
+template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
+    assert(!P.empty() && !Q.empty());
+    if (N == 0 || Q.size() == 1) return P[0] / Q[0];
+    
+    int qdeg = (int)Q.size();
+    FPS<mint> P2{P}, minusQ{Q};
+    P2.resize(qdeg - 1);
+    for (int i = 1; i < (int)Q.size(); i += 2) minusQ[i] = -minusQ[i];
+    P2 *= minusQ;
+    FPS<mint> Q2 = Q * minusQ;
+    FPS<mint> S(qdeg - 1), T(qdeg);
+    for (int i = 0; i < (int)S.size(); ++i) {
+        S[i] = (N % 2 == 0 ? P2[i * 2] : P2[i * 2 + 1]);
+    }
+    for (int i = 0; i < (int)T.size(); ++i) {
+        T[i] = Q2[i * 2];
+    }
+    return BostanMori(S, T, N >> 1);
+}
 
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
@@ -2176,30 +2229,258 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
 
 
 //------------------------------//
+// Polynomial Algorithms
+//------------------------------//
+
+// find f(x)^n mod g(x)
+template<class mint, class T_VAL = long long> 
+FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
+    assert(!mod.empty());
+    auto iv = mod.rev().inv();
+    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
+        if (pol.size() < mod.size()) return FPS<mint>();
+        int deg = (int)pol.size() - (int)mod.size() + 1;
+        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
+    };
+    FPS<mint> res{1}, b(f);
+    while (e) {
+        if (e & 1) res *= b, res -= calc_quo(res) * mod;
+        b *= b;
+        b -= calc_quo(b) * mod;
+        e >>= 1;
+        assert(b.size() + 1 <= mod.size());
+        assert(res.size() + 1 <= mod.size());
+    }
+    return res;
+}
+
+// middle product 
+// c[i] = sum_j a[i+j]b[j] (deg(a) = n, deg(b) = m -> deg(c) = n-m)
+template<class mint>
+FPS<mint> middle_product(const FPS<mint> &a, const FPS<mint> &b) {
+    assert(a.size() >= b.size());
+    if (b.empty()) return FPS<mint>((int)a.size() - (int)b.size() + 1);
+    int N = 1;
+    while (N < (int)a.size()) N <<= 1;
+    FPS<mint> fa(N), fb(N);
+    copy(a.begin(), a.end(), fa.begin());
+    copy(b.rbegin(), b.rend(), fb.begin());
+    fa *= fb;
+    fa.resize(a.size());
+    fa.erase(fa.begin(), fa.begin() + (int)b.size() - 1);
+    return fa;
+}
+
+// multipoint evaluation, polynomial interpolation
+template<class mint> struct SubproductTree {
+    // inner data
+    int num_points, siz;
+    vector<FPS<mint>> tree;
+
+    // constructor
+    SubproductTree() {}
+    SubproductTree(const vector<mint> &x) {
+        num_points = (int)x.size();
+        siz = 1;
+        while (siz < num_points) siz <<= 1;
+        tree.resize(siz * 2);
+        for (int i = 0; i < siz; i++) tree[siz + i] = {1, (i < num_points ? -x[i] : 0)};
+        for (int i = siz - 1; i >= 1; i--) tree[i] = tree[i * 2] * tree[i * 2 + 1];
+    }
+
+    // multipoint evaluation
+    vector<mint> eval(FPS<mint> f) {
+        int N = (int)f.size();
+        if (N == 0) return vector<mint>(num_points, mint(0));
+        f.resize(N * 2 - 1);
+        vector<FPS<mint>> g(siz * 2);
+        g[1] = tree[1];
+        g[1].resize(N);
+        g[1] = inv(g[1]);
+        g[1] = middle_product(f, g[1]);
+        g[1].resize(siz);
+        for (int i = 1; i < siz; i++) {
+            g[i * 2] = middle_product(g[i], tree[i * 2 + 1]);
+            g[i * 2 + 1] = middle_product(g[i], tree[i * 2]);
+        }
+        vector<mint> res(num_points);
+        for (int i = 0; i < num_points; i++) res[i] = g[siz + i][0];
+        return res;
+    }
+
+    // polynomial interpolation
+    FPS<mint> interpolate(const vector<mint> &y) {
+        assert((int)y.size() == num_points);
+        vector<mint> p(num_points);
+        for (int i = 0; i < num_points; i++) p[i] = tree[1][num_points - i - 1] * (i + 1);
+        p = eval(p);
+        vector<FPS<mint>> t(siz * 2);
+        for (int i = 0; i < siz; i++) t[siz + i] = {(i < num_points ? y[i] / p[i] : 0)};
+        for (int i = siz - 1; i >= 1; i--) {
+            t[i] = t[i * 2] * tree[i * 2 + 1];
+            auto rt = t[i * 2 + 1] * tree[i * 2];
+            for (int k = 0; k < (int)t[i].size(); k++) t[i][k] += rt[k];
+        }
+        t[1].resize(num_points);
+        reverse(t[1].begin(), t[1].end());
+        return t[1];
+    }
+};
+
+// multipoint evaluation, polynomial interpolation
+template<class mint>
+vector<mint> multipoint_eval(const FPS<mint> &f, const vector<mint> &x) {
+    if (x.empty()) return {};
+    SubproductTree<mint> st(x);
+    return st.eval(f);
+}
+template<class mint>
+FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
+    assert(x.size() == y.size());
+    if (x.empty()) return {};
+    SubproductTree<mint> st(x);
+    return st.interpolate(y);
+}
+
+// multipoint evaluation (case: geometric sequence)
+// for k = 0, 1, ..., M-1, calc f(ar^k)
+template<class mint>
+vector<mint> multipoint_eval(const FPS<mint> &f, const mint &a, const mint &r, int M) {
+    // calc 1, 1, r, r^3, r^6, r^10, ...
+    auto calc = [&](const mint &r, int m) -> FPS<mint> {
+        FPS<mint> res(m, mint(1));
+        mint po = 1;
+        for (int i = 0; i < m - 1; i++) res[i + 1] = res[i] * po, po *= r;
+        return res;
+    };
+    int N = (int)f.size();
+    if (M == 0) return vector<mint>();
+    if (r == mint(0)) {
+        vector<mint> res(M);
+        for (int i = 1; i < M; i++) res[i] = f[0];
+        res[0] = f.eval(a);
+        return res;
+    }
+    if (min(N, M) < 60) {
+        vector<mint> res(M);
+        mint b = a;
+        for (int i = 0; i < M; i++) res[i] = f.eval(b), b *= r;
+        return res;
+    }
+    FPS<mint> res = f;
+    mint po = 1;
+    for (int i = 0; i < N; i++) res[i] *= po, po *= a;
+    FPS<mint> A = calc(r, N + M - 1), B = calc(r.inv(), max(N, M));
+    for (int i = 0; i < N; i++) res[i] *= B[i];
+    res = middle_product(A, res);
+    for (int i = 0; i < M; i++) res[i] *= B[i];
+    return res;
+}
+
+// polynomial interpolation (case: geometric sequence)
+// y[i] = f(ar^i) -> find f
+template<class mint>
+vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
+    int N = (int)y.size();
+    if (N == 0) return FPS<mint>();
+    if (N == 1) return {y[0]};
+
+    // prod_[1,i] (1 - r^k)
+    auto Y = y;
+    mint ir = r.inv(), ia = a.inv();
+    FPS<mint> po(N + N - 1, 1), po2(N + N - 1, 1), ipo(N + N - 1, 1), ipo2(N + N - 1, 1);
+    for (int i = 0; i < N + N - 2; i++) po[i + 1] = po[i] * r, po2[i + 1] = po2[i] * po[i];
+    for (int i = 0; i < N; i++) ipo[i + 1] = ipo[i] * ir, ipo2[i + 1] = ipo2[i] * ipo[i];
+    vector<mint> S(N, mint(1));
+    for (int i = 1; i < N; i++) S[i] = S[i - 1] * (mint(1) - po[i]);
+    vector<mint> iS = all_inverse(S);
+    mint sn = S[N - 1] * (mint(1) - po[N]);
+
+    // sum_i Y[i] / (1 - r^i x)
+    for (int i = 0; i < N; i++) {
+        Y[i] = Y[i] * po2[N - i - 1] * ipo2[N - 1] * iS[i] * iS[N - i - 1];
+        if (i & 1) Y[i] = -Y[i];
+    }
+    for (int i = 0; i < N; i++) Y[i] *= ipo2[i];
+    FPS<mint> f = middle_product(po2, Y);
+    for (int i = 0; i < N; i++) f[i] *= ipo2[i];
+
+    // prod (1 - r^i x)
+    FPS<mint> g(N, mint(1));
+    for (int i = 1; i < N; i++) {
+        g[i] = po2[i] * sn * iS[i] * iS[N - i];
+        if (i & 1) g[i] = -g[i];
+    }
+    f = f * g;
+    f.resize(N);
+    reverse(f.begin(), f.end());
+    mint p = 1;
+    for (int i = 0; i < N; i++) f[i] *= p, p *= ia;
+    return f;
+}
+
+// shift of sampling points
+// input y[i] = f(i) (i = 0, 1, ..., N-1)
+// output f[c], f[c+1], ..., f[c+M-1]
+template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y, const mint &c, int M = -1) {
+    int N = (int)y.size();
+    if (M == -1) M = N;
+    int T = c.val;
+    if (T < N) {
+        FPS<mint> res(M);
+        int ptr = 0;
+        for (int i = T; i < N && ptr < M; i++) res[ptr++] = y[i];
+        if (N < T + M) {
+            auto suffix = shift_of_sampling_points(y, mint(N), M - ptr);
+            for (int i = N; i < T + M; i++) res[ptr++] = suffix[i - N];
+        }
+        return res;
+    }
+    if (T + M > mint::get_mod()) {
+        auto prefix = shift_of_sampling_points(y, mint(T), mint::get_mod() - T);
+        auto suffix = shift_of_sampling_points(y, mint(0), M - (int)prefix.size());
+        copy(begin(suffix), end(suffix), back_inserter(prefix));
+        return prefix;
+    }
+    BiCoef<mint> bc(N);
+    FPS<mint> res(M), d(N), h(M + N - 1);
+    for (int i = 0; i < N; i++) {
+        d[i] = bc.finv(i) * bc.finv(N - i - 1) * y[i];
+        if ((N - i - 1) & 1) d[i] = -d[i];
+    }
+    for (int i = 0; i < M + N - 1; i++) h[i] = mint(T - N + i + 1);
+    h = all_inverse(h);
+    auto dh = d * h;
+    mint cur = T;
+    for (int i = 1; i < N; i++) cur *= T - i;
+    for (int i = 0; i < M; i++) {
+        res[i] = cur * dh[N + i - 1];
+        cur *= T + i + 1;
+        cur *= h[i];
+    }
+    return res;
+}
+
+
+//------------------------------//
 // Examples
 //------------------------------//
 
-// Library Checker - Division of Polynomials
-void Yosupo_division_of_polynomials() {
+// Yosupo Library Checker - Shift of Sampling Points of Polynomial
+void Yosupo_Shift_of_Sampling_Points() {
     FastRead Read; FastWrite Write;
-
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
+    using mint = Fp<>;
     int N, M;
-    Read(N, M);
-    FPS<mint> a(N), b(M);
-    for (int i = 0; i < N; i++) Read(a[i].val);
-    for (int i = 0; i < M; i++) Read(b[i].val);
-
-    FPS<mint> q = a / b, r = a - b * q;
-    Write(q.size()), Write(' '), Write(r.size()), Write('\n');
-    for (int i = 0; i < q.size(); i++) Write(q[i].val), Write(' ');
-    Write('\n');
-    for (int i = 0; i < r.size(); i++) Write(r[i].val), Write(' ');
+    mint c;
+    Read(N, M, c.val);
+    vector<mint> f(N);
+    for (int i = 0; i < N; i++) Read(f[i].val);
+    auto res = shift_of_sampling_points(f, c, M);
+    for (int i = 0; i < res.size(); i++) Write(res[i].val), Write(' ');
     Write('\n');
 }
 
 
 int main() {
-    Yosupo_division_of_polynomials();
+    Yosupo_Shift_of_Sampling_Points();
 }
