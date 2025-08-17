@@ -2334,6 +2334,41 @@ FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
     return st.interpolate(y);
 }
 
+// multipoint evaluation (case: geometric sequence)
+// for k = 0, 1, ..., M-1, calc f(ar^k)
+template<class mint>
+vector<mint> multipoint_eval(const FPS<mint> &f, const mint &a, const mint &r, int M) {
+    // calc 1, 1, r, r^3, r^6, r^10, ...
+    auto calc = [&](const mint &r, int m) -> FPS<mint> {
+        FPS<mint> res(m, mint(1));
+        mint po = 1;
+        for (int i = 0; i < m - 1; i++) res[i + 1] = res[i] * po, po *= r;
+        return res;
+    };
+    int N = (int)f.size();
+    if (M == 0) return vector<mint>();
+    if (r == mint(0)) {
+        vector<mint> res(M);
+        for (int i = 1; i < M; i++) res[i] = f[0];
+        res[0] = f.eval(a);
+        return res;
+    }
+    if (min(N, M) < 60) {
+        vector<mint> res(M);
+        mint b = a;
+        for (int i = 0; i < M; i++) res[i] = f.eval(b), b *= r;
+        return res;
+    }
+    FPS<mint> res = f;
+    mint po = 1;
+    for (int i = 0; i < N; i++) res[i] *= po, po *= a;
+    FPS<mint> A = calc(r, N + M - 1), B = calc(r.inv(), max(N, M));
+    for (int i = 0; i < N; i++) res[i] *= B[i];
+    res = middle_product(A, res);
+    for (int i = 0; i < M; i++) res[i] *= B[i];
+    return res;
+}
+
 
 //------------------------------//
 // Matrix

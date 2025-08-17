@@ -367,7 +367,7 @@
 - (★★★★) [Multipoint Evaluation (O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation.cpp)
 - (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation_in_geometric_sequence.cpp)
 - (★★★★) [多項式補間 (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation.cpp)
-- (★★★★) [多項式補間 (等比数列のとき) (O(N log N)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
+- (★★★★) [多項式補間 (等比数列のとき) (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
 - (★★★★) [多項式の評価点シフト (O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_shift_sampling.cpp)
 - (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★★) [多項式 GCD (by half-gcd) (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
