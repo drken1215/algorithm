@@ -1,21 +1,9 @@
 //
-// Formal Power Series
+// 多項式の基底変換：Monomial 基底 → Newton 基底 (O(N(log N)^2))
 //
 // verified:
-//   Yosupo Library Checker - Sqrt of Formal Power Series
-//     https://judge.yosupo.jp/problem/sqrt_of_formal_power_series
-//
-//   Yosupo Library Checker - Composition of Formal Power Series (Large)
-//     https://judge.yosupo.jp/problem/composition_of_formal_power_series_large
-//
-//   HackerRank Array Restoring
-//     https://www.hackerrank.com/contests/happy-query-contest/challenges/array-restoring/problem
-//
-//   Codeforces 205 Div1 E. The Child and Binary TreeE
-//     https://codeforces.com/contest/438/problem/E
-//
-//   TDPC T - フィボナッチ (mod. 1000000007)
-//     https://atcoder.jp/contests/tdpc/tasks/tdpc_fibonacci
+//   Yosupo Library Checker - Conversion from Monomial Basis to Newton Basis
+//     https://judge.yosupo.jp/problem/conversion_from_monomial_basis_to_newton_basis
 //
 
 
@@ -2494,239 +2482,27 @@ const FPS<mint> &f, const vector<mint> &p) {
     return res;
 }
 
-// polynomial gcd, O(N(log N)^2)
-template<class mint>
-struct MatrixFPS22 {
-    FPS<mint> a00, a01, a10, a11;
-    MatrixFPS22() {}
-    MatrixFPS22(const FPS<mint> &a00, const FPS<mint> &a01, const FPS<mint> &a10, const FPS<mint> &a11)
-        : a00(a00), a01(a01), a10(a10), a11(a11) {}
-
-    MatrixFPS22 &operator *= (const MatrixFPS22 &r) {
-        FPS<mint> A00 = a00 * r.a00 + a01 * r.a10;
-        FPS<mint> A01 = a00 * r.a01 + a01 * r.a11;
-        FPS<mint> A10 = a10 * r.a00 + a11 * r.a10;
-        FPS<mint> A11 = a10 * r.a01 + a11 * r.a11;
-        swap(A00, a00), swap(A01, a01), swap(A10, a10), swap(A11, a11);
-        return *this;
-    }
-    static MatrixFPS22 get_identity() { 
-        return MatrixFPS22(FPS<mint>{mint(1)}, FPS<mint>(), FPS<mint>(), FPS<mint>{mint(1)});
-    }
-    MatrixFPS22 operator * (const MatrixFPS22 &r) const { return MatrixFPS22(*this) *= r; }
-};
-
-template<class mint> pair<FPS<mint>, FPS<mint>> operator * (
-const MatrixFPS22<mint> &m, const pair<FPS<mint>, FPS<mint>> &a) {
-    FPS<mint> b0 = m.a00 * a.first + m.a01 * a.second;
-    FPS<mint> b1 = m.a10 * a.first + m.a11 * a.second;
-    return {b0, b1};
-}
-
-template<class mint> MatrixFPS22<mint> mat_poly_half_gcd(pair<FPS<mint>, FPS<mint>> p) {
-    auto naive_gcd = [](MatrixFPS22<mint> &m, pair<FPS<mint>, FPS<mint>> &p) -> void {
-        FPS<mint> q = p.first / p.second, r = p.first - p.second * q;
-        FPS<mint> b10 = m.a00 - m.a10 * q, b11 = m.a01 - m.a11 * q;
-        swap(b10, m.a10), swap(b11, m.a11), swap(b10, m.a00), swap(b11, m.a01);
-        p = {p.second, r};
-    };
-    int N = p.first.size(), M = p.second.size(), K = (N + 1) / 2;
-    if (M <= K) return MatrixFPS22<mint>::get_identity();
-    MatrixFPS22<mint> m1 = mat_poly_half_gcd(make_pair(p.first >> K, p.second >> K));
-    p = m1 * p;
-    if ((int)p.second.size() <= K) return m1;
-    naive_gcd(m1, p);
-    if ((int)p.second.size() <= K) return m1;
-    int j = K * 2 - (int)p.first.size() + 1;
-    p.first >>= j, p.second >>= j;
-    return mat_poly_half_gcd(p) * m1;
-}
-
-template<class mint> MatrixFPS22<mint> mat_poly_gcd(const FPS<mint> &a, const FPS<mint> &b) {
-    auto naive_gcd = [](MatrixFPS22<mint> &m, pair<FPS<mint>, FPS<mint>> &p) -> void {
-        FPS<mint> q = p.first / p.second, r = p.first - p.second * q;
-        FPS<mint> b10 = m.a00 - m.a10 * q, b11 = m.a01 - m.a11 * q;
-        swap(b10, m.a10), swap(b11, m.a11), swap(b10, m.a00), swap(b11, m.a01);
-        p = {p.second, r};
-    };
-    pair<FPS<mint>, FPS<mint>> p{a, b};
-    p.first.normalize(), p.second.normalize();
-    int N = (int)p.first.size(), M = (int)p.second.size();
-    if (N < M) {
-        MatrixFPS22<mint> mat = mat_poly_gcd(p.second, p.first);
-        swap(mat.a00, mat.a01);
-        swap(mat.a10, mat.a11);
-        return mat;
-    }
-    MatrixFPS22<mint> res = MatrixFPS22<mint>::get_identity();
-    while (true) {
-        MatrixFPS22<mint> m1 = mat_poly_half_gcd(p);
-        p = m1 * p;
-        if (p.second.empty()) return m1 * res;
-        naive_gcd(m1, p);
-        if (p.second.empty()) return m1 * res;
-        res = m1 * res;
-    }
-}
-
-// find gcd(a(x), b(x)), O(N(log N)^2)
-template<class mint> FPS<mint> poly_gcd(const FPS<mint> &a, const FPS<mint> &b) {
-    pair<FPS<mint>, FPS<mint>> p(a, b);
-    MatrixFPS22<mint> m = mat_poly_gcd(a, b);
-    p = m * p;
-    if (!p.first.empty()) {
-        mint coef = p.first.back().inv();
-        for (auto &x : p.first) x *= coef;
-    }
-    return p.first;
-}
-
-// find {a^{-1}, exist: true, not: false}, O(N(log N)^2)
-template<class mint> pair<FPS<mint>, bool> poly_inv(const FPS<mint> &a, const FPS<mint> &mod) {
-    pair<FPS<mint>, FPS<mint>> p(a, mod);
-    MatrixFPS22<mint> m = mat_poly_gcd(a, mod);
-    FPS<mint> g = (m * p).first;
-    if (g.size() != 1) return {FPS<mint>(), false};
-    pair<FPS<mint>, FPS<mint>> x(FPS<mint>({mint(1)}), mod);
-    return {((m * x).first % mod) * g[0].inv(), true};
-}
-
-// find root, O(N(log N)^2 + N log N log p + n(log n)^2 log p)
-template<class mint> vector<mint> find_polynomial_roots(const FPS<mint> &f) {
-    int p = mint::get_mod();
-    vector<mint> res;
-    if (p == 2) {
-        for (int r = 0; r < 2; r++) if (f.eval(r) == 0) res.emplace_back(r);
-        return res;
-    }
-    auto rec = [&](auto &&rec, const FPS<mint> &F) -> void {
-        if (F.size() == 1) return;
-        if (F.size() == 2) {
-            mint r = (-F[0]) / F[1];
-            res.emplace_back(r);
-            return;
-        }
-        FPS<mint> g{randInt(0, p - 1), 1};
-        FPS<mint> h = mod_pow(g, (p - 1) / 2, F);
-        if (h.empty()) return rec(rec, F);
-        h[0]--;
-        auto f1 = poly_gcd(F, h);
-        auto f2 = F / f1;
-        rec(rec, f1), rec(rec, f2);
-    };
-    FPS<mint> x{0, 1};
-    FPS<mint> g = mod_pow(x, p, f) - x;
-    g = poly_gcd(f, g);
-    rec(rec, g);
-    sort(res.begin(), res.end());
-    return res;
-}
-
 
 //------------------------------//
 // Examples
 //------------------------------//
 
-// Yosupo Library Checker - Sqrt of Formal Power Series
-void Yosupo_Sqrt_of_FPS() {
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
-    
-    int N;
-    cin >> N;
-    FPS<mint> a(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-
-    auto res = sqrt(a);
-    for (int i = 0; i < res.size(); ++i) {
-        if (i) cout << " ";
-        cout << res[i];
-    }
-    cout << endl;
-}
-
-// Library Checker - Composition of Formal Power Series (Large)
-void Yosupo_composition_of_formal_power_series() {
+// Yosupo Library Checker - Conversion from Monomial Basis to Newton Basis
+void Yosupo_Conversion_from_Monomial_to_Newton() {
     FastRead Read; FastWrite Write;
-
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
+    using mint = Fp<>;
     int N;
     Read(N);
-    FPS<mint> a(N), b(N);
-    for (int i = 0; i < N; ++i) Read(a[i].val);
-    for (int i = 0; i < N; ++i) Read(b[i].val);
-    auto res = composition(a, b);
-    REP(i, res.size()) Write(res[i].val), Write(' ');
+    FPS<mint> f(N);
+    vector<mint> p(N);
+    for (int i = 0; i < N; i++) Read(f[i].val);
+    for (int i = 0; i < N; i++) Read(p[i].val);
+    auto res = conversion_basis_from_monomial_to_newton(f, p);
+    for (int i = 0; i < res.size(); i++) Write(res[i].val), Write(' ');
     Write('\n');
-}
-
-// HackerRank Array Restoring
-void HackerRankArrayRestoring() {
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
-    
-    int N, M, Q;
-    cin >> N >> M >> Q;
-    FPS<mint> f(N-M+1, 0);
-    for (int i = 0; i < Q; ++i) {
-        int l, r;
-        cin >> l >> r;
-        --l;
-        f[l] += 1;
-    }
-    f.normalize();
-
-    FPS<mint> A(N);
-    for (int i = 0; i < N; ++i) cin >> A[i];
-    auto B = A / f;
-    B.resize(M);
-    for (int i = 0; i < M; ++i) {
-        if (i) cout << " ";
-        cout << B[i];
-    }
-    cout << endl;
-}
-
-// Codeforces 205 Div1 E. The Child and Binary TreeE
-void Codeforces205Div1E() {
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
-    
-    int N, M;
-    cin >> N >> M;
-    FPS<mint> C(M+1, 0);
-    for (int i = 0; i < N; ++i) {
-        int c;
-        cin >> c;
-        if (c > M) continue;
-        C[c] += 1;
-    }
-    FPS<mint> F = inv(sqrt(C * mint(-4) + 1) + 1) * 2;
-    for (int w = 1; w <= M; ++w) cout << F[w] << endl;
-}
-
-// TDPC T - フィボナッチ
-void TDPC_T() {
-    const int MOD = 1000000007;
-    using mint = Fp<MOD>;
-    
-    long long K, N;
-    cin >> K >> N;
-    
-    --N;
-    FPS<mint> P(K), Q(K + 1);
-    Q[0] = 1;
-    for (int i = 0; i < P.size(); ++i) P[i] = mint(1 - i);
-    for (int i = 1; i < Q.size(); ++i) Q[i] = mint(-1);
-    cout << BostanMori(P, Q, N) << endl;
 }
 
 
 int main() {
-    //Yosupo_Sqrt_of_FPS();
-    Yosupo_composition_of_formal_power_series();
-    //HackerRankArrayRestoring();
-    //Codeforces205Div1E();
-    //TDPC_T();
+    Yosupo_Conversion_from_Monomial_to_Newton();
 }
