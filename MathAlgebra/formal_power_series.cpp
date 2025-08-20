@@ -833,6 +833,38 @@ template<class mint> struct BiCoef {
     }
 };
 
+// mod sqrt
+template<class T_VAL, class T_MOD>
+T_VAL mod_sqrt(T_VAL a, T_MOD p) {
+    a = safe_mod(a, p);
+    if (a <= 1) return a;
+    using mint = DynamicModint;
+    mint::set_mod(p);
+    if (mint(a).pow((p - 1) >> 1) != 1) return T_VAL(-1);
+    mint b = 1, one = 1;
+    while (b.pow((p - 1) >> 1) == 1) b++;
+    T_VAL m = p - 1, e = 0;
+    while (m % 2 == 0) m >>= 1, e++;
+    mint x = mint(a).pow((m - 1) >> 1);
+    mint y = mint(a) * x * x;
+    x *= a;
+    mint z = mint(b).pow(m);
+    while (y != 1) {
+        T_VAL j = 0;
+        mint t = y;
+        while (t != one) {
+            j++;
+            t *= t;
+        }
+        z = z.pow(T_VAL(1) << (e - j - 1));
+        x *= z, z *= z, y *= z;
+        e = j;
+    }
+    T_VAL res = x.val;
+    if (res * 2 > p) res = p - res;
+    return res;
+}
+
 // all inverse
 template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
     for (auto &&vi : v) assert(vi != mint(0));
@@ -1210,41 +1242,6 @@ vector<pair<long long, long long>> prime_factorize(long long N) {
     return res;
 }
 
-// calc primitive root
-constexpr int calc_primitive_root(long long m) {
-    if (m == 1) return -1;
-    if (m == 2) return 1;
-    if (m == 998244353) return 3;
-    if (m == 167772161) return 3;
-    if (m == 469762049) return 3;
-    if (m == 754974721) return 11;
-    if (m == 645922817) return 3;
-    if (m == 897581057) return 3;
-    
-    long long divs[20] = {};
-    divs[0] = 2;
-    long long cnt = 1;
-    long long x = (m - 1) / 2;
-    while (x % 2 == 0) x /= 2;
-    for (long long i = 3; i * i <= x; i += 2) {
-        if (x % i == 0) {
-            divs[cnt++] = i;
-            while (x % i == 0) x /= i;
-        }
-    }
-    if (x > 1) divs[cnt++] = x;
-    for (long long g = 2; ; g++) {
-        bool ok = true;
-        for (int i = 0; i < cnt; i++) {
-            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
-                ok = false;
-                break;
-            }
-        }
-        if (ok) return g;
-    }
-}
-
 // various methods mod prime P
 struct PrimeProcessor {
     using mint = MontgomeryModInt64;
@@ -1283,42 +1280,45 @@ struct PrimeProcessor {
     }
 };
 
-// mod sqrt
-template<class T_VAL, class T_MOD>
-T_VAL mod_sqrt(T_VAL a, T_MOD p) {
-    a = safe_mod(a, p);
-    if (a <= 1) return a;
-    using mint = DynamicModint;
-    mint::set_mod(p);
-    if (mint(a).pow((p - 1) >> 1) != 1) return T_VAL(-1);
-    mint b = 1, one = 1;
-    while (b.pow((p - 1) >> 1) == 1) b++;
-    T_VAL m = p - 1, e = 0;
-    while (m % 2 == 0) m >>= 1, e++;
-    mint x = mint(a).pow((m - 1) >> 1);
-    mint y = mint(a) * x * x;
-    x *= a;
-    mint z = mint(b).pow(m);
-    while (y != 1) {
-        T_VAL j = 0;
-        mint t = y;
-        while (t != one) {
-            j++;
-            t *= t;
-        }
-        z = z.pow(T_VAL(1) << (e - j - 1));
-        x *= z, z *= z, y *= z;
-        e = j;
-    }
-    T_VAL res = x.val;
-    if (res * 2 > p) res = p - res;
-    return res;
-}
-
 
 //------------------------------//
 // NTT
 //------------------------------//
+
+// calc primitive root
+constexpr int calc_primitive_root(long long m) {
+    if (m == 1) return -1;
+    if (m == 2) return 1;
+    if (m == 998244353) return 3;
+    if (m == 167772161) return 3;
+    if (m == 469762049) return 3;
+    if (m == 754974721) return 11;
+    if (m == 645922817) return 3;
+    if (m == 897581057) return 3;
+    
+    long long divs[20] = {};
+    divs[0] = 2;
+    long long cnt = 1;
+    long long x = (m - 1) / 2;
+    while (x % 2 == 0) x /= 2;
+    for (long long i = 3; i * i <= x; i += 2) {
+        if (x % i == 0) {
+            divs[cnt++] = i;
+            while (x % i == 0) x /= i;
+        }
+    }
+    if (x > 1) divs[cnt++] = x;
+    for (long long g = 2; ; g++) {
+        bool ok = true;
+        for (int i = 0; i < cnt; i++) {
+            if (mod_pow(g, (m - 1) / divs[i], m) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
