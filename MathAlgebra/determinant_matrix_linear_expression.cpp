@@ -5,6 +5,9 @@
 //   yukicoder No.1907 DETERMINATION
 //     https://yukicoder.me/problems/no/1907
 //
+//   ABC 412 G - Degree Harmony
+//     https://atcoder.jp/contests/abc412/tasks/abc412_g
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -1761,7 +1764,46 @@ void yukicoder_1907() {
     for (int i = 0; i < res.size(); i++) cout << res[i] << '\n';
 }
 
+// ABC 412 G - Degree Harmony
+void ABC_412_G() {
+    int N, M;
+    cin >> N >> M;
+    vector<int> A(N), id(N+1, 0), u(M), v(M);
+    for (int i = 0; i < N; i++) cin >> A[i], id[i+1] = id[i] + A[i];
+    for (int i = 0; i < M; i++) cin >> u[i] >> v[i], u[i]--, v[i]--;
+    int V = id.back();
+
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    MintMatrix<mint> M0(V, V), M1(V, V);
+    for (int i = 0; i < N; i++) {
+        for (int j = id[i]; j < id[i+1]; j++) {
+            for (int k = id[i]; k < id[i+1]; k++) {
+                if (j >= k) continue;
+                int val = randInt(0, MOD-1);
+                M0[j][k] = val, M0[k][j] = -val;
+            }
+        }
+    }
+    for (int i = 0; i < M; i++) {
+        for (int j = id[u[i]]; j < id[u[i]+1]; j++) {
+            for (int k = id[v[i]]; k < id[v[i]+1]; k++) {
+                int val = randInt(0, MOD-1);
+                M1[j][k] = val, M1[k][j] = -val;
+            }
+        }
+    }
+    auto f = calc_det_linear_expression(M0, M1);
+    int res = -1;
+    for (int i = 0; i < f.size(); i++) if (f[i] != mint(0)) {
+        res = i/2;
+        break;
+    }
+    cout << res << endl;
+}
+
 
 int main() {
-    yukicoder_1907();
+    //yukicoder_1907();
+    ABC_412_G();
 }
