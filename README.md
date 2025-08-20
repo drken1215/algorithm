@@ -686,8 +686,9 @@
 
 # コードテンプレート
 
-- [コンテスト用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_contest.cpp)
-- [コンテスト用のコードテンプレート（Codeforces, AOJ に対応した短縮版)](https://github.com/drken1215/algorithm/blob/master/template_codeforces_AOJ.cpp)
+- [AtCoder 用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_atcoder.cpp)
+- [Codeforces 用のコードテンプレート（65536 字以内)](https://github.com/drken1215/algorithm/blob/master/template_codeforces.cpp)
+- [AOJ 用のコードテンプレート（30000 字以内)](https://github.com/drken1215/algorithm/blob/master/template_aoj.cpp)
 
 
 　
