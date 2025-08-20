@@ -2690,6 +2690,101 @@ template<class mint> struct MintMatrix {
     }
 };
 
+// characteristic_polynomial
+// find f(x) = det(xI - B), for N x N mint matrix B, O(N^3)
+template<class mint>
+void hessenberg_reduction(MintMatrix<mint> &M) {
+    assert(M.height() == M.width());
+    int N = (int)M.height();
+    for (int r = 0; r < N - 2; r++) {
+        int pivot = -1;
+        for (int h = r + 1; h < N; h++) {
+            if (M[h][r] != 0) {
+                pivot = h;
+                break;
+            }
+        }
+        if (pivot == -1) continue;
+        for (int i = 0; i < N; i++) swap(M[r + 1][i], M[pivot][i]);
+        for (int i = 0; i < N; i++) swap(M[i][r + 1], M[i][pivot]);
+        mint ir = M[r + 1][r].inv();
+        for (int i = r + 2; i < N; i++) {
+            mint ir2 = M[i][r] * ir;
+            for (int j = 0; j < N; j++) M[i][j] -= M[r + 1][j] * ir2;
+            for (int j = 0; j < N; j++) M[j][r + 1] += M[j][i] * ir2;
+        }
+    }
+}
+template<class mint>
+FPS<mint> calc_characteristic_polynomial(MintMatrix<mint> B) {
+    assert(B.height() == B.width());
+    hessenberg_reduction(B);
+    int N = (int)B.height();
+    vector<FPS<mint>> res(N + 1);
+    res[0] = {mint(1)};
+    for (int i = 0; i < N; i++) {
+        res[i + 1].assign(i + 2, mint(0));
+        for (int j = 0; j < i + 1; j++) res[i + 1][j + 1] += res[i][j];
+        for (int j = 0; j < i + 1; j++) res[i + 1][j] -= res[i][j] * B[i][i];
+        mint beta = 1;
+        for (int j = i - 1; j >= 0; j--) {
+            beta *= B[j + 1][j];
+            mint beta2 = -B[j][i] * beta;
+            for (int k = 0; k < j + 1; k++) res[i + 1][k] += beta2 * res[j][k];
+        }
+    }
+    return res[N];
+}
+
+// find f(x) = det(M1x + M0), for given N x N matrix M0, M1, in O(N^3)
+template<class mint>
+FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
+    int N = (int)M0.height();
+    assert(M0.width() == N && M1.height() == N && M1.width() == N);
+    int con = 0;
+    mint invAB = 1;
+    for (int p = 0; p < N; p++) {
+        int pivot = -1;
+        for (int r = p; r < N; r++) {
+            if (M1[r][p] != mint(0)) {
+                pivot = r;
+                break;
+            }
+        }
+        if (pivot == -1) {
+            con++;
+            if (con > N) return FPS<mint>(N + 1, mint(0));
+            for (int r = 0; r < p; r++) {
+                mint v = M1[r][p];
+                M1[r][p] = 0;
+                for (int i = 0; i < N; i++) M0[i][p] -= v * M0[i][r];
+            }
+            for (int i = 0; i < N; i++) swap(M0[i][p], M1[i][p]);
+            p--;
+            continue;
+        }
+        if (pivot != p) {
+            swap(M1[p], M1[pivot]);
+            swap(M0[p], M0[pivot]);
+            invAB *= -1;
+        }
+        mint v = M1[p][p], iv = v.inv();
+        invAB *= v;
+        for (int c = 0; c < N; c++) M0[p][c] *= iv, M1[p][c] *= iv;
+        for (int r = 0; r < N; r++) {
+            if (r == p) continue;
+            mint v = M1[r][p];
+            for (int c = 0; c < N; c++) M0[r][c] -= M0[p][c] * v, M1[r][c] -= M1[p][c] * v;
+        }
+    }
+    for (int r = 0; r < M0.height(); r++) for (int c = 0; c < M0.width(); c++) M0[r][c] *= -1;
+    auto pol = calc_characteristic_polynomial(M0);
+    for (auto &x : pol) x *= invAB;
+    pol.erase(pol.begin(), pol.begin() + con);
+    pol.resize(N + 1);
+    return pol;
+}
+
 
 //------------------------------//
 // Flow

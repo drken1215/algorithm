@@ -1,9 +1,9 @@
 //
-// Shift of Sampling Points of Polynomial, O((N + M)log(N + M)
+// det(M1x + M0) の計算, for given N x N matrix M0, M1, in O(N^3)
 //
 // verified:
-//   Yosupo Library Checker - Shift of Sampling Points of Polynomial
-//     https://judge.yosupo.jp/problem/shift_of_sampling_points_of_polynomial
+//   yukicoder No.1907 DETERMINATION
+//     https://yukicoder.me/problems/no/1907
 //
 
 
@@ -206,303 +206,6 @@ ostream& operator << (ostream &os, const i128 &x) {
     }
     return os;
 }
-u128 to_uinteger(const string &s) {
-    u128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    return res;
-}
-istream& operator >> (istream &is, u128 &x) {
-    string s;
-    is >> s;
-    x = to_uinteger(s);
-    return is;
-}
-ostream& operator << (ostream &os, const u128 &x) {
-    u128 ax = x;
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
-}
-
-
-//------------------------------//
-// Fast IO
-//------------------------------//
-
-struct FastRead {
-    static constexpr int BUF_SIZE = 1 << 17;
-
-private:
-    FILE *stream_;
-    array<char, BUF_SIZE> buf_;
-    char *begin_, *end_, *ptr_;
-
-    // reader
-    void skip_space() {
-        while (*ptr_ <= ' ') ++ptr_;
-    }
-    template<int N = 0> void read() {
-        if (const auto n = end_ - ptr_; n <= N) {
-            ignore = fread(copy_n(ptr_, n, begin_), 1, BUF_SIZE - n, stream_);
-            ptr_ = begin_;
-        }
-    }
-    
-    // parser
-    template<typename T> void parse(T &x) {
-        common_type_t<T, uint64_t> x2 = 0;
-        while (true) {
-            uint64_t v;
-            memcpy(&v, ptr_, 8);
-            if ((v -= 0x3030303030303030) & 0x8080808080808080) break;
-            v = (v * 10 + (v >> 8)) & 0xff00ff00ff00ff;
-            v = (v * 100 + (v >> 16)) & 0xffff0000ffff;
-            v = (v * 10000 + (v >> 32)) & 0xffffffff;
-            x2 = 100000000 * x2 + v;
-            ptr_ += 8;
-        }
-        while (true) {
-            uint32_t v;
-            memcpy(&v, ptr_, 4);
-            if ((v -= 0x30303030) & 0x80808080) break;
-            v = (v * 10 + (v >> 8)) & 0xff00ff;
-            v = (v * 100 + (v >> 16)) & 0xffff;
-            x2 = 10000 * x2 + v;
-            ptr_ += 4;
-            break;
-        }
-        while (true) {
-            uint16_t v;
-            memcpy(&v, ptr_, 2);
-            if ((v -= 0x3030) & 0x8080) break;
-            v = (v * 10 + (v >> 8)) & 0xff;
-            x2 = 100 * x2 + v;
-            ptr_ += 2;
-            break;
-        }
-        if (' ' < *ptr_) {
-            x2 *= 10;
-            x2 += *ptr_++ - '0';
-        }
-        ++ptr_;
-        x = static_cast<T>(x2);
-    }
-    
-public:
-    // constructor
-    FastRead() : FastRead(stdin) {}
-    explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
-    explicit FastRead(FILE *stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { 
-        read(); 
-    }
-    ~FastRead() { 
-        if (stream_ != stdin) fclose(stream_); 
-    }
-    FastRead(const FastRead&) = delete;
-    FastRead &operator = (const FastRead&) = delete;
-    
-    // operators
-    template<unsigned_integral T> void operator () (T &x) {
-        skip_space();
-        read<64>();
-        parse(x);
-    }
-    template<signed_integral T> void operator () (T &x) {
-        skip_space();
-        read<64>();
-        make_unsigned_t<T> u;
-        if (*ptr_ == '-') {
-            ++ptr_;
-            parse(u);
-            u = -u;
-        } else {
-            parse(u);
-        }
-        x = u;
-    }
-    void operator () (char &x) {
-        skip_space();
-        read<64>();
-        x = *ptr_;
-        ++ptr_;
-    }
-    void operator () (string &x) {
-        x = "";
-        skip_space();
-        read<64>();
-        while (*ptr_ > ' ' && *ptr_ != '\0') {
-            x.push_back(*ptr_);
-            ++ptr_;
-        }
-        ++ptr_;
-    }
-    template<class... Ts> requires(sizeof...(Ts) != 1) void operator () (Ts&... xs) {
-        ((*this)(xs), ...);
-    }
-    template<class T> FastRead& operator >> (T &x) { (*this)(x); return *this; }
-};
-
-class FastWrite {
-    static constexpr int BUF_SIZE = 1 << 17;
-
-private:
-    FILE *stream_;
-    array<char, BUF_SIZE> buf_;
-    char *begin_, *end_, *ptr_;
-    
-    // preparation
-    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
-    template<class T> static constexpr auto POW10 = [] {
-        array<T, DIGITS<T>> ret;
-        ret[0] = 1;
-        for (int i = 1; i < DIGITS<T>; ++i) {
-            ret[i] = 10 * ret[i - 1];
-        }
-        return ret;
-    } ();
-    static constexpr auto LUT = [] {
-        array<char, 40000> res;
-        char* p = res.data();
-        char a = '0', b = '0', c = '0', d = '0';
-        do {
-            *p++ = a, *p++ = b, *p++ = c, *p++ = d;
-        } while (d++ < '9'
-                 || (d = '0', c++ < '9'
-                     || (c = '0', b++ < '9'
-                         || (b = '0', a++ < '9'))));
-        return res;
-    } ();
-    
-    // flush
-    template<int N = BUF_SIZE> void flush() {
-        if (end_ - ptr_ <= N) {
-            fwrite(begin_, 1, ptr_ - begin_, stream_);
-            ptr_ = begin_;
-        }
-    }
-    
-    // writer
-    template<int N = 4> void le4(uint64_t x) {
-        if constexpr (1 < N) {
-            if (x < POW10<uint64_t>[N - 1]) {
-                le4<N - 1>(x);
-                return;
-            }
-        }
-        ptr_ = copy_n(&LUT[x * 4 + (4 - N)], N, ptr_);
-    }
-    template<int N> void w4(uint64_t x) {
-        if constexpr (0 < N) {
-            ptr_ = copy_n(&LUT[x / POW10<uint64_t>[N - 4] * 4], 4, ptr_);
-            w4<N - 4>(x % POW10<uint64_t>[N - 4]);
-        }
-    }
-    template<int N> void write(uint64_t x) {
-        if constexpr (N < DIGITS<uint64_t>) {
-            if (POW10<uint64_t>[N] <= x) {
-                write<N + 4>(x);
-                return;
-            }
-        }
-        le4(x / POW10<uint64_t>[N - 4]);
-        w4<N - 4>(x % POW10<uint64_t>[N - 4]);
-    }
-    template<typename T> void write(T x) {
-        write<4>(x);
-    }
-    void write(__uint128_t x) {
-        if (x < POW10<__uint128_t>[16]) {
-            write(static_cast<uint64_t>(x));
-        } else if (x < POW10<__uint128_t>[32]) {
-            write(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
-            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
-        } else {
-            write(static_cast<uint64_t>(x / POW10<__uint128_t>[32]));
-            x %= POW10<__uint128_t>[32];
-            w4<16>(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
-            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
-        }
-    }
-    
-public:
-    // constructor
-    FastWrite() : FastWrite(stdout) {}
-    explicit FastWrite(const filesystem::path& p) : FastWrite(fopen(p.c_str(), "w")) {}
-    explicit FastWrite(FILE* stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(begin_) {}
-    ~FastWrite() {
-        flush();
-        if (stream_ != stdout) { fclose(stream_); }
-    }
-    FastWrite(const FastWrite&) = delete;
-    FastWrite& operator = (const FastWrite&) = delete;
-    
-    // operators
-    template<unsigned_integral T> void operator () (T x) {
-        flush<DIGITS<T>>();
-        write(x);
-    }
-    template<signed_integral T> void operator () (T x) {
-        flush<1 + DIGITS<T>>();
-        using U = make_unsigned_t<T>;
-        const U u = x;
-        if (x < 0) {
-            *ptr_++ = '-';
-            write(static_cast<U>(-u));
-        } else {
-            write(u);
-        }
-    }
-    void operator () (char c) {
-        flush<1>();
-        *ptr_++ = c;
-    }
-    void operator () (string_view s) {
-        while (!s.empty()) {
-            flush<0>();
-            const auto n = min(ssize(s), end_ - ptr_);
-            if (n == BUF_SIZE) {
-                fwrite(s.data(), 1, BUF_SIZE, stream_);
-            } else {
-                ptr_ = copy_n(s.data(), n, ptr_);
-            }
-            s.remove_prefix(n);
-        }
-        flush<0>();
-    }
-    template <char End = '\n', char Sep = ' ', class T, class... Ts>
-    void ln(T&& x, Ts&&... xs) {
-        (*this)(std::forward<T>(x));
-        if constexpr (sizeof...(Ts) == 0) {
-            *ptr_++ = End;
-        } else {
-            *ptr_++ = Sep;
-            ln<End, Sep>(std::forward<Ts>(xs)...);
-        }
-    }
-    template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
-};
-
-
-//------------------------------//
-// mod algorithms
-//------------------------------//
 
 // safe mod
 template<class T_VAL, class T_MOD>
@@ -833,371 +536,6 @@ template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
     return res;
 }
 
-
-// Garner's algorithm
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
-
-// if m is not coprime, call this function first
-template<class T_VAL>
-bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
-    assert(b.size() == m.size());
-    T_VAL res = 1;
-    for (int i = 0; i < (int)b.size(); i++) {
-        for (int j = 0; j < i; ++j) {
-            T_VAL g = gcd(m[i], m[j]);
-            if ((b[i] - b[j]) % g != 0) return false;
-            m[i] /= g, m[j] /= g;
-            T_VAL gi = gcd(m[i], g), gj = g/gi;
-            do {
-                g = gcd(gi, gj);
-                gi *= g, gj /= g;
-            } while (g != 1);
-            m[i] *= gi, m[j] *= gj;
-            b[i] %= m[i], b[j] %= m[j];
-        }
-    }
-    vector<T_VAL> b2, m2;
-    for (int i = 0; i < (int)b.size(); i++) {
-        if (m[i] == 1) continue;
-        b2.emplace_back(b[i]), m2.emplace_back(m[i]);
-    }
-    b = b2, m = m2;
-    return true;
-}
-
-// find x (%MOD), LCM (%MOD) (m must be coprime)
-template<class T_VAL>
-T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
-    assert(b.size() == m.size());
-    using mint = DynamicModint;
-    int num = (int)m.size();
-    T_VAL res = 0, lcm = 1;
-    vector<long long> coeffs(num, 1), constants(num, 0);
-    for (int k = 0; k < num; k++) {
-        mint::set_mod(m[k]);
-        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
-        for (int i = k + 1; i < num; i++) {
-            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
-            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
-        }
-        res += t * lcm;
-        lcm *= m[k];
-    }
-    return res;
-}
-
-// find x, LCM (m must be coprime)
-template<class T_VAL, class T_MOD>
-T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
-    assert(b.size() == m.size());
-    assert(MOD > 0);
-    using mint = DynamicModint;
-    int num = (int)m.size();
-    T_VAL res = 0, lcm = 1;
-    vector<long long> coeffs(num, 1), constants(num, 0);
-    for (int k = 0; k < num; k++) {
-        mint::set_mod(m[k]);
-        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
-        for (int i = k + 1; i < num; i++) {
-            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
-            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
-        }
-        res = safe_mod(res + t * lcm, MOD);
-        lcm = safe_mod(lcm * m[k], MOD);
-    }
-    return res;
-}
-
-
-//------------------------------//
-// Prime
-//------------------------------//
-
-// isprime[n] := is n prime?
-// mebius[n] := mebius value of n
-// min_factor[n] := the min prime-factor of n
-// euler[n] := euler function value of n
-struct Eratos {
-    vector<int> primes;
-    vector<bool> isprime;
-    vector<int> mebius, min_factor, euler;
-
-    // constructor, getter
-    Eratos(int MAX) : primes(),
-                      isprime(MAX+1, true),
-                      mebius(MAX+1, 1),
-                      min_factor(MAX+1, -1),
-                      euler(MAX+1) {
-        isprime[0] = isprime[1] = false;
-        min_factor[0] = 0, min_factor[1] = 1;
-        for (int i = 1; i <= MAX; i++) euler[i] = i;
-        for (int i = 2; i <= MAX; ++i) {
-            if (!isprime[i]) continue;
-            primes.push_back(i);
-            mebius[i] = -1;
-            min_factor[i] = i;
-            euler[i] = i - 1;
-            for (int j = i*2; j <= MAX; j += i) {
-                isprime[j] = false;
-                if ((j / i) % i == 0) mebius[j] = 0;
-                else mebius[j] = -mebius[j];
-                if (min_factor[j] == -1) min_factor[j] = i;
-                euler[j] /= i, euler[j] *= i - 1;
-            }
-        }
-    }
-
-    // prime factorization
-    vector<pair<int,int>> prime_factors(int n) {
-        vector<pair<int,int> > res;
-        while (n != 1) {
-            int prime = min_factor[n];
-            int exp = 0;
-            while (min_factor[n] == prime) {
-                ++exp;
-                n /= prime;
-            }
-            res.push_back(make_pair(prime, exp));
-        }
-        return res;
-    }
-
-    // enumerate divisors
-    vector<int> divisors(int n) {
-        vector<int> res({1});
-        auto pf = prime_factors(n);
-        for (auto p : pf) {
-            int n = (int)res.size();
-            for (int i = 0; i < n; ++i) {
-                int v = 1;
-                for (int j = 0; j < p.second; ++j) {
-                    v *= p.first;
-                    res.push_back(res[i] * v);
-                }
-            }
-        }
-        return res;
-    }
-};
-
-// montgomery modint (MOD < 2^62, MOD is odd)
-struct MontgomeryModInt64 {
-    using mint = MontgomeryModInt64;
-    using u64 = uint64_t;
-    using u128 = __uint128_t;
-    
-    // static menber
-    static u64 MOD;
-    static u64 INV_MOD;  // INV_MOD * MOD ≡ 1 (mod 2^64)
-    static u64 T128;  // 2^128 (mod MOD)
-    
-    // inner value
-    u64 val;
-    
-    // constructor
-    MontgomeryModInt64() : val(0) { }
-    MontgomeryModInt64(long long v) : val(reduce((u128(v) + MOD) * T128)) { }
-    u64 get() const {
-        u64 res = reduce(val);
-        return res >= MOD ? res - MOD : res;
-    }
-    
-    // mod getter and setter
-    static u64 get_mod() { return MOD; }
-    static void set_mod(u64 mod) {
-        assert(mod < (1LL << 62));
-        assert((mod & 1));
-        MOD = mod;
-        T128 = -u128(mod) % mod;
-        INV_MOD = get_inv_mod();
-    }
-    static u64 get_inv_mod() {
-        u64 res = MOD;
-        for (int i = 0; i < 5; ++i) res *= 2 - MOD * res;
-        return res;
-    }
-    static u64 reduce(const u128 &v) {
-        return (v + u128(u64(v) * u64(-INV_MOD)) * MOD) >> 64;
-    }
-    
-    // arithmetic operators
-    mint operator + () const { return mint(*this); }
-    mint operator - () const { return mint() - mint(*this); }
-    mint operator + (const mint &r) const { return mint(*this) += r; }
-    mint operator - (const mint &r) const { return mint(*this) -= r; }
-    mint operator * (const mint &r) const { return mint(*this) *= r; }
-    mint operator / (const mint &r) const { return mint(*this) /= r; }
-    mint& operator += (const mint &r) {
-        if ((val += r.val) >= 2 * MOD) val -= 2 * MOD;
-        return *this;
-    }
-    mint& operator -= (const mint &r) {
-        if ((val += 2 * MOD - r.val) >= 2 * MOD) val -= 2 * MOD;
-        return *this;
-    }
-    mint& operator *= (const mint &r) {
-        val = reduce(u128(val) * r.val);
-        return *this;
-    }
-    mint& operator /= (const mint &r) {
-        *this *= r.inv();
-        return *this;
-    }
-    mint inv() const { return pow(MOD - 2); }
-    mint pow(u128 n) const {
-        mint res(1), mul(*this);
-        while (n > 0) {
-            if (n & 1) res *= mul;
-            mul *= mul;
-            n >>= 1;
-        }
-        return res;
-    }
-
-    // other operators
-    bool operator == (const mint &r) const {
-        return (val >= MOD ? val - MOD : val) == (r.val >= MOD ? r.val - MOD : r.val);
-    }
-    bool operator != (const mint &r) const {
-        return (val >= MOD ? val - MOD : val) != (r.val >= MOD ? r.val - MOD : r.val);
-    }
-    mint& operator ++ () {
-        ++val;
-        if (val >= MOD) val -= MOD;
-        return *this;
-    }
-    mint& operator -- () {
-        if (val == 0) val += MOD;
-        --val;
-        return *this;
-    }
-    mint operator ++ (int) {
-        mint res = *this;
-        ++*this;
-        return res;
-    }
-    mint operator -- (int) {
-        mint res = *this;
-        --*this;
-        return res;
-    }
-    friend istream& operator >> (istream &is, mint &x) {
-        long long t;
-        is >> t;
-        x = mint(t);
-        return is;
-    }
-    friend ostream& operator << (ostream &os, const mint &x) {
-        return os << x.get();
-    }
-    friend mint pow(const mint &r, long long n) {
-        return r.pow(n);
-    }
-    friend mint inv(const mint &r) {
-        return r.inv();
-    }
-};
-
-typename MontgomeryModInt64::u64
-MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
-
-// Miller-Rabin
-bool MillerRabin(long long N, const vector<long long> &A) {
-    assert(N % 2 == 1);
-    assert(N < (1LL<<62));
-    using mint = MontgomeryModInt64;
-    mint::set_mod(N);
-    
-    long long s = 0, d = N - 1;
-    while (d % 2 == 0) {
-        ++s;
-        d >>= 1;
-    }
-    for (auto a : A) {
-        if (N <= a) return true;
-        mint x = mint(a).pow(d);
-        if (x != 1) {
-            long long t;
-            for (t = 0; t < s; ++t) {
-                if (x == N - 1) break;
-                x *= x;
-            }
-            if (t == s) return false;
-        }
-    }
-    return true;
-}
-
-bool is_prime(long long N) {
-    if (N <= 1) return false;
-    else if (N == 2) return true;
-    else if (N % 2 == 0) return false;
-    else if (N < 4759123141LL)
-        return MillerRabin(N, {2, 7, 61});
-    else
-        return MillerRabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
-}
-
-// Pollard's Rho
-unsigned int xor_shift_rng() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty, ty = tz, tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-
-long long pollard(long long N) {
-    if (N % 2 == 0) return 2;
-    if (is_prime(N)) return N;
-    
-    assert(N < (1LL<<62));
-    using mint = MontgomeryModInt64;
-    mint::set_mod(N);
-    
-    long long step = 0;
-    while (true) {
-        mint r = xor_shift_rng();  // random r
-        auto f = [&](mint x) -> mint { return x * x + r; };
-        mint x = ++step, y = f(x);
-        while (true) {
-            long long p = gcd((y - x).get(), N);
-            if (p == 0 || p == N) break;
-            if (p != 1) return p;
-            x = f(x);
-            y = f(f(y));
-        }
-    }
-}
-
-vector<long long> pollard_prime_factorize(long long N) {
-    if (N == 1) return {};
-    long long p = pollard(N);
-    if (p == N) return {p};
-    vector<long long> left = pollard_prime_factorize(p);
-    vector<long long> right = pollard_prime_factorize(N / p);
-    if (left.size() > right.size()) swap(left, right);
-    left.insert(left.end(), right.begin(), right.end());
-    sort(left.begin(), left.end());
-    return left;
-}
-
-vector<pair<long long, long long>> prime_factorize(long long N) {
-    vector<pair<long long, long long>> res;
-    const auto &prs = pollard_prime_factorize(N);
-    long long prev = -1, num = 0;
-    for (const auto &pr : prs) {
-        if (pr == prev) ++num;
-        else {
-            if (prev != -1) res.emplace_back(prev, num);
-            prev = pr, num = 1;
-        }
-    }
-    if (prev != -1) res.emplace_back(prev, num);
-    return res;
-}
-
 // calc primitive root
 constexpr int calc_primitive_root(long long m) {
     if (m == 1) return -1;
@@ -1231,76 +569,6 @@ constexpr int calc_primitive_root(long long m) {
         }
         if (ok) return g;
     }
-}
-
-// various methods mod prime P
-struct PrimeProcessor {
-    using mint = MontgomeryModInt64;
-    
-    // input prime
-    long long prime;
-    vector<pair<long long, long long>> pf;  // prime factorization of p-1
-    
-    // constructors
-    PrimeProcessor() {}
-    PrimeProcessor(long long p) : prime(p) {
-        init(p);
-    }
-    
-    // initializer
-    void init(long long p) {
-        assert(is_prime(p));
-        prime = p;
-        if (p % 2 == 1) {
-            assert(p < (1LL<<62));
-            prime = p;
-            pf = prime_factorize(prime - 1);
-            mint::set_mod(prime);
-        }
-    }
-    
-    // min: x s.t. a^x \equiv 1 (mod prime)
-    long long calc_order(long long a) {
-        assert(a != 0);
-        if (prime == 2) return 1;
-        long long res = prime - 1;
-        for (const auto &[p, num] : pf) {
-            while (res % p == 0 && mint(a).pow(res / p) == 1) res /= p;
-        }
-        return res;
-    }
-};
-
-// mod sqrt
-template<class T_VAL, class T_MOD>
-T_VAL mod_sqrt(T_VAL a, T_MOD p) {
-    a = safe_mod(a, p);
-    if (a <= 1) return a;
-    using mint = DynamicModint;
-    mint::set_mod(p);
-    if (mint(a).pow((p - 1) >> 1) != 1) return T_VAL(-1);
-    mint b = 1, one = 1;
-    while (b.pow((p - 1) >> 1) == 1) b++;
-    T_VAL m = p - 1, e = 0;
-    while (m % 2 == 0) m >>= 1, e++;
-    mint x = mint(a).pow((m - 1) >> 1);
-    mint y = mint(a) * x * x;
-    x *= a;
-    mint z = mint(b).pow(m);
-    while (y != 1) {
-        T_VAL j = 0;
-        mint t = y;
-        while (t != one) {
-            j++;
-            t *= t;
-        }
-        z = z.pow(T_VAL(1) << (e - j - 1));
-        x *= z, z *= z, y *= z;
-        e = j;
-    }
-    T_VAL res = x.val;
-    if (res * 2 > p) res = p - res;
-    return res;
 }
 
 
@@ -1515,63 +783,6 @@ vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
         unsigned int y1 = (imod0 * (c1[i] - y0)).val;
         unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
         res[i] = mod01 * y2 + mod0 * y1 + y0;
-    }
-    return res;
-}
-
-// convolution long long (especially, mod 2^64)
-vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, const vector<unsigned long long> &b) {
-    int n = (int)a.size(), m = (int)b.size();
-    if (!n || !m) return {};
-    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
-
-    static constexpr int MOD0 = 754974721;  // 2^24
-    static constexpr int MOD1 = 167772161;  // 2^25
-    static constexpr int MOD2 = 469762049;  // 2^26
-    static constexpr int MOD3 = 998244353;  // 2^23
-    static constexpr int MOD4 = 645922817;  // 2^23
-    static constexpr int MOD5 = 897581057;  // 2^23
-    using mint0 = Fp<MOD0>;
-    using mint1 = Fp<MOD1>;
-    using mint2 = Fp<MOD2>;
-    using mint3 = Fp<MOD3>;
-    using mint4 = Fp<MOD4>;
-    using mint5 = Fp<MOD5>;
-
-    vector<mint0> a0(n, 0), b0(m, 0);
-    vector<mint1> a1(n, 0), b1(m, 0);
-    vector<mint2> a2(n, 0), b2(m, 0);
-    vector<mint3> a3(n, 0), b3(m, 0);
-    vector<mint4> a4(n, 0), b4(m, 0);
-    vector<mint5> a5(n, 0), b5(m, 0);
-    for (int i = 0; i < n; ++i) {
-        a0[i] = a[i] % MOD0;
-        a1[i] = a[i] % MOD1;
-        a2[i] = a[i] % MOD2;
-        a3[i] = a[i] % MOD3;
-        a4[i] = a[i] % MOD4;
-        a5[i] = a[i] % MOD5;
-    }
-    for (int i = 0; i < m; ++i) {
-        b0[i] = b[i] % MOD0;
-        b1[i] = b[i] % MOD1;
-        b2[i] = b[i] % MOD2;
-        b3[i] = b[i] % MOD3;
-        b4[i] = b[i] % MOD4;
-        b5[i] = b[i] % MOD5;
-    }
-    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
-    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
-    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
-    auto c3 = sub_convolution_ntt(std::move(a3), std::move(b3));
-    auto c4 = sub_convolution_ntt(std::move(a4), std::move(b4));
-    auto c5 = sub_convolution_ntt(std::move(a5), std::move(b5));
-
-    vector<unsigned long long> res(n + m - 1);
-    for (int i = 0; i < n + m - 1; i++) {
-        vector<unsigned long long> rems = {c0[i].val, c1[i].val, c2[i].val, c3[i].val, c4[i].val, c5[i].val};
-        vector<unsigned long long> mods = {MOD0, MOD1, MOD2, MOD3, MOD4, MOD5};
-        res[i] = Garner(rems, mods);
     }
     return res;
 }
@@ -2028,21 +1239,6 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS sqrt_sparse_constant1(int deg) const {
         return pow_sparse_constant1(mint(2).inv(), deg);
     }
-
-    // polynomial taylor shift
-    constexpr FPS taylor_shift(long long c) const {
-        int N = (int)this->size() - 1;
-        BiCoef<mint> bc(N + 1);
-        FPS<mint> p(N + 1), q(N + 1);
-        for (int i = 0; i <= N; i++) {
-            p[i] = (*this)[i] * bc.fact(i);
-            q[N - i] = mint(c).pow(i) * bc.finv(i);
-        }
-        FPS<mint> pq = p * q;
-        FPS<mint> res(N + 1);
-        for (int i = 0; i <= N; i++) res[i] = pq[i + N] * bc.finv(i);
-        return res;
-    }
     
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
@@ -2052,180 +1248,7 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
     friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
     friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
-    friend constexpr FPS taylor_shift(const FPS &f, long long c) { return f.taylor_shift(c); }
 };
-
-// Bostan-Mori
-// find [x^N] P(x)/Q(x), O(K log K log N)
-// deg(Q(x)) = K, deg(P(x)) < K
-template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
-    assert(!P.empty() && !Q.empty());
-    if (N == 0 || Q.size() == 1) return P[0] / Q[0];
-    
-    int qdeg = (int)Q.size();
-    FPS<mint> P2{P}, minusQ{Q};
-    P2.resize(qdeg - 1);
-    for (int i = 1; i < (int)Q.size(); i += 2) minusQ[i] = -minusQ[i];
-    P2 *= minusQ;
-    FPS<mint> Q2 = Q * minusQ;
-    FPS<mint> S(qdeg - 1), T(qdeg);
-    for (int i = 0; i < (int)S.size(); ++i) {
-        S[i] = (N % 2 == 0 ? P2[i * 2] : P2[i * 2 + 1]);
-    }
-    for (int i = 0; i < (int)T.size(); ++i) {
-        T[i] = Q2[i * 2];
-    }
-    return BostanMori(S, T, N >> 1);
-}
-
-// composition of FPS, calc g(f(x)), O(N (log N)^2)
-template<class mint>
-FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
-    auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
-        if (n == 0) {
-            FPS<mint> T{begin(Q), begin(Q) + k};
-            T.emplace_back(mint(1));
-            FPS<mint> u = g * T.rev().inv().rev();
-            FPS<mint> P(h * k);
-            for (int i = 0; i < (int)g.size(); i++) P[k - i - 1] = u[i + k];
-            return P;
-        }
-        FPS<mint> nQ(h * k * 4), nR(h * k * 2);
-        for (int i = 0; i < k; i++) {
-            copy(begin(Q) + i * h, begin(Q) + i * h + n + 1, begin(nQ) + i * h * 2);
-        }
-        nQ[h * k * 2] += 1;
-        ntt_trans(nQ);
-        for (int i = 0; i < h * k * 4; i += 2) swap(nQ[i], nQ[i + 1]);
-        for (int i = 0; i < h * k * 2; i++) nR[i] = nQ[i * 2] * nQ[i * 2 + 1];
-        ntt_trans_inv(nR);
-        nR[0] -= 1;
-        Q.assign(h * k, 0);
-        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
-            Q[i * h / 2 + j] = nR[i * h + j];
-        }
-        auto P = rec(rec, Q, n / 2, h / 2, k * 2);
-        FPS<mint> nP(h * k * 4);
-        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
-            nP[i * h * 2 + j * 2 + n % 2] = P[i * h / 2 + j];
-        }
-        ntt_trans(nP);
-        for (int i = 1; i < h * k * 4; i <<= 1) reverse(begin(nQ) + i, begin(nQ) + i * 2);
-        for (int i = 0; i < h * k * 4; i++) nP[i] *= nQ[i];
-        ntt_trans_inv(nP);
-        P.assign(h * k, 0);
-        for (int i = 0; i < k; i++) {
-            copy(begin(nP) + i * h * 2, begin(nP) + i * h * 2 + n + 1, begin(P) + i * h);
-        }
-        return P;
-    };
-    if (deg == -1) deg = max((int)f.size(), (int)g.size());
-    f.resize(deg), g.resize(deg);
-    int n = (int)f.size() - 1, h = 1, k = 1;
-    while (h < n + 1) h *= 2;
-    FPS<mint> Q(h * k);
-    for (int i = 0; i <= n; i++) Q[i] = -f[i];
-    FPS<mint> P = rec(rec, Q, n, h, k);
-    return P.pre(n + 1).rev();
-}
-
-// Power Projection, O(N (log N)^2)
-// for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
-template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
-FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
-    int n = (int)f.size() - 1, k = 1, h = 1;
-    g.resize(n + 1);
-    if (m < 0) m = n;
-    while (h < n + 1) h <<= 1;
-    FPS<mint> P((n + 1) * k), Q((n + 1) * k), nP, nQ, buf, buf2;
-    for (int i = 0; i <= n; i++) P[i * k] = g[i];
-    for (int i = 0; i <= n; i++) Q[i * k] = -f[i];
-    Q[0]++;
-    mint iv2 = mint(2).inv();
-    while (n) {
-        mint w = mint(pr).pow((MOD - 1) / (2 * k)), iw = w.inv();
-        buf2.resize(k);
-        auto ntt_doubling = [&]() {
-            copy(begin(buf), end(buf), begin(buf2));
-            ntt_trans_inv(buf2);
-            mint c = 1;
-            for (int i = 0; i < k; i++) buf2[i] *= c, c *= w;
-            ntt_trans(buf2);
-            copy(begin(buf2), end(buf2), back_inserter(buf));
-        };
-        nP.clear(), nQ.clear();
-        for (int i = 0; i <= n; i++) {
-            buf.resize(k);
-            copy(begin(P) + i * k, begin(P) + (i + 1) * k, begin(buf));
-            ntt_doubling();
-            copy(begin(buf), end(buf), back_inserter(nP));
-            buf.resize(k);
-            copy(begin(Q) + i * k, begin(Q) + (i + 1) * k, begin(buf));
-            if (i == 0) {
-                for (int j = 0; j < k; j++) buf[j]--;
-                ntt_doubling();
-                for (int j = 0; j < k; j++) buf[j]++;
-                for (int j = 0; j < k; j++) buf[k + j]--;
-            } else {
-                ntt_doubling();
-            }
-            copy(begin(buf), end(buf), back_inserter(nQ));
-        }
-        nP.resize(h * 2 * k * 2), nQ.resize(h * 2 * k * 2);
-        FPS<mint> p(h * 2), q(h * 2);
-        w = mint(pr).pow((MOD - 1) / (h * 2)), iw = w.inv();
-        vector<int> btr;
-        if (n % 2) {
-            btr.resize(h);
-            for (int i = 0, lg = bsf(h); i < h; i++) {
-                btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (lg - 1));
-            }
-        }
-        for (int j = 0; j < k * 2; j++) {
-            p.assign(h * 2, 0), q.assign(h * 2, 0);
-            for (int i = 0; i < h; i++) p[i] = nP[i * k * 2 + j], q[i] = nQ[i * k * 2 + j];
-            ntt_trans(p), ntt_trans(q);
-            for (int i = 0; i < h * 2; i += 2) swap(q[i], q[i + 1]);
-            for (int i = 0; i < h * 2; i++) p[i] *= q[i];
-            for (int i = 0; i < h; i++) q[i] = q[i * 2] * q[i * 2 + 1];
-            if (n & 1) {
-                mint c = iv2;
-                buf.resize(h);
-                for (int i : btr) buf[i] = (p[i * 2] - p[i * 2 + 1]) * c, c *= iw;
-                swap(p, buf);
-            } else {
-                for (int i = 0; i < h; i++) p[i] = (p[i * 2] + p[i * 2 + 1]) * iv2;
-            }
-            p.resize(h), q.resize(h);
-            ntt_trans_inv(p), ntt_trans_inv(q);
-            for (int i = 0; i < h; i++) nP[i * k * 2 + j] = p[i];
-            for (int i = 0; i < h; i++) nQ[i * k * 2 + j] = q[i];
-        }
-        nP.resize((n / 2 + 1) * k * 2), nQ.resize((n / 2 + 1) * k * 2);
-        swap(P, nP), swap(Q, nQ);
-        n /= 2, h /= 2, k *= 2;
-    }
-    FPS<mint> S{begin(P), begin(P) + k}, T{begin(Q), begin(Q) + k};
-    ntt_trans_inv(S), ntt_trans_inv(T);
-    T[0]--;
-    if (T[0] == 0) return S.rev().pre(m + 1);
-    else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
-}
-
-// find g s.t. f(g(x)) ≡ x (mod x^{deg}), O(N (log N)^2)
-template<class mint>
-FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
-    assert((int)f.size() >= 2 && f[1] != 0);
-    if (deg == -1) deg = (int)f.size();
-    if (deg < 2) return FPS<mint>{0, f[1].inv()}.pre(deg);
-    int n = deg - 1;
-    FPS<mint> h = power_projection(f) * n;
-    for (int k = 1; k <= n; k++) h[k] /= k;
-    h = h.rev(), h *= h[0].inv();
-    FPS<mint> g = (h.log() * mint(-n).inv()).exp();
-    g *= f[1].inv();
-    return (g << 1).pre(deg);
-}
 
 
 //------------------------------//
@@ -2342,40 +1365,6 @@ FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
     return st.interpolate(y);
 }
 
-// multipoint evaluation (case: geometric sequence)
-// for k = 0, 1, ..., M-1, calc f(ar^k)
-template<class mint>
-vector<mint> multipoint_eval(const FPS<mint> &f, const mint &a, const mint &r, int M) {
-    // calc 1, 1, r, r^3, r^6, r^10, ...
-    auto calc = [&](const mint &r, int m) -> FPS<mint> {
-        FPS<mint> res(m, mint(1));
-        mint po = 1;
-        for (int i = 0; i < m - 1; i++) res[i + 1] = res[i] * po, po *= r;
-        return res;
-    };
-    int N = (int)f.size();
-    if (M == 0) return vector<mint>();
-    if (r == mint(0)) {
-        vector<mint> res(M);
-        for (int i = 1; i < M; i++) res[i] = f[0];
-        res[0] = f.eval(a);
-        return res;
-    }
-    if (min(N, M) < 60) {
-        vector<mint> res(M);
-        mint b = a;
-        for (int i = 0; i < M; i++) res[i] = f.eval(b), b *= r;
-        return res;
-    }
-    FPS<mint> res = f;
-    mint po = 1;
-    for (int i = 0; i < N; i++) res[i] *= po, po *= a;
-    FPS<mint> A = calc(r, N + M - 1), B = calc(r.inv(), max(N, M));
-    for (int i = 0; i < N; i++) res[i] *= B[i];
-    res = middle_product(A, res);
-    for (int i = 0; i < M; i++) res[i] *= B[i];
-    return res;
-}
 
 // polynomial interpolation (case: geometric sequence)
 // y[i] = f(ar^i) -> find f
@@ -2413,46 +1402,346 @@ vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
     return f;
 }
 
-// shift of sampling points
-// input y[i] = f(i) (i = 0, 1, ..., N-1)
-// output f[c], f[c+1], ..., f[c+M-1]
-template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y, const mint &c, int M = -1) {
-    int N = (int)y.size();
-    if (M == -1) M = N;
-    int T = c.val;
-    if (T < N) {
-        FPS<mint> res(M);
-        int ptr = 0;
-        for (int i = T; i < N && ptr < M; i++) res[ptr++] = y[i];
-        if (N < T + M) {
-            auto suffix = shift_of_sampling_points(y, mint(N), M - ptr);
-            for (int i = N; i < T + M; i++) res[ptr++] = suffix[i - N];
+
+//------------------------------//
+// Matrix
+//------------------------------//
+
+// matrix
+template<class mint> struct MintMatrix {
+    // inner value
+    vector<vector<mint>> val;
+    
+    // constructors
+    MintMatrix(int H, int W) : val(H, vector<mint>(W)) {}
+    MintMatrix(int H, int W, mint x) : val(H, vector<mint>(W, x)) {}
+    MintMatrix(const MintMatrix &mat) : val(mat.val) {}
+    void init(int H, int W, mint x) {
+        val.assign(H, vector<mint>(W, x));
+    }
+    void resize(int H, int W) {
+        val.resize(H);
+        for (int i = 0; i < H; ++i) val[i].resize(W);
+    }
+    
+    // getter and debugger
+    constexpr int height() const { 
+        return (int)val.size();
+    }
+    constexpr int width() const { 
+        return (height() > 0 ? (int)val[0].size() : 0);
+    }
+    vector<mint>& operator [] (int i) { return val[i]; }
+    constexpr vector<mint>& operator [] (int i) const { return val[i]; }
+    friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
+        os << endl;
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) {
+                if (j) os << ", ";
+                os << mat.val[i][j];
+            }
+            os << endl;
+        }
+        return os;
+    }
+    
+    // comparison operators
+    constexpr bool operator == (const MintMatrix &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const MintMatrix &r) const {
+        return this->val != r.val;
+    }
+    
+    // arithmetic operators
+    constexpr MintMatrix& operator += (const MintMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) {
+                val[i][j] = val[i][j] + r.val[i][j];
+            }
+        }
+        return *this;
+    }
+    constexpr MintMatrix& operator -= (const MintMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) {
+                val[i][j] = val[i][j] - r.val[i][j];
+            }
+        }
+        return *this;
+    }
+    constexpr MintMatrix& operator *= (const mint &v) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = val[i][j] * v;
+        return *this;
+    }
+    constexpr MintMatrix& operator *= (const MintMatrix &r) {
+        assert(width() == r.height());
+        MintMatrix<mint> res(height(), r.width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < r.width(); ++j)
+                for (int k = 0; k < width(); ++k)
+                    res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
+        return (*this) = res;
+    }
+    constexpr MintMatrix operator + () const { return MintMatrix(*this); }
+    constexpr MintMatrix operator - () const { return MintMatrix(*this) *= mint(-1); }
+    constexpr MintMatrix operator + (const MintMatrix &r) const { return MintMatrix(*this) += r; }
+    constexpr MintMatrix operator - (const MintMatrix &r) const { return MintMatrix(*this) -= r; }
+    constexpr MintMatrix operator * (const mint &v) const { return MintMatrix(*this) *= v; }
+    constexpr MintMatrix operator * (const MintMatrix &r) const { return MintMatrix(*this) *= r; }
+    constexpr vector<mint> operator * (const vector<mint> &v) const {
+        assert(width() == v.size());
+        vector<mint> res(height(), mint(0));
+        for (int i = 0; i < height(); i++)
+            for (int j = 0; j < width(); j++)
+                res[i] += val[i][j] * v[j];
+        return res;
+    }
+    
+    // pow
+    constexpr MintMatrix pow(long long n) const {
+        assert(height() == width());
+        MintMatrix<mint> res(height(), width()), mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = mint(1);
+        while (n > 0) {
+            if (n & 1) res = res * mul;
+            mul = mul * mul;
+            n >>= 1;
         }
         return res;
     }
-    if (T + M > mint::get_mod()) {
-        auto prefix = shift_of_sampling_points(y, mint(T), mint::get_mod() - T);
-        auto suffix = shift_of_sampling_points(y, mint(0), M - (int)prefix.size());
-        copy(begin(suffix), end(suffix), back_inserter(prefix));
-        return prefix;
+    friend constexpr MintMatrix<mint> pow(const MintMatrix<mint> &mat, long long n) {
+        return mat.pow(n);
     }
-    BiCoef<mint> bc(N);
-    FPS<mint> res(M), d(N), h(M + N - 1);
+    
+    // gauss-jordan
+    constexpr int find_pivot(int cur_rank, int col) const {
+        int pivot = -1;
+        for (int row = cur_rank; row < height(); ++row) {
+            if (val[row][col] != 0) {
+                pivot = row;
+                break;
+            }
+        }
+        return pivot;
+    }
+    constexpr void sweep(int cur_rank, int col, int pivot) {
+        swap(val[pivot], val[cur_rank]);
+        auto ifac = val[cur_rank][col].inv();
+        for (int col2 = 0; col2 < width(); ++col2) {
+            val[cur_rank][col2] *= ifac;
+        }
+        for (int row = 0; row < height(); ++row) {
+            if (row != cur_rank && val[row][col] != 0) {
+                auto fac = val[row][col];
+                for (int col2 = 0; col2 < width(); ++col2) {
+                    val[row][col2] -= val[cur_rank][col2] * fac;
+                }
+            }
+        }
+    }
+    constexpr int gauss_jordan(int not_sweep_width = 0) {
+        int rank = 0;
+        for (int col = 0; col < width(); ++col) {
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
+            if (pivot == -1) continue;
+            sweep(rank++, col, pivot);
+        }
+        return rank;
+    }
+    constexpr int gauss_jordan(int not_sweep_width, vector<int> &core) {
+        core.clear();
+        int rank = 0;
+        for (int col = 0; col < width(); ++col) {
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
+            if (pivot == -1) continue;
+            core.push_back(col);
+            sweep(rank++, col, pivot);
+        }
+        return rank;
+    }
+    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
+        return mat.gauss_jordan(not_sweep_width);
+    }
+
+    // find one solution
+    friend constexpr int linear_equation
+    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res) {
+        // extend
+        MintMatrix<mint> A(mat.height(), mat.width() + 1);
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
+            A[i].back() = b[i];
+        }
+        int rank = A.gauss_jordan(1);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) if (A[row].back() != 0) return -1;
+
+        // answer
+        res.assign(mat.width(), 0);
+        for (int i = 0; i < rank; ++i) res[i] = A[i].back();
+        return rank;
+    }
+    friend constexpr int linear_equation(const MintMatrix<mint> &mat, const vector<mint> &b) {
+        vector<mint> res;
+        return linear_equation(mat, b, res);
+    }
+
+    // find all solutions
+    friend int linear_equation
+    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
+        // extend
+        MintMatrix<mint> A(mat.height(), mat.width() + 1);
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
+            A[i].back() = b[i];
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(1, core);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) {
+            if (A[row].back() != 0) return -1;
+        }
+
+        // construct the core solution
+        res.assign(mat.width(), mint(0));
+        for (int i = 0; i < (int)core.size(); i++) res[core[i]] = A[i].back();
+    
+        // construct the all solutions
+        zeros.clear();
+        vector<bool> use(mat.width(), 0);
+        for (auto c : core) use[c] = true;
+        for (int j = 0; j < mat.width(); j++) {
+            if (use[j]) continue;
+            vector<mint> zero(mat.width(), mint(0));
+            zero[j] = mint(1);
+            for (int i = 0; i < (int)core.size(); i++) zero[core[i]] = -A[i][j];
+            zeros.push_back(zero);
+        }
+        return rank;
+    }
+    
+    // determinant
+    constexpr mint det() const {
+        MintMatrix<mint> A(*this);
+        int rank = 0;
+        mint res = 1;
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return mint(0);
+            res *= A[pivot][rank];
+            A.sweep(rank++, col, pivot);
+        }
+        return res;
+    }
+    friend constexpr mint det(const MintMatrix<mint> &mat) {
+        return mat.det();
+    }
+};
+
+// characteristic_polynomial
+// find f(x) = det(xI - B), for N x N mint matrix B, O(N^3)
+template<class mint>
+void hessenberg_reduction(MintMatrix<mint> &M) {
+    assert(M.height() == M.width());
+    int N = (int)M.height();
+    for (int r = 0; r < N - 2; r++) {
+        int pivot = -1;
+        for (int h = r + 1; h < N; h++) {
+            if (M[h][r] != 0) {
+                pivot = h;
+                break;
+            }
+        }
+        if (pivot == -1) continue;
+        for (int i = 0; i < N; i++) swap(M[r + 1][i], M[pivot][i]);
+        for (int i = 0; i < N; i++) swap(M[i][r + 1], M[i][pivot]);
+        mint ir = M[r + 1][r].inv();
+        for (int i = r + 2; i < N; i++) {
+            mint ir2 = M[i][r] * ir;
+            for (int j = 0; j < N; j++) M[i][j] -= M[r + 1][j] * ir2;
+            for (int j = 0; j < N; j++) M[j][r + 1] += M[j][i] * ir2;
+        }
+    }
+}
+template<class mint>
+FPS<mint> calc_characteristic_polynomial(MintMatrix<mint> B) {
+    assert(B.height() == B.width());
+    hessenberg_reduction(B);
+    int N = (int)B.height();
+    vector<FPS<mint>> res(N + 1);
+    res[0] = {mint(1)};
     for (int i = 0; i < N; i++) {
-        d[i] = bc.finv(i) * bc.finv(N - i - 1) * y[i];
-        if ((N - i - 1) & 1) d[i] = -d[i];
+        res[i + 1].assign(i + 2, mint(0));
+        for (int j = 0; j < i + 1; j++) res[i + 1][j + 1] += res[i][j];
+        for (int j = 0; j < i + 1; j++) res[i + 1][j] -= res[i][j] * B[i][i];
+        mint beta = 1;
+        for (int j = i - 1; j >= 0; j--) {
+            beta *= B[j + 1][j];
+            mint beta2 = -B[j][i] * beta;
+            for (int k = 0; k < j + 1; k++) res[i + 1][k] += beta2 * res[j][k];
+        }
     }
-    for (int i = 0; i < M + N - 1; i++) h[i] = mint(T - N + i + 1);
-    h = all_inverse(h);
-    auto dh = d * h;
-    mint cur = T;
-    for (int i = 1; i < N; i++) cur *= T - i;
-    for (int i = 0; i < M; i++) {
-        res[i] = cur * dh[N + i - 1];
-        cur *= T + i + 1;
-        cur *= h[i];
+    return res[N];
+}
+
+// find f(x) = det(M1x + M0), for given N x N matrix M0, M1, in O(N^3)
+template<class mint>
+FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
+    int N = (int)M0.height();
+    assert(M0.width() == N && M1.height() == N && M1.width() == N);
+    int con = 0;
+    mint invAB = 1;
+    for (int p = 0; p < N; p++) {
+        int pivot = -1;
+        for (int r = p; r < N; r++) {
+            if (M1[r][p] != mint(0)) {
+                pivot = r;
+                break;
+            }
+        }
+        if (pivot == -1) {
+            con++;
+            if (con > N) return FPS<mint>(N + 1, mint(0));
+            for (int r = 0; r < p; r++) {
+                mint v = M1[r][p];
+                M1[r][p] = 0;
+                for (int i = 0; i < N; i++) M0[i][p] -= v * M0[i][r];
+            }
+            for (int i = 0; i < N; i++) swap(M0[i][p], M1[i][p]);
+            p--;
+            continue;
+        }
+        if (pivot != p) {
+            swap(M1[p], M1[pivot]);
+            swap(M0[p], M0[pivot]);
+            invAB *= -1;
+        }
+        mint v = M1[p][p], iv = v.inv();
+        invAB *= v;
+        for (int c = 0; c < N; c++) M0[p][c] *= iv, M1[p][c] *= iv;
+        for (int r = 0; r < N; r++) {
+            if (r == p) continue;
+            mint v = M1[r][p];
+            for (int c = 0; c < N; c++) M0[r][c] -= M0[p][c] * v, M1[r][c] -= M1[p][c] * v;
+        }
     }
-    return res;
+    for (int r = 0; r < M0.height(); r++) for (int c = 0; c < M0.width(); c++) M0[r][c] *= -1;
+    auto pol = calc_characteristic_polynomial(M0);
+    for (auto &x : pol) x *= invAB;
+    pol.erase(pol.begin(), pol.begin() + con);
+    pol.resize(N + 1);
+    return pol;
 }
 
 
@@ -2460,21 +1749,19 @@ template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y
 // Examples
 //------------------------------//
 
-// Yosupo Library Checker - Shift of Sampling Points of Polynomial
-void Yosupo_Shift_of_Sampling_Points() {
-    FastRead Read; FastWrite Write;
+// yukicoder No.1907 DETERMINATION
+void yukicoder_1907() {
     using mint = Fp<>;
-    int N, M;
-    mint c;
-    Read(N, M, c.val);
-    vector<mint> f(N);
-    for (int i = 0; i < N; i++) Read(f[i].val);
-    auto res = shift_of_sampling_points(f, c, M);
-    for (int i = 0; i < res.size(); i++) Write(res[i].val), Write(' ');
-    Write('\n');
+    int N;
+    cin >> N;
+    MintMatrix<mint> M0(N, N), M1(N, N);
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> M0[i][j];
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> M1[i][j];
+    auto res = calc_det_linear_expression(M0, M1);
+    for (int i = 0; i < res.size(); i++) cout << res[i] << '\n';
 }
 
 
 int main() {
-    Yosupo_Shift_of_Sampling_Points();
+    yukicoder_1907();
 }
