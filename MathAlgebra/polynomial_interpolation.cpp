@@ -5,6 +5,9 @@
 //   Yosupo Library Checker - Polynomial Interpolation
 //     https://judge.yosupo.jp/problem/polynomial_interpolation
 //
+//   ABC 412 G - Degree Harmony
+//     https://atcoder.jp/contests/abc412/tasks/abc412_g
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -2338,7 +2341,62 @@ void Yosupo_Polynomial_Interpolation() {
     Write('\n');
 }
 
+// ABC 412 G - Degree Harmony
+void ABC_412_G() {
+    int N, M;
+    cin >> N >> M;
+    vector<int> A(N), id(N+1, 0), u(M), v(M);
+    for (int i = 0; i < N; i++) cin >> A[i], id[i+1] = id[i] + A[i];
+    for (int i = 0; i < M; i++) cin >> u[i] >> v[i], u[i]--, v[i]--;
+    int V = id.back();
+
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    vector<mint> vx(V+1, 0), vy(V+1, 0);
+    MintMatrix<mint> mat(V, V);
+    for (int i = 0; i < N; i++) {
+        for (int j = id[i]; j < id[i+1]; j++) {
+            for (int k = id[i]; k < id[i+1]; k++) {
+                if (j >= k) continue;
+                int val = randInt(0, MOD-1);
+                mat[j][k] = val;
+                mat[k][j] = -val;
+            }
+        }
+    }
+    for (int i = 0; i < M; i++) {
+        for (int j = id[u[i]]; j < id[u[i]+1]; j++) {
+            for (int k = id[v[i]]; k < id[v[i]+1]; k++) {
+                int val = randInt(0, MOD-1);
+                mat[j][k] = val;
+                mat[k][j] = -val;
+            }
+        }
+    }
+    for (int y = 0; y <= V; y++) {
+        auto mat2 = mat;
+        for (int i = 0; i < M; i++) {
+            for (int j = id[u[i]]; j < id[u[i]+1]; j++) {
+                for (int k = id[v[i]]; k < id[v[i]+1]; k++) {
+                    mat2[j][k] *= y;
+                    mat2[k][j] *= y;
+                }
+            }
+        }
+        vx[y] = y;
+        vy[y] = det(mat2);
+    }
+    auto f = interpolate(vx, vy);
+    int res = -1;
+    for (int i = 0; i < f.size(); i++) if (f[i] != mint(0)) {
+        res = i/2;
+        break;
+    }
+    cout << res << endl;
+}
+
 
 int main() {
     Yosupo_Polynomial_Interpolation();
+    //ABC_412_G();
 }
