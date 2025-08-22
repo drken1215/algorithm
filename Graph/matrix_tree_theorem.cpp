@@ -10,6 +10,9 @@
 //   AOJ 3369 - Namori Counting
 //     https://onlinejudge.u-aizu.ac.jp/problems/3369 
 //
+//   第二回日本最強プログラマー学生選手権 G - Spanning Tree
+//     https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g
+//
 //   AtCoder ABC 253 Ex - We Love Forest
 //     https://atcoder.jp/contests/abc253/tasks/abc253_h
 //
@@ -1525,6 +1528,76 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
     return pol;
 }
 
+// Union-Find
+struct UnionFind {
+    // core member
+    vector<int> par, nex;
+
+    // constructor
+    UnionFind() { }
+    UnionFind(int N) : par(N, -1), nex(N) {
+        init(N);
+    }
+    void init(int N) {
+        par.assign(N, -1);
+        nex.resize(N);
+        for (int i = 0; i < N; ++i) nex[i] = i;
+    }
+    
+    // core methods
+    int root(int x) {
+        if (par[x] < 0) return x;
+        else return par[x] = root(par[x]);
+    }
+    
+    bool same(int x, int y) {
+        return root(x) == root(y);
+    }
+    
+    bool merge(int x, int y, bool merge_technique = true) {
+        x = root(x), y = root(y);
+        if (x == y) return false;
+        if (merge_technique) if (par[x] > par[y]) swap(x, y); // merge technique
+        par[x] += par[y];
+        par[y] = x;
+        swap(nex[x], nex[y]);
+        return true;
+    }
+    
+    int size(int x) {
+        return -par[root(x)];
+    }
+    
+    // get group
+    vector<int> group(int x) {
+        vector<int> res({x});
+        while (nex[res.back()] != x) res.push_back(nex[res.back()]);
+        return res;
+    }
+    vector<vector<int>> groups() {
+        vector<vector<int>> member(par.size());
+        for (int v = 0; v < (int)par.size(); ++v) {
+            member[root(v)].push_back(v);
+        }
+        vector<vector<int>> res;
+        for (int v = 0; v < (int)par.size(); ++v) {
+            if (!member[v].empty()) res.push_back(member[v]);
+        }
+        return res;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, UnionFind uf) {
+        const vector<vector<int>> &gs = uf.groups();
+        for (const vector<int> &g : gs) {
+            s << "group: ";
+            for (int v : g) s << v << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
+
 
 //------------------------------//
 // Examples
@@ -1543,6 +1616,51 @@ void AOJ_3369() {
         if (u < N - 1 && v < N - 1) L[u][v] = L[v][u] = -1;
     }
     mint res = det(L) * (M - N + 1);
+    cout << res << endl;
+}
+
+// 第二回日本最強プログラマー学生選手権 G - Spanning Tree
+void jsc2021_G() {
+    using mint = Fp<1000000007>;
+    int N;
+    cin >> N;
+    vector A(N, vector(N, 0));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j];
+    UnionFind uf(N);
+    for (int i = 0; i < N; i++) for (int j = i+1; j < N; j++) {
+        if (A[i][j] == 1) {
+            if (uf.same(i, j)) {
+                cout << 0 << endl;
+                return;
+            }
+            uf.merge(i, j);
+        }
+    }
+    int V = 0;
+    vector<int> ids(N, -1);
+    for (int i = 0; i < N; i++) if (uf.root(i) == i) ids[i] = V++;
+    if (V == 1) {
+        cout << 1 << endl;
+        return;
+    }
+    vector<int> degs(V, 0);
+    vector<vector<int>> G(V, vector<int>(V, 0));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+        if (A[i][j] == -1) {
+            int vi = ids[uf.root(i)], vj = ids[uf.root(j)];
+            if (vi >= vj) continue;
+            degs[vi]++, degs[vj]++;
+            G[vi][vj]++, G[vj][vi]++;
+        }
+    }
+    MintMatrix<mint> L(V-1, V-1);
+    for (int i = 0; i < V-1; i++) {
+        L[i][i] = degs[i];
+        for (int j = i+1; j < V-1; j++) {
+            L[i][j] = L[j][i] = -G[i][j];
+        }
+    }
+    auto res = det(L);
     cout << res << endl;
 }
 
@@ -1629,6 +1747,7 @@ void ABC_323_G() {
 
 int main() {
     //AOJ_3369();
-    ABC_253_Ex();
+    jsc2021_G();
+    //ABC_253_Ex();
     //ABC_323_G();
 }
