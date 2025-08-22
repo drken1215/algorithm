@@ -10,6 +10,9 @@
 //   AOJ 3369 - Namori Counting
 //     https://onlinejudge.u-aizu.ac.jp/problems/3369 
 //
+//   AtCoder ABC 253 Ex - We Love Forest
+//     https://atcoder.jp/contests/abc253/tasks/abc253_h
+//
 //   AtCoder ABC 323 G - Inversion of Tree
 //     https://atcoder.jp/contests/abc323/tasks/abc323_g
 //
@@ -1543,6 +1546,58 @@ void AOJ_3369() {
     cout << res << endl;
 }
 
+// AtCoder ABC 253 Ex - We Love Forest
+void ABC_253_Ex() {
+    using mint = Fp<>;
+    int N, M, u, v;
+    cin >> N >> M;
+    BiCoef<mint> bc(N + 1);
+    vector G(N, vector(N, 0));
+    for (int i = 0; i < M; i++) {
+        cin >> u >> v, u--, v--;
+        G[u][v]++, G[v][u]++;
+    }
+    vector<mint> pre(1 << N, 1);
+    for (int S = 1; S < (1 << N); S++) {
+        MintMatrix<mint> A(N, N);
+        int jogai = bsf(S);
+        for (int i = 0; i < N; i++) {
+            if (i != jogai && S >> i & 1) {
+                int con = 0;
+                for (int j = 0; j < N; j++) if (S >> j & 1) con += G[i][j];
+                A[i][i] = con;
+            } else A[i][i] = 1;
+        }
+        for (int i = 0; i < N; i++) {
+            if (i == jogai || !(S >> i & 1)) continue;
+            for (int j = 0; j < N; j++) {
+                if (i == j || j == jogai || !(S >> j & 1)) continue;
+                A[i][j] = -G[i][j];
+            }
+        }
+        pre[S] = det(A);
+    }
+    vector dp(1 << N, vector(N, mint(0)));
+    vector seen(1 << N, vector(N, false));
+    auto rec = [&](auto &&rec, int S, int num) -> mint {
+        if (S == 0) return 1;
+        if (num == popcnt(S) - 1) return pre[S];
+        if (num < 0|| num >= popcnt(S)) return 0;
+        if (seen[S][num]) return dp[S][num];
+        seen[S][num] = true;
+        mint res = 0;
+        for (int S2 = (S - 1) & S; S2 > 0; S2 = (S2 - 1) & S) {
+            int num2 = num - (popcnt(S - S2) - 1);
+            res += rec(rec, S2, num2) * pre[S - S2];
+        }
+        return dp[S][num] = res;
+    };
+    for (int k = 1; k < N; k++) {
+        mint res = rec(rec, (1 << N) - 1, k) * bc.finv(N-k) * bc.fact(k) / mint(M).pow(k);
+        cout << res << '\n';
+    }
+}
+
 // AtCoder ABC 323 G - Inversion of Tree
 void ABC_323_G() {
     using mint = Fp<>;
@@ -1574,5 +1629,6 @@ void ABC_323_G() {
 
 int main() {
     //AOJ_3369();
-    ABC_323_G();
+    ABC_253_Ex();
+    //ABC_323_G();
 }
