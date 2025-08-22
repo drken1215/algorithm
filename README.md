@@ -252,7 +252,7 @@
 - (★★★☆) 有向 Euler 路
 - (★★★☆) [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
 - (★★★★) 最小有向全域木 (Chu-Liu/Edmonds 法)
-- (★★★★) 行列木定理
+- (★★★★) [無向グラフの全域木の個数 (行列木定理)](https://github.com/drken1215/algorithm/blob/master/Graph/matrix_tree_theorem.cpp)
 - (★★★★) 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
 
 ## グラフ上の有名問題
@@ -696,4 +696,3 @@
 # License
 These codes are licensed under CC0.
 [![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png "CC0")](http://creativecommons.org/publicdomain/zero/1.0/deed.ja)
-
