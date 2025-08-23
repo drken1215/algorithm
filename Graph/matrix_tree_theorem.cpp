@@ -13,6 +13,9 @@
 //   第二回日本最強プログラマー学生選手権 G - Spanning Tree
 //     https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g
 //
+//   AtCoder ARC 018 D - 僕は友達が少ない
+//     https://atcoder.jp/contests/arc018/tasks/arc018_4
+//
 //   AtCoder ABC 253 Ex - We Love Forest
 //     https://atcoder.jp/contests/abc253/tasks/abc253_h
 //
@@ -1664,6 +1667,49 @@ void jsc2021_G() {
     cout << res << endl;
 }
 
+// AtCoder ARC 018 D - 僕は友達が少ない
+void ARC_018_D() {
+    using mint = Fp<1000000007>;
+    int N, M, A, B, C;
+    cin >> N >> M;
+    unordered_map<long long, vector<pint>> all_edges;
+    for (int i = 0; i < M; i++) {
+        cin >> A >> B >> C, A--, B--;
+        all_edges[C].emplace_back(A, B);
+    }
+    UnionFind uf(N);
+    long long res = 0;
+    mint nres = 1;
+    for (auto [cost, edges] : all_edges) {
+        int V = 0;
+        unordered_map<int, int> conv;
+        for (auto &[u, v] : edges) {
+            u = uf.root(u), v = uf.root(v);
+            if (!conv.count(u)) conv[u] = V++;
+            if (!conv.count(v)) conv[v] = V++;
+            u = conv[u], v = conv[v];
+        }
+        vector<int> deg(V, 0);
+        vector<vector<int>> G(V, vector<int>(V, 0));
+        for (auto [u, v] : edges) {
+            deg[u]++, deg[v]++;
+            G[u][v]++, G[v][u]++;
+        }
+        
+        MintMatrix L(V-1, V-1);
+        for (int i = 0; i < V-1; i++) {
+            L[i][i] = deg[i];
+            for (int j = i+1; j < V-1; j++) {
+                L[i][j] = L[j][i] = -G[i][j];
+            }
+        }
+        mint tmp = det(L);
+        res += cost * ((int)conv.size() - 1);
+        nres *= tmp;
+    }
+    cout << res << " " << nres << '\n';
+}
+
 // AtCoder ABC 253 Ex - We Love Forest
 void ABC_253_Ex() {
     using mint = Fp<>;
@@ -1747,7 +1793,8 @@ void ABC_323_G() {
 
 int main() {
     //AOJ_3369();
-    jsc2021_G();
+    //jsc2021_G();
+    ARC_018_D();
     //ABC_253_Ex();
     //ABC_323_G();
 }
