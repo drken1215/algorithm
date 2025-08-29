@@ -2,6 +2,9 @@
 // mod. p 行列 (行列累乗、掃き出し法)
 //
 // verified:
+//   Yosupo Library Checker - Inverse Matrix
+//     https://judge.yosupo.jp/problem/inverse_matrix
+//
 //   AtCoder ARC 176 D - Swap Permutation
 //     https://atcoder.jp/contests/arc176/tasks/arc176_d
 //
