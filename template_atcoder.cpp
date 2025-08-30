@@ -2455,23 +2455,26 @@ template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y
 // matrix
 template<class mint> struct MintMatrix {
     // inner value
+    int H, W;
     vector<vector<mint>> val;
     
     // constructors
-    MintMatrix(int H, int W) : val(H, vector<mint>(W)) {}
-    MintMatrix(int H, int W, mint x) : val(H, vector<mint>(W, x)) {}
-    MintMatrix(const MintMatrix &mat) : val(mat.val) {}
-    void init(int H, int W, mint x) {
-        val.assign(H, vector<mint>(W, x));
+    MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
+    MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
+    MintMatrix(const MintMatrix &mat) : H(mat.H), W(mat.W), val(mat.val) {}
+    void init(int h, int w, mint x) {
+        H = h, W = w;
+        val.assign(h, vector<mint>(w, x));
     }
-    void resize(int H, int W) {
-        val.resize(H);
-        for (int i = 0; i < H; ++i) val[i].resize(W);
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
     }
     
     // getter and debugger
-    constexpr int height() const { return (int)val.size(); }
-    constexpr int width() const { return (int)val[0].size(); }
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
     vector<mint>& operator [] (int i) { return val[i]; }
     constexpr vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
@@ -2565,23 +2568,24 @@ template<class mint> struct MintMatrix {
     constexpr int find_pivot(int cur_rank, int col) const {
         int pivot = -1;
         for (int row = cur_rank; row < height(); ++row) {
-            if (val[row][col] != 0) {
+            if (val[row][col] != mint(0)) {
                 pivot = row;
                 break;
             }
         }
         return pivot;
     }
-    constexpr void sweep(int cur_rank, int col, int pivot) {
+    constexpr void sweep(int cur_rank, int col, int pivot, bool sweep_upper = true) {
         swap(val[pivot], val[cur_rank]);
         auto ifac = val[cur_rank][col].inv();
-        for (int col2 = 0; col2 < width(); ++col2) {
+        for (int col2 = cur_rank; col2 < width(); ++col2) {
             val[cur_rank][col2] *= ifac;
         }
-        for (int row = 0; row < height(); ++row) {
-            if (row != cur_rank && val[row][col] != 0) {
+        int row_start = (sweep_upper ? 0 : cur_rank + 1);
+        for (int row = row_start; row < height(); ++row) {
+            if (row != cur_rank && val[row][col] != mint(0)) {
                 auto fac = val[row][col];
-                for (int col2 = 0; col2 < width(); ++col2) {
+                for (int col2 = cur_rank; col2 < width(); ++col2) {
                     val[row][col2] -= val[cur_rank][col2] * fac;
                 }
             }
@@ -2611,6 +2615,22 @@ template<class mint> struct MintMatrix {
     }
     friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
         return mat.gauss_jordan(not_sweep_width);
+    }
+
+    // rank
+    constexpr int get_rank() const {
+        if (height() == 0 || width() == 0) return 0;
+        MintMatrix<mint> A(*this);
+        if (width() > height()) {
+            A.resize(width(), height());
+            for (int row = 0; row < width(); row++) for (int col = 0; col < height(); col++) {
+                A[row][col] = val[col][row];
+            }
+        }
+        return A.gauss_jordan(0);
+    }
+    friend constexpr int get_rank(const MintMatrix<mint> &mat) {
+        return mat.get_rank();
     }
 
     // find one solution
@@ -2674,6 +2694,8 @@ template<class mint> struct MintMatrix {
     
     // determinant
     constexpr mint det() const {
+        assert(height() == width());
+        if (height() == 0) return mint(1);
         MintMatrix<mint> A(*this);
         int rank = 0;
         mint res = mint(1);
@@ -2682,12 +2704,39 @@ template<class mint> struct MintMatrix {
             if (pivot == -1) return mint(0);
             if (pivot != rank) res = -res;
             res *= A[pivot][rank];
-            A.sweep(rank++, col, pivot);
+            A.sweep(rank++, col, pivot, false);
         }
         return res;
     }
     friend constexpr mint det(const MintMatrix<mint> &mat) {
         return mat.det();
+    }
+    constexpr mint det_nonprime_mod() const {
+        assert(height() == width());
+        if (height() == 0) return mint(1);
+        MintMatrix<mint> A(*this);
+        int rank = 0;
+        mint res = mint(1);
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return mint(0);
+            if (pivot != rank) swap(A[pivot], A[rank]), res = -res;
+            for (int row = rank + 1; row < height(); ++row) {
+                while (A[row][col] != 0) {
+                    swap(A[rank], A[row]), res = -res;
+                    long long quo = A[row][col].get() / A[rank][col].get();
+                    for (int col2 = rank; col2 < width(); ++col2) {
+                        A[row][col2] -= A[rank][col2] * quo;
+                    }
+                }
+            }
+            rank++;
+        }
+        for (int col = 0; col < height(); ++col) res *= A[col][col];
+        return res;
+    }
+    friend constexpr mint det_nonprime_mod(const MintMatrix<mint> &mat) {
+        return mat.det_nonprime_mod();
     }
 };
 
