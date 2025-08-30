@@ -400,6 +400,7 @@ template<class mint> struct MintMatrix {
         for (int col = 0; col < width(); ++col) {
             int pivot = A.find_pivot(rank, col);
             if (pivot == -1) return mint(0);
+            if (pivot != rank) res = -res;
             res *= A[pivot][rank];
             A.sweep(rank++, col, pivot);
         }
