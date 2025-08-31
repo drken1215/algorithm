@@ -94,27 +94,7 @@ template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
 template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 
-// xor128による乱数生成、周期は2^128-1
-unsigned int randInt() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-int randInt(int minv, int maxv) {
-    return randInt() % (maxv - minv + 1) + minv;
-}
-long long randInt(long long minv, long long maxv) {
-    long long a = randInt(), b = randInt();
-    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
-}
-template<class T> void shuffle(vector<T>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
-        int k = randInt() % (i + 1);
-        swap(vec[i], vec[k]);
-    }
-}
+
 
 
 //------------------------------//
@@ -435,13 +415,12 @@ template<class mint> struct MintMatrix {
     vector<mint>& operator [] (int i) { return val[i]; }
     constexpr vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
-        os << endl;
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
-                if (j) os << ", ";
+                if (j) os << ' ';
                 os << mat.val[i][j];
             }
-            os << endl;
+            os << '\n';
         }
         return os;
     }
@@ -504,6 +483,18 @@ template<class mint> struct MintMatrix {
                 res[i] += val[i][j] * v[j];
         return res;
     }
+
+    // transpose
+    constexpr MintMatrix trans() const {
+        MintMatrix<mint> res(width(), height());
+        for (int row = 0; row < width(); row++) for (int col = 0; col < height(); col++) {
+            res[row][col] = val[col][row];
+        }
+        return res;
+    }
+    friend constexpr MintMatrix<mint> trans(const MintMatrix<mint> &mat) {
+        return mat.trans();
+    }
     
     // pow
     constexpr MintMatrix pow(long long n) const {
@@ -548,17 +539,17 @@ template<class mint> struct MintMatrix {
             }
         }
     }
-    constexpr int gauss_jordan(int not_sweep_width = 0) {
+    constexpr int gauss_jordan(int not_sweep_width = 0, bool sweep_upper = true) {
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
             if (col == width() - not_sweep_width) break;
             int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
-            sweep(rank++, col, pivot);
+            sweep(rank++, col, pivot, sweep_upper);
         }
         return rank;
     }
-    constexpr int gauss_jordan(int not_sweep_width, vector<int> &core) {
+    constexpr int gauss_jordan(vector<int> &core, int not_sweep_width, bool sweep_upper = true) {
         core.clear();
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
@@ -566,25 +557,20 @@ template<class mint> struct MintMatrix {
             int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
             core.push_back(col);
-            sweep(rank++, col, pivot);
+            sweep(rank++, col, pivot, sweep_upper);
         }
         return rank;
     }
-    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
-        return mat.gauss_jordan(not_sweep_width);
+    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0, bool sweep_upper = true) {
+        return mat.gauss_jordan(not_sweep_width, sweep_upper);
     }
 
     // rank
     constexpr int get_rank() const {
         if (height() == 0 || width() == 0) return 0;
-        MintMatrix<mint> A(*this);
-        if (width() > height()) {
-            A.resize(width(), height());
-            for (int row = 0; row < width(); row++) for (int col = 0; col < height(); col++) {
-                A[row][col] = val[col][row];
-            }
-        }
-        return A.gauss_jordan(0);
+        MintMatrix A(*this);
+        if (height() < width()) A = A.trans();
+        return A.gauss_jordan(0, false);
     }
     friend constexpr int get_rank(const MintMatrix<mint> &mat) {
         return mat.get_rank();
@@ -624,7 +610,7 @@ template<class mint> struct MintMatrix {
             A[i].back() = b[i];
         }
         vector<int> core;
-        int rank = A.gauss_jordan(1, core);
+        int rank = A.gauss_jordan(core, 1);
         
         // check if it has no solution
         for (int row = rank; row < mat.height(); ++row) {

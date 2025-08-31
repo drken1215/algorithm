@@ -317,17 +317,25 @@
 - (★★★☆) [行列累乗, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
-- (★★★☆) [行列式 (任意 mod)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
+- (★★★☆) [任意 mod 行列式 (by Euclid の互助法を用いた掃き出し法)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
 - (★★★★) [特性多項式の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
-- (★★★★) [det(M0 + M1x) の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
+- (★★★★) ハフニアン (完全マッチングの個数に帰着)
+
+## 多項式行列
+
+- (★★★★) 多項式行列の行列式 (by 徐算を全く行わない法オフで, O(N^4))
+- (★★★★) 多項式行列の行列式 (by ラグランジュ補間によって, O(N^3 d))
+- (★★★★) 多項式行列の行列式 (by Euclid の互助法を用いた掃き出し法)
+- (★★★★) [行列式 det(M0 + M1x) の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
+- (★★★★) 多項式行列の prefix product M(0)M(1)...M(K-1)
+
+## 特殊な行列の乗法、逆行列
+
 - (★★★★) Black Box Linear Algebra
-
-## 特殊な行列
-
-- (★★★★) Toeplitz 行列 (乗算, 連立方程式が O(n^2))
-- (★★★★) 巡回行列 (乗算が O(n^2))
+- (★★★★) Toeplitz 行列 (乗算などが O(N^2))
+- (★★★★) 巡回行列 (乗算などが O(N^2))
 - (★★★★) コンパニオン行列
-- (★★★★) 三重対角行列 (連立方程式が O(n))
+- (★★★★) 三重対角行列 (乗算などが O(N))
 
 ## FFT, NTT, Convolution
 
@@ -372,7 +380,8 @@
 
 ## 多項式のその他のアルゴリズム
 
-- (★★★☆) [f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mod_pow.cpp)
+- (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mod_pow.cpp)
+- (★★★☆) [多項式の middle product (c[i] = sum_j a[i+j]b[j])](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_middle_product.cpp)
 - (★★★★) [多項式の評価点シフト (O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_shift_sampling.cpp)
 - (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★★) [多項式 GCD (by half-gcd) (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
