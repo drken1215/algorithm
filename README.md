@@ -23,10 +23,10 @@
 
 ## 難易度表記の目安
 
-- (★☆☆☆)：NoviSteps グレード基準で 3Q 以下
-- (★★☆☆)：NoviSteps グレード基準で 2Q, 1Q, 1D
-- (★★★☆)：NoviSteps グレード基準で 2D, 3D
-- (★★★★)：NoviSteps グレード基準で 4D 以上
+- (★☆☆☆)：一般教養, NoviSteps グレード基準で 2Q 以下
+- (★★☆☆)：初等典型, NoviSteps グレード基準で 1Q, 1D
+- (★★★☆)：中堅典型, NoviSteps グレード基準で 2D, 3D
+- (★★★★)：高度典型, NoviSteps グレード基準で 4D 以上
 
 
 　
@@ -58,12 +58,12 @@
 ## ハッシュ
 
 - (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
-- (★★★☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
-- (★★★★) 根付き木のハッシュ
+- (★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
+- (★★★☆) 根付き木のハッシュ
 
 ## N 以下の非負整数値の順序つき集合
 
-- (★★★☆) [BIT と BIT 上の二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
+- (★★☆☆) [BIT と BIT 上の二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
 - (★★★★) [64 分木](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
 - (★★★★) van Emde Boas 木
 
@@ -151,53 +151,54 @@
 # 幾何 (GEOMETRY)
 幾何ライブラリです
 
-## 全般
-
 - (★★★☆) [全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
-- (★★☆☆) [基本要素 (点, 線分, 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements.cpp)
-- (★★☆☆) [偏角ソート](https://github.com/drken1215/algorithm/blob/master/Geometry/arg_sort.cpp)
+
+## 基本要素
+
+- (★☆☆☆) [基本要素 (点, 線分, 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements.cpp)
+- (★☆☆☆) [偏角ソート](https://github.com/drken1215/algorithm/blob/master/Geometry/arg_sort.cpp)
 
 ## 点, 線分, 三角形などの位置関係
 
-- (★★☆☆) [点と線分の位置関係 (ccw)](https://github.com/drken1215/algorithm/blob/master/Geometry/ccw.cpp)
-- (★★☆☆) [点と三角形の包含関係](https://github.com/drken1215/algorithm/blob/master/Geometry/is_contain_in_the_triangle.cpp)
+- (★☆☆☆) [点と線分の位置関係 (ccw)](https://github.com/drken1215/algorithm/blob/master/Geometry/ccw.cpp)
+- (★☆☆☆) [点と三角形の包含関係](https://github.com/drken1215/algorithm/blob/master/Geometry/is_contain_in_the_triangle.cpp)
 
 ## 射影, 交差判定, 距離
 
-- (★★☆☆) [射影](https://github.com/drken1215/algorithm/blob/master/Geometry/projection.cpp)
-- (★★☆☆) [線分と線分の交差判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_intersect_two_segments.cpp)
-- (★★☆☆) [線分と線分との距離](https://github.com/drken1215/algorithm/blob/master/Geometry/distance_two_segments.cpp)
+- (★☆☆☆) [射影](https://github.com/drken1215/algorithm/blob/master/Geometry/projection.cpp)
+- (★☆☆☆) [線分と線分の交差判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_intersect_two_segments.cpp)
+- (★☆☆☆) [線分と線分との距離](https://github.com/drken1215/algorithm/blob/master/Geometry/distance_two_segments.cpp)
 
 ## 直線や円の交点
 
-- (★★☆☆) [直線と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_lines.cpp)
-- (★★★☆) [円と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_line_circle.cpp)
-- (★★★☆) [円と円の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_circles.cpp)
-- (★★★☆) [円と線分の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_segment_circle.cpp)
+- (★☆☆☆) [直線と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_lines.cpp)
+- (★★☆☆) [円と直線の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_line_circle.cpp)
+- (★★☆☆) [円と円の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_two_circles.cpp)
+- (★★☆☆) [円と線分の交点](https://github.com/drken1215/algorithm/blob/master/Geometry/crosspoint_segment_circle.cpp)
 
 ## 接線
 
-- (★★★☆) [接線](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
+- (★★☆☆) [接線](https://github.com/drken1215/algorithm/blob/master/Geometry/tanline.cpp)
 - (★★★☆) [共通接線 (2 円)](https://github.com/drken1215/algorithm/blob/master/Geometry/common_tanline.cpp)
 
 ## 多角形
 
-- (★★☆☆) [多角形の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_polygon.cpp)
+- (★☆☆☆) [多角形の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_polygon.cpp)
 - (★★☆☆) [点と多角形の包含判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_contain_in_the_polygon.cpp)
 - (★★☆☆) [凸性判定](https://github.com/drken1215/algorithm/blob/master/Geometry/is_convex.cpp)
-- (★★★☆) [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
+- (★★☆☆) [凸包](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_hull.cpp)
 - (★★★☆) [凸多角形の直径](https://github.com/drken1215/algorithm/blob/master/Geometry/diameter.cpp)
 - (★★★☆) [凸多角形の切断](https://github.com/drken1215/algorithm/blob/master/Geometry/convex_cut.cpp)
-- (★★★★) 凸多角形と直線の交点 O(log N)
-- (★★★★) [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
-- (★★★★) [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
+- (★★★☆) 凸多角形と直線の交点 O(log N)
+- (★★★☆) [円と円の共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_two_circles.cpp)
+- (★★★☆) [円と多角形との共通部分の面積](https://github.com/drken1215/algorithm/blob/master/Geometry/area_common_circle_polygon.cpp)
 - (★★★☆) [ボロノイ図 (単純ver, O(N^3))](https://github.com/drken1215/algorithm/blob/master/Geometry/voronoi.cpp)
 - (★★★★) ボロノイ図 (単純ver, O(N log N))
 - (★★★★) ドロネーの三角形分割 (期待値 O(N^2))
 
 ## 三次元幾何
 
-- (★★★★) [三次元幾何一式](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements_3D.cpp)
+- (★★★☆) [三次元幾何一式](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements_3D.cpp)
 
 ## その他
 
@@ -229,28 +230,24 @@
 
 ## 連結成分分解
 
-- (★★☆☆) [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
-- (★★☆☆) [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/functional_graph_cycle_detection.cpp)
-- (★★★☆) [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/Graph/strongly_connected_components.cpp)
+- (★☆☆☆) [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
+- (★☆☆☆) [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/functional_graph_cycle_detection.cpp)
+- (★★☆☆) [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/Graph/strongly_connected_components.cpp)
 - (★★★☆) [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/Graph/low_link.cpp)
-- (★★★★) [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/Graph/two_edge_connected_components.cpp)
-- (★★★★) [二重頂点連結成分分解 (Block-Cut 木)](https://github.com/drken1215/algorithm/blob/master/Graph/biconnected_components.cpp)
+- (★★★☆) [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/Graph/two_edge_connected_components.cpp)
+- (★★★☆) [二重頂点連結成分分解 (Block-Cut 木)](https://github.com/drken1215/algorithm/blob/master/Graph/biconnected_components.cpp)
 - (★★★★) 三重辺連結成分分解 (SPQR 木)
 
 ## 最短路問題 (基本)
 
 - (★☆☆☆) [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
-- (★★☆☆) [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
-- (★★☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
-- (★★☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
-- (★★☆☆) [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
+- (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
+- (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
+- (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
+- (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - (★★★☆) 全頂点対間最短路 (Johnson 法, O(EV log V))
-
-## 最短路問題 (応用)
-
 - (★★★☆) SPFA
 - (★★★★) 補グラフの最短路
-- (★★★★) d-辺最短路
 
 ## 全域木, 路に関する問題
 
@@ -264,8 +261,8 @@
 ## グラフ上の有名問題
 
 - (★★★☆) [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/Graph/maximum_stable_set.cpp)
-- (★★★★) 最大クリーク列挙（O(1.443^V)）
-- (★★★★) [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
+- (★★★☆) 最大クリーク列挙（O(1.443^V)）
+- (★★★☆) [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
 - (★★★★) 辺彩色
 - (★★★★) 二部グラフの辺彩色 (Alon 法, O(E log E))
 
@@ -293,7 +290,7 @@
 ## 劣モジュラ関数のグラフ表現
 
 - (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
-- (★★★★) [2 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
+- (★★★☆) [2 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
 - (★★★★) [3 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
 
 ## カット
@@ -346,7 +343,7 @@
 
 - (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
-- (★★★★) [任意 mod 畳み込み (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
+- (★★★☆) [任意 mod 畳み込み (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
 - (★★★★) [mod 2^64 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_mod_2_64.cpp)
 
 ## 形式的冪級数 (FPS)
@@ -409,10 +406,10 @@
 
 ## 二項係数
 
-- (★★☆☆) [二項係数 (オーソドックス, n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
-- (★★☆☆) [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
-- (★★☆☆) [二項係数 (漸化式計算, n<=5000, r<=5000, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
-- (★★★★) [二項係数 (任意 mod, n<=10^7, r<=10^7, m<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_any_mod.cpp)
+- (★☆☆☆) [二項係数 (オーソドックス, n<=10^7, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient.cpp)
+- (★☆☆☆) [二項係数 (愚直計算, n<=10^9, r<=10^7, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_naive.cpp)
+- (★☆☆☆) [二項係数 (漸化式計算, n<=5000, r<=5000, p<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_dp.cpp)
+- (★★★☆) [二項係数 (任意 mod, n<=10^7, r<=10^7, m<=10^9)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod_binomial_coefficient_any_mod.cpp)
 
 ## さまざまな数
 
@@ -429,8 +426,8 @@
 
 - (★☆☆☆) [クイックソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/quick_sort.cpp)
 - (★☆☆☆) [マージソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/merge_sort.cpp)
-- (★★☆☆) [ヒープソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/heap_sort.cpp)
-- (★★☆☆) [計数ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/counting_sort.cpp)
+- (★☆☆☆) [ヒープソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/heap_sort.cpp)
+- (★☆☆☆) [計数ソート](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/counting_sort.cpp)
 
 ## さまざまなソート
 
@@ -460,9 +457,9 @@
 
 ## その他
 
-- (★★★☆) [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
-- (★★★☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
-- (★★★☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
+- (★★☆☆) [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
+- (★★☆☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
+- (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
 
 
 　
@@ -472,26 +469,26 @@
 
 ## Mod の処理
 
-- (★★☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_pow_inv.cpp)
-- (★★☆☆) [Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint.cpp)
+- (★☆☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_pow_inv.cpp)
+- (★☆☆☆) [Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint.cpp)
 - (★★☆☆) [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_runtime.cpp)
-- (★★★★) [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_montgomery.cpp)
+- (★★★☆) [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint_montgomery.cpp)
 
 ## 約数, 倍数
 
 - (★☆☆☆) [約数列挙](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/divisor.cpp)
 - (★☆☆☆) [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
 - (★☆☆☆) [最小公倍数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/LCM.cpp)
-- (★★☆☆) [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
+- (★☆☆☆) [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
 
 ## 素数
 
 - (★☆☆☆) [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
 - (★☆☆☆) [素因数分解](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/prime_factorization.cpp)
-- (★★★☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
-- (★★★★) [確率的な高速素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
-- (★★★★) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/pollard_rho.cpp)
-- (★★★★) [原始根](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/primitive_root.cpp)
+- (★★☆☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
+- (★★★☆) [確率的な高速素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
+- (★★★☆) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/pollard_rho.cpp)
+- (★★★☆) [原始根](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/primitive_root.cpp)
 - (★★★★) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
 - (★★★★) N 以下の素数の個数 (O(N^2/3))
 
@@ -499,7 +496,7 @@
 
 - (★☆☆☆) [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - (★★☆☆) [エラトステネスの区間篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes_segment.cpp)
-- (★★★☆) [高速素因数分解, 約数列挙, メビウス関数 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
+- (★★☆☆) [高速素因数分解, 約数列挙, メビウス関数 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
 - (★★★★) [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
 - (★★★★) 線形篩
 - (★★★★) アトキンの篩
@@ -515,7 +512,7 @@
 
 ## さまざまな数
 
-- (★★★☆) [128 ビット整数 (ラッパー)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/int128.cpp)
+- (★★☆☆) [128 ビット整数 (ラッパー)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/int128.cpp)
 - (★★★☆) [多倍長整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
 - (★★★☆) [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
 - (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
@@ -523,8 +520,8 @@
 ## その他
 
 - (★☆☆☆) [m で割って r 余る, x 以上の最小の整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/amari_lower_bound.cpp)
-- (★★☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
-- (★★★☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/kth_root.cpp)
+- (★☆☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
+- (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/kth_root.cpp)
 - (★★★☆) [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Stern_Brocot.cpp)
 
 
@@ -561,8 +558,8 @@
 
 - (★★★☆) [Monotone 行最小値問題 (Monotone Minima, O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★★) TM 行最小値問題 (SMAWK, O(H + W))
-- (★★★★) TM 単一始点最短路問題 (D&D SMAWK, O(N log N))
+- (★★★☆) TM 行最小値問題 (SMAWK, O(H + W))
+- (★★★☆) TM 単一始点最短路問題 (D&D SMAWK, O(N log N))
 - (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, O(N log N))
 - (★★★★) Monge 単一始点最短路問題（by LARSCH, O(N))
 - (★★★★) Monge グラフ上の d-辺最短路
@@ -574,8 +571,8 @@
 
 ## 数理最適化
 
-- (★★☆☆) 二次方程式
-- (★★☆☆) 二分探索法 (方程式の解を 1 つ求める)
+- (★☆☆☆) 二次方程式
+- (★☆☆☆) 二分探索法 (方程式の解を 1 つ求める)
 - (★★☆☆) 三分探索法
 - (★★☆☆) 黄金探索法
 - (★★★☆) Newton 法
@@ -604,19 +601,19 @@
 
 ### 構文解析
 
-- (★★★☆) [LL(1) 再帰下降パーサ](https://github.com/drken1215/algorithm/blob/master/String/parser.cpp)
+- (★★☆☆) [LL(1) 再帰下降パーサ](https://github.com/drken1215/algorithm/blob/master/String/parser.cpp)
 
 ### 文字列検索
 
+- (★★☆☆) [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - (★★★☆) [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
-- (★★★☆) [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - (★★★☆) [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
 - (★★★☆) 単一パターン検索 (Boyer-Moore 法)
 - (★★★★) 複数パターン検索 (Aho-Corasick 法)
 
 ### さまざまな文字列アルゴリズム
 
-- (★★★☆) [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
+- (★★☆☆) [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
 - (★★★☆) [Manacher 法](https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
 
 ### さまざまな文字列データ構造
