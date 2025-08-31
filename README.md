@@ -23,7 +23,7 @@
 
 ## 難易度表記の目安
 
-- (★☆☆☆)：NoviSteps グレード基準 (https://atcoder-novisteps.vercel.app/) で 3Q 以下
+- (★☆☆☆)：NoviSteps グレード基準で 3Q 以下
 - (★★☆☆)：NoviSteps グレード基準で 2Q, 1Q, 1D
 - (★★★☆)：NoviSteps グレード基準で 2D, 3D
 - (★★★★)：NoviSteps グレード基準で 4D 以上
