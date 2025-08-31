@@ -21,6 +21,12 @@
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
+## 難易度表記の目安
+
+- (★☆☆☆)：NoviSteps グレード基準 (https://atcoder-novisteps.vercel.app/) で 3Q 以下
+- (★★☆☆)：NoviSteps グレード基準で 2Q, 1Q, 1D
+- (★★★☆)：NoviSteps グレード基準で 2D, 3D
+- (★★★★)：NoviSteps グレード基準で 4D 以上
 
 
 　
@@ -331,11 +337,10 @@
 
 ## 特殊な行列の乗法、逆行列
 
-- (★★★★) Black Box Linear Algebra
-- (★★★★) Toeplitz 行列 (乗算などが O(N^2))
-- (★★★★) 巡回行列 (乗算などが O(N^2))
-- (★★★★) コンパニオン行列
-- (★★★★) 三重対角行列 (乗算などが O(N))
+- (★★★★) Black Box Linear Algebra (行列式などが O(N^2 + N T(N)))
+- (★★★★) 巡回行列 (行列式などが O(N^2))
+- (★★★★) 上三角 Toeplitz 行列 (行列式などが O(N^2))
+- (★★★★) K 重対角行列 (行列式などが O(NK^2))
 
 ## FFT, NTT, Convolution
 
