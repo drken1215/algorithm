@@ -319,14 +319,14 @@
 
 - (★★★☆) [行列累乗, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
-- (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
+- (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (binary)](htx tps://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - (★★★☆) [任意 mod 行列式 (by Euclid の互助法を用いた掃き出し法)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
 - (★★★★) [特性多項式の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
 - (★★★★) ハフニアン (完全マッチングの個数に帰着)
 
 ## 多項式行列
 
-- (★★★★) 多項式行列の行列式 (by 徐算を全く行わない法オフで, O(N^4))
+- (★★★★) 多項式行列の行列式 (by 徐算を全く行わない方法で, O(N^4))
 - (★★★★) 多項式行列の行列式 (by ラグランジュ補間によって, O(N^3 d))
 - (★★★★) 多項式行列の行列式 (by Euclid の互助法を用いた掃き出し法)
 - (★★★★) [行列式 det(M0 + M1x) の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)

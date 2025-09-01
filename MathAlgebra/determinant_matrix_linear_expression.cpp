@@ -8,10 +8,10 @@
 //   ABC 412 G - Degree Harmony
 //     https://atcoder.jp/contests/abc412/tasks/abc412_g
 //
+//   yukicoder No.1303 Inconvenient Kingdom
+//     https://yukicoder.me/problems/no/1303
+//
 
-
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,14 +79,6 @@ template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
 template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 
-// 4-neighbor
-const vector<int> dx = {1, 0, -1, 0};
-const vector<int> dy = {0, 1, 0, -1};
-
-// 8-neighbor
-const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
-
 // min non-negative i such that n <= 2^i
 int ceil_pow2(int n) {
     int i = 0;
@@ -94,64 +86,11 @@ int ceil_pow2(int n) {
     return i;
 }
 
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-
 // min non-negative i such that (x & (1 << i)) != 0
 int bsf(int x) { return __builtin_ctz(x); }
 int bsf(unsigned int x) { return __builtin_ctz(x); }
 int bsf(long long x) { return __builtin_ctzll(x); }
 int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-
-// max non-negative i such that (x & (1 << i)) != 0
-int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
-int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
-int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
-int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
-
-// floor, ceil
-template<class T> T floor(T a, T b) {
-    if (a % b == 0 || a >= 0) return a / b;
-    else return -((-a) / b) - 1;
-}
-template<class T> T ceil(T x, T y) {
-    return floor(x + y - 1, y);
-}
-
-// kth root
-// N < 2^64, K <= 64
-uint64_t kth_root(uint64_t N, uint64_t K) {
-    assert(K >= 1);
-    if (N <= 1 || K == 1) return N;
-    if (K >= 64) return 1;
-    if (N == uint64_t(-1)) --N;
-    
-    auto mul = [&](uint64_t x, uint64_t y) -> uint64_t {
-        if (x < UINT_MAX && y < UINT_MAX) return x * y;
-        if (x == uint64_t(-1) || y == uint64_t(-1)) return uint64_t(-1);
-        return (x <= uint64_t(-1) / y ? x * y : uint64_t(-1));
-    };
-    auto power = [&](uint64_t x, uint64_t k) -> uint64_t {
-        if (k == 0) return 1ULL;
-        uint64_t res = 1ULL;
-        while (k) {
-            if (k & 1) res = mul(res, x);
-            x = mul(x, x);
-            k >>= 1;
-        }
-        return res;
-    };
-    
-    uint64_t res;
-    if (K == 2) res = sqrtl(N) - 1;
-    else if (K == 3) res = cbrt(N) - 1;
-    else res = pow(N, nextafter(1 / double(K), 0));
-    while (power(res + 1, K) <= N) ++res;
-    return res;
-}
 
 // xor128による乱数生成、周期は2^128-1
 unsigned int randInt() {
@@ -175,40 +114,10 @@ template<class T> void shuffle(vector<T>& vec) {
     }
 }
 
-// int 128
-i128 to_integer(const string &s) {
-    i128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    if (s[0] == '-') res *= -1;
-    return res;
-}
-istream& operator >> (istream &is, i128 &x) {
-    string s;
-    is >> s;
-    x = to_integer(s);
-    return is;
-}
-ostream& operator << (ostream &os, const i128 &x) {
-    i128 ax = (x >= 0 ? x : -x);
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
-}
+
+//------------------------------//
+// mod algorithms
+//------------------------------//
 
 // safe mod
 template<class T_VAL, class T_MOD>
@@ -527,17 +436,10 @@ template<class mint> struct BiCoef {
     }
 };
 
-// all inverse
-template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
-    for (auto &&vi : v) assert(vi != mint(0));
-    int N = (int)v.size();
-    vector<mint> res(N + 1, mint(1));
-    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
-    mint t = res.back().inv();
-    res.pop_back();
-    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
-    return res;
-}
+
+//------------------------------//
+// NTT
+//------------------------------//
 
 // calc primitive root
 constexpr int calc_primitive_root(long long m) {
@@ -573,11 +475,6 @@ constexpr int calc_primitive_root(long long m) {
         if (ok) return g;
     }
 }
-
-
-//------------------------------//
-// NTT
-//------------------------------//
 
 // NTT setup
 template<class mint, int MOD = mint::get_mod(), int g = calc_primitive_root(mint::get_mod())>
@@ -1369,81 +1266,44 @@ FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
 }
 
 
-// polynomial interpolation (case: geometric sequence)
-// y[i] = f(ar^i) -> find f
-template<class mint>
-vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
-    int N = (int)y.size();
-    if (N == 0) return FPS<mint>();
-    if (N == 1) return {y[0]};
-    auto Y = y;
-    mint ir = r.inv(), ia = a.inv();
-    FPS<mint> po(N + N - 1, 1), po2(N + N - 1, 1), ipo(N + N - 1, 1), ipo2(N + N - 1, 1);
-    for (int i = 0; i < N + N - 2; i++) po[i + 1] = po[i] * r, po2[i + 1] = po2[i] * po[i];
-    for (int i = 0; i < N; i++) ipo[i + 1] = ipo[i] * ir, ipo2[i + 1] = ipo2[i] * ipo[i];
-    vector<mint> S(N, mint(1));
-    for (int i = 1; i < N; i++) S[i] = S[i - 1] * (mint(1) - po[i]);
-    vector<mint> iS = all_inverse(S);
-    mint sn = S[N - 1] * (mint(1) - po[N]);
-    for (int i = 0; i < N; i++) {
-        Y[i] = Y[i] * po2[N - i - 1] * ipo2[N - 1] * iS[i] * iS[N - i - 1];
-        if (i & 1) Y[i] = -Y[i];
-    }
-    for (int i = 0; i < N; i++) Y[i] *= ipo2[i];
-    FPS<mint> f = middle_product(po2, Y);
-    for (int i = 0; i < N; i++) f[i] *= ipo2[i];
-    FPS<mint> g(N, mint(1));
-    for (int i = 1; i < N; i++) {
-        g[i] = po2[i] * sn * iS[i] * iS[N - i];
-        if (i & 1) g[i] = -g[i];
-    }
-    f = f * g;
-    f.resize(N);
-    reverse(f.begin(), f.end());
-    mint p = 1;
-    for (int i = 0; i < N; i++) f[i] *= p, p *= ia;
-    return f;
-}
-
-
 //------------------------------//
-// Matrix
+// Modint Matrix
 //------------------------------//
 
-// matrix
+// modint matrix
 template<class mint> struct MintMatrix {
     // inner value
+    int H, W;
     vector<vector<mint>> val;
     
     // constructors
-    MintMatrix(int H, int W) : val(H, vector<mint>(W)) {}
-    MintMatrix(int H, int W, mint x) : val(H, vector<mint>(W, x)) {}
-    MintMatrix(const MintMatrix &mat) : val(mat.val) {}
-    void init(int H, int W, mint x) {
-        val.assign(H, vector<mint>(W, x));
+    MintMatrix() : H(0), W(0) {}
+    MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
+    MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
+    MintMatrix(const MintMatrix &mat) : H(mat.H), W(mat.W), val(mat.val) {}
+    void init(int h, int w, mint x) {
+        H = h, W = w;
+        val.assign(h, vector<mint>(w, x));
     }
-    void resize(int H, int W) {
-        val.resize(H);
-        for (int i = 0; i < H; ++i) val[i].resize(W);
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
     }
     
     // getter and debugger
-    constexpr int height() const { 
-        return (int)val.size();
-    }
-    constexpr int width() const { 
-        return (height() > 0 ? (int)val[0].size() : 0);
-    }
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
     constexpr vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
-        os << endl;
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
-                if (j) os << ", ";
+                if (j) os << ' ';
                 os << mat.val[i][j];
             }
-            os << endl;
+            os << '\n';
         }
         return os;
     }
@@ -1506,6 +1366,18 @@ template<class mint> struct MintMatrix {
                 res[i] += val[i][j] * v[j];
         return res;
     }
+
+    // transpose
+    constexpr MintMatrix trans() const {
+        MintMatrix<mint> res(width(), height());
+        for (int row = 0; row < width(); row++) for (int col = 0; col < height(); col++) {
+            res[row][col] = val[col][row];
+        }
+        return res;
+    }
+    friend constexpr MintMatrix<mint> trans(const MintMatrix<mint> &mat) {
+        return mat.trans();
+    }
     
     // pow
     constexpr MintMatrix pow(long long n) const {
@@ -1527,39 +1399,40 @@ template<class mint> struct MintMatrix {
     constexpr int find_pivot(int cur_rank, int col) const {
         int pivot = -1;
         for (int row = cur_rank; row < height(); ++row) {
-            if (val[row][col] != 0) {
+            if (val[row][col] != mint(0)) {
                 pivot = row;
                 break;
             }
         }
         return pivot;
     }
-    constexpr void sweep(int cur_rank, int col, int pivot) {
+    constexpr void sweep(int cur_rank, int col, int pivot, bool sweep_upper = true) {
         swap(val[pivot], val[cur_rank]);
         auto ifac = val[cur_rank][col].inv();
-        for (int col2 = 0; col2 < width(); ++col2) {
+        for (int col2 = cur_rank; col2 < width(); ++col2) {
             val[cur_rank][col2] *= ifac;
         }
-        for (int row = 0; row < height(); ++row) {
-            if (row != cur_rank && val[row][col] != 0) {
+        int row_start = (sweep_upper ? 0 : cur_rank + 1);
+        for (int row = row_start; row < height(); ++row) {
+            if (row != cur_rank && val[row][col] != mint(0)) {
                 auto fac = val[row][col];
-                for (int col2 = 0; col2 < width(); ++col2) {
+                for (int col2 = cur_rank; col2 < width(); ++col2) {
                     val[row][col2] -= val[cur_rank][col2] * fac;
                 }
             }
         }
     }
-    constexpr int gauss_jordan(int not_sweep_width = 0) {
+    constexpr int gauss_jordan(int not_sweep_width = 0, bool sweep_upper = true) {
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
             if (col == width() - not_sweep_width) break;
             int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
-            sweep(rank++, col, pivot);
+            sweep(rank++, col, pivot, sweep_upper);
         }
         return rank;
     }
-    constexpr int gauss_jordan(int not_sweep_width, vector<int> &core) {
+    constexpr int gauss_jordan(vector<int> &core, int not_sweep_width, bool sweep_upper = true) {
         core.clear();
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
@@ -1567,12 +1440,23 @@ template<class mint> struct MintMatrix {
             int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
             core.push_back(col);
-            sweep(rank++, col, pivot);
+            sweep(rank++, col, pivot, sweep_upper);
         }
         return rank;
     }
-    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
-        return mat.gauss_jordan(not_sweep_width);
+    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0, bool sweep_upper = true) {
+        return mat.gauss_jordan(not_sweep_width, sweep_upper);
+    }
+
+    // rank
+    constexpr int get_rank() const {
+        if (height() == 0 || width() == 0) return 0;
+        MintMatrix A(*this);
+        if (height() < width()) A = A.trans();
+        return A.gauss_jordan(0, false);
+    }
+    friend constexpr int get_rank(const MintMatrix<mint> &mat) {
+        return mat.get_rank();
     }
 
     // find one solution
@@ -1609,7 +1493,7 @@ template<class mint> struct MintMatrix {
             A[i].back() = b[i];
         }
         vector<int> core;
-        int rank = A.gauss_jordan(1, core);
+        int rank = A.gauss_jordan(core, 1);
         
         // check if it has no solution
         for (int row = rank; row < mat.height(); ++row) {
@@ -1636,19 +1520,72 @@ template<class mint> struct MintMatrix {
     
     // determinant
     constexpr mint det() const {
+        assert(height() == width());
+        if (height() == 0) return mint(1);
         MintMatrix<mint> A(*this);
         int rank = 0;
-        mint res = 1;
+        mint res = mint(1);
         for (int col = 0; col < width(); ++col) {
             int pivot = A.find_pivot(rank, col);
             if (pivot == -1) return mint(0);
+            if (pivot != rank) res = -res;
             res *= A[pivot][rank];
-            A.sweep(rank++, col, pivot);
+            A.sweep(rank++, col, pivot, false);
         }
         return res;
     }
     friend constexpr mint det(const MintMatrix<mint> &mat) {
         return mat.det();
+    }
+    constexpr mint det_nonprime_mod() const {
+        assert(height() == width());
+        if (height() == 0) return mint(1);
+        MintMatrix<mint> A(*this);
+        int rank = 0;
+        mint res = mint(1);
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return mint(0);
+            if (pivot != rank) swap(A[pivot], A[rank]), res = -res;
+            for (int row = rank + 1; row < height(); ++row) {
+                while (A[row][col] != 0) {
+                    swap(A[rank], A[row]), res = -res;
+                    long long quo = A[row][col].get() / A[rank][col].get();
+                    for (int col2 = rank; col2 < width(); ++col2) {
+                        A[row][col2] -= A[rank][col2] * quo;
+                    }
+                }
+            }
+            rank++;
+        }
+        for (int col = 0; col < height(); ++col) res *= A[col][col];
+        return res;
+    }
+    friend constexpr mint det_nonprime_mod(const MintMatrix<mint> &mat) {
+        return mat.det_nonprime_mod();
+    }
+
+    // inv
+    constexpr MintMatrix inv() const {
+        assert(height() == width());
+
+        // extend
+        MintMatrix<mint> A(height(), width() + height());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) A[i][j] = val[i][j];
+            A[i][i+width()] = mint(1);
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(height(), true);
+
+        // gauss jordan
+        if (rank < height()) return MintMatrix();
+        MintMatrix<mint> res(height(), width());
+        for (int i = 0; i < height(); ++i) for (int j = 0; j < width(); ++j) res[i][j] = A[i][j+width()];
+        return res;
+    }
+    friend constexpr MintMatrix<mint> inv(const MintMatrix<mint> &mat) {
+        return mat.inv();
     }
 };
 
@@ -1802,8 +1739,149 @@ void ABC_412_G() {
     cout << res << endl;
 }
 
+// yukicoder No.1303 Inconvenient Kingdom
+struct UnionFind {
+    // core member
+    vector<int> par, nex;
+
+    // constructor
+    UnionFind() { }
+    UnionFind(int N) : par(N, -1), nex(N) {
+        init(N);
+    }
+    void init(int N) {
+        par.assign(N, -1);
+        nex.resize(N);
+        for (int i = 0; i < N; ++i) nex[i] = i;
+    }
+    
+    // core methods
+    int root(int x) {
+        if (par[x] < 0) return x;
+        else return par[x] = root(par[x]);
+    }
+    
+    bool same(int x, int y) {
+        return root(x) == root(y);
+    }
+    
+    bool merge(int x, int y, bool merge_technique = true) {
+        x = root(x), y = root(y);
+        if (x == y) return false;
+        if (merge_technique) if (par[x] > par[y]) swap(x, y); // merge technique
+        par[x] += par[y];
+        par[y] = x;
+        swap(nex[x], nex[y]);
+        return true;
+    }
+    
+    int size(int x) {
+        return -par[root(x)];
+    }
+    
+    // get group
+    vector<int> group(int x) {
+        vector<int> res({x});
+        while (nex[res.back()] != x) res.push_back(nex[res.back()]);
+        return res;
+    }
+    vector<vector<int>> groups() {
+        vector<vector<int>> member(par.size());
+        for (int v = 0; v < (int)par.size(); ++v) {
+            member[root(v)].push_back(v);
+        }
+        vector<vector<int>> res;
+        for (int v = 0; v < (int)par.size(); ++v) {
+            if (!member[v].empty()) res.push_back(member[v]);
+        }
+        return res;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, UnionFind uf) {
+        const vector<vector<int>> &gs = uf.groups();
+        for (const vector<int> &g : gs) {
+            s << "group: ";
+            for (int v : g) s << v << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
+void yukicoder_1303() {
+    using mint = Fp<>;
+    int N, M, u, v;
+    cin >> N >> M;
+    vector G(N, vector(N, 0));
+    vector degs(N, 0);
+    UnionFind uf(N);
+    for (int i = 0; i < M; i++) {
+        cin >> u >> v, u--, v--;
+        G[u][v]++, G[v][u]++, degs[u]++, degs[v]++;
+        uf.merge(u, v);
+    }
+
+    auto calc = [&](const vector<int> &group) -> mint {
+        vector<int> conv(N, -1);
+        int iter = 0;
+        for (auto v : group) conv[v] = iter++;
+        MintMatrix<mint> L(iter, iter);
+        for (int i = 0; i < iter; i++) L[i][i] = 1;
+        for (auto v1 : group) {
+            int i = conv[v1];
+            int deg = 0;
+            for (auto v2 : group) {
+                if (G[v1][v2]) deg += G[v1][v2];
+                int j = conv[v2];
+                if (i < iter - 1 && j < iter - 1) L[i][j] = -G[v1][v2];
+            }
+            if (i < iter - 1) L[i][i] = deg;
+        }
+        return det(L);
+    };
+
+    auto groups = uf.groups();
+    if (groups.size() > 1) {
+        mint res = 1;
+        vector<long long> siz;
+        for (auto group : groups) siz.push_back(group.size()), res *= calc(group);
+        sort(siz.begin(), siz.end(), greater<long long>());
+        long long sum = siz[0] + siz[1], sum2 = sum * sum;
+        for (int i = 2; i < (int)siz.size(); i++) sum += siz[i], sum2 += siz[i] * siz[i];
+        long long huben = (sum * sum - sum2);
+        if (siz[0] == siz[1]) {
+            long long sumsiz = 0, sumsiz2 = 0;
+            for (auto s : siz) if (s == siz[0]) sumsiz += s, sumsiz2 += s * s;
+            long long fac = (sumsiz * sumsiz - sumsiz2) / 2;
+            res *= fac;
+        } else {
+            long long sum_sub = 0;
+            for (auto s : siz) if (s == siz[1]) sum_sub += s;
+            long long fac = siz[0] * sum_sub;
+            res *= fac;
+        }
+        cout << huben << endl << res << endl;
+    } else {
+        long long huben = 0;
+        MintMatrix<mint> L0(N, N), L1(N, N);
+        for (int i = 0; i < N; i++) L0[i][i] = 1;
+        for (int i = 0; i < N-1; i++) {
+            L0[i][i] = degs[i], L1[i][i] = (N-1) - degs[i];
+            for (int j = 0; j < N-1; j++) {
+                if (i == j) continue;
+                if (G[i][j]) L0[i][j] = -G[i][j];
+                else L1[i][j] = -1;
+            }
+        }
+        FPS<mint> f = calc_det_linear_expression(L0, L1);
+        mint res = f[0] + f[1];
+        cout << huben << endl << res << endl;
+    }
+}
+
 
 int main() {
     //yukicoder_1907();
-    ABC_412_G();
+    //ABC_412_G();
+    yukicoder_1303();
 }

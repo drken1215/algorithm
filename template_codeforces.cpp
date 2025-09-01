@@ -96,12 +96,6 @@ int bsf(unsigned int x) { return __builtin_ctz(x); }
 int bsf(long long x) { return __builtin_ctzll(x); }
 int bsf(unsigned long long x) { return __builtin_ctzll(x); }
 
-// max non-negative i such that (x & (1 << i)) != 0
-int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
-int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
-int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
-int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
-
 // floor, ceil
 template<class T> T floor(T a, T b) {
     if (a % b == 0 || a >= 0) return a / b;
