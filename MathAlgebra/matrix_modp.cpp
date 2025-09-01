@@ -389,13 +389,14 @@ int DynamicModint::MOD;
 // Modint Matrix
 //------------------------------//
 
-// matrix
+// modint matrix
 template<class mint> struct MintMatrix {
     // inner value
     int H, W;
     vector<vector<mint>> val;
     
     // constructors
+    MintMatrix() : H(0), W(0) {}
     MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
     MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
     MintMatrix(const MintMatrix &mat) : H(mat.H), W(mat.W), val(mat.val) {}
@@ -412,6 +413,7 @@ template<class mint> struct MintMatrix {
     // getter and debugger
     constexpr int height() const { return H; }
     constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
     constexpr vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
@@ -680,6 +682,29 @@ template<class mint> struct MintMatrix {
     }
     friend constexpr mint det_nonprime_mod(const MintMatrix<mint> &mat) {
         return mat.det_nonprime_mod();
+    }
+
+    // inv
+    constexpr MintMatrix inv() const {
+        assert(height() == width());
+
+        // extend
+        MintMatrix<mint> A(height(), width() + height());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) A[i][j] = val[i][j];
+            A[i][i+width()] = mint(1);
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(height(), true);
+
+        // gauss jordan
+        if (rank < height()) return MintMatrix();
+        MintMatrix<mint> res(height(), width());
+        for (int i = 0; i < height(); ++i) for (int j = 0; j < width(); ++j) res[i][j] = A[i][j+width()];
+        return res;
+    }
+    friend constexpr MintMatrix<mint> inv(const MintMatrix<mint> &mat) {
+        return mat.inv();
     }
 };
 
@@ -1032,7 +1057,22 @@ void Yosupo_System_of_Linear_Equations() {
 
 // Yosupo Library Checker - Inverse Matrix
 void Yosupo_Inverse_Matrix() {
-
+    using mint = Fp<>;
+    FastRead Read;
+    FastWrite Write;
+    int N;
+    Read(N);
+    MintMatrix<mint> A(N, N);
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) Read(A[i][j].val);
+    auto res = inv(A);
+    if (res.empty()) {
+        Write("-1\n");
+        return;
+    }
+    for (int i = 0; i < (int)res.height(); i++) {
+        for (int j = 0; j < (int)res.width(); j++) Write(res[i][j].val), Write(' ');
+        Write('\n');
+    }
 }
 
 // AOJ 3369 Namori Counting (OUPC 2023 day2-D)
@@ -1191,8 +1231,8 @@ int main() {
     //Yosupo_Determinant_of_Matrix();
     //Yosupo_Determinant_of_Matrix_Arbitrary_Mod();
     //Yosupo_Rank_of_Matrix();
-    Yosupo_System_of_Linear_Equations();
-    //Yosupo_Inverse_Matrix();
+    //Yosupo_System_of_Linear_Equations();
+    Yosupo_Inverse_Matrix();
     //AOJ_3369();
     //ARC_199_B();
 }

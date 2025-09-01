@@ -2459,6 +2459,7 @@ template<class mint> struct MintMatrix {
     vector<vector<mint>> val;
     
     // constructors
+    MintMatrix() : H(0), W(0) {}
     MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
     MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
     MintMatrix(const MintMatrix &mat) : H(mat.H), W(mat.W), val(mat.val) {}
@@ -2475,6 +2476,7 @@ template<class mint> struct MintMatrix {
     // getter and debugger
     constexpr int height() const { return H; }
     constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
     constexpr vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
@@ -2743,6 +2745,29 @@ template<class mint> struct MintMatrix {
     }
     friend constexpr mint det_nonprime_mod(const MintMatrix<mint> &mat) {
         return mat.det_nonprime_mod();
+    }
+
+    // inv
+    constexpr MintMatrix inv() const {
+        assert(height() == width());
+
+        // extend
+        MintMatrix<mint> A(height(), width() + height());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) A[i][j] = val[i][j];
+            A[i][i+width()] = mint(1);
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(height(), true);
+
+        // gauss jordan
+        if (rank < height()) return MintMatrix();
+        MintMatrix<mint> res(height(), width());
+        for (int i = 0; i < height(); ++i) for (int j = 0; j < width(); ++j) res[i][j] = A[i][j+width()];
+        return res;
+    }
+    friend constexpr MintMatrix<mint> inv(const MintMatrix<mint> &mat) {
+        return mat.inv();
     }
 };
 
