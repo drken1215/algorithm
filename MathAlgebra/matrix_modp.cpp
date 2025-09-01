@@ -20,11 +20,8 @@
 //   Yosupo Library Checker - Inverse Matrix
 //     https://judge.yosupo.jp/problem/inverse_matrix
 //
-//   AOJ 3369 (?) Namori Counting (OUPC 2023 day2-D)
-//     https://onlinejudge.u-aizu.ac.jp/beta/room.html#OUPC2023Day2/problems/D
-//
-//   ARC 199 B - Adjacent Replace
-//     https://atcoder.jp/contests/arc199/tasks/arc199_b
+//   yukicoder No.1303 Inconvenient Kingdom
+//     https://yukicoder.me/problems/no/1303
 //
 
 
@@ -1075,154 +1072,152 @@ void Yosupo_Inverse_Matrix() {
     }
 }
 
-// AOJ 3369 Namori Counting (OUPC 2023 day2-D)
-void AOJ_3369() {
-    const int MOD = 998244353;
-    using mint = Fp<MOD>;
-    
-    int N, M;
-    cin >> N >> M;
-    vector<int> deg(N, 0);
-    vector<vector<int>> G(N, vector<int>(N, 0));
-    for (int i = 0; i < M; ++i) {
-        int u, v;
-        cin >> u >> v;
-        --u, --v;
-        ++G[u][v], ++G[v][u];
-        ++deg[u], ++deg[v];
+// yukicoder No.1303 Inconvenient Kingdom
+struct UnionFind {
+    // core member
+    vector<int> par, nex;
+
+    // constructor
+    UnionFind() { }
+    UnionFind(int N) : par(N, -1), nex(N) {
+        init(N);
+    }
+    void init(int N) {
+        par.assign(N, -1);
+        nex.resize(N);
+        for (int i = 0; i < N; ++i) nex[i] = i;
     }
     
-    // ラプラシアン行列の余因子を求めるため、行・列の末尾を削る
-    MintMatrix<mint> L(N - 1, N - 1, 0);
-    for (int i = 0; i < N - 1; ++i) {
-        for (int j = 0; j < N - 1; ++j) {
-            if (i == j) L[i][j] = deg[i];
-            else L[i][j] = -G[i][j];
+    // core methods
+    int root(int x) {
+        if (par[x] < 0) return x;
+        else return par[x] = root(par[x]);
+    }
+    
+    bool same(int x, int y) {
+        return root(x) == root(y);
+    }
+    
+    bool merge(int x, int y, bool merge_technique = true) {
+        x = root(x), y = root(y);
+        if (x == y) return false;
+        if (merge_technique) if (par[x] > par[y]) swap(x, y); // merge technique
+        par[x] += par[y];
+        par[y] = x;
+        swap(nex[x], nex[y]);
+        return true;
+    }
+    
+    int size(int x) {
+        return -par[root(x)];
+    }
+    
+    // get group
+    vector<int> group(int x) {
+        vector<int> res({x});
+        while (nex[res.back()] != x) res.push_back(nex[res.back()]);
+        return res;
+    }
+    vector<vector<int>> groups() {
+        vector<vector<int>> member(par.size());
+        for (int v = 0; v < (int)par.size(); ++v) {
+            member[root(v)].push_back(v);
         }
-    }
-    mint res = det(L) * (M - N + 1);
-    cout << res << endl;
-}
-
-//ARC 199 B - Adjacent Replace
-void solve() {
-    using mint = Fp<2>;
-    auto construct = [&](vector<int> need) -> vector<int> {
-        int N = need.size();
-        vector<int> res;
-        while (true) {
-            bool finish = true;
-            if (need[0] == 0) finish = false;
-            for (int i = 1; i < N; i++) if (need[i] == 1) finish = false;
-            if (finish) break;
-
-            // (1, 1, ...) と (..., 1, 1) の解消
-            if (need[0] == 1 && need[1] == 1) {
-                if (need[2] <= 0) {
-                    res.push_back(1);
-                    need[0] = 1, need[1] = 0;
-                } else {
-                    res.push_back(2), res.push_back(1);
-                    need[0] = 1, need[1] = 0, need[2] = 0;
-                }
-            }
-            if (need[N-1] == 1 && need[N-2] == 1) {
-                if (need[N-3] <= 0) {
-                    res.push_back(N-1);
-                    need[N-1] = 1, need[N-2] = 0;
-                } else {
-                    res.push_back(N-2), res.push_back(N-1);
-                    need[N-1] = 1, need[N-2] = 0, need[N-3] = 0;
-                }
-            }
-
-            // routine
-            for (int i = 0; i+1 < N; i++) {
-                if (need[i] == -1 && need[i+1] == -1) continue;
-                if (need[i] == 1 && need[i+1] == 1) {
-                    int j = i;
-                    while (j < N && need[j] == need[i]) j++;
-                    for (int k = j-2; k >= i; k--) {
-                        res.push_back(k+1);
-                        need[k+1] = 0;
-                    }
-                } else if (need[i] <= 0 && need[i+1] <= 0) {
-                    res.push_back(i+1), res.push_back(i+1);
-                    need[i] = need[i+1] = -1;
-                } else if (need[i] == -1 && need[i+1] == 1) {
-                    res.push_back(i+1);
-                    need[i] = 1, need[i+1] = 0;
-                } else if (i+2 < N && need[i] == 0 && need[i+1] == 1 && need[i+2] == -1) {
-                    res.push_back(i+2), res.push_back(i+1), res.push_back(i+1), 
-                    res.push_back(i+2), res.push_back(i+1);
-                    need[i] = 1, need[i+1] = 0, need[i+2] = 0;
-                }
-            }
+        vector<vector<int>> res;
+        for (int v = 0; v < (int)par.size(); ++v) {
+            if (!member[v].empty()) res.push_back(member[v]);
         }
         return res;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, UnionFind uf) {
+        const vector<vector<int>> &gs = uf.groups();
+        for (const vector<int> &g : gs) {
+            s << "group: ";
+            for (int v : g) s << v << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
+void yukicoder_1303() {
+    using mint = Fp<>;
+    int N, M, u, v;
+    cin >> N >> M;
+    vector G(N, vector(N, 0));
+    vector degs(N, 0);
+    UnionFind uf(N);
+    for (int i = 0; i < M; i++) {
+        cin >> u >> v, u--, v--;
+        G[u][v]++, G[v][u]++, degs[u]++, degs[v]++;
+        uf.merge(u, v);
+    }
+
+    auto calc = [&](const vector<int> &group) -> mint {
+        vector<int> conv(N, -1);
+        int iter = 0;
+        for (auto v : group) conv[v] = iter++;
+        MintMatrix<mint> L(iter, iter);
+        for (int i = 0; i < iter; i++) L[i][i] = 1;
+        for (auto v1 : group) {
+            int i = conv[v1];
+            int deg = 0;
+            for (auto v2 : group) {
+                if (G[v1][v2]) deg += G[v1][v2];
+                int j = conv[v2];
+                if (i < iter - 1 && j < iter - 1) L[i][j] = -G[v1][v2];
+            }
+            if (i < iter - 1) L[i][i] = deg;
+        }
+        return det(L);
     };
 
-    long long N, K;
-    cin >> N >> K;
-    vector<long long> A(N);
-    MintMatrix<mint> M(60, N);
-    vector<mint> v(60, 0);
-    for (int i = 0; i < N; i++) {
-        cin >> A[i];
-        for (int d = 0; d < 60; d++) if (A[i] >> d & 1) M[d][i] = 1;
-    }
-    for (int d = 0; d < 60; d++) if (K >> d & 1) v[d] = 1;
-
-    // find solutions
-    vector<mint> ans;
-    vector<vector<mint>> zeros;
-    int rank = linear_equation(M, v, ans, zeros);
-    if (rank == -1) {
-        cout << "No" << endl;
-        return;
-    }
-    bool exist = false;
-    vector<int> need(N, 0);
-    for (long long bit = 0; bit < (1LL<<zeros.size()); bit++) {
-        vector<mint> tmp = ans;
-        for (int i = 0; i < zeros.size(); i++) {
-            if (bit >> i & 1) for (int j = 0; j < tmp.size(); j++) tmp[j] += zeros[i][j];
+    auto groups = uf.groups();
+    if (groups.size() > 1) {
+        mint res = 1;
+        vector<long long> siz;
+        for (auto group : groups) siz.push_back(group.size()), res *= calc(group);
+        sort(siz.begin(), siz.end(), greater<long long>());
+        long long sum = siz[0] + siz[1], sum2 = sum * sum;
+        for (int i = 2; i < (int)siz.size(); i++) sum += siz[i], sum2 += siz[i] * siz[i];
+        long long huben = (sum * sum - sum2);
+        if (siz[0] == siz[1]) {
+            long long sumsiz = 0, sumsiz2 = 0;
+            for (auto s : siz) if (s == siz[0]) sumsiz += s, sumsiz2 += s * s;
+            long long fac = (sumsiz * sumsiz - sumsiz2) / 2;
+            res *= fac;
+        } else {
+            long long sum_sub = 0;
+            for (auto s : siz) if (s == siz[1]) sum_sub += s;
+            long long fac = siz[0] * sum_sub;
+            res *= fac;
         }
-        bool ok = false;
-        for (int i = 0; i + 1 < tmp.size(); i++) if (tmp[i] == tmp[i+1]) ok = true;
-        if (ok) {
-            exist = true;
-            for (int i = 0; i < N; i++) need[i] = tmp[i].val;
-            break;
+        cout << huben << endl << res << endl;
+    } else {
+        long long huben = 0;
+        mint res = calc(groups[0]);
+        for (int v = 0; v < N; v++) {
+            MintMatrix<mint> L(N, N);
+            for (int i = 0; i < N; i++) L[i][i] = 1;
+            for (int i = 0; i < N; i++) {
+                if (i == v) continue;
+                L[i][i] = degs[i];
+                for (int j = 0; j < N; j++) {
+                    if (i == j || j == v) continue;
+                    L[i][j] = -G[i][j];
+                }
+            }
+            auto detL = det(L);
+            auto invL = inv(L);
+            for (int v2 = v+1; v2 < N; v2++) {
+                if (G[v][v2]) continue;
+                auto tmp = detL * invL[v2][v2];
+                res += tmp;
+            }
         }
+        cout << huben << endl << res << endl;
     }
-    if (!exist) {
-        cout << "No" << endl;
-        return;
-    }
-
-    auto check = [&](const vector<int> &res) -> bool {
-        if (res.size() > 10000) return false;
-        for (int i = 0; i < res.size(); i++) {
-            int id = res[i];
-            if (id < 1 || id > N - 1) return false;
-            id--;
-            long long x = A[id] ^ A[id + 1];
-            A[id] = x, A[id + 1] = x;
-        }
-        return (A[0] == K);
-    };
-
-    auto res = construct(need);
-    cout << "Yes" << endl;
-    cout << res.size() << endl;
-    for (auto val : res) cout << val << " ";
-    cout << endl;
-}
-void ARC_199_B() {
-    int T;
-    cin >> T;
-    while (T--) solve();
 }
 
 
@@ -1232,7 +1227,6 @@ int main() {
     //Yosupo_Determinant_of_Matrix_Arbitrary_Mod();
     //Yosupo_Rank_of_Matrix();
     //Yosupo_System_of_Linear_Equations();
-    Yosupo_Inverse_Matrix();
-    //AOJ_3369();
-    //ARC_199_B();
+    //Yosupo_Inverse_Matrix();
+    yukicoder_1303();   
 }
