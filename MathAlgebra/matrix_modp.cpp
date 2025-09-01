@@ -1006,7 +1006,28 @@ void Yosupo_Rank_of_Matrix() {
 
 // Yosupo Library Checker - System of Linear Equations
 void Yosupo_System_of_Linear_Equations() {
-
+    using mint = Fp<>;
+    FastRead Read;
+    FastWrite Write;
+    int N, M;
+    Read(N, M);
+    MintMatrix<mint> A(N, M);
+    vector<mint> b(N), res;
+    vector<vector<mint>> zeros;
+    for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) Read(A[i][j].val);
+    for (int i = 0; i < N; i++) Read(b[i].val);
+    int rank = linear_equation(A, b, res, zeros);
+    if (rank == -1) {
+        Write("-1\n");
+        return;
+    }
+    Write(zeros.size()), Write('\n');
+    for (int i = 0; i < (int)res.size(); i++) Write(res[i].val), Write(' ');
+    Write('\n');
+    for (int i = 0; i < (int)zeros.size(); i++) {
+        for (int j = 0; j < (int)zeros[i].size(); j++) Write(zeros[i][j].val), Write(' ');
+        Write('\n');
+    }
 }
 
 // Yosupo Library Checker - Inverse Matrix
@@ -1169,8 +1190,8 @@ int main() {
     //Yosupo_Pow_of_Matrix();
     //Yosupo_Determinant_of_Matrix();
     //Yosupo_Determinant_of_Matrix_Arbitrary_Mod();
-    Yosupo_Rank_of_Matrix();
-    //Yosupo_System_of_Linear_Equations();
+    //Yosupo_Rank_of_Matrix();
+    Yosupo_System_of_Linear_Equations();
     //Yosupo_Inverse_Matrix();
     //AOJ_3369();
     //ARC_199_B();
