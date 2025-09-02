@@ -284,7 +284,8 @@
 - (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
 - (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
 - (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
-- (★★★★) 最小費用 b-flow (下限容量つき, 供給点・需要点つき)
+- (★★★★) [最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
+- (★★★★) [最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
 - (★★★★) 最小凸費用流
 
 ## 劣モジュラ関数のグラフ表現
@@ -326,7 +327,7 @@
 
 ## 多項式行列
 
-- (★★★★) 多項式行列の行列式 (by 徐算を全く行わない方法で, O(N^4))
+- (★★★★) 多項式行列の行列式 (by 除算を全く行わない方法で, O(N^4))
 - (★★★★) 多項式行列の行列式 (by ラグランジュ補間によって, O(N^3 d))
 - (★★★★) 多項式行列の行列式 (by Euclid の互助法を用いた掃き出し法)
 - (★★★★) [行列式 det(M0 + M1x) の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
