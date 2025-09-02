@@ -22,7 +22,7 @@ template<class T> struct CartesianTree {
     int root;  // root
     vector<int> par, left, right;
 
-    CartesianTree() {}
+    CartesianTree() : root(0) {}
     CartesianTree(const vector<T>& v) : root(0)
     , par(v.size(), -1), left(v.size(), -1), right(v.size(), -1) {
         vector<int> st(v.size(), 0);
@@ -380,5 +380,3 @@ int main() {
     ABC_311_G();
     //ABC_280_Ex();
 }
-
-
