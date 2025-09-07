@@ -2871,7 +2871,7 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
 // Flow
 //------------------------------//
 
-// edge class (for network-flow)
+// edge class (for max-flow)
 template<class FLOWTYPE> struct FlowEdge {
     // core members
     int rev, from, to;
@@ -2888,7 +2888,7 @@ template<class FLOWTYPE> struct FlowEdge {
     }
 };
 
-// graph class (for network-flow)
+// graph class (for max-flow)
 template<class FLOWTYPE> struct FlowGraph {
     // core members
     vector<vector<FlowEdge<FLOWTYPE>>> list;
