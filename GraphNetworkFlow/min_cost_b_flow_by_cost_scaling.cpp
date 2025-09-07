@@ -518,7 +518,6 @@ template<class FLOW, class COST> struct MinCostBFlow {
         for (int i = 0; i < (int)edges.size(); i++) {
             auto &e = edges[i];
             const auto &ge = sg.get_edge(i);
-            //cout << MP(e.lower_cap, e.upper_cap) << ", " << ge << ":: " << ge.cap - ge.flow << ", " << ge.flow << endl;
             G.add_edge(ge.from, ge.to, ge.cap, ge.flow, e.cost);
         }
         MinCostCirculation(G);

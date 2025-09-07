@@ -418,7 +418,15 @@ private:
     template<typename T> void write(T x) {
         write<4>(x);
     }
-    void write(__uint128_t x) {
+    void write_i128(i128 x) {
+        if (x < 0) {
+            *ptr_++ = '-';
+            write_u128(static_cast<__uint128_t>(-x));
+        } else {
+            write_u128(static_cast<__uint128_t>(x));
+        }
+    }
+    void write_u128(u128 x) {
         if (x < POW10<__uint128_t>[16]) {
             write(static_cast<uint64_t>(x));
         } else if (x < POW10<__uint128_t>[32]) {
@@ -464,6 +472,14 @@ public:
     void operator () (char c) {
         flush<1>();
         *ptr_++ = c;
+    }
+    void operator () (u128 x) {
+        flush<DIGITS<u128>>();
+        write_u128(x);
+    }
+    void operator () (i128 x) {
+        flush<1 + DIGITS<u128>>();
+        write_i128(x);
     }
     void operator () (string_view s) {
         while (!s.empty()) {
@@ -2872,14 +2888,14 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
 //------------------------------//
 
 // edge class (for max-flow)
-template<class FLOWTYPE> struct FlowEdge {
+template<class FLOW> struct FlowEdge {
     // core members
     int rev, from, to;
-    FLOWTYPE cap, icap, flow;
+    FLOW cap, icap, flow;
     
     // constructor
-    FlowEdge(int r, int f, int t, FLOWTYPE c)
-    : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
+    FlowEdge() {}
+    FlowEdge(int r, int f, int t, FLOW c) : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
     void reset() { cap = icap, flow = 0; }
     
     // debug
@@ -2889,40 +2905,41 @@ template<class FLOWTYPE> struct FlowEdge {
 };
 
 // graph class (for max-flow)
-template<class FLOWTYPE> struct FlowGraph {
+template<class FLOW> struct FlowGraph {
     // core members
-    vector<vector<FlowEdge<FLOWTYPE>>> list;
+    vector<vector<FlowEdge<FLOW>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
     
     // constructor
     FlowGraph(int n = 0) : list(n) { }
     void init(int n = 0) {
-        list.assign(n, FlowEdge<FLOWTYPE>());
+        list.clear(), list.resize(n);
         pos.clear();
     }
     
     // getter
-    vector<FlowEdge<FLOWTYPE>> &operator [] (int i) {
+    vector<FlowEdge<FLOW>> &operator [] (int i) {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
-    const vector<FlowEdge<FLOWTYPE>> &operator [] (int i) const {
+    const vector<FlowEdge<FLOW>> &operator [] (int i) const {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
     size_t size() const {
         return list.size();
     }
-    FlowEdge<FLOWTYPE> &get_rev_edge(const FlowEdge<FLOWTYPE> &e) {
-        if (e.from != e.to) return list[e.to][e.rev];
-        else return list[e.to][e.rev + 1];
+    FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
+        return list[e.to][e.rev];
     }
-    FlowEdge<FLOWTYPE> &get_edge(int i) {
+    FlowEdge<FLOW> &get_edge(int i) {
         return list[pos[i].first][pos[i].second];
     }
-    const FlowEdge<FLOWTYPE> &get_edge(int i) const {
+    const FlowEdge<FLOW> &get_edge(int i) const {
         return list[pos[i].first][pos[i].second];
     }
-    vector<FlowEdge<FLOWTYPE>> get_edges() const {
-        vector<FlowEdge<FLOWTYPE>> edges;
+    vector<FlowEdge<FLOW>> get_edges() const {
+        vector<FlowEdge<FLOW>> edges;
         for (int i = 0; i < (int)pos.size(); ++i) {
             edges.push_back(get_edge(i));
         }
@@ -2932,20 +2949,25 @@ template<class FLOWTYPE> struct FlowGraph {
     // change edges
     void reset() {
         for (int i = 0; i < (int)list.size(); ++i) {
-            for (FlowEdge<FLOWTYPE> &e : list[i]) e.reset();
+            for (FlowEdge<FLOW> &e : list[i]) e.reset();
         }
     }
-    void change_edge(FlowEdge<FLOWTYPE> &e, FLOWTYPE new_cap, FLOWTYPE new_flow) {
-        FlowEdge<FLOWTYPE> &re = get_rev_edge(e);
+    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_flow) {
+        assert(0 <= new_flow && new_flow <= new_cap);
+        FlowEdge<FLOW> &re = get_rev_edge(e);
         e.cap = new_cap - new_flow, e.icap = new_cap, e.flow = new_flow;
         re.cap = new_flow;
     }
     
     // add_edge
-    void add_edge(int from, int to, FLOWTYPE cap) {
-        pos.emplace_back(from, (int)list[from].size());
-        list[from].push_back(FlowEdge<FLOWTYPE>((int)list[to].size(), from, to, cap));
-        list[to].push_back(FlowEdge<FLOWTYPE>((int)list[from].size() - 1, to, from, 0));
+    void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
+        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
     }
 
     // debug
@@ -2957,10 +2979,9 @@ template<class FLOWTYPE> struct FlowGraph {
 };
 
 // Dinic
-template<class FLOWTYPE> FLOWTYPE Dinic
- (FlowGraph<FLOWTYPE> &G, int s, int t, FLOWTYPE limit_flow)
-{
-    FLOWTYPE current_flow = 0;
+template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
+    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     
     // Dinic BFS
@@ -2972,7 +2993,7 @@ template<class FLOWTYPE> FLOWTYPE Dinic
         while (!que.empty()) {
             int v = que.front();
             que.pop();
-            for (const FlowEdge<FLOWTYPE> &e : G[v]) {
+            for (const FlowEdge<FLOW> &e : G[v]) {
                 if (level[e.to] < 0 && e.cap > 0) {
                     level[e.to] = level[v] + 1;
                     if (e.to == t) return;
@@ -2983,13 +3004,13 @@ template<class FLOWTYPE> FLOWTYPE Dinic
     };
     
     // Dinic DFS
-    auto dfs = [&](auto self, int v, FLOWTYPE up_flow) {
+    auto dfs = [&](auto self, int v, FLOW up_flow) {
         if (v == t) return up_flow;
-        FLOWTYPE res_flow = 0;
+        FLOW res_flow = 0;
         for (int &i = iter[v]; i < (int)G[v].size(); ++i) {
-            FlowEdge<FLOWTYPE> &e = G[v][i], &re = G.get_rev_edge(e);
+            FlowEdge<FLOW> &e = G[v][i], &re = G.get_rev_edge(e);
             if (level[v] >= level[e.to] || e.cap == 0) continue;
-            FLOWTYPE flow = self(self, e.to, min(up_flow - res_flow, e.cap));
+            FLOW flow = self(self, e.to, min(up_flow - res_flow, e.cap));
             if (flow <= 0) continue;
             res_flow += flow;
             e.cap -= flow, e.flow += flow;
@@ -3005,7 +3026,7 @@ template<class FLOWTYPE> FLOWTYPE Dinic
         if (level[t] < 0) break;
         iter.assign((int)iter.size(), 0);
         while (current_flow < limit_flow) {
-            FLOWTYPE flow = dfs(dfs, s, limit_flow - current_flow);
+            FLOW flow = dfs(dfs, s, limit_flow - current_flow);
             if (!flow) break;
             current_flow += flow;
         }
@@ -3013,66 +3034,66 @@ template<class FLOWTYPE> FLOWTYPE Dinic
     return current_flow;
 };
 
-template<class FLOWTYPE> FLOWTYPE Dinic(FlowGraph<FLOWTYPE> &G, int s, int t) {
-    return Dinic(G, s, t, numeric_limits<FLOWTYPE>::max());
+template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
+    return Dinic(G, s, t, numeric_limits<FLOW>::max());
 }
 
 
-// edge class (for network-flow)
-template<class FLOWTYPE, class COSTTYPE> struct FlowCostEdge {
+// edge class (for min-cost flow)
+template<class FLOW, class COST> struct FlowCostEdge {
     // core members
     int rev, from, to;
-    FLOWTYPE cap, icap, flow;
-    COSTTYPE cost;
+    FLOW cap, icap, flow;
+    COST cost;
     
     // constructor
-    FlowCostEdge(int rev, int from, int to, FLOWTYPE cap, COSTTYPE cost)
+    FlowCostEdge() {}
+    FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
     : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {}
     void reset() { cap = icap, flow = 0; }
     
     // debug
     friend ostream& operator << (ostream& s, const FlowCostEdge& e) {
-        return s << e.from << " -> " << e.to
-        << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
+        return s << e.from << " -> " << e.to << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
     }
 };
 
-// graph class (for network-flow)
-template<class FLOWTYPE, class COSTTYPE> struct FlowCostGraph {
+// graph class (for min-cost flow)
+template<class FLOW, class COST> struct FlowCostGraph {
     // core members
-    vector<vector<FlowCostEdge<FLOWTYPE, COSTTYPE>>> list;
+    vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
     
     // constructor
     FlowCostGraph(int n = 0) : list(n) { }
     void init(int n = 0) {
-        list.assign(n, FlowCostEdge<FLOWTYPE, COSTTYPE>());
+        list.clear(), list.resize(n);
         pos.clear();
     }
     
     // getter
-    vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> &operator [] (int i) {
+    vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
-    const vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> &operator [] (int i) const {
+    const vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) const {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
     size_t size() const {
         return list.size();
     }
-    FlowCostEdge<FLOWTYPE, COSTTYPE> &get_rev_edge
-    (const FlowCostEdge<FLOWTYPE, COSTTYPE> &e) {
-        if (e.from != e.to) return list[e.to][e.rev];
-        else return list[e.to][e.rev + 1];
+    FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
+        return list[e.to][e.rev];
     }
-    FlowCostEdge<FLOWTYPE, COSTTYPE> &get_edge(int i) {
+    FlowCostEdge<FLOW, COST> &get_edge(int i) {
         return list[pos[i].first][pos[i].second];
     }
-    const FlowCostEdge<FLOWTYPE, COSTTYPE> &get_edge(int i) const {
+    const FlowCostEdge<FLOW, COST> &get_edge(int i) const {
         return list[pos[i].first][pos[i].second];
     }
-    vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> get_edges() const {
-        vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> edges;
+    vector<FlowCostEdge<FLOW, COST>> get_edges() const {
+        vector<FlowCostEdge<FLOW, COST>> edges;
         for (int i = 0; i < (int)pos.size(); ++i) {
             edges.push_back(get_edge(i));
         }
@@ -3082,17 +3103,28 @@ template<class FLOWTYPE, class COSTTYPE> struct FlowCostGraph {
     // change edges
     void reset() {
         for (int i = 0; i < (int)list.size(); ++i) {
-            for (FlowCostEdge<FLOWTYPE, COSTTYPE> &e : list[i]) e.reset();
+            for (FlowCostEdge<FLOW, COST> &e : list[i]) e.reset();
         }
     }
     
     // add_edge
-    void add_edge(int from, int to, FLOWTYPE cap, COSTTYPE cost) {
-        pos.emplace_back(from, (int)list[from].size());
-        list[from].push_back(FlowCostEdge<FLOWTYPE, COSTTYPE>
-                             ((int)list[to].size(), from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOWTYPE, COSTTYPE>
-                           ((int)list[from].size() - 1, to, from, 0, -cost));
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+    }
+    void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
     }
 
     // debug
@@ -3191,6 +3223,192 @@ MinCostFlow(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T)
 {
     return MinCostFlow(G, S, T, numeric_limits<FLOWTYPE>::max());
 }
+
+// Min Cost Circulation Flow by Cost-Scaling
+template<class FLOW, class COST> COST newcost
+(const FlowCostEdge<FLOW, COST> &e, const vector<COST> &price) {
+    return e.cost - price[e.from] + price[e.to];
+}
+    
+template<class FLOW, class COST> void SubConstruct
+(FlowCostGraph<FLOW, COST> &G, int v, vector<bool> &visited, vector<COST> &price) {
+    visited[v] = true;
+    for (int i = 0; i < G[v].size(); ++i) {
+        FlowCostEdge<FLOW, COST> &e = G[v][i];
+        if (e.cap > 0 && !visited[e.to] && newcost(e, price) < 0) 
+            SubConstruct(G, e.to, visited, price);
+    }
+}
+
+template<class FLOW, class COST> void ConstructGaux
+(FlowCostGraph<FLOW, COST> &G, COST eps, vector<FLOW> &balance, vector<COST> &price) {
+    vector<bool> visited(G.size(), false);
+    for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) SubConstruct(G, v, visited, price);
+    for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
+}
+
+template<class FLOW, class COST> FLOW SubAugment
+(FlowCostGraph<FLOW, COST> &G, int v, FLOW flow
+, vector<int> &iter, vector<FLOW> &balance, vector<COST> &price) {
+    if (balance[v] < 0) {
+        FLOW dif = min(flow, -balance[v]);
+        balance[v] += dif;
+        return dif;
+    }
+    for (; iter[v] < G[v].size(); iter[v]++) {
+        FlowCostEdge<FLOW, COST> &e = G[v][iter[v]];
+        if (e.cap > 0 && newcost(e, price) < 0) {
+            FLOW dif = SubAugment(G, e.to, min(flow, e.cap), iter, balance, price);
+            if (dif > 0) {
+                e.cap -= dif;
+                G.get_rev_edge(e).cap += dif;
+                return dif;
+            }
+        }
+    }
+    return 0;
+}
+
+template<class FLOW, class COST> bool AugmentBlockingFlow
+(FlowCostGraph<FLOW, COST> &G, vector<FLOW> &balance, vector<COST> &price) {
+    vector<int> iter(G.size(), 0);
+    bool finish = true;
+    for (int v = 0; v < G.size(); ++v) {
+        FLOW flow;
+        while (balance[v] > 0 && (flow = SubAugment(G, v, balance[v], iter, balance, price)) > 0)
+            balance[v] -= flow;
+        if (balance[v] > 0) finish = false;
+    }
+    if (finish) return true;
+    else return false;
+}
+
+template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
+    COST eps = 0;
+    vector<COST> price(G.size(), 0);
+    for (int v = 0; v < G.size(); ++v) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            FlowCostEdge<FLOW, COST> &e = G[v][i];
+            e.cost *= G.size();
+            if (e.cap > 0) eps = max(eps, -e.cost);
+        }
+        price[v] = 0;
+    }
+    vector<FLOW> balance(G.size(), 0);
+    while (eps > 1) {
+        eps /= 2;
+        for (int v = 0; v < G.size(); ++v) {
+            for (int i = 0; i < G[v].size(); ++i) {
+                FlowCostEdge<FLOW, COST> &e = G[v][i];
+                if (e.cap > 0 && newcost(e, price) < 0) {
+                    balance[e.from] -= e.cap;
+                    balance[e.to] += e.cap;
+                    G.get_rev_edge(e).cap += e.cap;
+                    e.cap = 0;
+                }
+            }
+        }
+        while (true) {
+            ConstructGaux(G, eps, balance, price);
+            if (AugmentBlockingFlow(G, balance, price)) break;
+        }
+    }
+    COST res = 0;
+    for (int v = 0; v < G.size(); ++v) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            FlowCostEdge<FLOW, COST> &e = G[v][i];
+            e.cost /= G.size();
+            if (e.icap > e.cap) res += e.cost * (e.icap - e.cap);
+        }
+    }
+    return res;
+}
+
+
+// Minimum Cost b-flow (come down to min-cost circulation)
+template<class FLOW, class COST> struct MinCostBFlow {
+    // Edge
+    struct Edge {
+        int from, to;
+        FLOW lower_cap, upper_cap, flow;
+        COST cost;
+    };
+
+    // inner values
+    int V;
+    vector<Edge> edges;
+    vector<FLOW> dss;  // demand (< 0) and supply (> 0)
+    vector<COST> dual;
+    FlowCostGraph<FLOW, COST> G;
+
+    // constructor
+    MinCostBFlow() {}
+    MinCostBFlow(int V) : V(V), dss(V) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
+        assert(lower_cap <= upper_cap);
+        edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
+    }
+    void add_ds(int v, FLOW ds) {
+        assert(0 <= v && v < V);
+        dss[v] += ds;
+    }
+
+    // solver
+    pair<bool, COST> solve() {
+        // feasibility check
+        FlowGraph<FLOW> sg(V + 2);
+        int s = V, t = s + 1;
+        for (const auto &e : edges) {
+            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
+            sg.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
+        }
+        FLOW ssum = 0, tsum = 0;
+        for (int i = 0; i < V; i++) {
+            if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
+            else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
+        }
+        if (ssum != tsum) return {false, COST(0)};
+        if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
+
+        // come down to min-cost circulation
+        G.init(V);
+        for (int i = 0; i < (int)edges.size(); i++) {
+            auto &e = edges[i];
+            const auto &ge = sg.get_edge(i);
+            G.add_edge(ge.from, ge.to, ge.cap, ge.flow, e.cost);
+        }
+        MinCostCirculation(G);
+
+        // find min-cost
+        COST res = 0;
+        for (int i = 0; i < (int)edges.size(); i++) {
+            auto &e = edges[i];
+            const auto &ge = G.get_edge(i);
+            e.flow = e.upper_cap - ge.cap;
+            res += e.flow * e.cost;
+        }
+
+        // find dual
+        dual.resize(V);
+        while (true) {
+            bool update = false;
+            for (int v = 0; v < V; v++) {
+                for (const auto &e : G[v]) {
+                    if (!e.cap) continue;
+                    auto cost2 = dual[v] + e.cost;
+                    if (cost2 < dual[e.to]) {
+                        dual[e.to] = cost2;
+                        update = true;
+                    }
+                }
+            }
+            if (!update) break;
+        }
+        return {true, res};
+    }
+};
 
 
 // Hopcroft-Karp
