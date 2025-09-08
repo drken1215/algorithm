@@ -77,8 +77,7 @@
 
 ## その他
 
-- (★★★☆) [区間の集合を set で管理する（del and add must be invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management.cpp)
-- (★★★☆) [区間の集合を set で管理する（del and add can be non-invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructure/intervals_management_with_noninvertible_del.cpp)
+- (★★★☆) [可変長 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/advanced_bitset.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 - (★★★☆) [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
 - (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
@@ -142,6 +141,12 @@
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sliding_minimum.cpp)
 - (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/mo.cpp)
+
+## その他
+
+- (★★★☆) [区間の集合を set で管理する（del and add must be invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_management.cpp)
+- (★★★☆) [区間の集合を set で管理する（del and add can be non-invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_management_with_noninvertible_del.cpp)
+
 
 
 
