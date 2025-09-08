@@ -3136,31 +3136,31 @@ template<class FLOW, class COST> struct FlowCostGraph {
 };
 
 // min-cost max-flow (<= limit_flow), slope ver.
-template<class FLOWTYPE, class COSTTYPE> vector<pair<FLOWTYPE, COSTTYPE>>
-MinCostFlowSlope(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T, FLOWTYPE limit_flow)
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
 {
     // result values
-    FLOWTYPE cur_flow = 0;
-    COSTTYPE cur_cost = 0, pre_cost = -1;
-    vector<pair<FLOWTYPE, COSTTYPE>> res;
+    FLOW cur_flow = 0;
+    COST cur_cost = 0, pre_cost = -1;
+    vector<pair<FLOW, COST>> res;
     res.emplace_back(cur_flow, cur_cost);
     
     // intermediate values
     vector<bool> seen((int)G.size(), false);
-    vector<COSTTYPE> dist((int)G.size(), numeric_limits<COSTTYPE>::max());
+    vector<COST> dist((int)G.size(), numeric_limits<COST>::max());
     vector<int> prevv((int)G.size(), -1), preve((int)G.size(), -1);
     
     // dual
     auto dual_step = [&]() -> bool {
         seen.assign((int)G.size(), false);
-        dist.assign((int)G.size(), numeric_limits<COSTTYPE>::max());
+        dist.assign((int)G.size(), numeric_limits<COST>::max());
         seen[S] = true, dist[S] = 0;
         while (true) {
             bool update = false;
             for (int v = 0; v < (int)G.size(); ++v) {
                 if (!seen[v]) continue;
                 for (int i = 0; i < G[v].size(); ++i) {
-                    const FlowCostEdge<FLOWTYPE, COSTTYPE> &e = G[v][i];
+                    const FlowCostEdge<FLOW, COST> &e = G[v][i];
                     if (e.cap > 0 && (!seen[e.to] || dist[e.to] > dist[v] + e.cost)) {
                         dist[e.to] = dist[v] + e.cost;
                         prevv[e.to] = v;
@@ -3177,14 +3177,14 @@ MinCostFlowSlope(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T, FLOWTYPE li
     
     // primal
     auto primal_step = [&]() -> void {
-        FLOWTYPE flow = limit_flow - cur_flow;
-        COSTTYPE cost = dist[T];
+        FLOW flow = limit_flow - cur_flow;
+        COST cost = dist[T];
         for (int v = T; v != S; v = prevv[v]) {
             flow = min(flow, G[prevv[v]][preve[v]].cap);
         }
         for (int v = T; v != S; v = prevv[v]) {
-            FlowCostEdge<FLOWTYPE, COSTTYPE> &e = G[prevv[v]][preve[v]];
-            FlowCostEdge<FLOWTYPE, COSTTYPE> &re = G.get_rev_edge(e);
+            FlowCostEdge<FLOW, COST> &e = G[prevv[v]][preve[v]];
+            FlowCostEdge<FLOW, COST> &re = G.get_rev_edge(e);
             e.cap -= flow, e.flow += flow;
             re.cap += flow, re.flow -= flow;
         }
@@ -3204,25 +3204,26 @@ MinCostFlowSlope(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T, FLOWTYPE li
 }
 
 // min-cost max-flow, slope ver.
-template<class FLOWTYPE, class COSTTYPE> vector<pair<FLOWTYPE, COSTTYPE>>
-MinCostFlowSlope(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T)
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T)
 {
-    return MinCostFlowSlope(G, S, T, numeric_limits<FLOWTYPE>::max());
+    return MinCostFlowSlope(G, S, T, numeric_limits<FLOW>::max());
 }
 
 // min-cost max-flow (<= limit_flow)
-template<class FLOWTYPE, class COSTTYPE> pair<FLOWTYPE, COSTTYPE>
-MinCostFlow(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T, FLOWTYPE limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
 {
     return MinCostFlowSlope(G, S, T, limit_flow).back();
 }
 
 // min-cost max-flow (<= limit_flow)
-template<class FLOWTYPE, class COSTTYPE> pair<FLOWTYPE, COSTTYPE>
-MinCostFlow(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
 {
-    return MinCostFlow(G, S, T, numeric_limits<FLOWTYPE>::max());
+    return MinCostFlow(G, S, T, numeric_limits<FLOW>::max());
 }
+
 
 // Min Cost Circulation Flow by Cost-Scaling
 template<class FLOW, class COST> COST newcost
