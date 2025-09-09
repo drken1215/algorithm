@@ -282,7 +282,6 @@
 
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
-- (★★★☆) 下限容量つき最大流
 
 ## 最小費用流
 

@@ -353,7 +353,6 @@ template<class FLOW, class COST> struct NetworkSimplex {
         while (u != v) up_u(), up_v();
         return u;
     }
-
 };
 
 
