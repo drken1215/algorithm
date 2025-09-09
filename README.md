@@ -307,7 +307,7 @@
 
 ## マッチング
 
-- (★★★☆) [二部マッチング (Hopcroft-Karp 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
+- (★★★☆) [二部マッチング (Hopcroft-Karp 法, O(E√V))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
 - (★★★☆) 重みつき二部マッチング (Hungarian 法)
 - (★★★★) 一般グラフの最大マッチング (Edmonds 法)
 - (★★★★) 一般グラフの最大マッチング (行列補間)

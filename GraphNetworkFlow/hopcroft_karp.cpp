@@ -1,19 +1,366 @@
 //
-// Hopcroft-Karp の最大二部マッチング
+// Hopcroft-Karp の最大二部マッチング, O(E√V)
 //
 // verified
+//   Yosupo Library Checker - Matching on Bipartite Graph
+//     https://judge.yosupo.jp/problem/bipartitematching
+//
 //   AOJ 1163 カードゲーム
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1163&lang=jp
 //
-//   TTPC 2022 H - Colorful Graph
-//     https://atcoder.jp/contests/ttpc2022/tasks/ttpc2022_h
-//
 
+
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 
 #include <bits/stdc++.h>
 using namespace std;
 
 
+//------------------------------//
+// Utility
+//------------------------------//
+
+template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
+template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
+
+using pint = pair<int, int>;
+using pll = pair<long long, long long>;
+using tint = array<int, 3>;
+using tll = array<long long, 3>;
+using fint = array<int, 4>;
+using fll = array<long long, 4>;
+using qint = array<int, 5>;
+using qll = array<long long, 5>;
+using vint = vector<int>;
+using vll = vector<long long>;
+using ll = long long;
+using u32 = unsigned int;
+using u64 = unsigned long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
+template <class T>
+using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+
+#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
+#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
+#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
+#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
+#define EB emplace_back
+#define PB push_back
+#define MP make_pair
+#define MT make_tuple
+#define FI first
+#define SE second
+#define ALL(x) x.begin(), x.end()
+#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+
+// debug stream
+template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, array<T, 3> P)
+{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << '>'; }
+template<class T> ostream& operator << (ostream &s, array<T, 4> P)
+{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << ", " << P[3] << '>'; }
+template<class T> ostream& operator << (ostream &s, vector<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, deque<T> P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, set<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, multiset<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, unordered_set<T> P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+
+//------------------------------//
+// Fast IO
+//------------------------------//
+
+struct FastRead {
+    static constexpr int BUF_SIZE = 1 << 17;
+
+private:
+    FILE *stream_;
+    array<char, BUF_SIZE> buf_;
+    char *begin_, *end_, *ptr_;
+
+    // reader
+    void skip_space() {
+        while (*ptr_ <= ' ') ++ptr_;
+    }
+    template<int N = 0> void read() {
+        if (const auto n = end_ - ptr_; n <= N) {
+            ignore = fread(copy_n(ptr_, n, begin_), 1, BUF_SIZE - n, stream_);
+            ptr_ = begin_;
+        }
+    }
+    
+    // parser
+    template<typename T> void parse(T &x) {
+        common_type_t<T, uint64_t> x2 = 0;
+        while (true) {
+            uint64_t v;
+            memcpy(&v, ptr_, 8);
+            if ((v -= 0x3030303030303030) & 0x8080808080808080) break;
+            v = (v * 10 + (v >> 8)) & 0xff00ff00ff00ff;
+            v = (v * 100 + (v >> 16)) & 0xffff0000ffff;
+            v = (v * 10000 + (v >> 32)) & 0xffffffff;
+            x2 = 100000000 * x2 + v;
+            ptr_ += 8;
+        }
+        while (true) {
+            uint32_t v;
+            memcpy(&v, ptr_, 4);
+            if ((v -= 0x30303030) & 0x80808080) break;
+            v = (v * 10 + (v >> 8)) & 0xff00ff;
+            v = (v * 100 + (v >> 16)) & 0xffff;
+            x2 = 10000 * x2 + v;
+            ptr_ += 4;
+            break;
+        }
+        while (true) {
+            uint16_t v;
+            memcpy(&v, ptr_, 2);
+            if ((v -= 0x3030) & 0x8080) break;
+            v = (v * 10 + (v >> 8)) & 0xff;
+            x2 = 100 * x2 + v;
+            ptr_ += 2;
+            break;
+        }
+        if (' ' < *ptr_) {
+            x2 *= 10;
+            x2 += *ptr_++ - '0';
+        }
+        ++ptr_;
+        x = static_cast<T>(x2);
+    }
+    
+public:
+    // constructor
+    FastRead() : FastRead(stdin) {}
+    explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
+    explicit FastRead(FILE *stream)
+    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { 
+        read(); 
+    }
+    ~FastRead() { 
+        if (stream_ != stdin) fclose(stream_); 
+    }
+    FastRead(const FastRead&) = delete;
+    FastRead &operator = (const FastRead&) = delete;
+    
+    // operators
+    template<unsigned_integral T> void operator () (T &x) {
+        skip_space();
+        read<64>();
+        parse(x);
+    }
+    template<signed_integral T> void operator () (T &x) {
+        skip_space();
+        read<64>();
+        make_unsigned_t<T> u;
+        if (*ptr_ == '-') {
+            ++ptr_;
+            parse(u);
+            u = -u;
+        } else {
+            parse(u);
+        }
+        x = u;
+    }
+    void operator () (char &x) {
+        skip_space();
+        read<64>();
+        x = *ptr_;
+        ++ptr_;
+    }
+    void operator () (string &x) {
+        x = "";
+        skip_space();
+        read<64>();
+        while (*ptr_ > ' ' && *ptr_ != '\0') {
+            x.push_back(*ptr_);
+            ++ptr_;
+        }
+        ++ptr_;
+    }
+    template<class... Ts> requires(sizeof...(Ts) != 1) void operator () (Ts&... xs) {
+        ((*this)(xs), ...);
+    }
+    template<class T> FastRead& operator >> (T &x) { (*this)(x); return *this; }
+};
+
+class FastWrite {
+    static constexpr int BUF_SIZE = 1 << 17;
+
+private:
+    FILE *stream_;
+    array<char, BUF_SIZE> buf_;
+    char *begin_, *end_, *ptr_;
+    
+    // preparation
+    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
+    template<class T> static constexpr auto POW10 = [] {
+        array<T, DIGITS<T>> ret;
+        ret[0] = 1;
+        for (int i = 1; i < DIGITS<T>; ++i) {
+            ret[i] = 10 * ret[i - 1];
+        }
+        return ret;
+    } ();
+    static constexpr auto LUT = [] {
+        array<char, 40000> res;
+        char* p = res.data();
+        char a = '0', b = '0', c = '0', d = '0';
+        do {
+            *p++ = a, *p++ = b, *p++ = c, *p++ = d;
+        } while (d++ < '9'
+                 || (d = '0', c++ < '9'
+                     || (c = '0', b++ < '9'
+                         || (b = '0', a++ < '9'))));
+        return res;
+    } ();
+    
+    // flush
+    template<int N = BUF_SIZE> void flush() {
+        if (end_ - ptr_ <= N) {
+            fwrite(begin_, 1, ptr_ - begin_, stream_);
+            ptr_ = begin_;
+        }
+    }
+    
+    // writer
+    template<int N = 4> void le4(uint64_t x) {
+        if constexpr (1 < N) {
+            if (x < POW10<uint64_t>[N - 1]) {
+                le4<N - 1>(x);
+                return;
+            }
+        }
+        ptr_ = copy_n(&LUT[x * 4 + (4 - N)], N, ptr_);
+    }
+    template<int N> void w4(uint64_t x) {
+        if constexpr (0 < N) {
+            ptr_ = copy_n(&LUT[x / POW10<uint64_t>[N - 4] * 4], 4, ptr_);
+            w4<N - 4>(x % POW10<uint64_t>[N - 4]);
+        }
+    }
+    template<int N> void write(uint64_t x) {
+        if constexpr (N < DIGITS<uint64_t>) {
+            if (POW10<uint64_t>[N] <= x) {
+                write<N + 4>(x);
+                return;
+            }
+        }
+        le4(x / POW10<uint64_t>[N - 4]);
+        w4<N - 4>(x % POW10<uint64_t>[N - 4]);
+    }
+    template<typename T> void write(T x) {
+        write<4>(x);
+    }
+    void write_i128(i128 x) {
+        if (x < 0) {
+            *ptr_++ = '-';
+            write_u128(static_cast<__uint128_t>(-x));
+        } else {
+            write_u128(static_cast<__uint128_t>(x));
+        }
+    }
+    void write_u128(u128 x) {
+        if (x < POW10<__uint128_t>[16]) {
+            write(static_cast<uint64_t>(x));
+        } else if (x < POW10<__uint128_t>[32]) {
+            write(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
+            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
+        } else {
+            write(static_cast<uint64_t>(x / POW10<__uint128_t>[32]));
+            x %= POW10<__uint128_t>[32];
+            w4<16>(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
+            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
+        }
+    }
+    
+public:
+    // constructor
+    FastWrite() : FastWrite(stdout) {}
+    explicit FastWrite(const filesystem::path& p) : FastWrite(fopen(p.c_str(), "w")) {}
+    explicit FastWrite(FILE* stream)
+    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(begin_) {}
+    ~FastWrite() {
+        flush();
+        if (stream_ != stdout) { fclose(stream_); }
+    }
+    FastWrite(const FastWrite&) = delete;
+    FastWrite& operator = (const FastWrite&) = delete;
+    
+    // operators
+    template<unsigned_integral T> void operator () (T x) {
+        flush<DIGITS<T>>();
+        write(x);
+    }
+    template<signed_integral T> void operator () (T x) {
+        flush<1 + DIGITS<T>>();
+        using U = make_unsigned_t<T>;
+        const U u = x;
+        if (x < 0) {
+            *ptr_++ = '-';
+            write(static_cast<U>(-u));
+        } else {
+            write(u);
+        }
+    }
+    void operator () (char c) {
+        flush<1>();
+        *ptr_++ = c;
+    }
+    void operator () (u128 x) {
+        flush<DIGITS<u128>>();
+        write_u128(x);
+    }
+    void operator () (i128 x) {
+        flush<1 + DIGITS<u128>>();
+        write_i128(x);
+    }
+    void operator () (string_view s) {
+        while (!s.empty()) {
+            flush<0>();
+            const auto n = min(ssize(s), end_ - ptr_);
+            if (n == BUF_SIZE) {
+                fwrite(s.data(), 1, BUF_SIZE, stream_);
+            } else {
+                ptr_ = copy_n(s.data(), n, ptr_);
+            }
+            s.remove_prefix(n);
+        }
+        flush<0>();
+    }
+    template <char End = '\n', char Sep = ' ', class T, class... Ts>
+    void ln(T&& x, Ts&&... xs) {
+        (*this)(std::forward<T>(x));
+        if constexpr (sizeof...(Ts) == 0) {
+            *ptr_++ = End;
+        } else {
+            *ptr_++ = Sep;
+            ln<End, Sep>(std::forward<Ts>(xs)...);
+        }
+    }
+    template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
+};
+
+
+//------------------------------//
+// Flow
+//------------------------------//
+
+// Hopcroft-Karp
 struct HopcroftKarp {
     // input
     int size_left, size_right;
@@ -120,6 +467,28 @@ struct HopcroftKarp {
 // Examples
 //------------------------------//
 
+// Yosupo Library Checker - Matching on Bipartite Graph
+void Yosupo_Matching_on_Bipartite_Graph() {
+    FastRead Read;
+    FastWrite Write;
+    int L, R, M, a, b;
+    Read(L, R, M);
+    HopcroftKarp G(L, R);
+    for (int i = 0; i < M; i++) {
+        Read(a, b);
+        G.add_edge(a, b);
+    }
+    int res = G.solve();
+    auto lr = G.lr;
+
+    Write(res), Write('\n');
+    for (int i = 0; i < L; i++) {
+        if (lr[i] != -1) {
+            Write(i), Write(' '), Write(lr[i]), Write('\n');
+        }
+    }
+}
+
 // AOJ 1163 カードゲーム
 void AOJ_1163() {
     int N, M;
@@ -137,185 +506,8 @@ void AOJ_1163() {
     }
 }
 
-// TTPC 2022 H - Colorful Graph
-// Edge Class
-template<class T> struct Edge {
-    int from, to;
-    T val;
-    Edge() : from(-1), to(-1), val(-1) { }
-    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
-    friend ostream& operator << (ostream& s, const Edge& E) {
-        return s << E.from << "->" << E.to;
-    }
-};
-
-// graph class
-template<class T> struct Graph {
-    vector<vector<Edge<T>>> list;
-    vector<vector<Edge<T>>> reversed_list;
-    
-    Graph(int n = 0) : list(n), reversed_list(n) { }
-    void init(int n = 0) {
-        list.assign(n, vector<Edge<T>>());
-        reversed_list.assign(n, vector<Edge<T>>());
-    }
-    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
-    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
-    const size_t size() const { return list.size(); }
-        
-    void add_edge(int from, int to, T val = -1) {
-        list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
-    }
-    
-    void add_bidirected_edge(int from, int to, T val = -1) {
-        list[from].push_back(Edge(from, to, val));
-        list[to].push_back(Edge(to, from, val));
-        reversed_list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
-    }
-
-    friend ostream &operator << (ostream &s, const Graph &G) {
-        s << endl;
-        for (int i = 0; i < G.size(); ++i) {
-            s << i << " -> ";
-            for (const auto &e : G[i]) s << e.to << " ";
-            s << endl;
-        }
-        return s;
-    }
-};
-
-// strongly connected components decomposition
-template<class T> struct SCC {
-    // results
-    vector<int> cmp;
-    vector<vector<int>> groups;
-    Graph<T> dag;
-    
-    // intermediate results
-    vector<bool> seen;
-    vector<int> vs, rvs;
-    
-    // constructor
-    SCC() { }
-    SCC(const Graph<T> &G) { 
-        solve(G);
-    }
-    void init(const Graph<T> &G) { 
-        solve(G);
-    }
-
-    // getter, compressed dag（v: node-id of compressed dag)
-    int get_size(int v) const {
-        return groups[v].size();
-    }
-    vector<int> get_group(int v) const {
-        return groups[v];
-    }
-
-    // solver
-    void dfs(const Graph<T> &G, int v) {
-        seen[v] = true;
-        for (const auto &e : G[v]) if (!seen[e.to]) dfs(G, e.to);
-        vs.push_back(v);
-    }
-    void rdfs(const Graph<T> &G, int v, int k) {
-        seen[v] = true;
-        cmp[v] = k;
-        for (const auto &e : G.get_rev_edges(v)) if (!seen[e.to]) rdfs(G, e.to, k);
-        rvs.push_back(v);
-    }
-    void reconstruct(const Graph<T> &G) {
-        dag.init((int)groups.size());
-        set<pair<int,int>> new_edges;
-        for (int i = 0; i < (int)G.size(); ++i) {
-            int u = cmp[i];
-            for (const auto &e : G[i]) {
-                int v = cmp[e.to];
-                if (u == v) continue;
-                if (!new_edges.count({u, v})) {
-                    dag.add_edge(u, v);
-                    new_edges.insert({u, v});
-                }
-            }
-        }
-    }
-    void solve(const Graph<T> &G) {
-        // first dfs
-        seen.assign((int)G.size(), false);
-        vs.clear();
-        for (int v = 0; v < (int)G.size(); ++v) if (!seen[v]) dfs(G, v);
-
-        // back dfs
-        int k = 0;
-        groups.clear();
-        seen.assign((int)G.size(), false);
-        cmp.assign((int)G.size(), -1);
-        for (int i = (int)G.size()-1; i >= 0; --i) {
-            if (!seen[vs[i]]) {
-                rvs.clear();
-                rdfs(G, vs[i], k++);
-                groups.push_back(rvs);
-            }
-        }
-        reconstruct(G);
-    }
-};
-void TTPC_2022_H() {
-    int N, M, a, b;
-    cin >> N >> M;
-    Graph<int> G(N);
-    for (int i = 0; i < M; i++) {
-        cin >> a >> b;
-        a--, b--;
-        G.add_edge(a, b, i);
-    }
-    SCC scc(G);
-
-    const auto &dag = scc.dag;
-    const auto &groups = scc.groups;
-
-    int V = dag.size();
-    HopcroftKarp hk(V, V);
-    for (int v = 0; v < V; v++) {
-        vector<bool> can(V, false);
-        can[v] = true;
-        queue<int> que;
-        que.push(v);
-        while (!que.empty()) {
-            auto x = que.front();
-            que.pop();
-            for (auto e : dag[x]) {
-                if (can[e.to]) continue;
-                can[e.to] = true;
-                que.push(e.to);
-            }
-        }
-        for (int v2 = 0; v2 < V; v2++) {
-            if (v2 != v && can[v2]) hk.add_edge(v, v2);
-        }
-    }
-    int max_flow = hk.solve();
-
-    vector<int> source, ans(V, -1);
-    for (int v = 0; v < V; v++) if (hk.rl[v] == -1) source.push_back(v);
-    for (int c = 0; c < source.size(); c++) {
-        int v = source[c];
-        while (v != -1) {
-            ans[v] = c + 1;
-            v = hk.lr[v];
-        }
-    }
-
-    vector<int> res(N, -1);
-    for (int v = 0; v < V; v++) for (auto v2 : groups[v]) res[v2] = ans[v];
-    for (int i = 0; i < N; i++) cout << res[i] << " ";
-    cout << endl;
-}
-
 
 int main() {
-    AOJ_1163();
-    //TTPC_2022_H();
+    Yosupo_Matching_on_Bipartite_Graph();
+    //AOJ_1163();
 }
