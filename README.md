@@ -326,7 +326,7 @@
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (binary)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - (★★★☆) [任意 mod 行列式 (by Euclid の互助法を用いた掃き出し法)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
-- (★★★★) [除算なし行列式 (O(N^4))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_without_division.cpp.cpp)
+- (★★★★) [除算なし行列式 (O(N^4))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_without_division.cpp)
 - (★★★★) [特性多項式の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
 - (★★★★) ハフニアン (完全マッチングの個数に帰着)
 
