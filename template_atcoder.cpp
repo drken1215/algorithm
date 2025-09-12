@@ -76,13 +76,6 @@ const vector<int> dy = {0, 1, 0, -1};
 const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
 const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
 
-// min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
-    return i;
-}
-
 // num of i such that (x & (1 << i)) != 0
 int popcnt(int x) { return __builtin_popcount(x); }
 int popcnt(unsigned int x) { return __builtin_popcount(x); }
@@ -1249,6 +1242,13 @@ struct PrimeProcessor {
 // NTT
 //------------------------------//
 
+// min non-negative i such that n <= 2^i
+int ceil_pow2(int n) {
+    int i = 0;
+    while ((1U << i) < (unsigned int)(n)) i++;
+    return i;
+}
+
 // calc primitive root
 constexpr int calc_primitive_root(long long m) {
     if (m == 1) return -1;
@@ -1432,7 +1432,6 @@ void ntt_trans_inv(vector<mint> &v) {
 template<class T>
 vector<T> sub_convolution_naive(const vector<T> &a, const vector<T> &b) {
     int n = (int)a.size(), m = (int)b.size();
-    if (!n || !m) return {};
     vector<T> res(n + m - 1);
     if (n < m) {
         for (int j = 0; j < m; j++) for (int i = 0; i < n; i++) res[i + j] += a[i] * b[j];
