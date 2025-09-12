@@ -1432,6 +1432,7 @@ void ntt_trans_inv(vector<mint> &v) {
 template<class T>
 vector<T> sub_convolution_naive(const vector<T> &a, const vector<T> &b) {
     int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
     vector<T> res(n + m - 1);
     if (n < m) {
         for (int j = 0; j < m; j++) for (int i = 0; i < n; i++) res[i + j] += a[i] * b[j];
