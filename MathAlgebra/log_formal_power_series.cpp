@@ -5,6 +5,9 @@
 //   Yosupo Judge - Log of Formal Power Series
 //     https://judge.yosupo.jp/problem/log_of_formal_power_series
 //
+//   Library Checker - Log of Formal Power Series (Sparse)
+//     https://judge.yosupo.jp/problem/log_of_formal_power_series_sparse
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -2044,7 +2047,26 @@ void Yosupo_log_of_formal_power_series() {
     Write('\n');
 }
 
+// Library Checker - Log of Formal Power Series (Sparse)
+void Yosupo_log_of_sparse_formal_power_series() {
+    FastRead Read; FastWrite Write;
+
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    int N, K, id;
+    Read(N, K);
+    FPS<mint> a(N);
+    for (int i = 0; i < K; i++) {
+        Read(id);
+        Read(a[id].val);
+    }
+    auto res = log(a);
+    REP(i, res.size()) Write(res[i].val), Write(' ');
+    Write('\n');
+}
+
 
 int main() {
     Yosupo_log_of_formal_power_series();
+    //Yosupo_log_of_sparse_formal_power_series();
 }

@@ -5,6 +5,9 @@
 //   Yosupo Judge - Pow of Formal Power Series
 //     https://judge.yosupo.jp/problem/pow_of_formal_power_series
 //
+//   Library Checker - Pow of Formal Power Series (Sparse)
+//     https://judge.yosupo.jp/problem/pow_of_formal_power_series_sparse
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -2045,7 +2048,27 @@ void Yosupo_pow_of_formal_power_series() {
     Write('\n');
 }
 
+// Library Checker - Pow of Formal Power Series (Sparse)
+void Yosupo_pow_of_sparse_formal_power_series() {
+    FastRead Read; FastWrite Write;
+
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    int N, K, id;
+    long long M;
+    Read(N, K, M);
+    FPS<mint> a(N);
+    for (int i = 0; i < K; i++) {
+        Read(id);
+        Read(a[id].val);
+    }
+    auto res = pow(a, M);
+    REP(i, res.size()) Write(res[i].val), Write(' ');
+    Write('\n');
+}
+
 
 int main() {
     Yosupo_pow_of_formal_power_series();
+    //Yosupo_pow_of_sparse_formal_power_series();
 }
