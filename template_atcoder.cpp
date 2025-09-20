@@ -105,7 +105,7 @@ template<class T> T ceil(T x, T y) {
 
 // kth root
 // N < 2^64, K <= 64
-uint64_t kth_root(uint64_t N, uint64_t K) {
+uint64_t kth_root(uint64_t N, uint64_t K = 2) {
     assert(K >= 1);
     if (N <= 1 || K == 1) return N;
     if (K >= 64) return 1;
@@ -4545,22 +4545,22 @@ template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> R
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMin(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
         N, seg_op_min<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
-        numeric_limits<Monoid>::max()/2, -1);
+        numeric_limits<Monoid>::max()/2, 0);
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMax(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
         N, seg_op_max<Monoid>, seg_act_add<Monoid, Action>, seg_comp_add<Action>,
-        -numeric_limits<Monoid>::max()/2, -1);
+        -numeric_limits<Monoid>::max()/2, 0);
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMinWithIndex(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
         N, seg_op_min_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
-        make_pair(numeric_limits<Monoid>::max()/2, -1), -1);
+        make_pair(numeric_limits<Monoid>::max()/2, -1), 0);
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid,int>, Action> RangeAddRangeMaxWithIndex(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
         N, seg_op_max_with_index<Monoid>, seg_act_add_with_index<Monoid, Action>, seg_comp_add<Action>,
-        make_pair(-numeric_limits<Monoid>::max()/2, -1), -1);
+        make_pair(-numeric_limits<Monoid>::max()/2, -1), 0);
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid,long long>, Action> RangeChangeRangeSum(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
