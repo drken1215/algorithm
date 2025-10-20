@@ -4698,6 +4698,71 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     }
 };
 
+// find diameter of tree
+template<class Graph = vector<vector<int>>> struct Diameter {
+    vector<int> path, prev;
+
+    Diameter() {}
+    Diameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, int> res(v, 0);
+        for (auto to : G[v]) {
+            if (to == p) continue;
+            pair<int, int> tmp = DiameterDFS(G, to, v);
+            tmp.second++;
+            if (tmp.second > res.second) res = tmp, prev[to] = v;
+        }
+        return res;
+    }
+    vector<int> solve(const Graph &G) {
+        prev.assign((int)G.size(), -1);
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), -1);
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) path.push_back(cur), cur = prev[cur];
+        return path;
+    }
+};
+
+// find diameter of weighted tree
+template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
+    vector<int> path;
+    vector<pair<int, Weight>> prev;
+
+    WeightedDiameter() {}
+    WeightedDiameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, Weight> res{v, 0};
+        for (auto [to, ew] : G[v]) {
+            if (to == p) continue;
+            pair<int, Weight> tmp = DiameterDFS(G, to, v);
+            tmp.second += ew;
+            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
+        }
+        return res;
+    }
+    pair<Weight, vector<int>> solve(const Graph &G) {
+        Weight res = 0;
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) {
+            if (prev[cur].first != -1) res += prev[cur].second;
+            path.push_back(cur), cur = prev[cur].first;
+        }
+        return {res, path};
+    }
+};
+
 
 //------------------------------//
 // Solver
