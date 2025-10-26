@@ -1691,8 +1691,17 @@ template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct W
 // Solver
 //------------------------------//
 
+void solve() {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    
+}
+
 int main() {
     cin.tie(nullptr);
     ios_base::sync_with_stdio(false);
     
+    int T;
+    cin >> T;
+    while (T--) solve();
 }
