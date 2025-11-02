@@ -26,14 +26,20 @@ template<class MeetSemiLattice> struct SparseTable {
     using Func = function<MeetSemiLattice(MeetSemiLattice, MeetSemiLattice)>;
 
     // core member
-    Func OP;
+    Func OP = [](const MeetSemiLattice &l, const MeetSemiLattice &r) {
+        return min(l, r);
+    };
     vector<vector<MeetSemiLattice>> dat;
     vector<int> height;
     
-    SparseTable() { }
-    SparseTable(const vector<MeetSemiLattice> &vec, const Func &op)  { init(vec, op); }
-    void init(const vector<MeetSemiLattice> &vec, const Func &op) {
-        OP = op;
+    SparseTable() {}
+    SparseTable(const vector<MeetSemiLattice> &vec) {
+        init(vec);
+    }
+    SparseTable(const vector<MeetSemiLattice> &vec, const Func &op)  {
+        init(vec, op);
+    }
+    void init(const vector<MeetSemiLattice> &vec) {
         int n = (int)vec.size(), h = 1;
         while ((1<<h) <= n) ++h;
         dat.assign(h, vector<MeetSemiLattice>(1<<h));
@@ -44,6 +50,10 @@ template<class MeetSemiLattice> struct SparseTable {
             for (int j = 0; j < n; ++j)
                 dat[i][j] = OP(dat[i-1][j], dat[i-1][min(j+(1<<(i-1)),n-1)]);
         }
+    }
+    void init(const vector<MeetSemiLattice> &vec, const Func &op) {
+        OP = op;
+        init(vec);
     }
     
     MeetSemiLattice get(int a, int b) {
