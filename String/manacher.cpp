@@ -16,23 +16,25 @@
 using namespace std;
 
 
-// Manacher
-struct Manacher {
-    string S;
+// Manacher algorithm
+template<class Str = string> struct Manacher {
+    Str S;
     vector<int> radius_odd, radius_even;
 
     // construct
-    Manacher(const string &S_) : S(S_) { init(S); }
-    void init(const string &S_) {
+    Manacher(const Str &S_) : S(S_) {
+        init(S);
+    }
+    void init(const Str &S_) {
         S = S_;
-        string S2 = "";
+        Str S2 = "";
         for (int i = 0; i < (int)S.size(); ++i) {
             S2 += S[i];
             if (i+1 < (int)S.size()) S2 += "$";
         }
         construct(S2);
     }
-    vector<int> construct(const string &S2) {
+    vector<int> construct(const Str &S2) {
         vector<int> len(S2.size());
         int i = 0, j = 0;
         while (i < (int)S2.size()) {
@@ -66,7 +68,6 @@ struct Manacher {
         else return (get_even(mid) == (right - left)/2);
     }
 };
-
 
 
 //------------------------------//

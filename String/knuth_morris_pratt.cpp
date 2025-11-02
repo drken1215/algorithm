@@ -20,15 +20,17 @@
 using namespace std;
 
 
-// T = string or vector<long long>
-template<class T> struct KMP {
-    T pat;
+// KMP algorithm
+template<class Str = string> struct KMP {
+    Str pat;
     vector<int> fail;
 
     // construct
-    KMP(const T &p) { init(p); }
-    void init(const T &p) {
-        pat = p;
+    KMP(const Str &S) {
+        init(S);
+    }
+    void init(const Str &S) {
+        pat = S;
         int m = (int)pat.size();
         fail.assign(m+1, -1);
         for (int i = 0, j = -1; i < m; ++i) {
@@ -38,10 +40,12 @@ template<class T> struct KMP {
     }
 
     // the period of S[0:i]
-    int period(int i) { return i - fail[i]; }
+    int period(int i) {
+        return i - fail[i];
+    }
     
     // the index i such that S[i:] has the exact prefix p
-    vector<int> match(const T &S) {
+    vector<int> match(const Str &S) {
         int n = (int)S.size(), m = (int)pat.size();
         vector<int> res;
         for (int i = 0, k = 0; i < n; ++i) {
@@ -52,7 +56,6 @@ template<class T> struct KMP {
         return res;
     }
 };
-
 
 
 //------------------------------//

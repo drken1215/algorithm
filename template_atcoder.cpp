@@ -4779,7 +4779,7 @@ template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct W
 //------------------------------//
 
 // SA-IS (O(N))
-template<class Str> struct SuffixArray {
+template<class Str = string> struct SuffixArray {
     // data
     Str str;
     vector<int> sa;    // sa[i] : the starting index of the i-th smallest suffix (i = 0, 1, ..., n)
@@ -5007,13 +5007,13 @@ template<class Str> struct SuffixArray {
 };
 
 // Rolling Hash
-struct RollingHash {
+template<class Str = string> struct RollingHash {
     static const int base1 = 1007, base2 = 2009;
     static const int mod1 = 1000000007, mod2 = 1000000009;
     vector<long long> hash1, hash2, power1, power2;
 
     // construct
-    RollingHash(const string &S) {
+    RollingHash(const Str &S) {
         int n = (int)S.size();
         hash1.assign(n+1, 0), hash2.assign(n+1, 0);
         power1.assign(n+1, 1), power2.assign(n+1, 1);
@@ -5064,15 +5064,17 @@ struct RollingHash {
     }
 };
 
-// KMP algorithm, T = string or vector<long long>
-template<class T> struct KMP {
-    T pat;
+// KMP algorithm
+template<class Str = string> struct KMP {
+    Str pat;
     vector<int> fail;
 
     // construct
-    KMP(const T &p) { init(p); }
-    void init(const T &p) {
-        pat = p;
+    KMP(const Str &S) {
+        init(S);
+    }
+    void init(const Str &S) {
+        pat = S;
         int m = (int)pat.size();
         fail.assign(m+1, -1);
         for (int i = 0, j = -1; i < m; ++i) {
@@ -5082,10 +5084,12 @@ template<class T> struct KMP {
     }
 
     // the period of S[0:i]
-    int period(int i) { return i - fail[i]; }
+    int period(int i) {
+        return i - fail[i];
+    }
     
     // the index i such that S[i:] has the exact prefix p
-    vector<int> match(const T &S) {
+    vector<int> match(const Str &S) {
         int n = (int)S.size(), m = (int)pat.size();
         vector<int> res;
         for (int i = 0, k = 0; i < n; ++i) {
@@ -5098,39 +5102,44 @@ template<class T> struct KMP {
 };
 
 // Z algorithm
-vector<int> Zalgo(const string &S) {
+template<class Str = string> vector<int> Zalgo(const Str &S) {
     int N = (int)S.size();
     vector<int> res(N);
     res[0] = N;
     int i = 1, j = 0;
     while (i < N) {
-        while (i+j < N && S[j] == S[i+j]) ++j;
+        while (i + j < N && S[j] == S[i + j]) ++j;
         res[i] = j;
-        if (j == 0) {++i; continue;}
+        if (j == 0) {
+            ++i;
+            continue;
+        }
         int k = 1;
-        while (i+k < N && k+res[k] < j) res[i+k] = res[k], ++k;
+        while (i + k < N && k + res[k] < j) res[i + k] = res[k], ++k;
         i += k, j -= k;
     }
     return res;
 }
 
 // Manacher algorithm
-struct Manacher {
-    string S;
+template<class Str = string> struct Manacher {
+    Str S;
     vector<int> radius_odd, radius_even;
 
     // construct
-    Manacher(const string &S_) : S(S_) { init(S); }
-    void init(const string &S_) {
+    Manacher(const Str &S_) : S(S_) {
+        init(S);
+    }
+    void init(const Str &S_) {
         S = S_;
-        string S2 = "";
+        Str S2 = "";
         for (int i = 0; i < (int)S.size(); ++i) {
             S2 += S[i];
             if (i+1 < (int)S.size()) S2 += "$";
         }
         construct(S2);
     }
-    vector<int> construct(const string &S2) {
+    vector<int> construct(const Str &S2) {
         vector<int> len(S2.size());
         int i = 0, j = 0;
         while (i < (int)S2.size()) {

@@ -15,22 +15,25 @@
 using namespace std;
 
 
-vector<int> Zalgo(const string &S) {
+// Z algorithm
+template<class Str = string> vector<int> Zalgo(const Str &S) {
     int N = (int)S.size();
     vector<int> res(N);
     res[0] = N;
     int i = 1, j = 0;
     while (i < N) {
-        while (i+j < N && S[j] == S[i+j]) ++j;
+        while (i + j < N && S[j] == S[i + j]) ++j;
         res[i] = j;
-        if (j == 0) {++i; continue;}
+        if (j == 0) {
+            ++i;
+            continue;
+        }
         int k = 1;
-        while (i+k < N && k+res[k] < j) res[i+k] = res[k], ++k;
+        while (i + k < N && k + res[k] < j) res[i + k] = res[k], ++k;
         i += k, j -= k;
     }
     return res;
 }
-
 
 
 //------------------------------//

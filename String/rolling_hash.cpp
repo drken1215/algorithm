@@ -14,14 +14,14 @@
 using namespace std;
 
 
-// ローリングハッシュ
-struct RollingHash {
+// Rolling Hash
+template<class Str = string> struct RollingHash {
     static const int base1 = 1007, base2 = 2009;
     static const int mod1 = 1000000007, mod2 = 1000000009;
     vector<long long> hash1, hash2, power1, power2;
 
     // construct
-    RollingHash(const string &S) {
+    RollingHash(const Str &S) {
         int n = (int)S.size();
         hash1.assign(n+1, 0), hash2.assign(n+1, 0);
         power1.assign(n+1, 1), power2.assign(n+1, 1);
