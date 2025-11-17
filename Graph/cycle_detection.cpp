@@ -67,7 +67,7 @@ template<class T = long long> struct Graph {
 };
 
 // cycle detection
-template<class T> struct CycleDetection {
+template<class T = long long> struct CycleDetection {
     // input
     Graph<T> G;
     
