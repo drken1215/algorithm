@@ -25,7 +25,7 @@ using namespace std;
 
 
 // Edge Class
-template<class T> struct Edge {
+template<class T = long long> struct Edge {
     int from, to;
     T val;
     Edge() : from(-1), to(-1), val(-1) { }
@@ -36,7 +36,7 @@ template<class T> struct Edge {
 };
 
 // graph class
-template<class T> struct Graph {
+template<class T = long long> struct Graph {
     vector<vector<Edge<T>>> list;
     
     Graph(int n = 0) : list(n) { }
