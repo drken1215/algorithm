@@ -69,7 +69,7 @@ const vector<int> DX = {1, 0, -1, 0};
 const vector<int> DY = {0, 1, 0, -1};
 
 // 8-neighbor
-const vector<int> DY8 = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> DX8 = {1, 0, -1, 0, 1, -1, 1, -1};
 const vector<int> DY8 = {0, 1, 0, -1, 1, 1, -1, -1};
 
 // num of i such that (x & (1 << i)) != 0
