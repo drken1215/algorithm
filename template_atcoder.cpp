@@ -69,12 +69,12 @@ template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 
 // 4-neighbor
-const vector<int> dx = {1, 0, -1, 0};
-const vector<int> dy = {0, 1, 0, -1};
+const vector<int> DX = {1, 0, -1, 0};
+const vector<int> DY = {0, 1, 0, -1};
 
 // 8-neighbor
-const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
+const vector<int> DX8 = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> DY8 = {0, 1, 0, -1, 1, 1, -1, -1};
 
 // num of i such that (x & (1 << i)) != 0
 int popcnt(int x) { return __builtin_popcount(x); }
