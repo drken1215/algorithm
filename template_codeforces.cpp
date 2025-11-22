@@ -1412,11 +1412,11 @@ template<class T> SegmentTree<T> RangeMin(int N = 0) {
 template<class Monoid> SegmentTree<Monoid> RangeMax(int N = 0) {
     return SegmentTree<Monoid>(N, seg_op_max<Monoid>, -numeric_limits<Monoid>::max()/2);
 }
-template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMinWithIndex(int N = 0) {
-    return SegmentTree<Monoid>(N, seg_op_min_with_index<Monoid>, {numeric_limits<Monoid>::max()/2, -1});
+template<class Monoid> SegmentTree<pair<Monoid, long long>> RangeMinWithIndex(int N = 0) {
+    return SegmentTree<pair<Monoid, long long>>(N, seg_op_min_with_index<Monoid>, {numeric_limits<Monoid>::max()/2, -1});
 }
-template<class Monoid> SegmentTree<pair<Monoid,int>> RangeMaxWithIndex(int N = 0) {
-    return SegmentTree<Monoid>(N, seg_op_max_with_index<Monoid>, {-numeric_limits<Monoid>::max()/2, -1});
+template<class Monoid> SegmentTree<pair<Monoid, long long>> RangeMaxWithIndex(int N = 0) {
+    return SegmentTree<pair<Monoid, long long>>(N, seg_op_max_with_index<Monoid>, {-numeric_limits<Monoid>::max()/2, -1});
 }
 
 // various lazy segment trees
