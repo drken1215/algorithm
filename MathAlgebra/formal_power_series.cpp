@@ -17,6 +17,9 @@
 //   TDPC T - フィボナッチ (mod. 1000000007)
 //     https://atcoder.jp/contests/tdpc/tasks/tdpc_fibonacci
 //
+//   Yosupo Library Checker - Kth term of Linearly Recurrent Sequence
+//     https://judge.yosupo.jp/problem/kth_term_of_linearly_recurrent_sequence
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -2090,6 +2093,19 @@ template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, 
     return BostanMori(S, T, N >> 1);
 }
 
+// find x[K] of linearly D-recurrent sequence, O(D log D log K)
+// x[0] = A[0], x[1] = A[1], ..., x[D-1] = A[D-1]
+// x[i] = C[0]x[i-1] + C[1]x[i-2] + ... + C[D-1]x[i-D]
+template<typename mint> mint kth_term(const vector<mint> &A, const vector<mint> &C, long long K) {
+    assert(A.size() == C.size());
+    int D = (int)C.size();
+    FPS<mint> Q(D+1);
+    Q[0] = 1;
+    for (int i = 1; i <= D; i++) Q[i] = -C[i-1];
+    FPS<mint> P = (Q * FPS<mint>(A)).pre(D);
+    return BostanMori(P, Q, K);  // F(x) = P(x) / Q(x), where F(x) is generating function
+}
+
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
 FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
@@ -2722,11 +2738,27 @@ void TDPC_T() {
     cout << BostanMori(P, Q, N) << endl;
 }
 
+// Yosupo Library Checker - Kth term of Linearly Recurrent Sequence
+void Yosupo_kth_term_of_linearly_recurrent_sequence() {
+    FastRead Read; FastWrite Write;
+    const int MOD = 998244353;
+    using mint = Fp<MOD>;
+    int D;
+    long long K;
+    Read(D, K);
+    vector<mint> A(D), C(D);
+    for (int i = 0; i < D; ++i) Read(A[i].val);
+    for (int i = 0; i < D; ++i) Read(C[i].val);
+    auto res = kth_term(A, C, K);
+    Write(res.val), Write('\n');
+}
+
 
 int main() {
     //Yosupo_Sqrt_of_FPS();
-    Yosupo_composition_of_formal_power_series();
+    //Yosupo_composition_of_formal_power_series();
     //HackerRankArrayRestoring();
     //Codeforces205Div1E();
     //TDPC_T();
+    Yosupo_kth_term_of_linearly_recurrent_sequence();
 }

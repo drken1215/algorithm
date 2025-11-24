@@ -2087,6 +2087,19 @@ template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, 
     return BostanMori(S, T, N >> 1);
 }
 
+// find x[K] of linearly D-recurrent sequence, O(D log D log K)
+// x[0] = A[0], x[1] = A[1], ..., x[D-1] = A[D-1]
+// x[i] = C[0]x[i-1] + C[1]x[i-2] + ... + C[D-1]x[i-D]
+template<typename mint> mint kth_term(const vector<mint> &A, const vector<mint> &C, long long K) {
+    assert(A.size() == C.size());
+    int D = (int)C.size();
+    FPS<mint> Q(D+1);
+    Q[0] = 1;
+    for (int i = 1; i <= D; i++) Q[i] = -C[i-1];
+    FPS<mint> P = (Q * FPS<mint>(A)).pre(D);
+    return BostanMori(P, Q, K);  // F(x) = P(x) / Q(x), where F(x) is generating function
+}
+
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
 FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {

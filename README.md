@@ -608,10 +608,15 @@
 ### 文字列検索
 
 - (★★☆☆) [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
-- (★★★☆) [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - (★★★☆) [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
 - (★★★☆) 単一パターン検索 (Boyer-Moore 法)
 - (★★★★) 複数パターン検索 (Aho-Corasick 法)
+
+### Suffix Array
+
+- (★★★☆) [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
+- (★★★☆) [Suffix Tree](https://github.com/drken1215/algorithm/blob/master/String/suffix_tree.cpp)
+- (★★★☆) [Suffix Automation](https://github.com/drken1215/algorithm/blob/master/String/suffix_automation.cpp)
 
 ### さまざまな文字列アルゴリズム
 
