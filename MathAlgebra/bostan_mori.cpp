@@ -1592,8 +1592,11 @@ template<typename mint> mint kth_term(const vector<mint> &A, const vector<mint> 
     Q[0] = 1;
     for (int i = 1; i <= D; i++) Q[i] = -C[i-1];
     FPS<mint> P = (Q * FPS<mint>(A)).pre(D);
-    return BostanMori(P, Q, K);  // F(x) = P(x) / Q(x), where F(x) is generating function
+
+    // F(x) = P(x) / Q(x), where F(x) is generating function
+    return BostanMori(P, Q, K);  
 }
+
 
 
 //------------------------------//
