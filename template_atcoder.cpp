@@ -226,6 +226,46 @@ ostream& operator << (ostream &os, const u128 &x) {
     return os;
 }
 
+// sum_{i=0}^{n-1} floor((a * i + b) / m)
+template<class T> T floor_sum(T n, T a, T b, T m) {
+    assert(n >= 0 && m >= 1);
+    T res = 0;
+    if (a < 0) {
+        T a2 = (a % m + m) % m;
+        res -= n * (n - 1) / 2 * ((a2 - a) / m);
+        a = a2;
+    }
+    if (b < 0) {
+        T b2 = (b % m + m) % m;
+        res -= n * ((b2 - b) / m);
+        b = b2;
+    }
+    
+    while (true) {
+        if (a >= m) {
+            res += n * (n - 1) / 2 * (a / m);
+            a %= m;
+        }
+        if (b >= m) {
+            res += n * (b / m);
+            b %= m;
+        }
+        T y_max = a * n + b;
+        if (y_max < m) break;
+        n = y_max / m;
+        b = y_max % m;
+        swap(m, a);
+    }
+    return res;
+}
+
+// #lp under (and on) the segment (x1, y1)-(x2, y2)
+// not including y = 0, x = x2
+template<class T> T num_lattice_points(T x1, T y1, T x2, T y2) {
+    T dx = x2 - x1;
+    return floor_sum(dx, y2 - y1, dx * y1, dx);
+}
+
 
 //------------------------------//
 // Fast IO
