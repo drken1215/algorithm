@@ -144,8 +144,8 @@
 
 ## その他
 
-- (★★★☆) [区間の集合を set で管理する（del and add must be invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_management.cpp)
-- (★★★☆) [区間の集合を set で管理する（del and add can be non-invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_management_with_noninvertible_del.cpp)
+- (★★★☆) [区間の集合を set で管理する（del and add must be invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set.cpp)
+- (★★★☆) [区間の集合を set で管理する（del and add can be non-invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set_with_noninvertible_del.cpp)
 
 
 
