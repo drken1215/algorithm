@@ -1291,13 +1291,6 @@ struct PrimeProcessor {
 // NTT
 //------------------------------//
 
-// min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
-    return i;
-}
-
 // calc primitive root
 constexpr int calc_primitive_root(long long m) {
     if (m == 1) return -1;
