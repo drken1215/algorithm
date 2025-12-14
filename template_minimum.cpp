@@ -95,6 +95,13 @@ template<class T> T ceil(T x, T y) {
     return floor(x + y - 1, y);
 }
 
+// min non-negative i such that n <= 2^i
+int ceil_pow2(int n) {
+    int i = 0;
+    while ((1U << i) < (unsigned int)(n)) i++;
+    return i;
+}
+
 
 //------------------------------//
 // Solver

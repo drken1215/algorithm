@@ -105,6 +105,13 @@ template<class T> T ceil(T x, T y) {
     return floor(x + y - 1, y);
 }
 
+// min non-negative i such that n <= 2^i
+int ceil_pow2(int n) {
+    int i = 0;
+    while ((1U << i) < (unsigned int)(n)) i++;
+    return i;
+}
+
 // kth root
 // N < 2^64, K <= 64
 uint64_t kth_root(uint64_t N, uint64_t K = 2) {
