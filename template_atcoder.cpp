@@ -223,6 +223,12 @@ ostream& operator << (ostream &os, const i128 &x) {
     }
     return os;
 }
+i128 gcd(i128 a, i128 b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    if (b == 0) return a;
+    else return gcd(b, a % b);
+}
 u128 to_uinteger(const string &s) {
     u128 res = 0;
     for (auto c : s) {
@@ -1306,6 +1312,99 @@ struct PrimeProcessor {
             while (res % p == 0 && mint(a).pow(res / p) == 1) res /= p;
         }
         return res;
+    }
+};
+
+
+//------------------------------//
+// various integer algorithms
+//------------------------------//
+
+// 有理数
+template<class T> struct frac {
+    // inner values
+    T first, second;
+
+    // constructor
+    frac& normalize() {
+        if (first == 0 && second != 0) {
+            second = 1;
+            return *this;
+        }
+        if (second == 0 && first != 0) {
+            first = 1;
+            return *this;
+        }
+        if (second < 0) first = -first, second = -second;
+        T abs_first = (first >= 0 ? first : -first);
+        T d = gcd(abs_first, second);
+        if (d == 0) first = 0, second = 1;
+        else first /= d, second /= d;
+        return *this;
+    }
+    constexpr frac(T f = 0, T s = 1) : first(f), second(s) { 
+        normalize(); 
+    }
+    constexpr frac& operator = (T a) { 
+        *this = frac(a, 1); 
+        return *this;
+    }
+
+    // comparison operators
+    constexpr bool operator == (const frac &r) const {
+        return this->first == r.first && this->second == r.second;
+    }
+    constexpr bool operator != (const frac &r) const {
+        return this->first != r.first || this->second != r.second;
+    }
+    constexpr bool operator < (const frac &r) const {
+        return this->first * r.second < this->second * r.first;
+    }
+    constexpr bool operator > (const frac &r) const {
+        return this->first * r.second > this->second * r.first;
+    }
+    constexpr bool operator <= (const frac &r) const {
+        return this->first * r.second <= this->second * r.first;
+    }
+    constexpr bool operator >= (const frac &r) const {
+        return this->first * r.second >= this->second * r.first;
+    }
+    
+    // arithmetic operators
+    constexpr frac& operator += (const frac &r) {
+        this->first = this->first * r.second + this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator -= (const frac &r) {
+        this->first = this->first * r.second - this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator *= (const frac &r) {
+        this->first *= r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator /= (const frac &r) {
+        this->first *= r.second;
+        this->second *= r.first;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac operator + () const { return frac(*this); }
+    constexpr frac operator - () const { return frac(0) - frac(*this); }
+    constexpr frac operator + (const frac &r) const { return frac(*this) += r; }
+    constexpr frac operator - (const frac &r) const { return frac(*this) -= r; }
+    constexpr frac operator * (const frac &r) const { return frac(*this) *= r; }
+    constexpr frac operator / (const frac &r) const { return frac(*this) /= r; }
+    friend constexpr ostream& operator << (ostream &os, const frac<T> &x) {
+        os << x.first; 
+        if (x.second != 1) os << "/" << x.second;
+        return os;
     }
 };
 

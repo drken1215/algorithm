@@ -21,6 +21,14 @@ template<class T> struct frac {
 
     // constructor
     frac& normalize() {
+        if (first == 0 && second != 0) {
+            second = 1;
+            return *this;
+        }
+        if (second == 0 && first != 0) {
+            first = 1;
+            return *this;
+        }
         if (second < 0) first = -first, second = -second;
         T abs_first = (first >= 0 ? first : -first);
         T d = gcd(abs_first, second);
