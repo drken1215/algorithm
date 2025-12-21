@@ -79,6 +79,29 @@ const vector<int> DY = {0, 1, 0, -1};
 const vector<int> DX8 = {1, 0, -1, 0, 1, -1, 1, -1};
 const vector<int> DY8 = {0, 1, 0, -1, 1, -1, -1, 1};
 
+// 10^n
+constexpr long long TEN[] = {
+    1LL,
+    10LL,
+    100LL,
+    1000LL,
+    10000LL,
+    100000LL,
+    1000000LL,
+    10000000LL,
+    100000000LL,
+    1000000000LL,
+    10000000000LL,
+    100000000000LL,
+    1000000000000LL,
+    10000000000000LL,
+    100000000000000LL,
+    1000000000000000LL,
+    10000000000000000LL,
+    100000000000000000LL,
+    1000000000000000000LL,
+};
+
 // min non-negative i such that n <= 2^i
 int ceil_pow2(int n) {
     int i = 0;
