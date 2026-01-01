@@ -13,6 +13,11 @@ using namespace std;
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
 template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
 
+using ll = long long;
+using u32 = unsigned int;
+using u64 = unsigned long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
 using pint = pair<int, int>;
 using pll = pair<long long, long long>;
 using tint = array<int, 3>;
@@ -25,13 +30,9 @@ using sint = array<int, 6>;
 using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-template <class T>
-using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+using vvint = vector<vector<int>>;
+using vvll = vector<vector<long long>>;
+template <class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
 #define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
 #define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
