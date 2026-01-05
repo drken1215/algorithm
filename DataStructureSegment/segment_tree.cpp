@@ -154,6 +154,15 @@ template<class Monoid> struct SegmentTree {
         }
         return s;
     }
+
+    // dump
+    void dump() {
+        int pt = 1;
+        for (int h = 0; h <= log; h++) {
+            for (int i = 0; i < (1<<h); i++) cout << dat[pt++] << " ";
+            cout << endl;
+        }
+    }
 };
 
 
