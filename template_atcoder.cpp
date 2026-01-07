@@ -12,12 +12,9 @@ using namespace std;
 
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
 template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
+template<class S, class T> inline S max(S a, T b) { return max(a, S(b)); }
+template<class S, class T> inline S min(S a, T b) { return min(a, S(b)); }
 
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
 using pint = pair<int, int>;
 using pll = pair<long long, long long>;
 using tint = array<int, 3>;
@@ -30,9 +27,13 @@ using sint = array<int, 6>;
 using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
-using vvint = vector<vector<int>>;
-using vvll = vector<vector<long long>>;
-template <class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+using ll = long long;
+using u32 = unsigned int;
+using u64 = unsigned long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
+template <class T>
+using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
 #define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
 #define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
@@ -4433,15 +4434,6 @@ template<class Monoid> struct SegmentTree {
         }
         return s;
     }
-
-    // dump
-    void dump() {
-        int pt = 1;
-        for (int h = 0; h <= log; h++) {
-            for (int i = 0; i < (1<<h); i++) cout << dat[pt++] << " ";
-            cout << endl;
-        }
-    }
 };
 
 // Lazy Segment Tree
@@ -4705,12 +4697,6 @@ template<class Monoid> SegmentTree<Monoid> RangeAdd(const vector<Monoid> &v) {
 template<class Monoid, class Action> auto seg_act_change = [](Action f, Monoid x) {
     return (f != Action(-1) ? f : x);
 };
-template<class Monoid, class Action> auto seg_act_chmin = [](Action f, Monoid x) {
-    return min(Monoid(f), x);
-};
-template<class Monoid, class Action> auto seg_act_chmax = [](Action f, Monoid x) {
-    return max(Monoid(f), x);
-};
 template<class Monoid, class Action> auto seg_act_add = [](Action f, Monoid x) {
     return f + x;
 };
@@ -4719,12 +4705,6 @@ template<class Monoid, class Action> auto seg_act_change_with_sum = [](Action f,
 };
 template<class Action> auto seg_comp_change = [](Action g, Action f) {
     return (g != Action(-1) ? g : f);
-};
-template<class Action> auto seg_comp_chmin = [](Action g, Action f) {
-    return min(g, f);
-};
-template<class Action> auto seg_comp_chmax = [](Action g, Action f) {
-    return max(g, f);
 };
 template<class Action> auto seg_comp_add = [](Action g, Action f) {
     return g + f;
@@ -4758,26 +4738,6 @@ template<class Monoid, class Action> LazySegmentTree<pair<Monoid, long long>, Ac
     return LazySegmentTree<pair<Monoid, long long>, Action>(
         v, seg_op_add_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
         make_pair(Monoid(0), 1), Action(-1));
-};
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChminRangeMin(int N = 0) {
-    return LazySegmentTree<Monoid, Action>(
-        N, seg_op_min<Monoid>, seg_act_chmin<Monoid, Action>, seg_comp_chmin<Action>,
-        numeric_limits<Monoid>::max()/2, numeric_limits<Action>::max()/2);
-};
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChminRangeMin(const vector<Monoid> &v) {
-    return LazySegmentTree<Monoid, Action>(
-        v, seg_op_min<Monoid>, seg_act_chmin<Monoid, Action>, seg_comp_chmin<Action>,
-        numeric_limits<Monoid>::max()/2, numeric_limits<Action>::max()/2);
-};
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChmaxRangeMax(int N = 0) {
-    return LazySegmentTree<Monoid, Action>(
-        N, seg_op_max<Monoid>, seg_act_chmax<Monoid, Action>, seg_comp_chmax<Action>,
-        -numeric_limits<Monoid>::max()/2, -numeric_limits<Action>::max()/2);
-};
-template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChmaxRangeMax(const vector<Monoid> &v) {
-    return LazySegmentTree<Monoid, Action>(
-        v, seg_op_max<Monoid>, seg_act_chmax<Monoid, Action>, seg_comp_chmax<Action>,
-        -numeric_limits<Monoid>::max()/2, -numeric_limits<Action>::max()/2);
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRangeMin(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
@@ -4901,6 +4861,11 @@ template<class Graph = vector<vector<int>>> struct RunTree {
         }
         return p;
     }
+
+    // is node v in s-t path?
+    bool is_on_path(int s, int t, int v) {
+        return get_dist(s, v) + get_dist(v, t) == get_dist(s, t);
+    };
     
     // rec
     int rec(const Graph &G, int v, int p, int d, int &ord) {

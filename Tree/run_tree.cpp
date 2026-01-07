@@ -117,6 +117,11 @@ template<class Graph = vector<vector<int>>> struct RunTree {
         }
         return p;
     }
+
+    // is node v in s-t path?
+    bool is_on_path(int s, int t, int v) {
+        return get_dist(s, v) + get_dist(v, t) == get_dist(s, t);
+    };
     
     // rec
     int rec(const Graph &G, int v, int p, int d, int &ord) {
