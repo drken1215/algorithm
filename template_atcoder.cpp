@@ -10,11 +10,11 @@ using namespace std;
 // Utility
 //------------------------------//
 
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-template<class S, class T> inline S max(S a, T b) { return max(a, S(b)); }
-template<class S, class T> inline S min(S a, T b) { return min(a, S(b)); }
-
+using ll = long long;
+using u32 = unsigned int;
+using u64 = unsigned long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
 using pint = pair<int, int>;
 using pll = pair<long long, long long>;
 using tint = array<int, 3>;
@@ -27,13 +27,14 @@ using sint = array<int, 6>;
 using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-template <class T>
-using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+
+template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
+template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
+template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
+template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
+template<class T> auto min(const T& a) { return *min_element(a.begin(), a.end()); }
+template<class T> auto max(const T& a) { return *min_element(a.begin(), a.end()); }
 
 #define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
 #define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
@@ -71,6 +72,11 @@ template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+// output
+void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
+void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
+void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
 
 // 4-neighbor
 const vector<int> DX = {1, 0, -1, 0};
@@ -4957,6 +4963,207 @@ template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct W
             path.push_back(cur), cur = prev[cur].first;
         }
         return {res, path};
+    }
+};
+
+// re-rooting
+/*
+    通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
+ 　　　1. res = IDENTITY
+ 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, rec(v2))
+    　　（辺重みあり：res = MERGE(res, ADDEDGE(e, rec(v2)))
+ 　　　3. return ADDNODE(v, res)
+ 　　というような更新を行うものとする。
+ 　　このような木 DP を全方位木 DP へと拡張する。
+ */
+template<class Monoid> struct ReRooting {
+    using Graph = vector<vector<int>>;
+    using MergeFunc = function<Monoid(Monoid, Monoid)>;
+    using AddNodeFunc = function<Monoid(int, Monoid)>;
+    
+    // core member
+    Graph G;
+    Monoid IDENTITY;
+    MergeFunc MERGE;
+    AddNodeFunc ADDNODE;
+    
+    // inner data
+    vector<vector<Monoid>> dp;
+    vector<unordered_map<int,int>> ids;
+    
+    // constructor
+    ReRooting() {}
+    ReRooting(const Graph &g, const Monoid &identity,
+              const MergeFunc &merge, const AddNodeFunc &addnode) {
+        G = g;
+        IDENTITY = identity;
+        MERGE = merge;
+        ADDNODE = addnode;
+        build();
+    }
+    
+    // re-looting dp
+    Monoid rec(int v, int p) {
+        Monoid res = IDENTITY;
+        dp[v].assign(G[v].size(), IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = G[v][i];
+            ids[v][v2] = i;
+            if (v2 == p) continue;
+            dp[v][i] = rec(v2, v);
+            res = MERGE(res, dp[v][i]);
+        }
+        return ADDNODE(v, res);
+    }
+    void rerec(int v, int p, Monoid pval) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = G[v][i];
+            if (v2 == p) {
+                dp[v][i] = pval;
+                continue;
+            }
+        }
+        vector<Monoid> left(G[v].size() + 1, IDENTITY);
+        vector<Monoid> right(G[v].size() + 1, IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            left[i + 1] = MERGE(left[i], dp[v][i]);
+            right[i + 1] = MERGE(right[i], dp[v][(int)G[v].size() - i - 1]);
+        }
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = G[v][i];
+            if (v2 == p) continue;
+            Monoid pval2 = MERGE(left[i], right[(int)G[v].size() - i - 1]);
+            rerec(v2, v, ADDNODE(v, pval2));
+        }
+    }
+    void build() {
+        dp.assign(G.size(), vector<Monoid>());
+        ids.assign(G.size(), unordered_map<int,int>());
+        int root = 0, nullparent = -1;
+        rec(root, nullparent);
+        rerec(root, nullparent, IDENTITY);
+    }
+    
+    // getter
+    Monoid get(int v) {
+        Monoid res = IDENTITY;
+        for (int i = 0; i < G[v].size(); ++i) {
+            res = MERGE(res, dp[v][i]);
+        }
+        return ADDNODE(v, res);
+    }
+    Monoid get(int v, int w) {
+        return dp[v][ids[v][w]];
+    }
+    
+    // dump
+    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid> &rr) {
+        for (int v = 0; v < rr.G.size(); ++v) {
+            for (int i = 0; i < rr.G[v].size(); ++i) {
+                os << v << " -> " << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
+            }
+        }
+        return os;
+    }
+};
+
+// 辺に重みがある場合
+template<class Monoid, class Edge> struct ReRootingWithEdge {
+    using Graph = vector<vector<Edge>>;
+    using GetIdFunc = function<int(Edge)>;
+    using AddEdgeFunc = function<Monoid(Edge, Monoid)>;
+    using MergeFunc = function<Monoid(Monoid, Monoid)>;
+    using AddNodeFunc = function<Monoid(int, Monoid)>;
+    
+    // core member
+    Graph G;
+    Monoid IDENTITY;
+    GetIdFunc GETID;
+    AddEdgeFunc ADDEDGE;
+    MergeFunc MERGE;
+    AddNodeFunc ADDNODE;
+    
+    // inner data
+    vector<vector<Monoid>> dp;
+    vector<unordered_map<int,int>> ids;
+    
+    // constructor
+    ReRootingWithEdge() {}
+    ReRootingWithEdge(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
+                      const AddEdgeFunc &addedge, 
+                      const MergeFunc &merge, const AddNodeFunc &addnode) {
+        G = g;
+        IDENTITY = identity;
+        GETID = getid;
+        ADDEDGE = addedge;
+        MERGE = merge;
+        ADDNODE = addnode;
+        build();
+    }
+    
+    // re-looting dp
+    Monoid rec(int v, int p) {
+        Monoid res = IDENTITY;
+        dp[v].assign(G[v].size(), IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = GETID(G[v][i]);
+            ids[v][v2] = i;
+            if (v2 == p) continue;
+            dp[v][i] = rec(v2, v);
+            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
+        }
+        return ADDNODE(v, res);
+    }
+    void rerec(int v, int p, Monoid pval) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = GETID(G[v][i]);
+            if (v2 == p) {
+                dp[v][i] = pval;
+                continue;
+            }
+        }
+        vector<Monoid> left(G[v].size() + 1, IDENTITY);
+        vector<Monoid> right(G[v].size() + 1, IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            int ri = (int)G[v].size() - i - 1;
+            left[i + 1] = MERGE(left[i], ADDEDGE(G[v][i], dp[v][i]));
+            right[i + 1] = MERGE(right[i], ADDEDGE(G[v][ri], dp[v][ri]));
+        }
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = GETID(G[v][i]), ri = (int)G[v].size() - i - 1;
+            if (v2 == p) continue;
+            Monoid pval2 = MERGE(left[i], right[ri]);
+            rerec(v2, v, ADDNODE(v, pval2));
+        }
+    }
+    void build() {
+        dp.assign(G.size(), vector<Monoid>());
+        ids.assign(G.size(), unordered_map<int,int>());
+        int root = 0;
+        rec(root, -1);
+        rerec(root, -1, IDENTITY);
+    }
+    
+    // getter
+    Monoid get(int v) {
+        Monoid res = IDENTITY;
+        for (int i = 0; i < G[v].size(); ++i) {
+            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
+        }
+        return ADDNODE(v, res);
+    }
+    Monoid get(int v, int w) {
+        return dp[v][ids[v][w]];
+    }
+    
+    // dump
+    friend constexpr ostream& operator << (ostream &os, const ReRootingWithEdge<Monoid, Edge> &rr) {
+        for (int v = 0; v < rr.G.size(); ++v) {
+            for (int i = 0; i < rr.G[v].size(); ++i) {
+                os << v << " -> " << rr.GETID(rr.G[v][i]) << ": " << rr.dp[v][i] << endl;
+            }
+        }
+        return os;
     }
 };
 
