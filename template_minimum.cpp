@@ -29,8 +29,8 @@ template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b,
 template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
 template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
 template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
-template<class T> auto min(const T& a) { return *min_element(a.begin(), a.end()); }
 template<class T> auto max(const T& a) { return *min_element(a.begin(), a.end()); }
+template<class T> auto min(const T& a) { return *min_element(a.begin(), a.end()); }
 
 #define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
 #define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
