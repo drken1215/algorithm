@@ -45,7 +45,13 @@ template<class T> auto min(const T& a) { return *min_element(a.begin(), a.end())
 #define ALL(x) x.begin(), x.end()
 #define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
 
-// debug stream
+// input
+template<class T> istream& operator >> (istream &is, const vector<T> &P)
+{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; }
+template<class T> istream& operator >> (istream &is, const deque<T> &P)
+{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; }
+
+// output
 template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
 { return s << '<' << P.first << ", " << P.second << '>'; }
 template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
