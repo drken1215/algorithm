@@ -5072,7 +5072,7 @@ template<class Monoid> struct ReRooting {
 };
 
 // 辺に重みがある場合
-template<class Monoid, class Edge> struct ReRootingWithEdge {
+template<class Monoid, class Edge> struct WeightedReRooting {
     using Graph = vector<vector<Edge>>;
     using GetIdFunc = function<int(Edge)>;
     using AddEdgeFunc = function<Monoid(Edge, Monoid)>;
@@ -5092,8 +5092,8 @@ template<class Monoid, class Edge> struct ReRootingWithEdge {
     vector<unordered_map<int,int>> ids;
     
     // constructor
-    ReRootingWithEdge() {}
-    ReRootingWithEdge(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
+    WeightedReRooting() {}
+    WeightedReRooting(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
                       const AddEdgeFunc &addedge, 
                       const MergeFunc &merge, const AddNodeFunc &addnode) {
         G = g;
@@ -5161,7 +5161,7 @@ template<class Monoid, class Edge> struct ReRootingWithEdge {
     }
     
     // dump
-    friend constexpr ostream& operator << (ostream &os, const ReRootingWithEdge<Monoid, Edge> &rr) {
+    friend constexpr ostream& operator << (ostream &os, const WeightedReRooting<Monoid, Edge> &rr) {
         for (int v = 0; v < rr.G.size(); ++v) {
             for (int i = 0; i < rr.G[v].size(); ++i) {
                 os << v << " -> " << rr.GETID(rr.G[v][i]) << ": " << rr.dp[v][i] << endl;
