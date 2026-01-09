@@ -23,6 +23,8 @@ using sint = array<int, 6>;
 using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
+using vvint = vector<vector<int>>;
+using vvll = vector<vector<long long>>;
 template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
@@ -46,10 +48,10 @@ template<class T> auto min(const T& a) { return *min_element(a.begin(), a.end())
 #define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
 
 // input
-template<class T> istream& operator >> (istream &is, const vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; }
-template<class T> istream& operator >> (istream &is, const deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; }
+template<class T> istream& operator >> (istream &is, vector<T> &P)
+{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, deque<T> &P)
+{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
 
 // output
 template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
