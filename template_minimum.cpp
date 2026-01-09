@@ -80,8 +80,6 @@ template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-// output
 void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
 void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
 void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
