@@ -314,18 +314,6 @@ template<class mint> struct BiCoef {
     }
 };
 
-// all inverse
-template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
-    for (auto &&vi : v) assert(vi != mint(0));
-    int N = (int)v.size();
-    vector<mint> res(N + 1, mint(1));
-    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
-    mint t = res.back().inv();
-    res.pop_back();
-    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
-    return res;
-}
-
 
 //------------------------------//
 // Solver
@@ -337,3 +325,14 @@ int main() {
 
     
 }
+
+
+
+
+
+
+
+
+
+
+
