@@ -2299,7 +2299,7 @@ template<typename mint> mint kth_term
 // Berlekamp-Massey, find linear recurrence, O(D^2)
 // given: A[0], ..., A[N-1]
 // find: C[0], ..., C[D-1] s.t. A[i] = C[0]A[i-1] + C[1]x[i-2] + ... + C[D-1]x[i-D]
-template<typename mint> vector<mint> BerleKampMassey(const vector<mint> &A) {
+template<typename mint> vector<mint> BerlekampMassey(const vector<mint> &A) {
     const int N = (int)A.size();
     vector<mint> b({mint(-1)}), c({mint(-1)});
     mint x = 0, y = 1;
@@ -2324,6 +2324,17 @@ template<typename mint> vector<mint> BerleKampMassey(const vector<mint> &A) {
     c.pop_back();
     reverse(c.begin(), c.end());
     return c;
+}
+template<typename mint> pair<FPS<mint>, FPS<mint>> find_generating_function
+(const vector<mint> &A) {
+    auto C = BerlekampMassey(A);
+    vector<mint> A2;
+    for (int i = 0; i < (int)C.size(); i++) A2.emplace_back(A[i]);
+    return find_generating_function(A2, C);
+}
+template<typename mint> mint kth_term(const vector<mint> &A, long long K) {
+    auto [P, Q] = find_generating_function(A);
+    return BostanMori(P, Q, K);   
 }
 
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
