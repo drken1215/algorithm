@@ -86,65 +86,6 @@ void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
 void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
 void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
 
-// 4-neighbor
-const vector<int> DX = {1, 0, -1, 0};
-const vector<int> DY = {0, 1, 0, -1};
-
-// 8-neighbor
-const vector<int> DX8 = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> DY8 = {0, 1, 0, -1, 1, -1, -1, 1};
-
-// 10^n
-constexpr long long TEN[] = {
-    1LL,
-    10LL,
-    100LL,
-    1000LL,
-    10000LL,
-    100000LL,
-    1000000LL,
-    10000000LL,
-    100000000LL,
-    1000000000LL,
-    10000000000LL,
-    100000000000LL,
-    1000000000000LL,
-    10000000000000LL,
-    100000000000000LL,
-    1000000000000000LL,
-    10000000000000000LL,
-    100000000000000000LL,
-    1000000000000000000LL,
-};
-
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-
-// min non-negative i such that (x & (1 << i)) != 0
-int bsf(int x) { return __builtin_ctz(x); }
-int bsf(unsigned int x) { return __builtin_ctz(x); }
-int bsf(long long x) { return __builtin_ctzll(x); }
-int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-
-// floor, ceil
-template<class T> T floor(T a, T b) {
-    if (a % b == 0 || a >= 0) return a / b;
-    else return -((-a) / b) - 1;
-}
-template<class T> T ceil(T x, T y) {
-    return floor(x + y - 1, y);
-}
-
-// min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
-    return i;
-}
-
 // mod inv
 template<class T_VAL, class T_MOD>
 constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
