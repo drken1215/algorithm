@@ -2251,7 +2251,8 @@ template<class mint> struct FPS : vector<mint> {
 // Bostan-Mori
 // find [x^N] P(x)/Q(x), O(K log K log N)
 // deg(Q(x)) = K, deg(P(x)) < K
-template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
+template<typename mint> mint BostanMori
+(const FPS<mint> &P, const FPS<mint> &Q, long long N) {
     assert(!P.empty() && !Q.empty());
     if (N == 0 || Q.size() == 1) return P[0] / Q[0];
     
@@ -2271,17 +2272,58 @@ template<typename mint> mint BostanMori(const FPS<mint> &P, const FPS<mint> &Q, 
     return BostanMori(S, T, N >> 1);
 }
 
-// find x[K] of linearly D-recurrent sequence, O(D log D log K)
+// find generating function F(x) (= P(x) / Q(x)) of linearly D-recurrent sequence, O(D log D)
 // x[0] = A[0], x[1] = A[1], ..., x[D-1] = A[D-1]
 // x[i] = C[0]x[i-1] + C[1]x[i-2] + ... + C[D-1]x[i-D]
-template<typename mint> mint kth_term(const vector<mint> &A, const vector<mint> &C, long long K) {
+template<typename mint> pair<FPS<mint>, FPS<mint>> find_generating_function
+(const vector<mint> &A, const vector<mint> &C) {
     assert(A.size() == C.size());
     int D = (int)C.size();
     FPS<mint> Q(D+1);
     Q[0] = 1;
     for (int i = 1; i <= D; i++) Q[i] = -C[i-1];
     FPS<mint> P = (Q * FPS<mint>(A)).pre(D);
-    return BostanMori(P, Q, K);  // F(x) = P(x) / Q(x), where F(x) is generating function
+    return make_pair(P, Q);  
+}
+
+// find x[K] of linearly D-recurrent sequence, O(D log D log K)
+// x[0] = A[0], x[1] = A[1], ..., x[D-1] = A[D-1]
+// x[i] = C[0]x[i-1] + C[1]x[i-2] + ... + C[D-1]x[i-D]
+template<typename mint> mint kth_term
+(const vector<mint> &A, const vector<mint> &C, long long K) {
+    assert(A.size() == C.size());
+    auto [P, Q] = find_generating_function(A, C);
+    return BostanMori(P, Q, K);  
+}
+
+// Berlekamp-Massey, find linear recurrence, O(D^2)
+// given: A[0], ..., A[N-1]
+// find: C[0], ..., C[D-1] s.t. A[i] = C[0]A[i-1] + C[1]x[i-2] + ... + C[D-1]x[i-D]
+template<typename mint> vector<mint> BerleKampMassey(const vector<mint> &A) {
+    const int N = (int)A.size();
+    vector<mint> b({mint(-1)}), c({mint(-1)});
+    mint x = 0, y = 1;
+    for (int iter = 1; iter <= N; iter++) {
+        int cl = c.size(), bl = b.size();
+        x = 0;
+        for (int i = 0; i < cl; i++) x += c[i] * A[iter - cl + i];
+        b.emplace_back(0);
+        bl++;
+        if (x == mint(0)) continue;
+        mint f = x / y;
+        if (cl < bl) {
+            auto tmp = c;
+            c.insert(c.begin(), bl - cl, mint(0));
+            for (int i = 0; i < bl; i++) c[bl - i - 1] -= f * b[bl - i - 1];
+            b = tmp;
+            y = x;
+        } else {
+            for (int i = 0; i < bl; i++) c[cl - i - 1] -= f * b[bl - i - 1];
+        }
+    }
+    c.pop_back();
+    reverse(c.begin(), c.end());
+    return c;
 }
 
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
