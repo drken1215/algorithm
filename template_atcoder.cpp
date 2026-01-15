@@ -2332,7 +2332,7 @@ template<typename mint> pair<FPS<mint>, FPS<mint>> find_generating_function
     for (int i = 0; i < (int)C.size(); i++) A2.emplace_back(A[i]);
     return find_generating_function(A2, C);
 }
-template<typename mint> mint kth_term(const vector<mint> &A, long long K) {
+template<typename mint> mint BMBM(const vector<mint> &A, long long K) {
     auto [P, Q] = find_generating_function(A);
     return BostanMori(P, Q, K);   
 }
