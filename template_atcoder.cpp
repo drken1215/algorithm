@@ -17,6 +17,8 @@ using i128 = __int128_t;
 using u128 = __uint128_t;
 using pint = pair<int, int>;
 using pll = pair<long long, long long>;
+using dint = array<int, 2>;
+using dll = array<long long, 2>;
 using tint = array<int, 3>;
 using tll = array<long long, 3>;
 using fint = array<int, 4>;
@@ -62,6 +64,8 @@ template<class T> istream& operator >> (istream &is, deque<T> &P)
 // output
 template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
 { return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
+{ return s << '<' << P[0] << "," << P[1] << '>'; }
 template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
 { return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
 template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
