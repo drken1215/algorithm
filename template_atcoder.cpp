@@ -922,6 +922,11 @@ template<class mint> struct BiCoef {
         if (n < 0) return 0;
         return finv_[n];
     }
+    // C(-n, r) = (-1)^r C(n + r - 1, r)
+    constexpr mint negcom(int n, int r) const {
+        if (r % 2 == 0) return com(n + r - 1, r);
+        else return -com(n + r - 1, r);
+    }
 };
 
 // all inverse
