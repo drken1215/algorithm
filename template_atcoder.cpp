@@ -3229,6 +3229,27 @@ template<class FLOW> struct FlowGraph {
         list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
     }
 
+    // augment
+    FLOW augment(int s, int t, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        return dfs(dfs, s, up_flow);
+    };
+
     // debug
     friend ostream& operator << (ostream& s, const FlowGraph &G) {
         const auto &edges = G.get_edges();
