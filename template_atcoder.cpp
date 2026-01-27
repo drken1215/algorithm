@@ -153,9 +153,9 @@ template<class T> T ceil(T x, T y) {
 }
 
 // min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
+template<class T> T ceil_pow2(T n) {
+    T i = 0;
+    while ((T(1) << i) < T(n)) i++;
     return i;
 }
 
