@@ -3250,6 +3250,21 @@ template<class FLOW> struct FlowGraph {
         return dfs(dfs, s, up_flow);
     };
 
+    // find reachable nodes from node s (1: s-domain, 0: t-domain)
+    vector<bool> find_cut(int s) {
+        vector<bool> res(size(), false);
+        auto dfs = [&](auto &&dfs, int v) -> void {
+            res[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i];
+                if (res[e.to] || e.cap <= 0) continue;
+                dfs(dfs, e.to);
+            }
+        };
+        dfs(dfs, s);
+        return res;
+    }
+
     // debug
     friend ostream& operator << (ostream& s, const FlowGraph &G) {
         const auto &edges = G.get_edges();
