@@ -3175,6 +3175,9 @@ template<class FLOW> struct FlowGraph {
         list.clear(), list.resize(n);
         pos.clear();
     }
+    void clear() {
+        list.clear(), pos.clear();
+    }
     
     // getter
     vector<FlowEdge<FLOW>> &operator [] (int i) {
