@@ -38,6 +38,11 @@ template<class DD> struct Point {
         else return atan2((long double)(y), (long double)(x));
     }
     constexpr bool eq(const Point &r) const {return (*this - r).abs() <= EPS;}
+    constexpr int sign() const {
+        if (x >= -EPS && x <= EPS && y >= -EPS && y <= EPS) return 0;
+        else if (y < -EPS || (y >= -EPS && y <= EPS && x > EPS)) return -1;
+        else return 1;
+    }
     constexpr Point rot90() const {return Point(-y, x);}
     constexpr Point rot(long double ang) const {
         return Point(cos(ang) * x - sin(ang) * y, sin(ang) * x + cos(ang) * y);
@@ -88,19 +93,49 @@ template<class DD> struct Point {
     friend constexpr long double abs(const Point &p) {return p.abs();}
     friend constexpr long double arg(const Point &p) {return p.arg();}
     friend constexpr bool eq(const Point &p, const Point &q) {return p.eq(q);}
+    friend constexpr int sign(const Point &p) {return p.sign();}
     friend constexpr Point rot90(const Point &p) {return p.rot90();}
     friend constexpr Point rot(const Point &p, long long ang) {return p.rot(ang);}
 };
 
-// 偏角ソート
+// necessary for some functions
+template<class DD> constexpr bool operator < (const Point<DD> &p, const Point<DD> &q) {
+    return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
+}
+
+// Line
+template<class DD> struct Line : vector<Point<DD>> {
+    Line(Point<DD> a = Point<DD>(0, 0), Point<DD> b = Point<DD>(0, 0)) {
+        this->push_back(a);
+        this->push_back(b);
+    }
+    friend ostream& operator << (ostream &s, const Line<DD> &l) {
+        return s << '{' << l[0] << ", " << l[1] << '}';
+    }
+};
+
+// Circle
+template<class DD> struct Circle : Point<DD> {
+    DD r;
+    Circle(Point<DD> p = Point<DD>(0, 0), DD r = 0) : Point<DD>(p), r(r) {}
+    friend ostream& operator << (ostream &s, const Circle<DD> &c) {
+        return s << '(' << c.x << ", " << c.y << ", " << c.r << ')';
+    }
+};
+
+// arg sort
+// by defining comparison
 template<class DD> void arg_sort(vector<Point<DD>> &v) {
-    auto sign = [&](const Point<DD> &p) -> int {
-        if (abs(p.x) <= EPS && abs(p.y) <= EPS) return 0;
-        else if (p.y < -EPS || (abs(p.y) <= EPS && p.x > EPS)) return -1;
-        else return 1;
-    };
     auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
-        return (sign(p) != sign(q) ? sign(p) < sign(q) : p.x * q.y - p.y * q.x > 0);
+        if (sign(p) != sign(q)) return sign(p) < sign(q);
+        return (abs(cross(p, q)) > EPS ? cross(p, q) > EPS : norm(p) < norm(q));
+    };
+    sort(v.begin(), v.end(), cmp);
+}
+// by calculating arg directly
+template<class DD> void arg_sort_direct(vector<Point<DD>> &v) {
+    auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
+        return (abs(arg(p) - arg(q)) > EPS ? arg(p) < arg(q) : norm(p) < norm(q));
     };
     sort(v.begin(), v.end(), cmp);
 }
