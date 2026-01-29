@@ -153,9 +153,9 @@ template<class T> T ceil(T x, T y) {
 }
 
 // min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
+template<class T> T ceil_pow2(T n) {
+    T i = 0;
+    while ((T(1) << i) < T(n)) i++;
     return i;
 }
 
@@ -3175,6 +3175,9 @@ template<class FLOW> struct FlowGraph {
         list.clear(), list.resize(n);
         pos.clear();
     }
+    void clear() {
+        list.clear(), pos.clear();
+    }
     
     // getter
     vector<FlowEdge<FLOW>> &operator [] (int i) {
@@ -3227,6 +3230,42 @@ template<class FLOW> struct FlowGraph {
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
         list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
+    }
+
+    // augment
+    FLOW augment(int s, int t, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        return dfs(dfs, s, up_flow);
+    };
+
+    // find reachable nodes from node s (1: s-domain, 0: t-domain)
+    vector<bool> find_cut(int s) {
+        vector<bool> res(size(), false);
+        auto dfs = [&](auto &&dfs, int v) -> void {
+            res[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i];
+                if (res[e.to] || e.cap <= 0) continue;
+                dfs(dfs, e.to);
+            }
+        };
+        dfs(dfs, s);
+        return res;
     }
 
     // debug
