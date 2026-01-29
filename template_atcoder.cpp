@@ -5714,6 +5714,11 @@ template<class DD> struct Point {
         else return atan2((long double)(y), (long double)(x));
     }
     constexpr bool eq(const Point &r) const {return (*this - r).abs() <= EPS;}
+    constexpr int sign() const {
+        if (x >= -EPS && x <= EPS && y >= -EPS && y <= EPS) return 0;
+        else if (y < -EPS || (y >= -EPS && y <= EPS && x > EPS)) return -1;
+        else return 1;
+    }
     constexpr Point rot90() const {return Point(-y, x);}
     constexpr Point rot(long double ang) const {
         return Point(cos(ang) * x - sin(ang) * y, sin(ang) * x + cos(ang) * y);
@@ -5764,6 +5769,7 @@ template<class DD> struct Point {
     friend constexpr long double abs(const Point &p) {return p.abs();}
     friend constexpr long double arg(const Point &p) {return p.arg();}
     friend constexpr bool eq(const Point &p, const Point &q) {return p.eq(q);}
+    friend constexpr int sign(const Point &p) {return p.sign();}
     friend constexpr Point rot90(const Point &p) {return p.rot90();}
     friend constexpr Point rot(const Point &p, long long ang) {return p.rot(ang);}
 };
@@ -5801,11 +5807,6 @@ template<class DD> struct Circle : Point<DD> {
 // arg sort
 // by defining comparison
 template<class DD> void arg_sort(vector<Point<DD>> &v) {
-    auto sign = [&](const Point<DD> &p) -> int {
-        if (abs(p.x) <= EPS && abs(p.y) <= EPS) return 0;
-        else if (p.y < -EPS || (abs(p.y) <= EPS && p.x > EPS)) return -1;
-        else return 1;
-    };
     auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
         if (sign(p) != sign(q)) return sign(p) < sign(q);
         return (abs(cross(p, q)) > EPS ? cross(p, q) > EPS : norm(p) < norm(q));
