@@ -5845,19 +5845,12 @@ template<class DD> struct Circle : Point<DD> {
 
 // arg sort
 // by defining comparison
-template<class DD> void arg_sort(vector<Point<DD>> &v) {
-    auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
-        if (sign(p) != sign(q)) return sign(p) < sign(q);
-        return (abs(cross(p, q)) > EPS ? cross(p, q) > EPS : norm(p) < norm(q));
-    };
-    sort(v.begin(), v.end(), cmp);
+template<class DD> bool arg_cmp(const Point<DD> &p, const Point<DD> &q) {
+    if (sign(p) != sign(q)) return sign(p) < sign(q);
+    return (abs(cross(p, q)) > EPS ? cross(p, q) > EPS : norm(p) < norm(q));
 }
-// by calculating arg directly
-template<class DD> void arg_sort_direct(vector<Point<DD>> &v) {
-    auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
-        return (abs(arg(p) - arg(q)) > EPS ? arg(p) < arg(q) : norm(p) < norm(q));
-    };
-    sort(v.begin(), v.end(), cmp);
+template<class DD> void arg_sort(vector<Point<DD>> &v) {
+    sort(v.begin(), v.end(), [&](const Point<DD> &p, const Point<DD> &q){return arg_cmp(p, q);});
 }
 
 // 粗
