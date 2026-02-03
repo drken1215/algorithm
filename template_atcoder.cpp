@@ -40,7 +40,7 @@ template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)
 template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
 template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
 template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto argmin(const T &a) { return *min_element(a.begin(), a.end()) - a.begin(); }
 
 #define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
 #define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
@@ -192,23 +192,23 @@ uint64_t kth_root(uint64_t N, uint64_t K = 2) {
 }
 
 // xor128による乱数生成、周期は2^128-1
-unsigned int rand_int() {
+unsigned int randInt() {
     static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
     unsigned int tt = (tx^(tx<<11));
     tx = ty; ty = tz; tz = tw;
     return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
 }
-int rand_int(int minv, int maxv) {
-    return rand_int() % (maxv - minv + 1) + minv;
+int randInt(int minv, int maxv) {
+    return randInt() % (maxv - minv + 1) + minv;
 }
-long long rand_ll(long long minv, long long maxv) {
-    long long a = rand_int(), b = rand_int();
+long long randInt(long long minv, long long maxv) {
+    long long a = randInt(), b = randInt();
     return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
 }
 template<class T> void shuffle(vector<T>& vec) {
     int n = vec.size();
     for (int i = n - 1; i > 0; --i) {
-        int k = rand_int() % (i + 1);
+        int k = randInt() % (i + 1);
         swap(vec[i], vec[k]);
     }
 }
@@ -3143,6 +3143,76 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
 
 
 //------------------------------//
+// Graph
+//------------------------------//
+
+// find diameter of graph
+template<class Graph = vector<vector<int>>> struct Diameter {
+    vector<int> path, prev;
+
+    Diameter() {}
+    Diameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, int> res(v, 0);
+        for (auto to : G[v]) {
+            if (to == p) continue;
+            pair<int, int> tmp = DiameterDFS(G, to, v);
+            tmp.second++;
+            if (tmp.second > res.second) res = tmp, prev[to] = v;
+        }
+        return res;
+    }
+    vector<int> solve(const Graph &G) {
+        prev.assign((int)G.size(), -1);
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), -1);
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) path.push_back(cur), cur = prev[cur];
+        return path;
+    }
+};
+
+// find diameter of weighted graph
+template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
+    vector<int> path;
+    vector<pair<int, Weight>> prev;
+
+    WeightedDiameter() {}
+    WeightedDiameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, Weight> res{v, 0};
+        for (auto [to, ew] : G[v]) {
+            if (to == p) continue;
+            pair<int, Weight> tmp = DiameterDFS(G, to, v);
+            tmp.second += ew;
+            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
+        }
+        return res;
+    }
+    pair<Weight, vector<int>> solve(const Graph &G) {
+        Weight res = 0;
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) {
+            if (prev[cur].first != -1) res += prev[cur].second;
+            path.push_back(cur), cur = prev[cur].first;
+        }
+        return {res, path};
+    }
+};
+
+
+//------------------------------//
 // Flow
 //------------------------------//
 
@@ -5054,71 +5124,6 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     }
 };
 
-// find diameter of tree
-template<class Graph = vector<vector<int>>> struct Diameter {
-    vector<int> path, prev;
-
-    Diameter() {}
-    Diameter(const Graph &G) {
-        solve(G);
-    }
-    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, int> res(v, 0);
-        for (auto to : G[v]) {
-            if (to == p) continue;
-            pair<int, int> tmp = DiameterDFS(G, to, v);
-            tmp.second++;
-            if (tmp.second > res.second) res = tmp, prev[to] = v;
-        }
-        return res;
-    }
-    vector<int> solve(const Graph &G) {
-        prev.assign((int)G.size(), -1);
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), -1);
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) path.push_back(cur), cur = prev[cur];
-        return path;
-    }
-};
-
-// find diameter of weighted tree
-template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
-    vector<int> path;
-    vector<pair<int, Weight>> prev;
-
-    WeightedDiameter() {}
-    WeightedDiameter(const Graph &G) {
-        solve(G);
-    }
-    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, Weight> res{v, 0};
-        for (auto [to, ew] : G[v]) {
-            if (to == p) continue;
-            pair<int, Weight> tmp = DiameterDFS(G, to, v);
-            tmp.second += ew;
-            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
-        }
-        return res;
-    }
-    pair<Weight, vector<int>> solve(const Graph &G) {
-        Weight res = 0;
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) {
-            if (prev[cur].first != -1) res += prev[cur].second;
-            path.push_back(cur), cur = prev[cur].first;
-        }
-        return {res, path};
-    }
-};
-
 // re-rooting
 /*
     通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
@@ -5720,46 +5725,6 @@ template<class Str = string> struct Manacher {
         else return (get_even(mid) == (right - left)/2);
     }
 };
-
-
-//------------------------------//
-// Optimization
-//------------------------------//
-
-// min value of H within [left[i], right[i]) <= H[i]
-template<class T> pair<vector<T>, vector<T>> solve_left_right(const vector<T> &H) {
-    int N = (int)H.size();
-    vector<T> left(N, 0), right(N, N);
-    
-    // left
-    stack<pair<T, int>> stack_left;
-    for(int i = 0; i < N; ++i) {
-        while (!stack_left.empty() && H[i] <= stack_left.top().first)
-            stack_left.pop();
-        if (!stack_left.empty()) left[i] = stack_left.top().second + 1;
-        stack_left.push({H[i], i});
-    }
-    
-    // right
-    stack<pair<T, int>> stack_right;
-    for(int i = N-1; i >= 0; --i) {
-        while (!stack_right.empty() && H[i] <= stack_right.top().first)
-            stack_right.pop();
-        if (!stack_right.empty()) right[i] = stack_right.top().second;
-        stack_right.push({H[i], i});
-    }
-    return {left, right};
-}
-
-// max area of rectangle in histogram
-template<class T> T max_area_in_histogram(const vector<T> &H) {
-    auto [left, right] = solve_left_right(H);
-    T res = 0;
-    for (int i = 0; i < H.size(); ++i) {
-        res = max(res, H[i] * (right[i] - left[i]));
-    }
-    return res;
-}
 
 
 //------------------------------//
@@ -6390,7 +6355,6 @@ template<class DD> DD Cloest(vector<Point<DD>> &ps) {
     sort(ps.begin(), ps.end(), cmp);
     return dac(dac, ps.begin(), (int)ps.size());
 }
-
 
 
 //------------------------------//
