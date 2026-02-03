@@ -5723,6 +5723,46 @@ template<class Str = string> struct Manacher {
 
 
 //------------------------------//
+// Optimization
+//------------------------------//
+
+// min value of H within [left[i], right[i]) <= H[i]
+template<class T> pair<vector<T>, vector<T>> solve_left_right(const vector<T> &H) {
+    int N = (int)H.size();
+    vector<T> left(N, 0), right(N, N);
+    
+    // left
+    stack<pair<T, int>> stack_left;
+    for(int i = 0; i < N; ++i) {
+        while (!stack_left.empty() && H[i] <= stack_left.top().first)
+            stack_left.pop();
+        if (!stack_left.empty()) left[i] = stack_left.top().second + 1;
+        stack_left.push({H[i], i});
+    }
+    
+    // right
+    stack<pair<T, int>> stack_right;
+    for(int i = N-1; i >= 0; --i) {
+        while (!stack_right.empty() && H[i] <= stack_right.top().first)
+            stack_right.pop();
+        if (!stack_right.empty()) right[i] = stack_right.top().second;
+        stack_right.push({H[i], i});
+    }
+    return {left, right};
+}
+
+// max area of rectangle in histogram
+template<class T> T max_area_in_histogram(const vector<T> &H) {
+    auto [left, right] = solve_left_right(H);
+    T res = 0;
+    for (int i = 0; i < H.size(); ++i) {
+        res = max(res, H[i] * (right[i] - left[i]));
+    }
+    return res;
+}
+
+
+//------------------------------//
 // Geometry
 //------------------------------//
 
