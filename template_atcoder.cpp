@@ -208,7 +208,7 @@ long long rand_ll(long long minv, long long maxv) {
 template<class T> void shuffle(vector<T>& vec) {
     int n = vec.size();
     for (int i = n - 1; i > 0; --i) {
-        int k = randInt() % (i + 1);
+        int k = rand_int() % (i + 1);
         swap(vec[i], vec[k]);
     }
 }
