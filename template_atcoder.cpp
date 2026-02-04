@@ -3146,6 +3146,510 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
 // Graph
 //------------------------------//
 
+// Edge Class
+template<class T = long long> struct Edge {
+    int from, to;
+    T val;
+    Edge() : from(-1), to(-1), val(-1) { }
+    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& E) {
+        return s << E.from << "->" << E.to;
+    }
+};
+
+// graph class
+template<class T = long long> struct Graph {
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    
+    Graph(int n = 0) : list(n), reversed_list(n) { }
+    void init(int n = 0) {
+        list.assign(n, vector<Edge<T>>());
+        reversed_list.assign(n, vector<Edge<T>>());
+    }
+    Graph &operator = (const Graph &g) {
+        list = g.list, reversed_list = g.reversed_list;
+        return *this;
+    }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
+    const size_t size() const { return list.size(); }
+    const void clear() { list.clear(); }
+    const void resize(int n) { list.resize(n); }
+        
+    void add_edge(int from, int to, T val = -1) {
+        list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+    
+    void add_bidirected_edge(int from, int to, T val = -1) {
+        list[from].push_back(Edge(from, to, val));
+        list[to].push_back(Edge(to, from, val));
+        reversed_list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+
+    friend ostream &operator << (ostream &s, const Graph &G) {
+        s << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            s << i << " -> ";
+            for (const auto &e : G[i]) s << e.to << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
+
+// cycle detection of functional graph
+// G[v] := 頂点 v から出ている辺
+template<class T = long long> struct FunctitonalGraphCycleDetection {
+    // input
+    vector<Edge<T>> G;
+    
+    // intermediate results
+    vector<bool> seen, finished;
+    vector<int> history;
+    
+    // constructor
+    FunctitonalGraphCycleDetection() { }
+    FunctitonalGraphCycleDetection(const vector<Edge<T>> &graph) { init(graph); }
+    void init(const vector<Edge<T>> &graph) {
+        G = graph;
+        seen.assign(G.size(), false);
+        finished.assign(G.size(), false);
+    }
+    
+    // return the vertex where cycle is detected
+    int search(int v) {
+        do {
+            seen[v] = true;
+            history.push_back(v);
+            v = G[v].to;
+            if (finished[v]) {
+                v = -1;
+                break;
+            }
+        } while (!seen[v]);
+        pop_history();
+        return v;
+    }
+    
+    // pop history
+    void pop_history() {
+        while (!history.empty()) {
+            int v = history.back();
+            finished[v] = true;
+            history.pop_back();
+        }
+    }
+    
+    // reconstruct
+    vector<Edge<T>> reconstruct(int pos) {
+        // reconstruct the cycle
+        vector<Edge<T>> cycle;
+        int v = pos;
+        do {
+            cycle.push_back(G[v]);
+            v = G[v].to;
+        } while (v != pos);
+        return cycle;
+    }
+    
+    // find cycle, v is the start vertex
+    vector<Edge<T>> detect_from_v(int v) {
+        int pos = search(v);
+        if (pos != -1) return reconstruct(pos);
+        else return vector<Edge<T>>();
+    }
+    
+    // find all cycle
+    vector<vector<Edge<T>>> detect_all() {
+        vector<vector<Edge<T>>> res;
+        for (int v = 0; v < (int)G.size(); ++v) {
+            if (finished[v]) continue;
+            int pos = search(v);
+            if (pos == -1) continue;
+            const vector<Edge<T>> &cycle = reconstruct(pos);
+            if (!cycle.empty()) res.push_back(cycle);
+        }
+        return res;
+    }
+};
+
+// cycle detection
+template<class T = long long> struct CycleDetection {
+    // input
+    Graph<T> G;
+    
+    // intermediate results
+    vector<bool> seen, finished;
+    vector<Edge<T>> history;
+    
+    // constructor
+    CycleDetection() { }
+    CycleDetection(const Graph<T> &graph) { init(graph); }
+    void init(const Graph<T> &graph) {
+        G = graph;
+        seen.assign(G.size(), false);
+        finished.assign(G.size(), false);
+    }
+    
+    // dfs
+    // return the vertex where cycle is detected
+    int dfs(int v, const Edge<T> &e, bool is_prohibit_reverse = true) {
+        seen[v] = true;
+        for (const Edge<T> &e2 : G[v]) {
+            if (is_prohibit_reverse && e2.to == e.from) continue;
+            if (finished[e2.to]) continue;
+
+            // detect cycle
+            if (seen[e2.to] && !finished[e2.to]) {
+                history.push_back(e2);
+                finished[v] = true;
+                return e2.to;
+            }
+
+            history.push_back(e2);
+            int pos = dfs(e2.to, e2, is_prohibit_reverse);
+            if (pos != -1) {
+                finished[v] = true;
+                return pos;
+            }
+            history.pop_back();
+        }
+        finished[v] = true;
+        return -1;
+    }
+    
+    // reconstruct
+    vector<Edge<T>> reconstruct(int pos) {
+        vector<Edge<T>> cycle;
+        while (!history.empty()) {
+            const Edge<T> &e = history.back();
+            cycle.push_back(e);
+            history.pop_back();
+            if (e.from == pos) break;
+        }
+        reverse(cycle.begin(), cycle.end());
+        return cycle;
+    }
+    
+    // find cycle, v is the start vertex
+    vector<Edge<T>> detect_from_v(int v, bool is_prohibit_reverse = true) {
+        history.clear();
+        int pos = dfs(v, Edge<T>(), is_prohibit_reverse);
+        if (pos != -1) return reconstruct(pos);
+        else return vector<Edge<T>>();
+    }
+    
+    // find cycle
+    vector<Edge<T>> detect(bool is_prohibit_reverse = true) {
+        int pos = -1;
+        for (int v = 0; v < (int)G.size() && pos == -1; ++v) {
+            if (seen[v]) continue;
+            history.clear();
+            pos = dfs(v, Edge<T>(), is_prohibit_reverse);
+            if (pos != -1) return reconstruct(pos);
+        }
+        return vector<Edge<T>>();
+    }
+};
+
+// strongly connected components decomposition
+template<class T = long long> struct SCC {
+    // results
+    vector<int> cmp;
+    vector<vector<int>> groups;
+    Graph<T> dag;
+    
+    // intermediate results
+    vector<bool> seen;
+    vector<int> vs, rvs;
+    
+    // constructor
+    SCC() { }
+    SCC(const Graph<T> &G) { 
+        solve(G);
+    }
+    void init(const Graph<T> &G) { 
+        solve(G);
+    }
+
+    // getter, compressed dag（v: node-id of compressed dag)
+    int get_size(int v) const {
+        return groups[v].size();
+    }
+    vector<int> get_group(int v) const {
+        return groups[v];
+    }
+
+    // solver
+    void dfs(const Graph<T> &G, int v) {
+        seen[v] = true;
+        for (const auto &e : G[v]) if (!seen[e.to]) dfs(G, e.to);
+        vs.push_back(v);
+    }
+    void rdfs(const Graph<T> &G, int v, int k) {
+        seen[v] = true;
+        cmp[v] = k;
+        for (const auto &e : G.get_rev_edges(v)) if (!seen[e.to]) rdfs(G, e.to, k);
+        rvs.push_back(v);
+    }
+    void reconstruct(const Graph<T> &G) {
+        dag.init((int)groups.size());
+        set<pair<int,int>> new_edges;
+        for (int i = 0; i < (int)G.size(); ++i) {
+            int u = cmp[i];
+            for (const auto &e : G[i]) {
+                int v = cmp[e.to];
+                if (u == v) continue;
+                if (!new_edges.count({u, v})) {
+                    dag.add_edge(u, v);
+                    new_edges.insert({u, v});
+                }
+            }
+        }
+    }
+    void solve(const Graph<T> &G) {
+        // first dfs
+        seen.assign((int)G.size(), false);
+        vs.clear();
+        for (int v = 0; v < (int)G.size(); ++v) if (!seen[v]) dfs(G, v);
+
+        // back dfs
+        int k = 0;
+        groups.clear();
+        seen.assign((int)G.size(), false);
+        cmp.assign((int)G.size(), -1);
+        for (int i = (int)G.size()-1; i >= 0; --i) {
+            if (!seen[vs[i]]) {
+                rvs.clear();
+                rdfs(G, vs[i], k++);
+                groups.push_back(rvs);
+            }
+        }
+        reconstruct(G);
+    }
+};
+
+// low-link
+template<class T = long long> struct LowLink {
+    // results
+    vector<int> ord, low;
+    vector<int> aps;         // articulation points
+    vector<Edge<T>> brs;     // brideges
+
+    // constructor
+    LowLink() { }
+    LowLink(const Graph<T> &G) {
+        solve(G);
+    }
+    void init(const Graph<T> &G) {
+        solve(G);
+    }
+
+    // solver
+    int dfs(const Graph<T> &G, int t, int v, int p) {
+        ord[v] = low[v] = t++;
+        int num_of_children = 0;
+        bool exist_articulation = false, is_multiple_edge = false;
+        for (const auto &e : G[v]) {
+            if (ord[e.to] == -1) {
+                num_of_children++;
+                t = dfs(G, t, e.to, v);
+                low[v] = min(low[v], low[e.to]);  // forward edge of DFS-tree
+                exist_articulation |= (p != -1) && (low[e.to] >= ord[v]);
+                if (ord[v] < low[e.to]) brs.push_back(e);
+            } else if (e.to != p || is_multiple_edge) {
+                low[v] = min(low[v], ord[e.to]);  // back edge
+            } else {
+                is_multiple_edge = true;
+            }
+        }
+        if (exist_articulation || (p == -1 && num_of_children > 1)) {
+            aps.emplace_back(v);
+        }
+        return t;
+    }
+
+    void solve(const Graph<T> &G) {
+        ord.assign(G.size(), -1), low.assign(G.size(), -1);
+        for (int v = 0, k = 0; v < (int)G.size(); v++) {
+            if (ord[v] == -1) k = dfs(G, k, v, -1);
+        }
+    }
+};
+
+// Two-Edge-Connected Components decomposition
+template<class T = long long> struct TwoEdgeConnectedComponentsDecomposition {
+    // results
+    LowLink<T> ll;
+    vector<int> cmp;
+    vector<vector<int>> groups, tree;
+
+    // constructor
+    TwoEdgeConnectedComponentsDecomposition() { }
+    TwoEdgeConnectedComponentsDecomposition(const Graph<T> &G) {
+        solve(G);
+    }
+    void init(const Graph<T> &G) {
+        solve(G);
+    }
+
+    // getter, bridge-block tree to orignal graph（v: node-id of bridge-block tree)
+    int get_size(int v) const {
+        return groups[v].size();
+    }
+    vector<int> get_group(int v) const {
+        return groups[v];
+    }
+
+    // solver
+    int dfs(const Graph<T> &G, int t, int v, int p) {
+        if (p >= 0 && ll.ord[p] >= ll.low[v]) cmp[v] = cmp[p];
+        else cmp[v] = t++;
+        for (const auto &e : G[v]) {
+            if (cmp[e.to] == -1) t = dfs(G, t, e.to, v);
+        }
+        return t;
+    }
+
+    void solve(const Graph<T> &G) {
+        ll.init(G);
+        cmp.assign(G.size(), -1);
+        int t = 0;
+        for (int v = 0; v < (int)G.size(); v++) {
+            if (cmp[v] == -1) t = dfs(G, t, v, -1);
+        }
+        groups.resize(t);
+        tree.resize(t);
+        for (int v = 0; v < (int)G.size(); v++) {
+            groups[cmp[v]].push_back(v);
+        }
+        for (const auto &e : ll.brs) {
+            int u = cmp[e.from], v = cmp[e.to];
+            tree[u].push_back(v);
+            tree[v].push_back(u);
+        }
+    }
+};
+
+// BiConnected Components decomposition
+// block-cut tree (aps: 0, 1, ..., A-1, components: A, A+1, ..., A+C-1)
+// (A: size of aps, C: num of components)
+template<class T = long long> struct BiConnectedComponentsDecomposition {
+    // result
+    LowLink<T> ll;
+    vector<int> id_ap;   // index of the articulation point (size: V)
+    vector<int> id_cc;   // index of the connected component (size: V)
+    vector<vector<int>> groups;   // biconnected components (size: C)
+    vector<vector<int>> tree;     // block-cut tree (size: A + C)
+
+    // intermediate results
+    vector<int> seen, finished;
+    vector<vector<pair<int, int>>> grouped_edges;
+    vector<pair<int, int>> tmp_edges;
+
+    // constructor
+    BiConnectedComponentsDecomposition() { }
+    BiConnectedComponentsDecomposition(const Graph<T> &G) {
+        solve(G);
+    }
+    void init(const Graph<T> &G) {
+        solve(G);
+    }
+
+    // getter, original graph to block-cut tree (v: node of orignal graph)
+    int is_ap_original_graph(int v) const {
+        return (id_ap[v] != -1);
+    }
+    int get_id(int v) const {
+        return (id_ap[v] == -1 ? id_cc[v] : id_ap[v]);
+    }
+
+    // getter, block-cut tree to orignal graph（v: node-id of block-cut tree)
+    int is_ap(int v) const {
+        return (v < ll.aps.size());
+    }
+    int get_ap(int v) const {
+        if (v >= (int)ll.aps.size()) return -1;  // not ap
+        else return ll.aps[v];
+    }
+    int get_size(int v) const {  // including aps
+        if (v < (int)ll.aps.size()) return 1;  // ap
+        else return groups[v - ll.aps.size()].size();
+    }
+    vector<int> get_group(int v) const {
+        if (v < (int)ll.aps.size()) return vector<int>({ll.aps[v]});  // ap
+        else return groups[v - ll.aps.size()];
+    }
+
+    // solver
+    void dfs(const Graph<T> &G, int v, int p) {
+        seen[v] = true;
+        if (G[v].empty()) {
+            groups.emplace_back(vector<int>({v}));
+        }
+        for (const auto &e : G[v]) {
+            if (e.to == p) continue;
+            if (!seen[e.to] || ll.ord[e.to] < ll.ord[v]) {
+                tmp_edges.emplace_back(minmax(v, e.to));
+            }
+            if (!seen[e.to]) {
+                dfs(G, e.to, v);
+                if (ll.low[e.to] >= ll.ord[v]) {
+                    groups.emplace_back(vector<int>({v}));
+                    grouped_edges.emplace_back();
+                    int ap = v;
+                    while (!tmp_edges.empty()) {
+                        const auto &e2 = tmp_edges.back();
+                        if (!finished[e2.first] && e2.first != ap) {
+                            groups.back().emplace_back(e2.first);
+                            finished[e2.first] = true;
+                        }
+                        if (!finished[e2.second] && e2.second != ap) {
+                            groups.back().emplace_back(e2.second);
+                            finished[e2.second] = true;
+                        }
+                        grouped_edges.back().emplace_back(e2);
+                        tmp_edges.pop_back();
+                        if (e2.first == min(v, e.to) && e2.second == max(v, e.to)) break;
+                    }
+                }
+            }
+        }
+    }
+
+    void solve(const Graph<T> &G) {
+        ll.init(G);
+        seen.assign(G.size(), false), finished.assign(G.size(), false);
+        for (int v = 0; v < (int)G.size(); v++) {
+            if (!seen[v]) dfs(G, v, -1);
+        }
+        id_ap.assign(G.size(), -1), id_cc.assign(G.size(), -1);
+        for (int i = 0; i < (int)ll.aps.size(); i++) {
+            id_ap[ll.aps[i]] = i;
+        }
+        tree.assign(ll.aps.size() + grouped_edges.size(), vector<int>());
+        vector<int> last(G.size(), -1);
+        for (int i = 0; i < (int)grouped_edges.size(); i++) {
+            vector<int> st;
+            for (auto [u, v] : grouped_edges[i]) {
+                st.push_back(u), st.push_back(v);
+            }
+            for (auto v : st) {
+                if (id_ap[v] == -1) {
+                    id_cc[v] = i + ll.aps.size();
+                } else if (last[v] != i) {
+                    tree[i + ll.aps.size()].push_back(id_ap[v]);
+                    tree[id_ap[v]].push_back(i + ll.aps.size());
+                    last[v] = i;
+                }
+            }
+        }
+    }
+};
+
 // find diameter of graph
 template<class Graph = vector<vector<int>>> struct Diameter {
     vector<int> path, prev;
@@ -6357,6 +6861,7 @@ template<class DD> DD Cloest(vector<Point<DD>> &ps) {
 }
 
 
+
 //------------------------------//
 // Solver
 //------------------------------//
@@ -6375,9 +6880,6 @@ int main() {
     
     
 }
-
-
-
 
 
 
