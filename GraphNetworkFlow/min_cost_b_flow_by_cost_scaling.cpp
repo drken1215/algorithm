@@ -365,106 +365,91 @@ template<class FLOW, class COST> struct FlowCostGraph {
     }
 };
 
-// Min Cost Circulation Flow by Cost-Scaling
-template<class FLOW, class COST> COST newcost
-(const FlowCostEdge<FLOW, COST> &e, const vector<COST> &price) {
-    return e.cost - price[e.from] + price[e.to];
-}
-    
-template<class FLOW, class COST> void SubConstruct
-(FlowCostGraph<FLOW, COST> &G, int v, vector<bool> &visited, vector<COST> &price) {
-    visited[v] = true;
-    for (int i = 0; i < G[v].size(); ++i) {
-        FlowCostEdge<FLOW, COST> &e = G[v][i];
-        if (e.cap > 0 && !visited[e.to] && newcost(e, price) < 0) 
-            SubConstruct(G, e.to, visited, price);
-    }
-}
-
-template<class FLOW, class COST> void ConstructGaux
-(FlowCostGraph<FLOW, COST> &G, COST eps, vector<FLOW> &balance, vector<COST> &price) {
-    vector<bool> visited(G.size(), false);
-    for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) SubConstruct(G, v, visited, price);
-    for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
-}
-
-template<class FLOW, class COST> FLOW SubAugment
-(FlowCostGraph<FLOW, COST> &G, int v, FLOW flow
-, vector<int> &iter, vector<FLOW> &balance, vector<COST> &price) {
-    if (balance[v] < 0) {
-        FLOW dif = min(flow, -balance[v]);
-        balance[v] += dif;
-        return dif;
-    }
-    for (; iter[v] < G[v].size(); iter[v]++) {
-        FlowCostEdge<FLOW, COST> &e = G[v][iter[v]];
-        if (e.cap > 0 && newcost(e, price) < 0) {
-            FLOW dif = SubAugment(G, e.to, min(flow, e.cap), iter, balance, price);
-            if (dif > 0) {
-                e.cap -= dif;
-                G.get_rev_edge(e).cap += dif;
-                return dif;
-            }
-        }
-    }
-    return 0;
-}
-
-template<class FLOW, class COST> bool AugmentBlockingFlow
-(FlowCostGraph<FLOW, COST> &G, vector<FLOW> &balance, vector<COST> &price) {
-    vector<int> iter(G.size(), 0);
-    bool finish = true;
-    for (int v = 0; v < G.size(); ++v) {
-        FLOW flow;
-        while (balance[v] > 0 && (flow = SubAugment(G, v, balance[v], iter, balance, price)) > 0)
-            balance[v] -= flow;
-        if (balance[v] > 0) finish = false;
-    }
-    if (finish) return true;
-    else return false;
-}
-
+// Min Cost Circulation Flow by Cost-Scaling 
 template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
     COST eps = 0;
+    vector<FLOW> balance(G.size(), 0);
     vector<COST> price(G.size(), 0);
+    
+    auto newcost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
+        return e.cost * (COST)G.size() - price[e.from] + price[e.to];
+    };
+
+    auto ConstructGaux = [&]() -> void {
+        vector<bool> visited(G.size(), false);
+        auto dfs = [&](auto &&dfs, int v) -> void {
+            visited[v] = true;
+            for (int i = 0; i < G[v].size(); ++i) {
+                FlowCostEdge<FLOW, COST> &e = G[v][i];
+                if (e.cap > 0 && !visited[e.to] && newcost(e) < 0) dfs(dfs, e.to);
+            }
+        };
+        for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) dfs(dfs, v);
+        for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
+    };
+
+    auto augment_blocking_flow = [&]() -> bool {
+        vector<COST> iter(G.size(), 0);
+        auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
+            if (balance[v] < 0) {
+                FLOW dif = min(flow, -balance[v]);
+                balance[v] += dif;
+                return dif;
+            }
+            for (; iter[v] < G[v].size(); iter[v]++) {
+                auto &e = G[v][iter[v]], &re = G.get_rev_edge(e);
+                if (e.cap > 0 && newcost(e) < 0) {
+                    FLOW dif = augment(augment, e.to, min(flow, e.cap));
+                    if (dif > 0) {
+                        e.cap -= dif, e.flow += dif;
+                        re.cap += dif, re.flow -= dif;
+                        return dif;
+                    }
+                }
+            }
+            return 0;
+        };
+        bool finish = true;
+        for (int v = 0; v < G.size(); ++v) {
+            FLOW flow;
+            while (balance[v] > 0 && (flow = augment(augment, v, balance[v])) > 0)
+                balance[v] -= flow;
+            if (balance[v] > 0) finish = false;
+        }
+        if (finish) return true;
+        else return false;
+    };
+
     for (int v = 0; v < G.size(); ++v) {
         for (int i = 0; i < G[v].size(); ++i) {
             FlowCostEdge<FLOW, COST> &e = G[v][i];
-            e.cost *= G.size();
-            if (e.cap > 0) eps = max(eps, -e.cost);
+            if (e.cap > 0) eps = max(eps, -e.cost * (COST)G.size());
         }
         price[v] = 0;
     }
-    vector<FLOW> balance(G.size(), 0);
     while (eps > 1) {
         eps /= 2;
         for (int v = 0; v < G.size(); ++v) {
             for (int i = 0; i < G[v].size(); ++i) {
-                FlowCostEdge<FLOW, COST> &e = G[v][i];
-                if (e.cap > 0 && newcost(e, price) < 0) {
-                    balance[e.from] -= e.cap;
-                    balance[e.to] += e.cap;
-                    G.get_rev_edge(e).cap += e.cap;
-                    e.cap = 0;
+                auto &e = G[v][i], &re = G.get_rev_edge(e);
+                if (e.cap > 0 && newcost(e) < 0) {
+                    FLOW flow = e.cap;
+                    balance[e.from] -= flow, balance[e.to] += flow;
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
                 }
             }
         }
         while (true) {
-            ConstructGaux(G, eps, balance, price);
-            if (AugmentBlockingFlow(G, balance, price)) break;
+            ConstructGaux();
+            if (augment_blocking_flow()) break;
         }
     }
     COST res = 0;
-    for (int v = 0; v < G.size(); ++v) {
-        for (int i = 0; i < G[v].size(); ++i) {
-            FlowCostEdge<FLOW, COST> &e = G[v][i];
-            e.cost /= G.size();
-            if (e.icap > e.cap) res += e.cost * (e.icap - e.cap);
-        }
-    }
+    const auto &edges = G.get_edges();
+    for (const auto &e : edges) res += e.flow * e.cost;
     return res;
 }
-
 
 // Minimum Cost b-flow (come down to min-cost circulation)
 template<class FLOW, class COST> struct MinCostBFlow {
