@@ -4156,7 +4156,8 @@ MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
 // Min Cost Circulation Flow by Cost-Scaling 
 template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
     COST eps = 0;
-    vector<COST> price(G.size(), 0), balance(G.size(), 0);
+    vector<FLOW> balance(G.size(), 0);
+    vector<COST> price(G.size(), 0);
     
     auto newcost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
         return e.cost * (COST)G.size() - price[e.from] + price[e.to];
