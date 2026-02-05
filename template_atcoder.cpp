@@ -4064,12 +4064,12 @@ MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
 {
     // result values
     FLOW cur_flow = 0;
-    COST cur_cost = 0, pre_cost = -1;
+    COST cur_cost = 0, pre_cost = numeric_limits<COST>::max() / 2;
     vector<pair<FLOW, COST>> res;
     res.emplace_back(cur_flow, cur_cost);
     
     // intermediate values
-    vector<COST> dist((int)G.size(), numeric_limits<COST>::max());
+    vector<COST> dist((int)G.size(), numeric_limits<COST>::max() / 2);
     vector<int> prevv((int)G.size(), -1), preve((int)G.size(), -1);
     
     // dual
@@ -4117,7 +4117,7 @@ MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
         cur_cost += flow * cost;
         if (pre_cost == cost) res.pop_back();
         res.emplace_back(cur_flow, cur_cost);
-        pre_cost = cur_cost;
+        pre_cost = cost;
     };
 
     // initialize potential
