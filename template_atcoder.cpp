@@ -3935,12 +3935,16 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // core members
     vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
+    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool include_negative_edge = false;
     
     // constructor
-    FlowCostGraph(int n = 0) : list(n) { }
+    FlowCostGraph(int n = 0) : list(n), pot(n), include_negative_edge(false) { }
     void init(int n = 0) {
         list.clear(), list.resize(n);
         pos.clear();
+        pot.assign(n, 0);
+        include_negative_edge = false;
     }
     
     // getter
@@ -3988,6 +3992,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
         list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+        if (cost < 0) include_negative_edge = true;
     }
     void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
         assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
@@ -3997,6 +4002,52 @@ template<class FLOW, class COST> struct FlowCostGraph {
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
         list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
+        if (cost < 0) include_negative_edge = true;
+    }
+
+    // find initial potential (to resolve initial negative-edge)
+    // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool init_potential_dag() {
+        vector<int> deg(size(), 0), st;
+        for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
+        st.reserve(size());
+        for (int v = 0; v < size(); v++) if (!deg[v]) st.emplace_back(v);
+        for (int i = 0; i < size(); i++) {
+            if (st.size() == i) return false;  // not DAG
+            int cur = st[i];
+            for (const auto &e : list[cur]) {
+                if (!e.cap) continue;
+                deg[e.to]--;
+                if (deg[e.to] == 0) st.emplace_back(e.to);
+                if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
+            }
+        }
+        return true;
+    }
+    bool init_potential_spfa() {
+        queue<int> que;
+        vector<bool> inque(size(), true);
+        vector<int> cnt(size(), 0);
+        for (int v = 0; v < size(); v++) que.push(v);
+        while (!que.empty()) {
+            int cur = que.front();
+            que.pop();
+            inque[cur] = false;
+            if (cnt[cur] > size()) return false;  // include negative-cycle
+            cnt[cur]++;
+            for (const auto &e : list[cur]) {
+                if (!e.cap) continue;
+                if (pot[e.to] > pot[cur] + e.cost) {
+                    pot[e.to] = pot[cur] + e.cost;
+                    if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
+                }
+            }
+        }
+        return true;
+    }
+    bool init_potential() {
+        if (!include_negative_edge) return true;
+        return init_potential_dag() || init_potential_spfa();
     }
 
     // debug
@@ -4018,39 +4069,41 @@ MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
     res.emplace_back(cur_flow, cur_cost);
     
     // intermediate values
-    vector<bool> seen((int)G.size(), false);
     vector<COST> dist((int)G.size(), numeric_limits<COST>::max());
     vector<int> prevv((int)G.size(), -1), preve((int)G.size(), -1);
     
     // dual
     auto dual_step = [&]() -> bool {
-        seen.assign((int)G.size(), false);
-        dist.assign((int)G.size(), numeric_limits<COST>::max());
-        seen[S] = true, dist[S] = 0;
-        while (true) {
-            bool update = false;
-            for (int v = 0; v < (int)G.size(); ++v) {
-                if (!seen[v]) continue;
-                for (int i = 0; i < G[v].size(); ++i) {
-                    const FlowCostEdge<FLOW, COST> &e = G[v][i];
-                    if (e.cap > 0 && (!seen[e.to] || dist[e.to] > dist[v] + e.cost)) {
-                        dist[e.to] = dist[v] + e.cost;
-                        prevv[e.to] = v;
-                        preve[e.to] = i;
-                        seen[e.to] = true;
-                        update = true;
-                    }
+        dist.assign((int)G.size(), numeric_limits<COST>::max() / 2);
+        dist[S] = 0;
+        priority_queue<pair<COST,int>, vector<pair<COST,int>>, greater<pair<COST,int>>> que;
+        que.emplace(0, S);
+        while (!que.empty()) {
+            auto [cur, v] = que.top();
+            que.pop();
+            if (cur > dist[v]) continue;
+            for (int i = 0; i < (int)G[v].size(); i++) {
+                const auto &e = G[v][i];
+                COST add = e.cost + G.pot[v] - G.pot[e.to];
+                if (e.cap && dist[e.to] > dist[v] + add) {
+                    dist[e.to] = dist[v] + add;
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    que.emplace(dist[e.to], e.to);
                 }
             }
-            if (!update) break;
         }
-        return seen[T];
+        return dist[T] < numeric_limits<COST>::max() / 2;
     };
     
     // primal
     auto primal_step = [&]() -> void {
+        for (int v = 0; v < G.size(); v++) {
+            if (dist[v] < numeric_limits<COST>::max() / 2) G.pot[v] += dist[v];
+            else G.pot[v] = numeric_limits<COST>::max() / 2;
+        }
         FLOW flow = limit_flow - cur_flow;
-        COST cost = dist[T];
+        COST cost = G.pot[T] - G.pot[S];
         for (int v = T; v != S; v = prevv[v]) {
             flow = min(flow, G[prevv[v]][preve[v]].cap);
         }
@@ -4066,6 +4119,9 @@ MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
         res.emplace_back(cur_flow, cur_cost);
         pre_cost = cur_cost;
     };
+
+    // initialize potential
+    assert(G.init_potential());
     
     // primal-dual
     while (cur_flow < limit_flow) {
@@ -4196,7 +4252,6 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
     }
     return res;
 }
-
 
 // Minimum Cost b-flow (come down to min-cost circulation)
 template<class FLOW, class COST> struct MinCostBFlow {
