@@ -4027,9 +4027,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
     bool init_potential_spfa() {
         pot.assign(size(), 0);
         queue<int> que;
-        vector<bool> inque(size(), true);
+        vector<bool> inque(size(), false);
         vector<int> cnt(size(), 0);
-        for (int v = 0; v < size(); v++) que.push(v);
+        for (int v = 0; v < size(); v++) que.push(v), inque[v] = true;
         while (!que.empty()) {
             int cur = que.front();
             que.pop();
