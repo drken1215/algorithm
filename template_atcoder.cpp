@@ -3827,18 +3827,25 @@ template<class FLOW> struct FlowGraph {
         return dfs(dfs, s, up_flow);
     };
 
-    // find reachable nodes from node s (1: s-domain, 0: t-domain)
-    vector<bool> find_cut(int s) {
-        vector<bool> res(size(), false);
-        auto dfs = [&](auto &&dfs, int v) -> void {
-            res[v] = true;
-            for (int i = 0; i < (int)list[v].size(); i++) {
-                FlowEdge<FLOW> &e = list[v][i];
+    // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
+    vector<int> find_cut(int s, int t) {
+        vector<int> res(size(), 0);
+        auto dfs_s = [&](auto &&dfs_s, int v) -> void {
+            res[v] = 1;
+            for (const auto &e : list[v]) {
                 if (res[e.to] || e.cap <= 0) continue;
-                dfs(dfs, e.to);
+                dfs_s(dfs_s, e.to);
             }
         };
-        dfs(dfs, s);
+        auto dfs_t = [&](auto &&dfs_t, int v) -> void {
+            res[v] = -1;
+            for (const auto &e : list[v]) {
+                auto re = get_rev_edge(e);
+                if (res[e.to] || re.cap <= 0) continue;
+                dfs_t(dfs_t, e.to);
+            }
+        };
+        dfs_s(dfs_s, s), dfs_t(dfs_t, t);
         return res;
     }
 

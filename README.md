@@ -251,7 +251,7 @@
 - (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
 - (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - (★★★☆) [全頂点対間最短路 (Johnson 法, O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
-- (★★★☆) [SPFA](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
+- (★★★☆) [SPFA (Shortest Path Faster Algorithm)](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
 - (★★★★) 補グラフの最短路
 
 ## 全域木, 路に関する問題
