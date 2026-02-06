@@ -250,8 +250,8 @@
 - (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
 - (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
 - (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
-- (★★★☆) 全頂点対間最短路 (Johnson 法, O(EV log V))
-- (★★★☆) SPFA
+- (★★★☆) [全頂点対間最短路 (Johnson 法, O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
+- (★★★☆) [SPFA](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
 - (★★★★) 補グラフの最短路
 
 ## 全域木, 路に関する問題
@@ -706,8 +706,6 @@
 # コードテンプレート
 
 - [AtCoder 用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_atcoder.cpp)
-- [Codeforces 用のコードテンプレート（65536 字以内)](https://github.com/drken1215/algorithm/blob/master/template_codeforces.cpp)
-- [AOJ 用のコードテンプレート（30000 字以内)](https://github.com/drken1215/algorithm/blob/master/template_aoj.cpp)
 - [最小限のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_minimum.cpp)
 
 
