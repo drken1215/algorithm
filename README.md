@@ -462,6 +462,7 @@
 - (★★☆☆) [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
 - (★★☆☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
 - (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
+- (★★★☆) [転倒数 (一般的な、多重集合として一致する 2 系列)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number_general.cpp)
 
 
 　
