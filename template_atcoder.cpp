@@ -152,6 +152,13 @@ template<class T> T ceil(T x, T y) {
     return floor(x + y - 1, y);
 }
 
+// min non-negative i such that 2^i <= n
+template<class T> T floor_pow2(T n) {
+    T i = 0;
+    while ((T(1) << (i + 1)) <= T(n)) i++;
+    return i;
+}
+
 // min non-negative i such that n <= 2^i
 template<class T> T ceil_pow2(T n) {
     T i = 0;
