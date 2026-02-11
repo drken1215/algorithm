@@ -41,6 +41,7 @@ template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end())
 template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
 template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
 template<class T> auto argmin(const T &a) { return *min_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto accum(const T &a) { return *accumulate(a.begin(), a.end(), T(0)); }
 
 #define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
 #define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
