@@ -3159,7 +3159,7 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
 template<class T = long long> struct Edge {
     int from, to;
     T val;
-    Edge() : from(-1), to(-1), val(-1) { }
+    Edge() : from(-1), to(-1) { }
     Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
     friend ostream& operator << (ostream& s, const Edge& E) {
         return s << E.from << "->" << E.to;
