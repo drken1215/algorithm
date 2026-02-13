@@ -5316,6 +5316,52 @@ template<class Abel = int> struct FastMultiSetByBIT {
     }
 };
 
+// mapping[i]: A[i] に対応する B の要素の index
+template<class T> vector<long long> find_mapping(vector<T> A, vector<T> B) {
+    // 多重集合として等しいことを保証して、座標圧縮する
+    int N = (int)A.size();
+    auto A2 = A, B2 = B;
+    sort(A2.begin(), A2.end()), sort(B2.begin(), B2.end());
+    assert(A2 == B2);
+    A2.erase(unique(A2.begin(), A2.end()), A2.end());
+    for (int i = 0; i < N; i++) {
+        A[i] = lower_bound(A2.begin(), A2.end(), A[i]) - A2.begin();
+        B[i] = lower_bound(A2.begin(), A2.end(), B[i]) - A2.begin();
+    }
+
+    // B の各値ごとに index を求める
+    vector<vector<long long>> pb(N);
+    for (int i = 0; i < N; i++) pb[B[i]].emplace_back(i);
+
+    // A[i] が B で何番目なのかを求める
+    vector<long long> res(N), iter(N, 0);
+    for (int i = 0; i < N; i++) res[i] = pb[A[i]][iter[A[i]]++];
+    return res;
+}
+
+// A の転倒数
+template<class T> T inversion_number(vector<T> A) {
+    int N = (int)A.size();
+    auto A2 = A;
+    sort(A2.begin(), A2.end());
+    A2.erase(unique(A2.begin(), A2.end()), A2.end());
+    for (int i = 0; i < N; i++) A[i] = lower_bound(A2.begin(), A2.end(), A[i]) - A2.begin();
+
+    T res = 0;
+    FastMultiSetByBIT<T> S(N);
+    for (int i = 0; i < N; i++) {
+        res += S.count(A[i] + 1, N);
+        S.add(A[i], 1);
+    }
+    return res;
+}
+
+// A, B の間の転倒数
+template<class T> T inversion_number(vector<T> A, vector<T> B) {
+    auto mapping = find_mapping(A, B);
+    return inversion_number(mapping);
+}
+
 // Sparse Table
 template<class MeetSemiLattice> struct SparseTable {
     using Func = function<MeetSemiLattice(MeetSemiLattice, MeetSemiLattice)>;
