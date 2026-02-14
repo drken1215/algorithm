@@ -4023,7 +4023,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
 
     // find initial potential (to resolve initial negative-edge)
     // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
-    bool init_potential_dag() {
+    bool calc_potential_dag() {
         vector<int> deg(size(), 0), st;
         for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
         st.reserve(size());
@@ -4040,7 +4040,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
         }
         return true;
     }
-    bool init_potential_spfa() {
+    bool calc_potential_spfa() {
         pot.assign(size(), 0);
         queue<int> que;
         vector<bool> inque(size(), false);
@@ -4062,9 +4062,12 @@ template<class FLOW, class COST> struct FlowCostGraph {
         }
         return true;
     }
+    bool calc_potential() {
+        return calc_potential_dag() || calc_potential_spfa();
+    }
     bool init_potential() {
         if (!include_negative_edge) return true;
-        return init_potential_dag() || init_potential_spfa();
+        return calc_potential();
     }
 
     // debug
@@ -4277,6 +4280,10 @@ template<class FLOW, class COST> struct MinCostBFlow {
     MinCostBFlow(int V) : V(V), dss(V) {}
 
     // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.push_back({from, to, 0, cap, 0, cost});
+    }
     void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
         assert(lower_cap <= upper_cap);
         edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
@@ -4322,22 +4329,49 @@ template<class FLOW, class COST> struct MinCostBFlow {
         }
 
         // find dual
-        dual.resize(V);
-        while (true) {
-            bool update = false;
-            for (int v = 0; v < V; v++) {
-                for (const auto &e : G[v]) {
-                    if (!e.cap) continue;
-                    auto cost2 = dual[v] + e.cost;
-                    if (cost2 < dual[e.to]) {
-                        dual[e.to] = cost2;
-                        update = true;
-                    }
-                }
-            }
-            if (!update) break;
-        }
+        G.calc_potential();
+        dual = G.pot;
         return {true, res};
+    }
+};
+
+// upper and lower demand-supply
+template<class FLOW, class COST> struct GeneraliezedMinCostBFlow {
+    // Edge
+    struct Edge {
+        int from, to;
+        FLOW lower_cap, upper_cap, flow;
+        COST cost;
+    };
+
+    // inner values
+    int V;
+    vector<Edge> edges;
+    vector<FLOW> lower_dss, upper_dss;
+    MinCostBFlow<FLOW, COST> mcbf;
+
+    // constructor
+    GeneraliezedMinCostBFlow() {}
+    GeneraliezedMinCostBFlow(int V) : V(V), lower_dss(V), upper_dss(V), mcbf(V) {}
+
+    // setter
+        // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.push_back({from, to, 0, cap, 0, cost});
+    }
+    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
+        assert(lower_cap <= upper_cap);
+        edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
+    }
+    void add_ds(int v, FLOW lower_ds, FLOW upper_ds) {
+        assert(0 <= v && v < V);
+        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // solver
+    pair<bool, COST> solve() {
+        
     }
 };
 
@@ -7658,7 +7692,6 @@ template<class DD> DD Cloest(vector<Point<DD>> &ps) {
     sort(ps.begin(), ps.end(), cmp);
     return dac(dac, ps.begin(), (int)ps.size());
 }
-
 
 
 //------------------------------//
