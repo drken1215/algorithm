@@ -4024,6 +4024,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // find initial potential (to resolve initial negative-edge)
     // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
     bool calc_potential_dag() {
+        pot.assign(size(), 0);
         vector<int> deg(size(), 0), st;
         for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
         st.reserve(size());
