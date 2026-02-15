@@ -40,25 +40,34 @@
 
 - (★☆☆☆) [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_size.cpp)
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
-- (★★☆☆) [重みつき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
+- (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_enumerable.cpp)
-- (★★★☆) [undo つき Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
+- (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
+- (★★★★) 動的 Union-Find
+- (★★★★) 並列 Union-Find
+- (★★★★) 領域 Union-Find
+- (★★★★) 完全永続 Union-Find
 
-## キュー, ヒープ
+## ヒープ
 
 - (★☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
-- (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/removable_queue.cpp)
-- (★★★☆) [両端 priority queue (削除も可能)](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
 - (★★★★) Skew Heap (マージ可能ヒープ)
 - (★★★★) Paring Heap (マージ可能ヒープ)
 - (★★★★) Radix Heap
 - (★★★★) Fibonacci Heap
 
+## キュー
+
+- (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/removable_queue.cpp)
+- (★★★☆) [両端 priority queue (削除も可能)](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
+- (★★★★) 永続 queue
+
 ## ハッシュ
 
 - (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
 - (★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
+- (★★★☆) ハッシュマップ
 - (★★★☆) 根付き木のハッシュ
 
 ## N 以下の非負整数値の順序つき集合
@@ -67,21 +76,13 @@
 - (★★★★) [64 分木](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
 - (★★★★) van Emde Boas 木
 
-## 永続データ構造
-
-- (★★★★) 永続配列
-- (★★★★) 完全永続 Union-Find
-- (★★★★) 永続キュー
-- (★★★★) 永続セグメント木
-- (★★★★) 永続赤黒木
-
 ## その他
 
-- (★★★☆) [可変長 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/advanced_bitset.cpp)
+- (★★★☆) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/advanced_bitset.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
-- (★★★☆) [Cartesian 木](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
 - (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - (★★★★) Dynamic Connectivity
+- (★★★★) 永続配列
 
 
 　
@@ -91,26 +92,26 @@
 # 区間系データ構造 (DATA STRUCTURE : SEGMENT)
 セグメント木や BIT など、区間クエリに強いデータ構造の実装です
 
-## セグメント木, Binary Indexed 木
+## セグメント木
 
 - (★★☆☆) [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree.cpp)
 - (★★★☆) [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
-- (★★☆☆) [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree.cpp)
-- (★★★☆) [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_RAQ.cpp)
-- (★★★★) Segment Tree Beats (俗称)
-
-## セグメント木の応用
 - (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
 - (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
 - (★★★☆) [マージソート過程木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
-
-## 動的・二次元セグメント木
-
-- (★★★☆) 動的セグメント木
 - (★★★☆) [二次元セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_2d.cpp)
+- (★★★★) 動的セグメント木
+- (★★★★) 動的二次元セグメント木
+- (★★★★) 永続セグメント木
+- (★★★★) Segment Tree Beats (俗称)
+
+## Binary Indexed 木
+
+- (★★☆☆) [BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree.cpp)
+- (★★★☆) [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_RAQ.cpp)
 - (★★★☆) [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D.cpp)
 - (★★★★) [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D_RAQ.cpp)
-- (★★★★) 動的二次元セグメント木
+- (★★★★) 動的 BIT
 - (★★★★) 動的二次元 BIT
 
 ## Sparse Table
@@ -133,6 +134,9 @@
 - (★★★★) AVL 木
 - (★★★★) Splay 木
 - (★★★★) 赤黒木
+- (★★★★) 永続赤黒木
+- (★★★★) 遅延伝播反転可能 RBST
+- (★★★★) 遅延伝播反転可能 Treap
 
 ## 各種高速化アルゴリズム
 
@@ -252,6 +256,7 @@
 - (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - (★★★☆) [全頂点対間最短路 (Johnson 法, O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
 - (★★★☆) [SPFA (Shortest Path Faster Algorithm)](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
+- (★★★☆) 最短路問題の双対問題 (俗称: 牛ゲー)
 - (★★★★) 補グラフの最短路
 
 ## 全域木, 路に関する問題
@@ -263,8 +268,9 @@
 - (★★★★) [無向グラフの全域木の個数 (行列木定理)](https://github.com/drken1215/algorithm/blob/master/Graph/matrix_tree_theorem.cpp)
 - (★★★★) 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
 
-## グラフ上の有名問題
+## その他
 
+- (★★★☆) ランダムグラフ生成
 - (★★★☆) [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/Graph/maximum_stable_set.cpp)
 - (★★★☆) 最大クリーク列挙（O(1.443^V)）
 - (★★★☆) [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
@@ -353,8 +359,11 @@
 
 - (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/FFT.cpp)
 - (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT.cpp)
-- (★★★☆) [任意 mod 畳み込み (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
-- (★★★★) [mod 2^64 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_mod_2_64.cpp)
+- (★★★☆) [任意 mod Convolution (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_any_mod.cpp)
+- (★★★★) [mod 2^64 Convolution](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/NTT_mod_2_64.cpp)
+- (★★★★) Relaxed Convolution
+- (★★★★) 二次元 FFT
+- (★★★★) 多変数巡回 FFT
 
 ## 形式的冪級数 (FPS)
 
@@ -448,7 +457,7 @@
 
 ## 集合冪級数 (SPS)
 
-- (★★★☆) [高速ゼータ変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
+- (★★★☆) [高速ゼータ変換・高速メビウス変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_zeta_transform.cpp)
 - (★★★★) [高速アダマール変換](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/fast_hadmard_transform.cpp)
 - (★★★★) AND Convolution
 - (★★★★) OR Convolution
@@ -463,6 +472,7 @@
 - (★★☆☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
 - (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
 - (★★★☆) [転倒数 (一般的な、多重集合として一致する 2 系列)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number_general.cpp)
+- (★★★☆) プリューファーコード
 
 
 　
@@ -500,9 +510,14 @@
 - (★☆☆☆) [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - (★★☆☆) [エラトステネスの区間篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes_segment.cpp)
 - (★★☆☆) [高速素因数分解, 約数列挙, メビウス関数 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
-- (★★★★) [添字 GCD 畳み込み](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
+- (★★★★) [添字 GCD Convolutio](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
+- (★★★★) 添字 LCM Convolution
 - (★★★★) 線形篩
 - (★★★★) アトキンの篩
+
+## 乗法的関数
+
+- (★★★★) Multivariate Multiplication
 
 ## 方程式
 
@@ -537,7 +552,8 @@
 ## さまざまな全探索
 
 - (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/next_combination.cpp)
-- (★★☆☆) [部分集合の部分集合 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
+- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
+- (★★☆☆) 上位集合の列挙
 - (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Optimization/sudoku.cpp)
 
 ## 動的計画法
@@ -556,6 +572,8 @@
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
 - (★★★★) [一般化 Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
+- (★★★☆) Line Container
+- (★★★★) 2D Line container (max(ax + by) クエリ)
 
 ## Monge 性を活用する DP 高速化技法
 
@@ -566,11 +584,15 @@
 - (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, O(N log N))
 - (★★★★) Monge 単一始点最短路問題（by LARSCH, O(N))
 - (★★★★) Monge グラフ上の d-辺最短路
+- (★★★★) Monge グラフ上の d-辺最短路の d = 1, 2, ..., N における列挙
 - (★★★★) Aliens DP
 
 ## その他の DP 高速化技法
 
 - (★★★★) Slope Trick
+- (★★★★) Min Plus Convolution (凸と任意)
+- (★★★★) Min Plus Convolution (凸と凸)
+- (★★★★) Min Plus Convolution (凹と任意)
 
 ## 数理最適化
 
@@ -612,6 +634,8 @@
 - (★★★☆) [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
 - (★★★☆) 単一パターン検索 (Boyer-Moore 法)
 - (★★★★) 複数パターン検索 (Aho-Corasick 法)
+- (★★★★) 二次元ローリングハッシュ
+- (★★★★) セグメント木上のローリングハッシュ
 
 ### Suffix Array
 
@@ -623,6 +647,7 @@
 
 - (★★☆☆) [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
 - (★★★☆) [Manacher 法](https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
+- (★★★☆) Run Enumerate
 
 ### さまざまな文字列データ構造
 
@@ -631,9 +656,11 @@
 
 ### その他
 
+- (★☆☆☆) ランレングス圧縮
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
-- (★★★☆) [文字列の相異なる部分列の個数 (O(cN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
-- (★★★☆) [文字列の相異なる連続部分文字列の個数 (O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
+- (★★★☆) [文字列の相異なる subsequence の個数 (O(cN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
+- (★★★☆) [文字列の相異なる substring の個数 (O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
+- (★★★★) ワイルドカードパターンマッチング
 
 
 　
@@ -646,6 +673,7 @@
 
 - (★★★☆) [木の走査 (部分木サイズ, LCA, Euler tour など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
 - (★★★☆) [木の直径](https://github.com/drken1215/algorithm/blob/master/Tree/diameter.cpp)
+- (★★★☆) 木の中心
 - (★★★☆) 木の重心
 - (★★★★) 木の Distance Frequency Table
 
@@ -667,13 +695,22 @@
 - (★★★☆) [Euler Tour](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour.cpp)
 - (★★★☆) [HL 分解](https://github.com/drken1215/algorithm/blob/master/Tree/heavy_light_decomposition.cpp)
 - (★★★☆) [重心分解](https://github.com/drken1215/algorithm/blob/master/Tree/tree_centroid_decomposition.cpp)
-- (★★★☆) DSU on Tree
 - (★★★★) Link-Cut 木
 - (★★★★) toptree
+
+## さまざまな木
+
+- (★★★☆) Union-Find のマージ過程を表す木
+- (★★★☆) [Cartesian Tree](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
+- (★★★☆) Auxiliary Tree
+- (★★★☆) Inclusion Tree
 
 ## その他の問題
 
 - (★★★☆) [強平衡二分木の Distance Frequency Table](https://github.com/drken1215/algorithm/blob/master/Tree/find_various_values_of_binary_tree.cpp)
+- (★★★☆) DSU on Tree
+- (★★★☆) 動的直径
+- (★★★☆) 動的 rerooting
 - (★★★★) Level Ancester
 
 
