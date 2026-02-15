@@ -148,6 +148,7 @@
 
 - (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum.cpp)
 - (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum_2D.cpp)
+- (★★☆☆) ダブリング
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sliding_minimum.cpp)
 - (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/mo.cpp)
@@ -338,6 +339,7 @@
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (F2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - (★★★★) F2 ベクトル空間の交差
+- (★★★★) Strassen 法
 
 ## いろいろな行列式計算
 
@@ -417,14 +419,18 @@
 - (★★★★) オンライン FPS
 - (★★★★) 多変数 FPS
 
-## さまざまな和
+## さまざまな値の高速計算
 
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/floor_sum.cpp)
 - (★★★★) 自然数の k 乗和 (Faulhaber の公式)
 - (★★★★) Σ{i=0}^{n-1} r^i i^d
 - (★★★★) Σ{i=0}^{∞} r^i i^d
 - (★★★★) Σ{i=0}^{n-1} a^i f(i)
+- (★★★★) N! mod P (by FPS, O(√P log P))
+- (★★★★) Tetration
+- (★★★★) 二項係数の prefix sum の多点評価
 - (★★★★) Karatsuba 法
+
 
 
 
@@ -489,14 +495,18 @@
 
 - (★★☆☆) [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
 - (★★☆☆) Grundy 数
-- (★★☆☆) 超現実数
+- (★★★★) Nim Product
+- (★★★★) Grundy 数と多項式環の変換
+- (★★★★) 超現実数
 
 ## その他
 
 - (★★☆☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
 - (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
 - (★★★☆) [転倒数 (一般的な、多重集合として一致する 2 系列)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number_general.cpp)
-- (★★★☆) プリューファーコード
+- (★★★★) プリューファーコード
+- (★★★★) 半環
+
 
 
 　
@@ -504,7 +514,7 @@
 # 整数 (MATH : NUMBER THEORY)
 整数論的アルゴリズムたちです
 
-## Mod の処理
+## Modint
 
 - (★☆☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_pow_inv.cpp)
 - (★☆☆☆) [Modint](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/modint.cpp)
@@ -527,21 +537,26 @@
 - (★★★☆) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/pollard_rho.cpp)
 - (★★★☆) [原始根](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/primitive_root.cpp)
 - (★★★★) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
-- (★★★★) N 以下の素数の個数 (O(N^2/3))
 
-## エラトステネスの篩、GCD Convolution
+## エラトステネスの篩
 
 - (★☆☆☆) [エラトステネスの篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes.cpp)
 - (★★☆☆) [エラトステネスの区間篩](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Eratosthenes_segment.cpp)
 - (★★☆☆) [高速素因数分解, 約数列挙, メビウス関数 (エラトステネスの篩風)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_prime_factorization_eratosthenes.cpp)
-- (★★★★) [添字 GCD Convolutio](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
-- (★★★★) 添字 LCM Convolution
 - (★★★★) 線形篩
 - (★★★★) アトキンの篩
 
 ## 乗法的関数
 
+- (★★★★) 高速ゼータ変換：約数倍数関係
+- (★★★★) [添字 GCD Convolutio](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
+- (★★★★) 添字 LCM Convolution
 - (★★★★) Multivariate Multiplication
+- (★★★★) 乗法的関数の列挙
+- (★★★★) 乗法的関数の prefix sum の列挙
+- (★★★★) オイラー関数の和
+- (★★★★) 無平方数の個数
+- (★★★★) N 以下の素数の個数 (O(N^{2/3}))
 
 ## 方程式
 
@@ -552,19 +567,28 @@
 - (★★★★) [平方剰余 (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_sqrt.cpp)
 - (★★★★) [Kth Root (MOD) (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_kth_root.cpp)
 
-## さまざまな数
+## 多倍長整数
 
-- (★★☆☆) [128 ビット整数 (ラッパー)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/int128.cpp)
-- (★★★☆) [多倍長整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
+- (★★☆☆) [128 ビット整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/int128.cpp)
+- (★★★☆) [多倍長整数 (ナイーブ)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/big_integer.cpp)
+- (★★★★) 多倍長整数 (高速)
+- (★★★★) 多倍長整数の分数
+- (★★★★) 多倍長整数の最大公約数
+
+## 有理数
+
 - (★★★☆) [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
-- (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
+- (★★★☆) [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Stern_Brocot.cpp)
+- (★★★★) Stern-Brocot 木上の二分探索
+- (★★★★) Enumerate Convex
+- (★★★★) Enumerate Quotients
 
 ## その他
 
 - (★☆☆☆) [m で割って r 余る, x 以上の最小の整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/amari_lower_bound.cpp)
 - (★☆☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/kth_root.cpp)
-- (★★★☆) [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Stern_Brocot.cpp)
+- (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
 
 
 　
@@ -627,6 +651,7 @@
 - (★★★☆) Newton 法
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
+- (★★★★) SAT Solver
 
 ## さまざまな探索法
 
