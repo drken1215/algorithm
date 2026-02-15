@@ -67,8 +67,13 @@
 
 - (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
 - (★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
-- (★★★☆) ハッシュマップ
 - (★★★☆) 根付き木のハッシュ
+
+## ハッシュテーブル
+
+- (★★★☆) ハッシュマップ
+- (★★★☆) ハッシュ関数
+- (★★★☆) ハッシュ構造体
 
 ## N 以下の非負整数値の順序つき集合
 
@@ -130,13 +135,14 @@
 ## 平衡二分探索木
 
 - (★★★★) [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/randomized_binary_search_tree.cpp)
-- (★★★★) Treap 木
-- (★★★★) AVL 木
+- (★★★★) Treap
 - (★★★★) Splay 木
+- (★★★★) AVL 木
 - (★★★★) 赤黒木
 - (★★★★) 永続赤黒木
 - (★★★★) 遅延伝播反転可能 RBST
 - (★★★★) 遅延伝播反転可能 Treap
+- (★★★★) 遅延伝播反転可能 Splay 木
 
 ## 各種高速化アルゴリズム
 
@@ -354,6 +360,8 @@
 - (★★★★) 巡回行列 (行列式などが O(N^2))
 - (★★★★) 上三角 Toeplitz 行列 (行列式などが O(N^2))
 - (★★★★) K 重対角行列 (行列式などが O(NK^2))
+- (★★★★) 二項係数行列の作用
+- (★★★★) スターリング数行列の作用
 
 ## FFT, NTT, Convolution
 
@@ -381,6 +389,10 @@
 - (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/power_projection.cpp)
 - (★★★★) [FPS の合成 (Kinoshita-Li 法, O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
 - (★★★★) [FPS の逆関数 (Kinoshita-Li 法, O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
+- (★★★★) pow 列挙
+- (★★★★) 部分分数分解
+- (★★★★) 常微分方程式
+- (★★★★) 三角関数
 
 ## 多項式の基底変換
 
@@ -400,12 +412,18 @@
 - (★★★★) [多項式 GCD (by half-gcd) (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
 - (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_root_finding.cpp)
 
+## さまざまな FPS
+
+- (★★★★) オンライン FPS
+- (★★★★) 多変数 FPS
+
 ## さまざまな和
 
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/floor_sum.cpp)
-- (★★★★) Bk = Σ{i=0}^{n-1} i^k を係数とする多項式
+- (★★★★) 自然数の k 乗和 (Faulhaber の公式)
 - (★★★★) Σ{i=0}^{n-1} r^i i^d
 - (★★★★) Σ{i=0}^{∞} r^i i^d
+- (★★★★) Σ{i=0}^{n-1} a^i f(i)
 - (★★★★) Karatsuba 法
 
 
@@ -428,7 +446,8 @@
 - (★★★☆) [カタラン数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/catalan_number.cpp)
 - (★★★☆) [分割数 P(N, K) (O(NK))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
 - (★★★★) [分割数 P(N) (O(N√N))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
-- (★★★☆) スターリング数
+- (★★★☆) 第一種スターリング数
+- (★★★☆) 第二種スターリング数
 - (★★★☆) ベル数
 - (★★★☆) ベルヌーイ数
 - (★★★☆) モンモール数
@@ -466,9 +485,14 @@
 - (★★★★) 集合冪級数の exp
 - (★★★★) 集合冪級数の合成
 
-## その他
+## ゲーム
 
 - (★★☆☆) [Nim](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/nim.cpp)
+- (★★☆☆) Grundy 数
+- (★★☆☆) 超現実数
+
+## その他
+
 - (★★☆☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
 - (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
 - (★★★☆) [転倒数 (一般的な、多重集合として一致する 2 系列)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number_general.cpp)
@@ -672,6 +696,7 @@
 ## 木
 
 - (★★★☆) [木の走査 (部分木サイズ, LCA, Euler tour など)](https://github.com/drken1215/algorithm/blob/master/Tree/run_tree.cpp)
+- (★★★☆) [LCA (by ダブリング)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_by_doubling.cpp)
 - (★★★☆) [木の直径](https://github.com/drken1215/algorithm/blob/master/Tree/diameter.cpp)
 - (★★★☆) 木の中心
 - (★★★☆) 木の重心
@@ -684,18 +709,29 @@
 - (★★★☆) [全方位木 DP](https://github.com/drken1215/algorithm/blob/master/Tree/rerooting.cpp)
 - (★★★☆) [全方位木 DP (辺に重みがある場合)](https://github.com/drken1215/algorithm/blob/master/Tree/rerooting_with_edge.cpp)
 
-## LCA
-
-- (★★★☆) [LCA (ダブリング)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_by_doubling.cpp)
-- (★★★☆) [LCA (Euler Tour)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_euler_tour.cpp)
-- (★★★☆) [LCA (HL 分解)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_heavy_light_decomposition.cpp)
-
-## 木上のクエリ処理
+## Euler Tour
 
 - (★★★☆) [Euler Tour](https://github.com/drken1215/algorithm/blob/master/Tree/euler_tour.cpp)
+- (★★★☆) [LCA (by Euler Tour)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_euler_tour.cpp)
+- (★★★☆) 部分木加算 (by Euler Tour)
+
+## HL 分解
+
 - (★★★☆) [HL 分解](https://github.com/drken1215/algorithm/blob/master/Tree/heavy_light_decomposition.cpp)
+- (★★★☆) [LCA (by HL 分解)](https://github.com/drken1215/algorithm/blob/master/Tree/lca_heavy_light_decomposition.cpp)
+
+## 重心分解
+
 - (★★★☆) [重心分解](https://github.com/drken1215/algorithm/blob/master/Tree/tree_centroid_decomposition.cpp)
+
+## Link-Cut 木
+
 - (★★★★) Link-Cut 木
+- (★★★★) 部分木加算 (by Link-Cut 木)
+- (★★★★) 遅延伝播 Link-Cut 木
+
+## toptree
+
 - (★★★★) toptree
 
 ## さまざまな木
