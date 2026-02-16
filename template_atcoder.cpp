@@ -6264,411 +6264,6 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
 
 
 //------------------------------//
-// Tree
-//------------------------------//
-
-// Run Tree (including Euler Tour)
-template<class T = long long> struct RunTree {
-    // id[v][w] := the index of node w in G[v]
-    vector<unordered_map<int, int>> id;
-
-    // num[v][i] := the size of subtree of G[v][i] with parent v
-    vector<vector<long long>> num;
-    
-    // for finding lca
-    int root;
-    vector<vector<int>> parent;
-    vector<int> depth;
-
-    // Euler tour
-    vector<int> tour; // the node-number of i-th element of Euler-tour
-    vector<int> v_s_id, v_t_id; // the index of Euler-tour of node v
-    vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root))
-
-    // constructor
-    RunTree() {}
-    RunTree(const Graph<T> &G, int root = 0) : root(root) {
-        init(G, root);
-    }
-    
-    // init
-    void init(const Graph<T> &G, int root = 0) {
-        int N = (int)G.size();
-        id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
-        for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
-        int h = 1, ord = 0;
-        while ((1<<h) < N) h++;
-        parent.assign(h, vector<int>(N, -1)), depth.resize(N);
-        tour.resize(N*2-1), v_s_id.resize(N), v_t_id.resize(N), e_id.resize(N*2);
-        rec(G, root, -1, 0, ord);
-        for (int i = 0; i+1 < (int)parent.size(); ++i) {
-            for (int v = 0; v < N; v++)
-                if (parent[i][v] != -1)
-                    parent[i+1][v] = parent[i][parent[i][v]];
-        }
-    }
-
-    // get_size(u, v) := the size of subtree v with parent u
-    long long get_size(int u, int v) {
-        return num[u][id[u][v]];
-    }
-
-    // get first / last id of node v in Euler tour
-    int vs(int v) { return v_s_id[v]; }
-    int vt(int v) { return v_t_id[v]; }
-    int get_v(int id) { return tour[id]; }
-
-    // get edge-id of (pv, v) in Euler tour
-    int e(int v, bool leaf_to_root = false) {
-        assert(v != root);
-        if (!leaf_to_root) return e_id[v * 2];
-        else return e_id[v * 2 + 1];
-    }
-    int e(int u, int v) {
-        if (depth[u] < depth[v]) return e(v);
-        else return e(u, false);
-    }
-    pair<int, int> get_e(int id) { 
-        return make_pair(tour[id], tour[id + 1]);
-    }
-
-    // lca(u, v)
-    int get_lca(int u, int v) {
-        if (depth[u] > depth[v]) swap(u, v);
-        for (int i = 0; i < (int)parent.size(); i++) {
-            if ((depth[v] - depth[u]) & (1<<i))
-                v = parent[i][v];
-        }
-        if (u == v) return u;
-        for (int i = (int)parent.size()-1; i >= 0; i--) {
-            if (parent[i][u] != parent[i][v]) {
-                u = parent[i][u];
-                v = parent[i][v];
-            }
-        }
-        return parent[0][u];
-    }
-
-    // dist(u, v)
-    long long get_dist(int u, int v) {
-        int lca = get_lca(u, v);
-        return depth[u] + depth[v] - depth[lca]*2;
-    }
-
-    // get_parent(v, p) := the parent of v directed for p
-    int get_parent(int v, int p) {
-        if (v == p) return -1;
-        int lca = get_lca(v, p);
-        if (lca != v) return parent[0][v];
-        for (int i = (int)parent.size()-1; i >= 0; i--) {
-            if (parent[i][p] != -1 && depth[parent[i][p]] > depth[v]) {
-                p = parent[i][p];
-            }
-        }
-        return p;
-    }
-
-    // is node v in s-t path?
-    bool is_on_path(int s, int t, int v) {
-        return get_dist(s, v) + get_dist(v, t) == get_dist(s, t);
-    };
-    
-    // rec
-    int rec(const Graph<T> &G, int v, int p, int d, int &ord) {
-        int p_index = -1;
-        int sum = 1;
-        parent[0][v] = p, depth[v] = d;
-        tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
-        ord++;
-        for (int i = 0; i < (int)G[v].size(); i++) {
-            int ch = G[v][i].to;
-            id[v][ch] = i;
-            if (ch == p) {
-                p_index = i;
-                continue;
-            }
-            e_id[ch * 2] = ord - 1;
-            int s = rec(G, ch, v, d+1, ord);
-            num[v][i] = s;
-            sum += s;
-            tour[ord] = v;
-            v_t_id[v] = ord;
-            e_id[ch * 2 + 1] = ord - 1;
-            ord++;
-        }
-        if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
-        return sum;
-    }
-};
-
-// find diameter of graph
-template<class Graph = vector<vector<int>>> struct Diameter {
-    vector<int> path, prev;
-
-    Diameter() {}
-    Diameter(const Graph &G) {
-        solve(G);
-    }
-    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, int> res(v, 0);
-        for (auto to : G[v]) {
-            if (to == p) continue;
-            pair<int, int> tmp = DiameterDFS(G, to, v);
-            tmp.second++;
-            if (tmp.second > res.second) res = tmp, prev[to] = v;
-        }
-        return res;
-    }
-    vector<int> solve(const Graph &G) {
-        prev.assign((int)G.size(), -1);
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), -1);
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) path.push_back(cur), cur = prev[cur];
-        return path;
-    }
-};
-
-// find diameter of weighted graph
-template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
-    vector<int> path;
-    vector<pair<int, Weight>> prev;
-
-    WeightedDiameter() {}
-    WeightedDiameter(const Graph &G) {
-        solve(G);
-    }
-    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, Weight> res{v, 0};
-        for (auto [to, ew] : G[v]) {
-            if (to == p) continue;
-            pair<int, Weight> tmp = DiameterDFS(G, to, v);
-            tmp.second += ew;
-            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
-        }
-        return res;
-    }
-    pair<Weight, vector<int>> solve(const Graph &G) {
-        Weight res = 0;
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) {
-            if (prev[cur].first != -1) res += prev[cur].second;
-            path.push_back(cur), cur = prev[cur].first;
-        }
-        return {res, path};
-    }
-};
-
-// re-rooting
-/*
-    通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
- 　　　1. res = IDENTITY
- 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, rec(v2))
-    　　（辺重みあり：res = MERGE(res, ADDEDGE(e, rec(v2)))
- 　　　3. return ADDNODE(v, res)
- 　　というような更新を行うものとする。
- 　　このような木 DP を全方位木 DP へと拡張する。
- */
-template<class Monoid> struct ReRooting {
-    using Graph = vector<vector<int>>;
-    using MergeFunc = function<Monoid(Monoid, Monoid)>;
-    using AddNodeFunc = function<Monoid(int, Monoid)>;
-    
-    // core member
-    Graph G;
-    Monoid IDENTITY;
-    MergeFunc MERGE;
-    AddNodeFunc ADDNODE;
-    
-    // inner data
-    vector<vector<Monoid>> dp;
-    vector<unordered_map<int,int>> ids;
-    
-    // constructor
-    ReRooting() {}
-    ReRooting(const Graph &g, const Monoid &identity,
-              const MergeFunc &merge, const AddNodeFunc &addnode) {
-        G = g;
-        IDENTITY = identity;
-        MERGE = merge;
-        ADDNODE = addnode;
-        build();
-    }
-    
-    // re-looting dp
-    Monoid rec(int v, int p) {
-        Monoid res = IDENTITY;
-        dp[v].assign(G[v].size(), IDENTITY);
-        for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
-            ids[v][v2] = i;
-            if (v2 == p) continue;
-            dp[v][i] = rec(v2, v);
-            res = MERGE(res, dp[v][i]);
-        }
-        return ADDNODE(v, res);
-    }
-    void rerec(int v, int p, Monoid pval) {
-        for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
-            if (v2 == p) {
-                dp[v][i] = pval;
-                continue;
-            }
-        }
-        vector<Monoid> left(G[v].size() + 1, IDENTITY);
-        vector<Monoid> right(G[v].size() + 1, IDENTITY);
-        for (int i = 0; i < G[v].size(); ++i) {
-            left[i + 1] = MERGE(left[i], dp[v][i]);
-            right[i + 1] = MERGE(right[i], dp[v][(int)G[v].size() - i - 1]);
-        }
-        for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
-            if (v2 == p) continue;
-            Monoid pval2 = MERGE(left[i], right[(int)G[v].size() - i - 1]);
-            rerec(v2, v, ADDNODE(v, pval2));
-        }
-    }
-    void build() {
-        dp.assign(G.size(), vector<Monoid>());
-        ids.assign(G.size(), unordered_map<int,int>());
-        int root = 0, nullparent = -1;
-        rec(root, nullparent);
-        rerec(root, nullparent, IDENTITY);
-    }
-    
-    // getter
-    Monoid get(int v) {
-        Monoid res = IDENTITY;
-        for (int i = 0; i < G[v].size(); ++i) {
-            res = MERGE(res, dp[v][i]);
-        }
-        return ADDNODE(v, res);
-    }
-    Monoid get(int v, int w) {
-        return dp[v][ids[v][w]];
-    }
-    
-    // dump
-    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid> &rr) {
-        for (int v = 0; v < rr.G.size(); ++v) {
-            for (int i = 0; i < rr.G[v].size(); ++i) {
-                os << v << " -> " << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
-            }
-        }
-        return os;
-    }
-};
-
-// 辺に重みがある場合
-template<class Monoid, class Edge> struct WeightedReRooting {
-    using Graph = vector<vector<Edge>>;
-    using GetIdFunc = function<int(Edge)>;
-    using AddEdgeFunc = function<Monoid(Edge, Monoid)>;
-    using MergeFunc = function<Monoid(Monoid, Monoid)>;
-    using AddNodeFunc = function<Monoid(int, Monoid)>;
-    
-    // core member
-    Graph G;
-    Monoid IDENTITY;
-    GetIdFunc GETID;
-    AddEdgeFunc ADDEDGE;
-    MergeFunc MERGE;
-    AddNodeFunc ADDNODE;
-    
-    // inner data
-    vector<vector<Monoid>> dp;
-    vector<unordered_map<int,int>> ids;
-    
-    // constructor
-    WeightedReRooting() {}
-    WeightedReRooting(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
-                      const AddEdgeFunc &addedge, 
-                      const MergeFunc &merge, const AddNodeFunc &addnode) {
-        G = g;
-        IDENTITY = identity;
-        GETID = getid;
-        ADDEDGE = addedge;
-        MERGE = merge;
-        ADDNODE = addnode;
-        build();
-    }
-    
-    // re-looting dp
-    Monoid rec(int v, int p) {
-        Monoid res = IDENTITY;
-        dp[v].assign(G[v].size(), IDENTITY);
-        for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = GETID(G[v][i]);
-            ids[v][v2] = i;
-            if (v2 == p) continue;
-            dp[v][i] = rec(v2, v);
-            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
-        }
-        return ADDNODE(v, res);
-    }
-    void rerec(int v, int p, Monoid pval) {
-        for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = GETID(G[v][i]);
-            if (v2 == p) {
-                dp[v][i] = pval;
-                continue;
-            }
-        }
-        vector<Monoid> left(G[v].size() + 1, IDENTITY);
-        vector<Monoid> right(G[v].size() + 1, IDENTITY);
-        for (int i = 0; i < G[v].size(); ++i) {
-            int ri = (int)G[v].size() - i - 1;
-            left[i + 1] = MERGE(left[i], ADDEDGE(G[v][i], dp[v][i]));
-            right[i + 1] = MERGE(right[i], ADDEDGE(G[v][ri], dp[v][ri]));
-        }
-        for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = GETID(G[v][i]), ri = (int)G[v].size() - i - 1;
-            if (v2 == p) continue;
-            Monoid pval2 = MERGE(left[i], right[ri]);
-            rerec(v2, v, ADDNODE(v, pval2));
-        }
-    }
-    void build() {
-        dp.assign(G.size(), vector<Monoid>());
-        ids.assign(G.size(), unordered_map<int,int>());
-        int root = 0;
-        rec(root, -1);
-        rerec(root, -1, IDENTITY);
-    }
-    
-    // getter
-    Monoid get(int v) {
-        Monoid res = IDENTITY;
-        for (int i = 0; i < G[v].size(); ++i) {
-            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
-        }
-        return ADDNODE(v, res);
-    }
-    Monoid get(int v, int w) {
-        return dp[v][ids[v][w]];
-    }
-    
-    // dump
-    friend constexpr ostream& operator << (ostream &os, const WeightedReRooting<Monoid, Edge> &rr) {
-        for (int v = 0; v < rr.G.size(); ++v) {
-            for (int i = 0; i < rr.G[v].size(); ++i) {
-                os << v << " -> " << rr.GETID(rr.G[v][i]) << ": " << rr.dp[v][i] << endl;
-            }
-        }
-        return os;
-    }
-};
-
-
-//------------------------------//
 // String
 //------------------------------//
 
@@ -7692,6 +7287,411 @@ template<class DD> DD Cloest(vector<Point<DD>> &ps) {
     sort(ps.begin(), ps.end(), cmp);
     return dac(dac, ps.begin(), (int)ps.size());
 }
+
+
+//------------------------------//
+// Tree
+//------------------------------//
+
+// Run Tree (including Euler Tour)
+template<class T = long long> struct RunTree {
+    // id[v][w] := the index of node w in G[v]
+    vector<unordered_map<int, int>> id;
+
+    // num[v][i] := the size of subtree of G[v][i] with parent v
+    vector<vector<long long>> num;
+    
+    // for finding lca
+    int root;
+    vector<vector<int>> parent;
+    vector<int> depth;
+
+    // Euler tour
+    vector<int> tour; // the node-number of i-th element of Euler-tour
+    vector<int> v_s_id, v_t_id; // the index of Euler-tour of node v
+    vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root))
+
+    // constructor
+    RunTree() {}
+    RunTree(const Graph<T> &G, int root = 0) : root(root) {
+        init(G, root);
+    }
+    
+    // init
+    void init(const Graph<T> &G, int root = 0) {
+        int N = (int)G.size();
+        id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
+        for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
+        int h = 1, ord = 0;
+        while ((1<<h) < N) h++;
+        parent.assign(h, vector<int>(N, -1)), depth.resize(N);
+        tour.resize(N*2-1), v_s_id.resize(N), v_t_id.resize(N), e_id.resize(N*2);
+        rec(G, root, -1, 0, ord);
+        for (int i = 0; i+1 < (int)parent.size(); ++i) {
+            for (int v = 0; v < N; v++)
+                if (parent[i][v] != -1)
+                    parent[i+1][v] = parent[i][parent[i][v]];
+        }
+    }
+
+    // get_size(u, v) := the size of subtree v with parent u
+    long long get_size(int u, int v) {
+        return num[u][id[u][v]];
+    }
+
+    // get first / last id of node v in Euler tour
+    int vs(int v) { return v_s_id[v]; }
+    int vt(int v) { return v_t_id[v]; }
+    int get_v(int id) { return tour[id]; }
+
+    // get edge-id of (pv, v) in Euler tour
+    int e(int v, bool leaf_to_root = false) {
+        assert(v != root);
+        if (!leaf_to_root) return e_id[v * 2];
+        else return e_id[v * 2 + 1];
+    }
+    int e(int u, int v) {
+        if (depth[u] < depth[v]) return e(v);
+        else return e(u, false);
+    }
+    pair<int, int> get_e(int id) { 
+        return make_pair(tour[id], tour[id + 1]);
+    }
+
+    // lca(u, v)
+    int get_lca(int u, int v) {
+        if (depth[u] > depth[v]) swap(u, v);
+        for (int i = 0; i < (int)parent.size(); i++) {
+            if ((depth[v] - depth[u]) & (1<<i))
+                v = parent[i][v];
+        }
+        if (u == v) return u;
+        for (int i = (int)parent.size()-1; i >= 0; i--) {
+            if (parent[i][u] != parent[i][v]) {
+                u = parent[i][u];
+                v = parent[i][v];
+            }
+        }
+        return parent[0][u];
+    }
+
+    // dist(u, v)
+    long long get_dist(int u, int v) {
+        int lca = get_lca(u, v);
+        return depth[u] + depth[v] - depth[lca]*2;
+    }
+
+    // get_parent(v, p) := the parent of v directed for p
+    int get_parent(int v, int p) {
+        if (v == p) return -1;
+        int lca = get_lca(v, p);
+        if (lca != v) return parent[0][v];
+        for (int i = (int)parent.size()-1; i >= 0; i--) {
+            if (parent[i][p] != -1 && depth[parent[i][p]] > depth[v]) {
+                p = parent[i][p];
+            }
+        }
+        return p;
+    }
+
+    // is node v in s-t path?
+    bool is_on_path(int s, int t, int v) {
+        return get_dist(s, v) + get_dist(v, t) == get_dist(s, t);
+    };
+    
+    // rec
+    int rec(const Graph<T> &G, int v, int p, int d, int &ord) {
+        int p_index = -1;
+        int sum = 1;
+        parent[0][v] = p, depth[v] = d;
+        tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
+        ord++;
+        for (int i = 0; i < (int)G[v].size(); i++) {
+            int ch = G[v][i].to;
+            id[v][ch] = i;
+            if (ch == p) {
+                p_index = i;
+                continue;
+            }
+            e_id[ch * 2] = ord - 1;
+            int s = rec(G, ch, v, d+1, ord);
+            num[v][i] = s;
+            sum += s;
+            tour[ord] = v;
+            v_t_id[v] = ord;
+            e_id[ch * 2 + 1] = ord - 1;
+            ord++;
+        }
+        if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
+        return sum;
+    }
+};
+
+// find diameter of graph
+template<class Graph = vector<vector<int>>> struct Diameter {
+    vector<int> path, prev;
+
+    Diameter() {}
+    Diameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, int> res(v, 0);
+        for (auto to : G[v]) {
+            if (to == p) continue;
+            pair<int, int> tmp = DiameterDFS(G, to, v);
+            tmp.second++;
+            if (tmp.second > res.second) res = tmp, prev[to] = v;
+        }
+        return res;
+    }
+    vector<int> solve(const Graph &G) {
+        prev.assign((int)G.size(), -1);
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), -1);
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) path.push_back(cur), cur = prev[cur];
+        return path;
+    }
+};
+
+// find diameter of weighted graph
+template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
+    vector<int> path;
+    vector<pair<int, Weight>> prev;
+
+    WeightedDiameter() {}
+    WeightedDiameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, Weight> res{v, 0};
+        for (auto [to, ew] : G[v]) {
+            if (to == p) continue;
+            pair<int, Weight> tmp = DiameterDFS(G, to, v);
+            tmp.second += ew;
+            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
+        }
+        return res;
+    }
+    pair<Weight, vector<int>> solve(const Graph &G) {
+        Weight res = 0;
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) {
+            if (prev[cur].first != -1) res += prev[cur].second;
+            path.push_back(cur), cur = prev[cur].first;
+        }
+        return {res, path};
+    }
+};
+
+// re-rooting
+/*
+    通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
+ 　　　1. res = IDENTITY
+ 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, rec(v2))
+    　　（辺重みあり：res = MERGE(res, ADDEDGE(e, rec(v2)))
+ 　　　3. return ADDNODE(v, res)
+ 　　というような更新を行うものとする。
+ 　　このような木 DP を全方位木 DP へと拡張する。
+ */
+template<class Monoid> struct ReRooting {
+    using Graph = vector<vector<int>>;
+    using MergeFunc = function<Monoid(Monoid, Monoid)>;
+    using AddNodeFunc = function<Monoid(int, Monoid)>;
+    
+    // core member
+    Graph G;
+    Monoid IDENTITY;
+    MergeFunc MERGE;
+    AddNodeFunc ADDNODE;
+    
+    // inner data
+    vector<vector<Monoid>> dp;
+    vector<unordered_map<int,int>> ids;
+    
+    // constructor
+    ReRooting() {}
+    ReRooting(const Graph &g, const Monoid &identity,
+              const MergeFunc &merge, const AddNodeFunc &addnode) {
+        G = g;
+        IDENTITY = identity;
+        MERGE = merge;
+        ADDNODE = addnode;
+        build();
+    }
+    
+    // re-looting dp
+    Monoid rec(int v, int p) {
+        Monoid res = IDENTITY;
+        dp[v].assign(G[v].size(), IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = G[v][i];
+            ids[v][v2] = i;
+            if (v2 == p) continue;
+            dp[v][i] = rec(v2, v);
+            res = MERGE(res, dp[v][i]);
+        }
+        return ADDNODE(v, res);
+    }
+    void rerec(int v, int p, Monoid pval) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = G[v][i];
+            if (v2 == p) {
+                dp[v][i] = pval;
+                continue;
+            }
+        }
+        vector<Monoid> left(G[v].size() + 1, IDENTITY);
+        vector<Monoid> right(G[v].size() + 1, IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            left[i + 1] = MERGE(left[i], dp[v][i]);
+            right[i + 1] = MERGE(right[i], dp[v][(int)G[v].size() - i - 1]);
+        }
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = G[v][i];
+            if (v2 == p) continue;
+            Monoid pval2 = MERGE(left[i], right[(int)G[v].size() - i - 1]);
+            rerec(v2, v, ADDNODE(v, pval2));
+        }
+    }
+    void build() {
+        dp.assign(G.size(), vector<Monoid>());
+        ids.assign(G.size(), unordered_map<int,int>());
+        int root = 0, nullparent = -1;
+        rec(root, nullparent);
+        rerec(root, nullparent, IDENTITY);
+    }
+    
+    // getter
+    Monoid get(int v) {
+        Monoid res = IDENTITY;
+        for (int i = 0; i < G[v].size(); ++i) {
+            res = MERGE(res, dp[v][i]);
+        }
+        return ADDNODE(v, res);
+    }
+    Monoid get(int v, int w) {
+        return dp[v][ids[v][w]];
+    }
+    
+    // dump
+    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid> &rr) {
+        for (int v = 0; v < rr.G.size(); ++v) {
+            for (int i = 0; i < rr.G[v].size(); ++i) {
+                os << v << " -> " << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
+            }
+        }
+        return os;
+    }
+};
+
+// 辺に重みがある場合
+template<class Monoid, class Edge> struct WeightedReRooting {
+    using Graph = vector<vector<Edge>>;
+    using GetIdFunc = function<int(Edge)>;
+    using AddEdgeFunc = function<Monoid(Edge, Monoid)>;
+    using MergeFunc = function<Monoid(Monoid, Monoid)>;
+    using AddNodeFunc = function<Monoid(int, Monoid)>;
+    
+    // core member
+    Graph G;
+    Monoid IDENTITY;
+    GetIdFunc GETID;
+    AddEdgeFunc ADDEDGE;
+    MergeFunc MERGE;
+    AddNodeFunc ADDNODE;
+    
+    // inner data
+    vector<vector<Monoid>> dp;
+    vector<unordered_map<int,int>> ids;
+    
+    // constructor
+    WeightedReRooting() {}
+    WeightedReRooting(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
+                      const AddEdgeFunc &addedge, 
+                      const MergeFunc &merge, const AddNodeFunc &addnode) {
+        G = g;
+        IDENTITY = identity;
+        GETID = getid;
+        ADDEDGE = addedge;
+        MERGE = merge;
+        ADDNODE = addnode;
+        build();
+    }
+    
+    // re-looting dp
+    Monoid rec(int v, int p) {
+        Monoid res = IDENTITY;
+        dp[v].assign(G[v].size(), IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = GETID(G[v][i]);
+            ids[v][v2] = i;
+            if (v2 == p) continue;
+            dp[v][i] = rec(v2, v);
+            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
+        }
+        return ADDNODE(v, res);
+    }
+    void rerec(int v, int p, Monoid pval) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = GETID(G[v][i]);
+            if (v2 == p) {
+                dp[v][i] = pval;
+                continue;
+            }
+        }
+        vector<Monoid> left(G[v].size() + 1, IDENTITY);
+        vector<Monoid> right(G[v].size() + 1, IDENTITY);
+        for (int i = 0; i < G[v].size(); ++i) {
+            int ri = (int)G[v].size() - i - 1;
+            left[i + 1] = MERGE(left[i], ADDEDGE(G[v][i], dp[v][i]));
+            right[i + 1] = MERGE(right[i], ADDEDGE(G[v][ri], dp[v][ri]));
+        }
+        for (int i = 0; i < G[v].size(); ++i) {
+            int v2 = GETID(G[v][i]), ri = (int)G[v].size() - i - 1;
+            if (v2 == p) continue;
+            Monoid pval2 = MERGE(left[i], right[ri]);
+            rerec(v2, v, ADDNODE(v, pval2));
+        }
+    }
+    void build() {
+        dp.assign(G.size(), vector<Monoid>());
+        ids.assign(G.size(), unordered_map<int,int>());
+        int root = 0;
+        rec(root, -1);
+        rerec(root, -1, IDENTITY);
+    }
+    
+    // getter
+    Monoid get(int v) {
+        Monoid res = IDENTITY;
+        for (int i = 0; i < G[v].size(); ++i) {
+            res = MERGE(res, ADDEDGE(G[v][i], dp[v][i]));
+        }
+        return ADDNODE(v, res);
+    }
+    Monoid get(int v, int w) {
+        return dp[v][ids[v][w]];
+    }
+    
+    // dump
+    friend constexpr ostream& operator << (ostream &os, const WeightedReRooting<Monoid, Edge> &rr) {
+        for (int v = 0; v < rr.G.size(); ++v) {
+            for (int i = 0; i < rr.G[v].size(); ++i) {
+                os << v << " -> " << rr.GETID(rr.G[v][i]) << ": " << rr.dp[v][i] << endl;
+            }
+        }
+        return os;
+    }
+};
 
 
 //------------------------------//
