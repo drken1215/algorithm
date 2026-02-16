@@ -3659,71 +3659,6 @@ template<class T = long long> struct BiConnectedComponentsDecomposition {
     }
 };
 
-// find diameter of graph
-template<class Graph = vector<vector<int>>> struct Diameter {
-    vector<int> path, prev;
-
-    Diameter() {}
-    Diameter(const Graph &G) {
-        solve(G);
-    }
-    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, int> res(v, 0);
-        for (auto to : G[v]) {
-            if (to == p) continue;
-            pair<int, int> tmp = DiameterDFS(G, to, v);
-            tmp.second++;
-            if (tmp.second > res.second) res = tmp, prev[to] = v;
-        }
-        return res;
-    }
-    vector<int> solve(const Graph &G) {
-        prev.assign((int)G.size(), -1);
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), -1);
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) path.push_back(cur), cur = prev[cur];
-        return path;
-    }
-};
-
-// find diameter of weighted graph
-template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
-    vector<int> path;
-    vector<pair<int, Weight>> prev;
-
-    WeightedDiameter() {}
-    WeightedDiameter(const Graph &G) {
-        solve(G);
-    }
-    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, Weight> res{v, 0};
-        for (auto [to, ew] : G[v]) {
-            if (to == p) continue;
-            pair<int, Weight> tmp = DiameterDFS(G, to, v);
-            tmp.second += ew;
-            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
-        }
-        return res;
-    }
-    pair<Weight, vector<int>> solve(const Graph &G) {
-        Weight res = 0;
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) {
-            if (prev[cur].first != -1) res += prev[cur].second;
-            path.push_back(cur), cur = prev[cur].first;
-        }
-        return {res, path};
-    }
-};
-
 
 //------------------------------//
 // Flow
@@ -6333,7 +6268,7 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
 //------------------------------//
 
 // Run Tree (including Euler Tour)
-template<class Graph = vector<vector<int>>> struct RunTree {
+template<class T = long long> struct RunTree {
     // id[v][w] := the index of node w in G[v]
     vector<unordered_map<int, int>> id;
 
@@ -6352,12 +6287,12 @@ template<class Graph = vector<vector<int>>> struct RunTree {
 
     // constructor
     RunTree() {}
-    RunTree(const Graph &G, int root = 0) : root(root) {
+    RunTree(const Graph<T> &G, int root = 0) : root(root) {
         init(G, root);
     }
     
     // init
-    void init(const Graph &G, int root = 0) {
+    void init(const Graph<T> &G, int root = 0) {
         int N = (int)G.size();
         id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
         for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
@@ -6381,6 +6316,7 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     // get first / last id of node v in Euler tour
     int vs(int v) { return v_s_id[v]; }
     int vt(int v) { return v_t_id[v]; }
+    int get_v(int id) { return tour[id]; }
 
     // get edge-id of (pv, v) in Euler tour
     int e(int v, bool leaf_to_root = false) {
@@ -6391,6 +6327,9 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     int e(int u, int v) {
         if (depth[u] < depth[v]) return e(v);
         else return e(u, false);
+    }
+    pair<int, int> get_e(int id) { 
+        return make_pair(tour[id], tour[id + 1]);
     }
 
     // lca(u, v)
@@ -6435,14 +6374,14 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     };
     
     // rec
-    int rec(const Graph &G, int v, int p, int d, int &ord) {
+    int rec(const Graph<T> &G, int v, int p, int d, int &ord) {
         int p_index = -1;
         int sum = 1;
         parent[0][v] = p, depth[v] = d;
         tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
         ord++;
         for (int i = 0; i < (int)G[v].size(); i++) {
-            int ch = G[v][i];
+            int ch = G[v][i].to;
             id[v][ch] = i;
             if (ch == p) {
                 p_index = i;
@@ -6459,6 +6398,71 @@ template<class Graph = vector<vector<int>>> struct RunTree {
         }
         if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
         return sum;
+    }
+};
+
+// find diameter of graph
+template<class Graph = vector<vector<int>>> struct Diameter {
+    vector<int> path, prev;
+
+    Diameter() {}
+    Diameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, int> res(v, 0);
+        for (auto to : G[v]) {
+            if (to == p) continue;
+            pair<int, int> tmp = DiameterDFS(G, to, v);
+            tmp.second++;
+            if (tmp.second > res.second) res = tmp, prev[to] = v;
+        }
+        return res;
+    }
+    vector<int> solve(const Graph &G) {
+        prev.assign((int)G.size(), -1);
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), -1);
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) path.push_back(cur), cur = prev[cur];
+        return path;
+    }
+};
+
+// find diameter of weighted graph
+template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
+    vector<int> path;
+    vector<pair<int, Weight>> prev;
+
+    WeightedDiameter() {}
+    WeightedDiameter(const Graph &G) {
+        solve(G);
+    }
+    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
+        pair<int, Weight> res{v, 0};
+        for (auto [to, ew] : G[v]) {
+            if (to == p) continue;
+            pair<int, Weight> tmp = DiameterDFS(G, to, v);
+            tmp.second += ew;
+            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
+        }
+        return res;
+    }
+    pair<Weight, vector<int>> solve(const Graph &G) {
+        Weight res = 0;
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [leaf, distance] = DiameterDFS(G, 0, -1);
+        prev.assign((int)G.size(), make_pair(-1, -1));
+        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
+        path.clear();
+        int cur = ev;
+        while (cur != -1) {
+            if (prev[cur].first != -1) res += prev[cur].second;
+            path.push_back(cur), cur = prev[cur].first;
+        }
+        return {res, path};
     }
 };
 
@@ -7180,11 +7184,6 @@ template<class DD> struct Circle : Point<DD> {
         return s << '(' << c.x << ", " << c.y << ", " << c.r << ')';
     }
 };
-
-
-//------------------------------//
-// 点や線分の位置関係
-//------------------------------//
 
 // arg sort
 // by defining comparison

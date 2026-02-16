@@ -16,9 +16,62 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Edge Class
+template<class T = long long> struct Edge {
+    int from, to;
+    T val;
+    Edge() : from(-1), to(-1) { }
+    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& E) {
+        return s << E.from << "->" << E.to;
+    }
+};
+
+// graph class
+template<class T = long long> struct Graph {
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    
+    Graph(int n = 0) : list(n), reversed_list(n) { }
+    void init(int n = 0) {
+        list.assign(n, vector<Edge<T>>());
+        reversed_list.assign(n, vector<Edge<T>>());
+    }
+    Graph &operator = (const Graph &g) {
+        list = g.list, reversed_list = g.reversed_list;
+        return *this;
+    }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
+    const size_t size() const { return list.size(); }
+    const void clear() { list.clear(); }
+    const void resize(int n) { list.resize(n); }
+        
+    void add_edge(int from, int to, T val = -1) {
+        list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+    
+    void add_bidirected_edge(int from, int to, T val = -1) {
+        list[from].push_back(Edge(from, to, val));
+        list[to].push_back(Edge(to, from, val));
+        reversed_list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+
+    friend ostream &operator << (ostream &s, const Graph &G) {
+        s << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            s << i << " -> ";
+            for (const auto &e : G[i]) s << e.to << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
 
 // Run Tree (including Euler Tour)
-template<class Graph = vector<vector<int>>> struct RunTree {
+template<class T = long long> struct RunTree {
     // id[v][w] := the index of node w in G[v]
     vector<unordered_map<int, int>> id;
 
@@ -37,12 +90,12 @@ template<class Graph = vector<vector<int>>> struct RunTree {
 
     // constructor
     RunTree() {}
-    RunTree(const Graph &G, int root = 0) : root(root) {
+    RunTree(const Graph<T> &G, int root = 0) : root(root) {
         init(G, root);
     }
     
     // init
-    void init(const Graph &G, int root = 0) {
+    void init(const Graph<T> &G, int root = 0) {
         int N = (int)G.size();
         id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
         for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
@@ -124,14 +177,14 @@ template<class Graph = vector<vector<int>>> struct RunTree {
     };
     
     // rec
-    int rec(const Graph &G, int v, int p, int d, int &ord) {
+    int rec(const Graph<T> &G, int v, int p, int d, int &ord) {
         int p_index = -1;
         int sum = 1;
         parent[0][v] = p, depth[v] = d;
         tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
         ord++;
         for (int i = 0; i < (int)G[v].size(); i++) {
-            int ch = G[v][i];
+            int ch = G[v][i].to;
             id[v][ch] = i;
             if (ch == p) {
                 p_index = i;
@@ -160,13 +213,12 @@ template<class Graph = vector<vector<int>>> struct RunTree {
 void Codeforces_614_C() {
     int N;
     scanf("%d", &N);
-    vector<vector<int>> G(N);
+    Graph G(N);
     for (int i = 0; i < N-1; ++i) {
         int u, v;
         scanf("%d %d", &u, &v);
         --u, --v;
-        G[u].push_back(v);
-        G[v].push_back(u);
+        G.add_bidirected_edge(u, v);
     }
     
     // Run Tree
@@ -201,13 +253,12 @@ void CodeQUEEN_D() {
     int N, S, T;
     cin >> N >> S >> T;
     --S, --T;
-    vector<vector<int>> G(N);
+    Graph G(N);
     for (int i = 0; i < N-1; ++i) {
         int u, v;
         cin >> u >> v;
         --u, --v;
-        G[u].push_back(v);
-        G[v].push_back(u);
+        G.add_bidirected_edge(u, v);
     }
     
     RunTree rt(G, S);
@@ -256,7 +307,6 @@ template <class Abel> struct BIT {
     }
 };
 void ABC_406_F() {
-    using Graph = vector<vector<int>>;
     int N, Q, u, v;
     cin >> N;
     Graph G(N);
@@ -264,7 +314,7 @@ void ABC_406_F() {
     for (int i = 0; i < N-1; i++) {
         cin >> u >> v, u--, v--;
         edges[i] = {u, v};
-        G[u].push_back(v), G[v].push_back(u);
+        G.add_bidirected_edge(u, v);
     }
     RunTree rt(G);
     cin >> Q;
@@ -295,6 +345,6 @@ void ABC_406_F() {
 
 int main() {
     //Codeforces_614_C();
-    CodeQUEEN_D();
-    //ABC_406_F();
+    //CodeQUEEN_D();
+    ABC_406_F();
 }
