@@ -4688,11 +4688,11 @@ struct HopcroftKarp {
 template<class COST> struct ThreeVariableSubmodularOpt {
     // constructors
     ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
-    ThreeVariableSubmodularOpt(int n, COST inf = 0)
+    ThreeVariableSubmodularOpt(int n, COST inf = numeric_limits<COST>::max())
     : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
     
     // initializer
-    void init(int n, COST inf = 0) {
+    void init(int n, COST inf = numeric_limits<COST>::max()) {
         N = n, S = n, T = n + 1;
         OFFSET = 0, INF = inf;
         list.assign(N + 2, Edge());
