@@ -246,8 +246,7 @@
 
 ## 連結成分分解
 
-- (★☆☆☆) [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
-- (★☆☆☆) [Functional グラフの閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/functional_graph_cycle_detection.cpp)
+- (★★☆☆) [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
 - (★★☆☆) [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/Graph/strongly_connected_components.cpp)
 - (★★★☆) [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/Graph/low_link.cpp)
 - (★★★☆) [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/Graph/two_edge_connected_components.cpp)
@@ -726,6 +725,13 @@
 - (★★★☆) 木の中心
 - (★★★☆) 木の重心
 - (★★★★) 木の Distance Frequency Table
+
+## 木の亜種 (Functional Graph など)
+
+- (★★★☆) [Functional グラフの分解 (連結)](https://github.com/drken1215/algorithm/blob/master/Tree/functional_graph.cpp)
+- (★★★☆) [Functional グラフの分解 (非連結)](https://github.com/drken1215/algorithm/blob/master/Tree/disconnected_functional_graph.cpp)
+- (★★★☆) [Namori グラフの分解 (連結)](https://github.com/drken1215/algorithm/blob/master/Tree/namori_graph.cpp)
+- (★★★☆) [Namori グラフの分解 (非連結)](https://github.com/drken1215/algorithm/blob/master/Tree/namori_graph.cpp)
 
 ## 木 DP
 
