@@ -31,6 +31,8 @@ using dint = deque<int>;
 using dll = deque<long long>;
 using vvint = vector<vector<int>>;
 using vvll = vector<vector<long long>>;
+using vpint = vector<pair<int, int>>;
+using vpll = vector<pair<long long, long long>>;
 template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
@@ -3161,8 +3163,8 @@ template<class T = long long> struct Edge {
     T val;
     Edge() : from(-1), to(-1) { }
     Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
-    friend ostream& operator << (ostream& s, const Edge& E) {
-        return s << E.from << "->" << E.to;
+    friend ostream& operator << (ostream& s, const Edge& e) {
+        return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
 };
 
@@ -3206,82 +3208,6 @@ template<class T = long long> struct Graph {
             s << endl;
         }
         return s;
-    }
-};
-
-// cycle detection of functional graph
-// G[v] := 頂点 v から出ている辺
-template<class T = long long> struct FunctitonalGraphCycleDetection {
-    // input
-    vector<Edge<T>> G;
-    
-    // intermediate results
-    vector<bool> seen, finished;
-    vector<int> history;
-    
-    // constructor
-    FunctitonalGraphCycleDetection() { }
-    FunctitonalGraphCycleDetection(const vector<Edge<T>> &graph) { init(graph); }
-    void init(const vector<Edge<T>> &graph) {
-        G = graph;
-        seen.assign(G.size(), false);
-        finished.assign(G.size(), false);
-    }
-    
-    // return the vertex where cycle is detected
-    int search(int v) {
-        do {
-            seen[v] = true;
-            history.push_back(v);
-            v = G[v].to;
-            if (finished[v]) {
-                v = -1;
-                break;
-            }
-        } while (!seen[v]);
-        pop_history();
-        return v;
-    }
-    
-    // pop history
-    void pop_history() {
-        while (!history.empty()) {
-            int v = history.back();
-            finished[v] = true;
-            history.pop_back();
-        }
-    }
-    
-    // reconstruct
-    vector<Edge<T>> reconstruct(int pos) {
-        // reconstruct the cycle
-        vector<Edge<T>> cycle;
-        int v = pos;
-        do {
-            cycle.push_back(G[v]);
-            v = G[v].to;
-        } while (v != pos);
-        return cycle;
-    }
-    
-    // find cycle, v is the start vertex
-    vector<Edge<T>> detect_from_v(int v) {
-        int pos = search(v);
-        if (pos != -1) return reconstruct(pos);
-        else return vector<Edge<T>>();
-    }
-    
-    // find all cycle
-    vector<vector<Edge<T>>> detect_all() {
-        vector<vector<Edge<T>>> res;
-        for (int v = 0; v < (int)G.size(); ++v) {
-            if (finished[v]) continue;
-            int pos = search(v);
-            if (pos == -1) continue;
-            const vector<Edge<T>> &cycle = reconstruct(pos);
-            if (!cycle.empty()) res.push_back(cycle);
-        }
-        return res;
     }
 };
 
@@ -7424,6 +7350,252 @@ template<class T = long long> struct RunTree {
         }
         if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
         return sum;
+    }
+};
+
+// 連結な Functional Graph を、サイクルと森に分解する
+// input: vector<Edge<T>, G[v] := 頂点 v から出ている辺
+template<class T = long long> struct RunFunctionalGraph {
+    // input
+    vector<Edge<T>> G;
+
+    // cycle
+    const int NOT_IN_CYCLE = -1;
+    vector<int> roots;  // nodes in the cycle
+    vector<Edge<T>> cycle;  // the cycle
+    vector<int> cmp;  // order in tye cycle
+
+    // trees
+    vector<vector<Edge<T>>> childs;
+    vector<unordered_map<int,int>> id;  // id[v][w] := the index of node w in G[v]
+    vector<long long> siz;  // the size of v-subtree
+    
+    // for finding lca
+    vector<vector<int>> parent;
+    vector<int> root, depth;
+
+    // Euler tour
+    vector<int> tour; // the node-number of i-th element of Euler-tour
+    vector<int> v_s_id, v_t_id; // the index of Euler-tour of node v
+    vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root)
+
+    // constructor
+    RunFunctionalGraph() {}
+    RunFunctionalGraph(const vector<Edge<T>> &graph, int s = 0) {
+        init(graph, s);
+    }
+
+    // get first / last id of node v in Euler tour
+    int vs(int v) { return v_s_id[v]; }
+    int vt(int v) { return v_t_id[v]; }
+    int get_v(int id) { return tour[id]; }
+
+    // get edge-id of (pv, v) in Euler tour
+    int e(int v, bool leaf_to_root = false) {
+        assert(cmp[v] == NOT_IN_CYCLE);
+        if (!leaf_to_root) return e_id[v * 2];
+        else return e_id[v * 2 + 1];
+    }
+    int e(int u, int v) {
+        if (depth[u] < depth[v]) return e(v);
+        else return e(u, false);
+    }
+    pair<int, int> get_e(int id) { 
+        return make_pair(tour[id], tour[id + 1]);
+    }
+
+    // get_parent(v, p) := the parent of v directed for p
+    int get_parent(int v) { return parent[0][v];  }
+    int get_root(int v) { return root[v]; }
+    int kth_ancestor(int v, int k) {
+        if (k > depth[v]) return root[v];
+        int goal_depth = depth[v] - k;
+        for (int i = (int)parent.size()-1; i >= 0; i--)
+            if (parent[i][v] != -1 && depth[parent[i][v]] > goal_depth) 
+                v = parent[i][v];
+        return v;
+    }
+    int get_parent(int v, int p) {
+        assert(v != p && root[v] == root[p]);
+        int lca = get_lca(v, p);
+        if (lca != v) return parent[0][v];
+        else return kth_ancestor(p, depth[p] - depth[v] - 1);
+    }
+
+    // lca(u, v)
+    int get_lca(int u, int v) {
+        assert(root[u] == root[v]);
+        if (depth[u] > depth[v]) swap(u, v);
+        for (int i = 0; i < (int)parent.size(); i++) {
+            if ((depth[v] - depth[u]) & (1<<i))
+                v = parent[i][v];
+        }
+        if (u == v) return u;
+        for (int i = (int)parent.size()-1; i >= 0; i--) {
+            if (parent[i][u] != parent[i][v]) {
+                u = parent[i][u];
+                v = parent[i][v];
+            }
+        }
+        return parent[0][u];
+    }
+
+    // dist(u, v)
+    long long get_dist(int u, int v) {
+        if (root[u] == root[v]) {
+            int lca = get_lca(u, v);
+            return depth[u] + depth[v] - depth[lca] * 2;
+        } else {
+            int res = depth[u] + depth[v];
+            u = root[u], v = root[v];
+            int cycledis = max(cmp[u], cmp[v]) - min(cmp[u], cmp[v]);
+            cycledis = min(cycledis, (int)cycle.size() - cycledis);
+            res += cycledis;
+            return res;
+        }
+    }
+
+    // is node v in s-t path?
+    bool is_on_path(int s, int t, int v) {
+        return get_dist(s, v) + get_dist(v, t) == get_dist(s, t);
+    };
+    
+    // init
+    void init(const vector<Edge<T>> &graph, int s = 0) {
+        G = graph;
+        int N = (int)G.size();
+        roots.clear(), cycle.clear();
+
+        // step 1: detect a node in the cycle
+        vector<bool> seen(N, false), finished(N, false);
+        int r = s;
+        do {
+            assert(r != -1);
+            seen[r] = true;
+            r = G[r].to; 
+        } while (!seen[r]);
+
+        // step 2: construct cycle
+        int v = r, iter = 0;
+        cmp.assign(N, NOT_IN_CYCLE);
+        do {
+            roots.emplace_back(v);
+            cycle.emplace_back(G[v]);
+            cmp[v] = iter++;
+            v = G[v].to;
+        } while (v != r);
+
+        // step 3: construct trees
+        int D = ceil_pow2(N);
+        parent.assign(D + 1, vector<int>(N, -1)), childs.resize(N);
+        for (int v = 0; v < N; v++) {
+            if (cmp[v] != NOT_IN_CYCLE) {
+                parent[0][v] = v;
+            } else {
+                childs[G[v].to].emplace_back(Edge<T>(G[v].to, v, G[v].val));
+                parent[0][v] = G[v].to;
+            }
+        }
+        for (int i = 0; i < D; i++) for (int v = 0; v < N; v++) {
+            parent[i + 1][v] = parent[i][parent[i][v]];
+        }
+
+        // step 4: run trees
+        depth.resize(N), root.resize(N), siz.resize(N), id.resize(N);
+        tour.resize(N * 2 - 1), v_s_id.resize(N), v_t_id.resize(N), e_id.resize(N * 2);
+        int ord = 0;
+        auto rec = [&](auto &&rec, int v, int d, int r) -> int {
+            int sum = 1;
+            depth[v] = d, root[v] = r, tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
+            ord++;
+            for (int i = 0; i < (int)childs[v].size(); i++) {
+                int ch = childs[v][i].to;
+                id[v][ch] = i;
+                e_id[ch * 2] = ord - 1;
+                sum += rec(rec, ch, d + 1, r);
+                tour[ord] = v, v_t_id[v] = ord, e_id[ch * 2 + 1] = ord - 1;
+                ord++;
+            }
+            siz[v] = sum;
+            return sum;
+        };
+        for (auto r : roots) rec(rec, r, 0, r);
+    }
+};
+
+// 連結とは限らない Functional Graph を、サイクルと森に分解していく
+// G[v] := 頂点 v から出ている辺
+template<class T = long long> struct RunDisconnectedFunctionalGraph {
+    // input
+    vector<Edge<T>> G;
+    
+    // intermediate results
+    vector<bool> seen, finished;
+    vector<int> history;
+    
+    // constructor
+    RunDisconnectedFunctionalGraph() { }
+    RunDisconnectedFunctionalGraph(const vector<Edge<T>> &graph) { init(graph); }
+    void init(const vector<Edge<T>> &graph) {
+        G = graph;
+        seen.assign(G.size(), false);
+        finished.assign(G.size(), false);
+    }
+    
+    // return the vertex where cycle is detected
+    int search(int v) {
+        do {
+            seen[v] = true;
+            history.push_back(v);
+            v = G[v].to;
+            if (finished[v]) {
+                v = -1;
+                break;
+            }
+        } while (!seen[v]);
+        pop_history();
+        return v;
+    }
+    
+    // pop history
+    void pop_history() {
+        while (!history.empty()) {
+            int v = history.back();
+            finished[v] = true;
+            history.pop_back();
+        }
+    }
+    
+    // reconstruct
+    vector<Edge<T>> reconstruct(int pos) {
+        // reconstruct the cycle
+        vector<Edge<T>> cycle;
+        int v = pos;
+        do {
+            cycle.push_back(G[v]);
+            v = G[v].to;
+        } while (v != pos);
+        return cycle;
+    }
+    
+    // find cycle, v is the start vertex
+    vector<Edge<T>> detect_from_v(int v) {
+        int pos = search(v);
+        if (pos != -1) return reconstruct(pos);
+        else return vector<Edge<T>>();
+    }
+    
+    // find all cycle
+    vector<vector<Edge<T>>> detect_all() {
+        vector<vector<Edge<T>>> res;
+        for (int v = 0; v < (int)G.size(); ++v) {
+            if (finished[v]) continue;
+            int pos = search(v);
+            if (pos == -1) continue;
+            const vector<Edge<T>> &cycle = reconstruct(pos);
+            if (!cycle.empty()) res.push_back(cycle);
+        }
+        return res;
     }
 };
 
