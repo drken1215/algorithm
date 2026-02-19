@@ -12,28 +12,27 @@
 //     https://atcoder.jp/contests/abc348/tasks/abc348_e
 //
 
-/*
-    通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
- 　　　1. res = IDENTITY
- 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, rec(v2))
- 　　　3. return ADDNODE(v, res)
- 　　というような更新を行うものとする。
- 　　このような木 DP を全方位木 DP へと拡張する。
- */
-
 
 #include <bits/stdc++.h>
 using namespace std;
 
 
 // re-rooting
+/*
+    通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
+ 　　　1. res = IDENTITY
+ 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, rec(v2))
+    　　（辺重みあり：res = MERGE(res, ADDEDGE(e, rec(v2)))
+ 　　　3. return ADDNODE(v, res)
+ 　　というような更新を行うものとする。
+ 　　このような木 DP を全方位木 DP へと拡張する。
+ */
 template<class Monoid> struct ReRooting {
-    using Graph = vector<vector<int>>;
     using MergeFunc = function<Monoid(Monoid, Monoid)>;
     using AddNodeFunc = function<Monoid(int, Monoid)>;
     
     // core member
-    Graph G;
+    vector<vector<int>> G;  // input graph
     Monoid IDENTITY;
     MergeFunc MERGE;
     AddNodeFunc ADDNODE;
@@ -44,8 +43,9 @@ template<class Monoid> struct ReRooting {
     
     // constructor
     ReRooting() {}
-    ReRooting(const Graph &g, const Monoid &identity,
-              const MergeFunc &merge, const AddNodeFunc &addnode) {
+    ReRooting(const vector<vector<int>> &g,
+              const MergeFunc &merge, const AddNodeFunc &addnode, 
+              const Monoid &identity) {
         G = g;
         IDENTITY = identity;
         MERGE = merge;
@@ -119,7 +119,6 @@ template<class Monoid> struct ReRooting {
 };
 
 
-
 //------------------------------//
 // Examples
 //------------------------------//
@@ -143,7 +142,7 @@ void EDPC_V() {
     Monoid identity = 1;
     auto merge = [&](Monoid a, Monoid b) -> Monoid { return a * b % M; };
     auto addnode = [&](int v, Monoid a) -> Monoid { return (a + 1) % M; };
-    ReRooting<Monoid> rr(G, identity, merge, addnode);
+    ReRooting<Monoid> rr(G, merge, addnode, identity);
     
     //cout << rr << endl;
     
@@ -309,7 +308,7 @@ void TDPC_N() {
     auto addnode = [&](int v, Monoid a) -> Monoid {
         return make_pair(a.first + 1, a.second);
     };
-    ReRooting<Monoid> rr(G, identity, merge, addnode);
+    ReRooting<Monoid> rr(G, merge, addnode, identity);
 
     mint res = 0;
     for (int v = 0; v < N; v++) {
@@ -354,7 +353,7 @@ void ABC_348_E() {
         return res;
     };
     
-    ReRooting<Monoid> rr(G, IDENTITY, MERGE, ADDNODE);
+    ReRooting<Monoid> rr(G, MERGE, ADDNODE, IDENTITY);
     long long res = 1LL << 62;
     for (int v = 0; v < N; ++v) {
         auto tmp = rr.get(v);
@@ -365,7 +364,7 @@ void ABC_348_E() {
 
 
 int main() {
-    //EDPC_V();
-    TDPC_N();
+    EDPC_V();
+    //TDPC_N();
     //ABC_348_E();
 }
