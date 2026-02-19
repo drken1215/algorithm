@@ -7599,15 +7599,15 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
     }
 };
 
-// find diameter of graph
-template<class Graph = vector<vector<int>>> struct Diameter {
+// find diameter of graph (not weighted)
+struct Diameter {
     vector<int> path, prev;
 
     Diameter() {}
-    Diameter(const Graph &G) {
+    Diameter(const vector<vector<int>> &G) {
         solve(G);
     }
-    pair<int, int> DiameterDFS(const Graph &G, int v, int p) {
+    pair<int, int> DiameterDFS(const vector<vector<int>> &G, int v, int p) {
         pair<int, int> res(v, 0);
         for (auto to : G[v]) {
             if (to == p) continue;
@@ -7617,7 +7617,7 @@ template<class Graph = vector<vector<int>>> struct Diameter {
         }
         return res;
     }
-    vector<int> solve(const Graph &G) {
+    vector<int> solve(const vector<vector<int>> &G) {
         prev.assign((int)G.size(), -1);
         auto [leaf, distance] = DiameterDFS(G, 0, -1);
         prev.assign((int)G.size(), -1);
@@ -7630,26 +7630,26 @@ template<class Graph = vector<vector<int>>> struct Diameter {
 };
 
 // find diameter of weighted graph
-template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct WeightedDiameter {
+template<class T = long long> struct WeightedDiameter {
     vector<int> path;
-    vector<pair<int, Weight>> prev;
+    vector<pair<int, T>> prev;
 
     WeightedDiameter() {}
-    WeightedDiameter(const Graph &G) {
+    WeightedDiameter(const Graph<T> &G) {
         solve(G);
     }
-    pair<int, Weight> DiameterDFS(const Graph &G, int v, int p) {
-        pair<int, Weight> res{v, 0};
-        for (auto [to, ew] : G[v]) {
-            if (to == p) continue;
-            pair<int, Weight> tmp = DiameterDFS(G, to, v);
-            tmp.second += ew;
-            if (tmp.second > res.second) res = tmp, prev[to] = {v, ew};
+    pair<int, T> DiameterDFS(const Graph<T> &G, int v, int p) {
+        pair<int, T> res{v, 0};
+        for (auto e : G[v]) {
+            if (e.to == p) continue;
+            pair<int, T> tmp = DiameterDFS(G, e.to, v);
+            tmp.second += e.val;
+            if (tmp.second > res.second) res = tmp, prev[e.to] = {v, e.val};
         }
         return res;
     }
-    pair<Weight, vector<int>> solve(const Graph &G) {
-        Weight res = 0;
+    pair<T, vector<int>> solve(const Graph<T> &G) {
+        T res = 0;
         prev.assign((int)G.size(), make_pair(-1, -1));
         auto [leaf, distance] = DiameterDFS(G, 0, -1);
         prev.assign((int)G.size(), make_pair(-1, -1));
