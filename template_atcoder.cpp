@@ -7675,12 +7675,11 @@ template<class Weight, class Graph = vector<vector<pair<int, Weight>>>> struct W
  　　このような木 DP を全方位木 DP へと拡張する。
  */
 template<class Monoid> struct ReRooting {
-    using Graph = vector<vector<int>>;
     using MergeFunc = function<Monoid(Monoid, Monoid)>;
     using AddNodeFunc = function<Monoid(int, Monoid)>;
     
     // core member
-    Graph G;
+    vector<vector<int>> G;  // input graph
     Monoid IDENTITY;
     MergeFunc MERGE;
     AddNodeFunc ADDNODE;
@@ -7691,8 +7690,9 @@ template<class Monoid> struct ReRooting {
     
     // constructor
     ReRooting() {}
-    ReRooting(const Graph &g, const Monoid &identity,
-              const MergeFunc &merge, const AddNodeFunc &addnode) {
+    ReRooting(const vector<vector<int>> &g,
+              const MergeFunc &merge, const AddNodeFunc &addnode, 
+              const Monoid &identity) {
         G = g;
         IDENTITY = identity;
         MERGE = merge;

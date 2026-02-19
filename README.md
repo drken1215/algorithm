@@ -548,7 +548,7 @@
 ## 乗法的関数
 
 - (★★★★) 高速ゼータ変換：約数倍数関係
-- (★★★★) [添字 GCD Convolutio](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
+- (★★★★) [添字 GCD Convolution](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
 - (★★★★) 添字 LCM Convolution
 - (★★★★) Multivariate Multiplication
 - (★★★★) 乗法的関数の列挙
