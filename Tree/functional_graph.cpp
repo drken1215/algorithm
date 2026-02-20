@@ -1,6 +1,11 @@
-// code template is in https://github.com/drken1215/algorithm/blob/master/template_atcoder.cpp
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
+//
+// Functional Graph をサイクルと森に分解する
+//
+// verified:
+//   第二回日本最強プログラマー学生選手権 H - Shipping
+//     https://atcoder.jp/contests/jsc2021/tasks/jsc2021_h
+//
+
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -118,12 +123,52 @@ template<class T = long long> struct Edge {
     }
 };
 
-// 連結な Functional Graph を、サイクルと森に分解する
-// input: vector<Edge<T>, G[v] := 頂点 v から出ている辺
-template<class T = long long> struct RunFunctionalGraph {
-    // input
-    vector<Edge<T>> G;
+// graph class
+template<class T = long long> struct Graph {
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    
+    Graph(int n = 0) : list(n), reversed_list(n) { }
+    void init(int n = 0) {
+        list.assign(n, vector<Edge<T>>());
+        reversed_list.assign(n, vector<Edge<T>>());
+    }
+    Graph &operator = (const Graph &g) {
+        list = g.list, reversed_list = g.reversed_list;
+        return *this;
+    }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
+    const size_t size() const { return list.size(); }
+    const void clear() { list.clear(); }
+    const void resize(int n) { list.resize(n); }
+        
+    void add_edge(int from, int to, T val = 1) {
+        list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+    
+    void add_bidirected_edge(int from, int to, T val = 1) {
+        list[from].push_back(Edge(from, to, val));
+        list[to].push_back(Edge(to, from, val));
+        reversed_list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
 
+    friend ostream &operator << (ostream &s, const Graph &G) {
+        s << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            s << i << " -> ";
+            for (const auto &e : G[i]) s << e.to << " ";
+            s << endl;
+        }
+        return s;
+    }
+};
+
+// 連結な Functional Graph を、サイクルと森に分解する
+// G[v] の出次数が 1 でなければならない
+template<class T = long long> struct RunFunctionalGraph {
     // cycle
     const int NOT_IN_CYCLE = -1;
     vector<int> roots;  // nodes in the cycle
@@ -146,8 +191,8 @@ template<class T = long long> struct RunFunctionalGraph {
 
     // constructor
     RunFunctionalGraph() {}
-    RunFunctionalGraph(const vector<Edge<T>> &graph, int s = 0) {
-        init(graph, s);
+    RunFunctionalGraph(const Graph<T> &G, int s = 0) {
+        init(G, s);
     }
 
     // get first / last id of node v in Euler tour
@@ -226,18 +271,20 @@ template<class T = long long> struct RunFunctionalGraph {
     };
     
     // init
-    void init(const vector<Edge<T>> &graph, int s = 0) {
-        G = graph;
+    void init(const Graph<T> &G, int s = 0) {
         int N = (int)G.size();
-        roots.clear(), cycle.clear();
 
+        // step 0: assertion
+        for (int v = 0; v < N; v++) assert(G[v].size() == 1);
+        
         // step 1: detect a node in the cycle
+        roots.clear(), cycle.clear();
         vector<bool> seen(N, false), finished(N, false);
         int r = s;
         do {
             assert(r != -1);
             seen[r] = true;
-            r = G[r].to; 
+            r = G[r][0].to; 
         } while (!seen[r]);
 
         // step 2: construct cycle
@@ -245,9 +292,9 @@ template<class T = long long> struct RunFunctionalGraph {
         cmp.assign(N, NOT_IN_CYCLE);
         do {
             roots.emplace_back(v);
-            cycle.emplace_back(G[v]);
+            cycle.emplace_back(G[v][0]);
             cmp[v] = iter++;
-            v = G[v].to;
+            v = G[v][0].to;
         } while (v != r);
 
         // step 3: construct trees
@@ -257,8 +304,8 @@ template<class T = long long> struct RunFunctionalGraph {
             if (cmp[v] != NOT_IN_CYCLE) {
                 parent[0][v] = v;
             } else {
-                childs[G[v].to].emplace_back(Edge<T>(G[v].to, v, G[v].val));
-                parent[0][v] = G[v].to;
+                childs[G[v][0].to].emplace_back(Edge<T>(G[v][0].to, v, G[v][0].val));
+                parent[0][v] = G[v][0].to;
             }
         }
         for (int i = 0; i < D; i++) for (int v = 0; v < N; v++) {
@@ -528,10 +575,10 @@ template<class Monoid, class Action> struct LazySegmentTree {
 void The2ndSaikyoKonH() {
     // step 1: 入力と、Functional Graph グラフの分解（無向グラフだが、Functional Graph として見た方がやりやすい）
     ll N, M; cin >> N >> M;
-    vector<Edge<ll>> G(N);
+    Graph<ll> G(N);
     REP(i, N) {
         ll A, C; cin >> A >> C, A--;
-        G[i] = Edge<ll>(i, A, C);
+        G.add_edge(i, A, C);
     }
     RunFunctionalGraph<ll> fg(G);
     int C = fg.cycle.size();
