@@ -7224,8 +7224,8 @@ template<class T = long long> struct RunTree {
     // id[v][w] := the index of node w in G[v]
     vector<unordered_map<int, int>> id;
 
-    // num[v][i] := the size of subtree of G[v][i] with parent v
-    vector<vector<long long>> num;
+    // siz[v][i] := the size of subtree of G[v][i] with parent v
+    vector<vector<long long>> siz;
     
     // for finding lca
     int root;
@@ -7246,8 +7246,8 @@ template<class T = long long> struct RunTree {
     // init
     void init(const Graph<T> &G, int root = 0) {
         int N = (int)G.size();
-        id.assign(N, unordered_map<int,int>()), num.assign(N, vector<long long>());
-        for (int v = 0; v < N; v++) num[v].assign((int)G[v].size(), 0);
+        id.assign(N, unordered_map<int,int>()), siz.assign(N, vector<long long>());
+        for (int v = 0; v < N; v++) siz[v].assign((int)G[v].size(), 0);
         int h = 1, ord = 0;
         while ((1<<h) < N) h++;
         parent.assign(h, vector<int>(N, -1)), depth.resize(N);
@@ -7262,7 +7262,7 @@ template<class T = long long> struct RunTree {
 
     // get_size(u, v) := the size of subtree v with parent u
     long long get_size(int u, int v) {
-        return num[u][id[u][v]];
+        return siz[u][id[u][v]];
     }
 
     // get first / last id of node v in Euler tour
@@ -7282,6 +7282,23 @@ template<class T = long long> struct RunTree {
     }
     pair<int, int> get_e(int id) { 
         return make_pair(tour[id], tour[id + 1]);
+    }
+
+    // get_parent(v, p) := the parent of v directed for p
+    int get_parent(int v) { return parent[0][v]; }
+    int kth_ancestor(int v, int k) {
+        if (k > depth[v]) return root;
+        int goal_depth = depth[v] - k;
+        for (int i = (int)parent.size()-1; i >= 0; i--)
+            if (parent[i][v] != -1 && depth[parent[i][v]] > goal_depth) 
+                v = parent[i][v];
+        return v;
+    }
+    int get_parent(int v, int p) {
+        if (v == p) return -1;
+        int lca = get_lca(v, p);
+        if (lca != v) return parent[0][v];
+        else return kth_ancestor(p, depth[p] - depth[v] - 1);
     }
 
     // lca(u, v)
@@ -7307,19 +7324,6 @@ template<class T = long long> struct RunTree {
         return depth[u] + depth[v] - depth[lca]*2;
     }
 
-    // get_parent(v, p) := the parent of v directed for p
-    int get_parent(int v, int p) {
-        if (v == p) return -1;
-        int lca = get_lca(v, p);
-        if (lca != v) return parent[0][v];
-        for (int i = (int)parent.size()-1; i >= 0; i--) {
-            if (parent[i][p] != -1 && depth[parent[i][p]] > depth[v]) {
-                p = parent[i][p];
-            }
-        }
-        return p;
-    }
-
     // is node v in s-t path?
     bool is_on_path(int s, int t, int v) {
         return get_dist(s, v) + get_dist(v, t) == get_dist(s, t);
@@ -7341,14 +7345,14 @@ template<class T = long long> struct RunTree {
             }
             e_id[ch * 2] = ord - 1;
             int s = rec(G, ch, v, d+1, ord);
-            num[v][i] = s;
+            siz[v][i] = s;
             sum += s;
             tour[ord] = v;
             v_t_id[v] = ord;
             e_id[ch * 2 + 1] = ord - 1;
             ord++;
         }
-        if (p_index != -1) num[v][p_index] = (int)G.size() - sum;
+        if (p_index != -1) siz[v][p_index] = (int)G.size() - sum;
         return sum;
     }
 };
