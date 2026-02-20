@@ -27,12 +27,12 @@ using namespace std;
  　　というような更新を行うものとする。
  　　このような木 DP を全方位木 DP へと拡張する。
  */
-template<class Monoid> struct ReRooting {
+template<class Monoid, class Weight = long long> struct ReRooting {
     using MergeFunc = function<Monoid(Monoid, Monoid)>;
     using AddNodeFunc = function<Monoid(int, Monoid)>;
     
     // core member
-    vector<vector<int>> G;  // input graph
+    Graph<Weight> G;  // input graph
     Monoid IDENTITY;
     MergeFunc MERGE;
     AddNodeFunc ADDNODE;
@@ -43,7 +43,7 @@ template<class Monoid> struct ReRooting {
     
     // constructor
     ReRooting() {}
-    ReRooting(const vector<vector<int>> &g,
+    ReRooting(const Graph<Weight> &g,
               const MergeFunc &merge, const AddNodeFunc &addnode, 
               const Monoid &identity) {
         G = g;
@@ -58,7 +58,7 @@ template<class Monoid> struct ReRooting {
         Monoid res = IDENTITY;
         dp[v].assign(G[v].size(), IDENTITY);
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = G[v][i].to;
             ids[v][v2] = i;
             if (v2 == p) continue;
             dp[v][i] = rec(v2, v);
@@ -68,7 +68,7 @@ template<class Monoid> struct ReRooting {
     }
     void rerec(int v, int p, Monoid pval) {
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = G[v][i].to;
             if (v2 == p) {
                 dp[v][i] = pval;
                 continue;
@@ -81,7 +81,7 @@ template<class Monoid> struct ReRooting {
             right[i + 1] = MERGE(right[i], dp[v][(int)G[v].size() - i - 1]);
         }
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = G[v][i].to;
             if (v2 == p) continue;
             Monoid pval2 = MERGE(left[i], right[(int)G[v].size() - i - 1]);
             rerec(v2, v, ADDNODE(v, pval2));
@@ -108,10 +108,10 @@ template<class Monoid> struct ReRooting {
     }
     
     // dump
-    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid> &rr) {
+    friend constexpr ostream& operator << (ostream &os, const ReRooting &rr) {
         for (int v = 0; v < rr.G.size(); ++v) {
             for (int i = 0; i < rr.G[v].size(); ++i) {
-                os << v << " -> " << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
+                os << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
             }
         }
         return os;

@@ -3162,7 +3162,7 @@ template<class T = long long> struct Edge {
     int from, to;
     T val;
     Edge() : from(-1), to(-1) { }
-    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
+    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
     friend ostream& operator << (ostream& s, const Edge& e) {
         return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
@@ -3188,12 +3188,12 @@ template<class T = long long> struct Graph {
     const void clear() { list.clear(); }
     const void resize(int n) { list.resize(n); }
         
-    void add_edge(int from, int to, T val = -1) {
+    void add_edge(int from, int to, T val = 1) {
         list[from].push_back(Edge(from, to, val));
         reversed_list[to].push_back(Edge(to, from, val));
     }
     
-    void add_bidirected_edge(int from, int to, T val = -1) {
+    void add_bidirected_edge(int from, int to, T val = 1) {
         list[from].push_back(Edge(from, to, val));
         list[to].push_back(Edge(to, from, val));
         reversed_list[from].push_back(Edge(from, to, val));
@@ -7599,70 +7599,40 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
     }
 };
 
-// find diameter of graph (not weighted)
-struct Diameter {
-    vector<int> path, prev;
+// find diameter of tree
+template<class Weight = long long> pair<Weight, vector<Edge<Weight>>> calc_diameter
+(const Graph<Weight> &G) {
+    Weight length = 0;
+    vector<Edge<Weight>> path;
+    vector<Edge<Weight>> prev(G.size(), Edge<Weight>(-1, -1));
 
-    Diameter() {}
-    Diameter(const vector<vector<int>> &G) {
-        solve(G);
-    }
-    pair<int, int> DiameterDFS(const vector<vector<int>> &G, int v, int p) {
-        pair<int, int> res(v, 0);
-        for (auto to : G[v]) {
-            if (to == p) continue;
-            pair<int, int> tmp = DiameterDFS(G, to, v);
-            tmp.second++;
-            if (tmp.second > res.second) res = tmp, prev[to] = v;
-        }
-        return res;
-    }
-    vector<int> solve(const vector<vector<int>> &G) {
-        prev.assign((int)G.size(), -1);
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), -1);
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) path.push_back(cur), cur = prev[cur];
-        return path;
-    }
-};
-
-// find diameter of weighted graph
-template<class T = long long> struct WeightedDiameter {
-    vector<int> path;
-    vector<pair<int, T>> prev;
-
-    WeightedDiameter() {}
-    WeightedDiameter(const Graph<T> &G) {
-        solve(G);
-    }
-    pair<int, T> DiameterDFS(const Graph<T> &G, int v, int p) {
-        pair<int, T> res{v, 0};
-        for (auto e : G[v]) {
+    auto dfs = [&](auto &&dfs, int v, int p, bool record = true) -> pair<int, Weight> {
+        pair<int, Weight> res{v, 0};
+        for (const auto &e : G[v]) {
             if (e.to == p) continue;
-            pair<int, T> tmp = DiameterDFS(G, e.to, v);
+            auto tmp = dfs(dfs, e.to, v, record);
             tmp.second += e.val;
-            if (tmp.second > res.second) res = tmp, prev[e.to] = {v, e.val};
+            if (tmp.second > res.second) {
+                res = tmp;
+                if (record) prev[e.to] = e;
+            }
         }
         return res;
+    };
+
+    auto [leaf, distance] = dfs(dfs, 0, -1, false);
+    prev.assign((int)G.size(), Edge<Weight>(-1, -1));
+    auto [most_distant_v, distance2] = dfs(dfs, leaf, -1, true);
+    int cur = most_distant_v;
+    while (cur != -1) {
+        const auto &e = prev[cur];
+        if (e.from == -1) break;
+        length += e.val, path.emplace_back(e);
+        cur = e.from;
     }
-    pair<T, vector<int>> solve(const Graph<T> &G) {
-        T res = 0;
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [leaf, distance] = DiameterDFS(G, 0, -1);
-        prev.assign((int)G.size(), make_pair(-1, -1));
-        auto [ev, distance2] = DiameterDFS(G, leaf, -1);
-        path.clear();
-        int cur = ev;
-        while (cur != -1) {
-            if (prev[cur].first != -1) res += prev[cur].second;
-            path.push_back(cur), cur = prev[cur].first;
-        }
-        return {res, path};
-    }
-};
+    reverse(path.begin(), path.end());
+    return {length, path};
+}
 
 // re-rooting
 /*
@@ -7674,12 +7644,12 @@ template<class T = long long> struct WeightedDiameter {
  　　というような更新を行うものとする。
  　　このような木 DP を全方位木 DP へと拡張する。
  */
-template<class Monoid> struct ReRooting {
+template<class Monoid, class Weight = long long> struct ReRooting {
     using MergeFunc = function<Monoid(Monoid, Monoid)>;
     using AddNodeFunc = function<Monoid(int, Monoid)>;
     
     // core member
-    vector<vector<int>> G;  // input graph
+    Graph<Weight> G;  // input graph
     Monoid IDENTITY;
     MergeFunc MERGE;
     AddNodeFunc ADDNODE;
@@ -7690,7 +7660,7 @@ template<class Monoid> struct ReRooting {
     
     // constructor
     ReRooting() {}
-    ReRooting(const vector<vector<int>> &g,
+    ReRooting(const Graph<Weight> &g,
               const MergeFunc &merge, const AddNodeFunc &addnode, 
               const Monoid &identity) {
         G = g;
@@ -7705,7 +7675,7 @@ template<class Monoid> struct ReRooting {
         Monoid res = IDENTITY;
         dp[v].assign(G[v].size(), IDENTITY);
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = G[v][i].to;
             ids[v][v2] = i;
             if (v2 == p) continue;
             dp[v][i] = rec(v2, v);
@@ -7715,7 +7685,7 @@ template<class Monoid> struct ReRooting {
     }
     void rerec(int v, int p, Monoid pval) {
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = G[v][i].to;
             if (v2 == p) {
                 dp[v][i] = pval;
                 continue;
@@ -7728,7 +7698,7 @@ template<class Monoid> struct ReRooting {
             right[i + 1] = MERGE(right[i], dp[v][(int)G[v].size() - i - 1]);
         }
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = G[v][i];
+            int v2 = G[v][i].to;
             if (v2 == p) continue;
             Monoid pval2 = MERGE(left[i], right[(int)G[v].size() - i - 1]);
             rerec(v2, v, ADDNODE(v, pval2));
@@ -7755,10 +7725,10 @@ template<class Monoid> struct ReRooting {
     }
     
     // dump
-    friend constexpr ostream& operator << (ostream &os, const ReRooting<Monoid> &rr) {
+    friend constexpr ostream& operator << (ostream &os, const ReRooting &rr) {
         for (int v = 0; v < rr.G.size(); ++v) {
             for (int i = 0; i < rr.G[v].size(); ++i) {
-                os << v << " -> " << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
+                os << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
             }
         }
         return os;
@@ -7766,17 +7736,22 @@ template<class Monoid> struct ReRooting {
 };
 
 // 辺に重みがある場合
-template<class Monoid, class Edge> struct WeightedReRooting {
-    using Graph = vector<vector<Edge>>;
-    using GetIdFunc = function<int(Edge)>;
-    using AddEdgeFunc = function<Monoid(Edge, Monoid)>;
+/*
+    通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
+ 　　　1. res = IDENTITY
+ 　　　2. 頂点 v の各子頂点 v2 (その辺を e とする) に対して：res = MERGE(res, ADDEDGE(e, rec(v2)))
+ 　　　3. return ADDNODE(v, res)
+ 　　というような更新を行うものとする。
+ 　　このような木 DP を全方位木 DP へと拡張する。
+ */
+template<class Monoid, class Weight = long long> struct WeightedReRooting {
+    using AddEdgeFunc = function<Monoid(Edge<Weight>, Monoid)>;
     using MergeFunc = function<Monoid(Monoid, Monoid)>;
     using AddNodeFunc = function<Monoid(int, Monoid)>;
     
     // core member
-    Graph G;
+    Graph<Weight> G;  // input graph
     Monoid IDENTITY;
-    GetIdFunc GETID;
     AddEdgeFunc ADDEDGE;
     MergeFunc MERGE;
     AddNodeFunc ADDNODE;
@@ -7787,12 +7762,12 @@ template<class Monoid, class Edge> struct WeightedReRooting {
     
     // constructor
     WeightedReRooting() {}
-    WeightedReRooting(const Graph &g, const Monoid &identity, const GetIdFunc &getid,
+    WeightedReRooting(const Graph<Weight> &g,
                       const AddEdgeFunc &addedge, 
-                      const MergeFunc &merge, const AddNodeFunc &addnode) {
+                      const MergeFunc &merge, const AddNodeFunc &addnode, 
+                      const Monoid &identity) {
         G = g;
         IDENTITY = identity;
-        GETID = getid;
         ADDEDGE = addedge;
         MERGE = merge;
         ADDNODE = addnode;
@@ -7804,7 +7779,7 @@ template<class Monoid, class Edge> struct WeightedReRooting {
         Monoid res = IDENTITY;
         dp[v].assign(G[v].size(), IDENTITY);
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = GETID(G[v][i]);
+            int v2 = G[v][i].to;
             ids[v][v2] = i;
             if (v2 == p) continue;
             dp[v][i] = rec(v2, v);
@@ -7814,7 +7789,7 @@ template<class Monoid, class Edge> struct WeightedReRooting {
     }
     void rerec(int v, int p, Monoid pval) {
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = GETID(G[v][i]);
+            int v2 = G[v][i].to;
             if (v2 == p) {
                 dp[v][i] = pval;
                 continue;
@@ -7828,7 +7803,7 @@ template<class Monoid, class Edge> struct WeightedReRooting {
             right[i + 1] = MERGE(right[i], ADDEDGE(G[v][ri], dp[v][ri]));
         }
         for (int i = 0; i < G[v].size(); ++i) {
-            int v2 = GETID(G[v][i]), ri = (int)G[v].size() - i - 1;
+            int v2 = G[v][i].to, ri = (int)G[v].size() - i - 1;
             if (v2 == p) continue;
             Monoid pval2 = MERGE(left[i], right[ri]);
             rerec(v2, v, ADDNODE(v, pval2));
@@ -7855,10 +7830,10 @@ template<class Monoid, class Edge> struct WeightedReRooting {
     }
     
     // dump
-    friend constexpr ostream& operator << (ostream &os, const WeightedReRooting<Monoid, Edge> &rr) {
+    friend constexpr ostream& operator << (ostream &os, const WeightedReRooting &rr) {
         for (int v = 0; v < rr.G.size(); ++v) {
             for (int i = 0; i < rr.G[v].size(); ++i) {
-                os << v << " -> " << rr.GETID(rr.G[v][i]) << ": " << rr.dp[v][i] << endl;
+                os << rr.G[v][i] << ": " << rr.dp[v][i] << endl;
             }
         }
         return os;

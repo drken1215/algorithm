@@ -235,18 +235,19 @@
 # グラフ (GRAPH)
 グラフアルゴリズムです
 
-## DFS, BFS
+## グラフ探索
 
-- (★☆☆☆) [連結成分の個数 (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/dfs.cpp)
-- (★☆☆☆) [連結成分の個数 (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/bfs.cpp)
-- (★☆☆☆) [二部グラフ判定 (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_dfs.cpp)
-- (★☆☆☆) [二部グラフ判定 (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_bfs.cpp)
-- (★★☆☆) [トポロジカルソート (DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_dfs.cpp)
-- (★★☆☆) [トポロジカルソート (BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_bfs.cpp)
+- (★☆☆☆) [グラフテンプレート](https://github.com/drken1215/algorithm/blob/master/Graph/graph_template.cpp)
+- (★☆☆☆) [連結成分の個数 (by DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/dfs.cpp)
+- (★☆☆☆) [連結成分の個数 (by BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/bfs.cpp)
+- (★☆☆☆) [二部グラフ判定 (by DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_dfs.cpp)
+- (★☆☆☆) [二部グラフ判定 (by BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_bfs.cpp)
+- (★★☆☆) [トポロジカルソート (by DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_dfs.cpp)
+- (★★☆☆) [トポロジカルソート (by BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/topological_sort_bfs.cpp)
+- (★★☆☆) [閉路検出 (サイクル検出, by DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
 
 ## 連結成分分解
 
-- (★★☆☆) [閉路検出 (サイクル検出)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_detection.cpp)
 - (★★☆☆) [強連結成分分解](https://github.com/drken1215/algorithm/blob/master/Graph/strongly_connected_components.cpp)
 - (★★★☆) [橋, 関節点列挙 (Low-Link)](https://github.com/drken1215/algorithm/blob/master/Graph/low_link.cpp)
 - (★★★☆) [二重辺連結成分分解 (Bridge-Block 木)](https://github.com/drken1215/algorithm/blob/master/Graph/two_edge_connected_components.cpp)
