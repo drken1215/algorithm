@@ -729,9 +729,9 @@
 
 ## 木の亜種 (Functional Graph など)
 
-- (★★★☆) [Functional グラフの分解 (連結)](https://github.com/drken1215/algorithm/blob/master/Tree/functional_graph.cpp)
-- (★★★☆) [Functional グラフの分解 (非連結)](https://github.com/drken1215/algorithm/blob/master/Tree/disconnected_functional_graph.cpp)
-- (★★★☆) [Namori グラフの分解 (連結)](https://github.com/drken1215/algorithm/blob/master/Tree/namori_graph.cpp)
+- (★★★☆) [Functional グラフの分解 (連結)](https://github.com/drken1215/algorithm/blob/master/Tree/functional_graph_connected.cpp)
+- (★★★☆) [Functional グラフの分解 (非連結)](https://github.com/drken1215/algorithm/blob/master/Tree/functional_graph.cpp)
+- (★★★☆) [Namori グラフの分解 (連結)](https://github.com/drken1215/algorithm/blob/master/Tree/namori_graph_connected.cpp)
 - (★★★☆) [Namori グラフの分解 (非連結)](https://github.com/drken1215/algorithm/blob/master/Tree/namori_graph.cpp)
 
 ## 木 DP

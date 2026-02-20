@@ -1,9 +1,12 @@
 //
-// Functional Graph をサイクルと森に分解する
+// (連結とは限らない) Functional Graph をサイクルと森に分解する
 //
 // verified:
-//   第二回日本最強プログラマー学生選手権 H - Shipping
-//     https://atcoder.jp/contests/jsc2021/tasks/jsc2021_h
+//   AtCoder ABC 256 E - Takahashi's Anguish
+//     https://atcoder.jp/contests/abc256/tasks/abc256_e
+//
+//   AtCoder ABC 387 F - Count Arrays
+//     https://atcoder.jp/contests/abc387/tasks/abc387_f
 //
 
 
@@ -166,15 +169,15 @@ template<class T = long long> struct Graph {
     }
 };
 
-// 連結な Functional Graph を、サイクルと森に分解する
-// G[v] の出次数が 1 でなければならない
-template<class T = long long> struct RunConnectedFunctionalGraph {
-    // cycle
+// 連結とは限らない Functional Graph を、サイクルと森に分解していく
+// G[v] := 頂点 v から出ている辺
+template<class T = long long> struct RunFunctionalGraph {
+    // cycles
     const int NOT_IN_CYCLE = -1;
-    vector<int> roots;  // nodes in the cycle
-    vector<Edge<T>> cycle;  // the cycle
+    vector<vector<int>> roots;  // nodes in each cycle
+    vector<vector<Edge<T>>> cycles;  // the cycles
     vector<int> cmp;  // order in tye cycle
-
+    
     // trees
     vector<vector<Edge<T>>> childs;
     vector<unordered_map<int,int>> id;  // id[v][w] := the index of node w in G[v]
@@ -182,7 +185,7 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
     
     // for finding lca
     vector<vector<int>> parent;
-    vector<int> root, depth;
+    vector<int> root, depth, which_cycle;
 
     // Euler tour
     vector<int> tour; // the node-number of i-th element of Euler-tour
@@ -190,9 +193,9 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
     vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root)
 
     // constructor
-    RunConnectedFunctionalGraph() {}
-    RunConnectedFunctionalGraph(const Graph<T> &G, int s = 0) {
-        init(G, s);
+    RunFunctionalGraph() { }
+    RunFunctionalGraph(const Graph<T> &G) {
+        init(G);
     }
 
     // get first / last id of node v in Euler tour
@@ -252,6 +255,7 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
 
     // dist(u, v)
     long long get_dist(int u, int v) {
+        assert(which_cycle[u] == which_cycle[v]);
         if (root[u] == root[v]) {
             int lca = get_lca(u, v);
             return depth[u] + depth[v] - depth[lca] * 2;
@@ -259,7 +263,7 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
             int res = depth[u] + depth[v];
             u = root[u], v = root[v];
             int cycledis = max(cmp[u], cmp[v]) - min(cmp[u], cmp[v]);
-            cycledis = min(cycledis, (int)cycle.size() - cycledis);
+            cycledis = min(cycledis, (int)cycles[which_cycle[v]].size() - cycledis);
             res += cycledis;
             return res;
         }
@@ -271,33 +275,65 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
     };
     
     // init
+    void detect_all_cycles(const Graph<T> &G) {
+        int N = (int)G.size();
+        roots.clear(), cycles.clear();
+        cmp.assign(N, NOT_IN_CYCLE);
+        vector<bool> seen(N, false), finished(N, false);
+        vector<int> history;
+        auto pop_history = [&]() -> void {
+            while (!history.empty()) {
+                int v = history.back();
+                finished[v] = true;
+                history.pop_back();
+            }
+        };
+        auto detect_a_node_in_the_cycle = [&](int v) {
+            do {
+                seen[v] = true;
+                history.push_back(v);
+                v = G[v][0].to;
+                if (finished[v]) {
+                    v = -1;
+                    break;
+                }
+            } while (!seen[v]);
+            pop_history();
+            return v;
+        };
+        auto reconstruct = [&](int r) -> pair<vector<int>, vector<Edge<T>>> {
+            vector<int> sub_roots;
+            vector<Edge<T>> cycle;
+            int v = r, iter = 0;
+            do {
+                sub_roots.emplace_back(v);
+                cycle.emplace_back(G[v][0]);
+                cmp[v] = iter++;
+                v = G[v][0].to;
+            } while (v != r);
+            return {sub_roots, cycle};
+        };
+        for (int v = 0; v < (int)G.size(); ++v) {
+            if (finished[v]) continue;
+            int r = detect_a_node_in_the_cycle(v);
+            if (r == -1) continue;
+            auto [sub_roots, cycle] = reconstruct(r);
+            if (!cycle.empty()) {
+                roots.emplace_back(sub_roots);
+                cycles.emplace_back(cycle);
+            }
+        }
+    }
     void init(const Graph<T> &G, int s = 0) {
         int N = (int)G.size();
 
         // step 0: assertion
         for (int v = 0; v < N; v++) assert(G[v].size() == 1);
         
-        // step 1: detect a node in the cycle
-        roots.clear(), cycle.clear();
-        vector<bool> seen(N, false), finished(N, false);
-        int r = s;
-        do {
-            assert(r != -1);
-            seen[r] = true;
-            r = G[r][0].to; 
-        } while (!seen[r]);
+        // step 1: detect all cycles
+        detect_all_cycles(G);
 
-        // step 2: construct cycle
-        int v = r, iter = 0;
-        cmp.assign(N, NOT_IN_CYCLE);
-        do {
-            roots.emplace_back(v);
-            cycle.emplace_back(G[v][0]);
-            cmp[v] = iter++;
-            v = G[v][0].to;
-        } while (v != r);
-
-        // step 3: construct trees
+        // step 2: construct trees
         int D = ceil_pow2(N);
         parent.assign(D + 1, vector<int>(N, -1)), childs.resize(N);
         for (int v = 0; v < N; v++) {
@@ -312,352 +348,231 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
             parent[i + 1][v] = parent[i][parent[i][v]];
         }
 
-        // step 4: run trees
-        depth.resize(N), root.resize(N), siz.resize(N), id.resize(N);
+        // step 3: run trees
+        depth.resize(N), root.resize(N), which_cycle.resize(N);
+        siz.resize(N), id.resize(N);
         tour.resize(N * 2 - 1), v_s_id.resize(N), v_t_id.resize(N), e_id.resize(N * 2);
         int ord = 0;
-        auto rec = [&](auto &&rec, int v, int d, int r) -> int {
+        auto rec = [&](auto &&rec, int v, int d, int cid, int r) -> int {
             int sum = 1;
-            depth[v] = d, root[v] = r, tour[ord] = v, v_s_id[v] = v_t_id[v] = ord;
+            depth[v] = d, root[v] = r, which_cycle[v] = cid;
             ord++;
             for (int i = 0; i < (int)childs[v].size(); i++) {
                 int ch = childs[v][i].to;
                 id[v][ch] = i;
                 e_id[ch * 2] = ord - 1;
-                sum += rec(rec, ch, d + 1, r);
+                sum += rec(rec, ch, d + 1, cid, r);
                 tour[ord] = v, v_t_id[v] = ord, e_id[ch * 2 + 1] = ord - 1;
                 ord++;
             }
             siz[v] = sum;
             return sum;
         };
-        for (auto r : roots) rec(rec, r, 0, r);
+        for (int cid = 0; cid < (int)roots.size(); cid++) {
+            for (auto r : roots[cid]) {
+                ord = 0;
+                rec(rec, r, 0, cid, r);
+            }
+        }
     }
 };
 
 
 //------------------------------//
-// Solver
+// Examples
 //------------------------------//
 
+// AtCoder ABC 256 E - Takahashi's Anguish
+void ABC_256_E() {
+    int N; cin >> N;
+    long long res = 0;
+    Graph<long long> G(N);
+    vector<long long> X(N), C(N);
+    cin >> X >> C;
+    for (int i = 0; i < N; i++) {
+        X[i]--;
+        G.add_edge(i, X[i], C[i]);
+    }
+    RunFunctionalGraph<long long> fg(G);
+    for (const auto &cycle : fg.cycles) {
+        long long sub = 1LL << 60;
+        for (const auto &e : cycle) sub = min(sub, e.val);
+        res += sub;
+    }
+    cout << res << endl;
+}
 
-// 第二回日本最強プログラマー学生選手権 H - Shipping
-template<class Monoid, class Action> struct LazySegmentTree {
-    // various function types
-    using FuncMonoid = function<Monoid(Monoid, Monoid)>;
-    using FuncAction = function<Monoid(Action, Monoid)>;
-    using FuncComposition = function<Action(Action, Action)>;
-
-    // core member
-    int N;
-    FuncMonoid OP;
-    FuncAction ACT;
-    FuncComposition COMP;
-    Monoid IDENTITY_MONOID;
-    Action IDENTITY_ACTION;
-    
-    // inner data
-    int log, offset;
-    vector<Monoid> dat;
-    vector<Action> lazy;
+// AtCoder ABC 387 F - Count Arrays
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
+    T_VAL b = m, u = 1, v = 0;
+    while (b > 0) {
+        T_VAL t = a / b;
+        a -= t * b, swap(a, b);
+        u -= t * v, swap(u, v);
+    }
+    u %= m;
+    if (u < 0) u += m;
+    return u;
+}
+template<int MOD = 998244353, bool PRIME = true> struct Fp {
+    // inner value
+    unsigned int val;
     
     // constructor
-    LazySegmentTree() {}
-    LazySegmentTree(const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-                    const Monoid &identity_monoid, const Action &identity_action) 
-                    : OP(op), ACT(act), COMP(comp), 
-                    IDENTITY_MONOID(identity_monoid), IDENTITY_ACTION(identity_action) {}
-    LazySegmentTree(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-                    const Monoid &identity_monoid, const Action &identity_action) {
-        init(n, op, act, comp, identity_monoid, identity_action);
+    constexpr Fp() : val(0) { }
+    template<std::signed_integral T> constexpr Fp(T v) {
+        long long tmp = (long long)(v % (long long)(get_umod()));
+        if (tmp < 0) tmp += get_umod();
+        val = (unsigned int)(tmp);
     }
-    LazySegmentTree(const vector<Monoid> &v,
-                    const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-                    const Monoid &identity_monoid, const Action &identity_action) {
-        init(v, op, act, comp, identity_monoid, identity_action);
+    template<std::unsigned_integral T> constexpr Fp(T v) {
+        val = (unsigned int)(v % get_umod());
     }
-    void init(const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-              const Monoid &identity_monoid, const Action &identity_action) {
-        OP = op, ACT = act, COMP = comp;
-        IDENTITY_MONOID = identity_monoid, IDENTITY_ACTION = identity_action;      
-    }
-    void init(int n) {
-        N = n, 
-        log = 0, offset = 1;
-        while (offset < N) ++log, offset <<= 1;
-        dat.assign(offset * 2, IDENTITY_MONOID);
-        lazy.assign(offset * 2, IDENTITY_ACTION);
-    }
-    void init(const vector<Monoid> &v) {
-        init((int)v.size());
-        build(v);
-    }
-    void init(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-              const Monoid &identity_monoid, const Action &identity_action) {
-        init(op, act, comp, identity_monoid, identity_action);
-        init(n);
-    }
-    void init(const vector<Monoid> &v,
-              const FuncMonoid op, const FuncAction act, const FuncComposition comp,
-              const Monoid &identity_monoid, const Action &identity_action) {
-        init((int)v.size(), op, act, comp, identity_monoid, identity_action);
-        build(v);
-    }
-    void build(const vector<Monoid> &v) {
-        assert(N == (int)v.size());
-        for (int i = 0; i < N; ++i) dat[i + offset] = v[i];
-        for (int k = offset - 1; k > 0; --k) pull_dat(k);
-    }
-    int size() const {
-        return N;
-    }
+    constexpr long long get() const { return val; }
+    constexpr static int get_mod() { return MOD; }
+    constexpr static unsigned int get_umod() { return MOD; }
     
-    // basic functions for lazy segment tree
-    void pull_dat(int k) {
-        dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
+    // arithmetic operators
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp() - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) {
+        val += r.val;
+        if (val >= get_umod()) val -= get_umod();
+        return *this;
     }
-    void apply_lazy(int k, const Action &f) {
-        dat[k] = ACT(f, dat[k]);
-        if (k < offset) lazy[k] = COMP(f, lazy[k]);
+    constexpr Fp& operator -= (const Fp &r) {
+        val -= r.val;
+        if (val >= get_umod()) val += get_umod();
+        return *this;
     }
-    void push_lazy(int k) {
-        apply_lazy(k * 2, lazy[k]);
-        apply_lazy(k * 2 + 1, lazy[k]);
-        lazy[k] = IDENTITY_ACTION;
+    constexpr Fp& operator *= (const Fp &r) {
+        unsigned long long tmp = val;
+        tmp *= r.val;
+        val = (unsigned int)(tmp % get_umod());
+        return *this;
     }
-    void pull_dat_deep(int k) {
-        for (int h = 1; h <= log; ++h) pull_dat(k >> h);
+    constexpr Fp& operator /= (const Fp &r) {
+        return *this = *this * r.inv(); 
     }
-    void push_lazy_deep(int k) {
-        for (int h = log; h >= 1; --h) push_lazy(k >> h);
-    }
-    
-    // setter and getter, update A[i], i is 0-indexed, O(log N)
-    void set(int i, const Monoid &v) {
-        assert(0 <= i && i < N);
-        int k = i + offset;
-        push_lazy_deep(k);
-        dat[k] = v;
-        pull_dat_deep(k);
-    }
-    Monoid get(int i) {
-        assert(0 <= i && i < N);
-        int k = i + offset;
-        push_lazy_deep(k);
-        return dat[k];
-    }
-    Monoid operator [] (int i) {
-        return get(i);
-    }
-    
-    // apply f for index i
-    void apply(int i, const Action &f) {
-        assert(0 <= i && i < N);
-        int k = i + offset;
-        push_lazy_deep(k);
-        dat[k] = ACT(f, dat[k]);
-        pull_dat_deep(k);
-    }
-    // apply f for interval [l, r)
-    void apply(int l, int r, const Action &f) {
-        assert(0 <= l && l <= r && r <= N);
-        if (l == r) return;
-        l += offset, r += offset;
-        for (int h = log; h >= 1; --h) {
-            if (((l >> h) << h) != l) push_lazy(l >> h);
-            if (((r >> h) << h) != r) push_lazy((r - 1) >> h);
-        }
-        int original_l = l, original_r = r;
-        for (; l < r; l >>= 1, r >>= 1) {
-            if (l & 1) apply_lazy(l++, f);
-            if (r & 1) apply_lazy(--r, f);
-        }
-        l = original_l, r = original_r;
-        for (int h = 1; h <= log; ++h) {
-            if (((l >> h) << h) != l) pull_dat(l >> h);
-            if (((r >> h) << h) != r) pull_dat((r - 1) >> h);
-        }
-    }
-    
-    // get prod of interval [l, r)
-    Monoid prod(int l, int r) {
-        assert(0 <= l && l <= r && r <= N);
-        if (l == r) return IDENTITY_MONOID;
-        l += offset, r += offset;
-        for (int h = log; h >= 1; --h) {
-            if (((l >> h) << h) != l) push_lazy(l >> h);
-            if (((r >> h) << h) != r) push_lazy(r >> h);
-        }
-        Monoid val_left = IDENTITY_MONOID, val_right = IDENTITY_MONOID;
-        for (; l < r; l >>= 1, r >>= 1) {
-            if (l & 1) val_left = OP(val_left, dat[l++]);
-            if (r & 1) val_right = OP(dat[--r], val_right);
-        }
-        return OP(val_left, val_right);
-    }
-    Monoid all_prod() {
-        return dat[1];
-    }
-    
-    // get max r that f(get(l, r)) = True (0-indexed), O(log N)
-    // f(IDENTITY) need to be True
-    int max_right(const function<bool(Monoid)> f, int l = 0) {
-        if (l == N) return N;
-        l += offset;
-        push_lazy_deep(l);
-        Monoid sum = IDENTITY_MONOID;
-        do {
-            while (l % 2 == 0) l >>= 1;
-            if (!f(OP(sum, dat[l]))) {
-                while (l < offset) {
-                    push_lazy(l);
-                    l = l * 2;
-                    if (f(OP(sum, dat[l]))) {
-                        sum = OP(sum, dat[l]);
-                        ++l;
-                    }
-                }
-                return l - offset;
-            }
-            sum = OP(sum, dat[l]);
-            ++l;
-        } while ((l & -l) != l);  // stop if l = 2^e
-        return N;
-    }
-
-    // get min l that f(get(l, r)) = True (0-indexed), O(log N)
-    // f(IDENTITY) need to be True
-    int min_left(const function<bool(Monoid)> f, int r = -1) {
-        if (r == 0) return 0;
-        if (r == -1) r = N;
-        r += offset;
-        push_lazy_deep(r - 1);
-        Monoid sum = IDENTITY_MONOID;
-        do {
-            --r;
-            while (r > 1 && (r % 2)) r >>= 1;
-            if (!f(OP(dat[r], sum))) {
-                while (r < offset) {
-                    push_lazy(r);
-                    r = r * 2 + 1;
-                    if (f(OP(dat[r], sum))) {
-                        sum = OP(dat[r], sum);
-                        --r;
-                    }
-                }
-                return r + 1 - offset;
-            }
-            sum = OP(dat[r], sum);
-        } while ((r & -r) != r);
-        return 0;
-    }
-    
-    // debug stream
-    friend ostream& operator << (ostream &s, LazySegmentTree seg) {
-        for (int i = 0; i < (int)seg.size(); ++i) {
-            s << seg[i];
-            if (i != (int)seg.size() - 1) s << " ";
-        }
-        return s;
-    }
-    
-    // dump
-    void dump() {
-        for (int i = 0; i <= log; ++i) {
-            for (int j = (1 << i); j < (1 << (i + 1)); ++j) {
-                cout << "{" << dat[j] << "," << lazy[j] << "} ";
-            }
-            cout << endl;
-        }
-    }
-};
-
-void The2ndSaikyoKonH() {
-    // step 1: 入力と、Functional Graph グラフの分解（無向グラフだが、Functional Graph として見た方がやりやすい）
-    ll N, M; cin >> N >> M;
-    Graph<ll> G(N);
-    REP(i, N) {
-        ll A, C; cin >> A >> C, A--;
-        G.add_edge(i, A, C);
-    }
-    RunConnectedFunctionalGraph<ll> fg(G);
-    int C = fg.cycle.size();
-
-    // step 2: ひげ部分の imos 法処理と、サイクル上のパスの取得
-    vll imos(N, 0);
-    vll X(M), Y(M);
-    vector<pll> paths;
-    REP(i, M) {
-        cin >> X[i] >> Y[i], X[i]--, Y[i]--;
-        int rx = fg.root[X[i]], ry = fg.root[Y[i]];
-        if (rx == ry) {
-            auto lca = fg.get_lca(X[i], Y[i]);
-            imos[X[i]]++, imos[lca]--, imos[Y[i]]++, imos[lca]--;
-        } else {
-            imos[X[i]]++, imos[rx]--, imos[Y[i]]++, imos[ry]--;
-            int idx = fg.cmp[rx], idy = fg.cmp[ry];
-            if (idx > idy) swap(idx, idy);
-            paths.EB(idx, idy);
-        }
-    }
-    auto rec = [&](auto &&rec, int v) -> ll {
-        ll res = 0;
-        for (auto e : fg.childs[v]) {
-            res += rec(rec, e.to);
-            imos[v] += imos[e.to];
-            if (imos[e.to]) res += e.val;
+    constexpr Fp pow(long long n) const {
+        assert(n >= 0);
+        Fp res(1), mul(*this);
+        while (n) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
         }
         return res;
-    };
-    ll mori = 0;
-    for (auto r : fg.roots) mori += rec(rec, r);
-
-    // step 3: サイクル部分の初期コストの計算
-    vector<pll> ini(C);
-    ll all_sum = 0;
-    REP(i, C) ini[i] = pll(0, fg.cycle[i].val), all_sum += fg.cycle[i].val;
-    const ll INF = 1LL << 60;
-    auto op = [&](pll a, pll b) -> pll {
-        if (a.first == b.first) return pll(a.first, a.second + b.second);
-        else return min(a, b);
-    };
-    auto mapping = [&](ll f, pll a) -> pll { return pll(a.first + f, a.second); };
-    auto composition = [&](ll g, ll f) -> ll { return g + f; };
-    LazySegmentTree<pll, ll> seg(ini, op, mapping, composition, pll(INF, 0), 0);
-    auto calc_score = [&]() -> ll {
-        auto [mi, sum] = seg.all_prod();
-        return (mi == 0 ? all_sum - sum : all_sum);
-    };
-    vvll left(N), right(N);
-    REP(i, paths.size()) {
-        auto [x, y] = paths[i];
-        left[x].EB(i), right[y].EB(i), seg.apply(x, y, 1);
     }
-    ll cur = mori + calc_score();
+    constexpr Fp inv() const {
+        if (PRIME) {
+            assert(val);
+            return pow(get_umod() - 2);
+        } else {
+            assert(val);
+            return mod_inv((long long)(val), get_umod());
+        }
+    }
 
-    // step 4: サイクル部分の差分更新の計算
-    ll res = cur;
-    REP(i, N-1) {
-        // erase を ((i-1+N)%N, i) から (i, i+1) に移す
-        // 始点が i になっているやつは、反転する
-        for (auto id : left[i]) {
-            auto [x, y] = paths[id];  // (x < y)
-            seg.apply(x, y, -1);
-            seg.apply(y, C, 1), seg.apply(0, x, 1);
+    // other operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
+    constexpr bool operator < (const Fp &r) const {
+        return this->val < r.val;
+    }
+    constexpr bool operator > (const Fp &r) const {
+        return this->val > r.val;
+    }
+    constexpr bool operator <= (const Fp &r) const {
+        return this->val <= r.val;
+    }
+    constexpr bool operator >= (const Fp &r) const {
+        return this->val >= r.val;
+    }
+    constexpr Fp& operator ++ () {
+        ++val;
+        if (val == get_umod()) val = 0;
+        return *this;
+    }
+    constexpr Fp& operator -- () {
+        if (val == 0) val = get_umod();
+        --val;
+        return *this;
+    }
+    constexpr Fp operator ++ (int) {
+        Fp res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr Fp operator -- (int) {
+        Fp res = *this;
+        --*this;
+        return res;
+    }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+        long long tmp = 1;
+        is >> tmp;
+        tmp = tmp % (long long)(get_umod());
+        if (tmp < 0) tmp += get_umod();
+        x.val = (unsigned int)(tmp);
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+        return os << x.val;
+    }
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+        return r.pow(n);
+    }
+    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+        return r.inv();
+    }
+};
+void ABC_387_F() {
+    using mint = Fp<>;
+    int N, M;
+    cin >> N >> M;
+    vll A(N);
+    Graph<ll> G(N);
+    REP(i, N) {
+        cin >> A[i], A[i]--;
+        G.add_edge(i, A[i]);
+    }
+    RunFunctionalGraph<ll> fg(G);
+
+    vector dp(N, vector(M, mint(0))), sdp(N, vector(M+1, mint(0)));
+    auto rec = [&](auto &&rec, int v) -> void {    
+        for (auto e : fg.childs[v]) rec(rec, e.to);
+        REP(val, M) {
+            dp[v][val] = 1;
+            for (auto e : fg.childs[v]) dp[v][val] *= sdp[e.to][val+1];
+            sdp[v][val+1] = sdp[v][val] + dp[v][val];
         }
-        // 終点が i になっているやつは、反転する
-        for (auto id : right[i]) {
-            auto [x, y] = paths[id];  // (x < y)
-            seg.apply(x, y, 1);
-            seg.apply(y, C, -1), seg.apply(0, x, -1);
+    };
+    mint res = 1;
+    for (auto rts : fg.roots) {
+        mint sub = 0;
+        for (auto r : rts) rec(rec, r);
+        REP(val, M) {
+            mint tmp = 1;
+            for (auto r : rts) tmp *= dp[r][val];
+            sub += tmp;
         }
-        cur = mori + calc_score();
-        chmin(res, cur);
+        res *= sub;
     }
     cout << res << endl;
 }
 
 
 int main() {
-    The2ndSaikyoKonH();
+    ABC_256_E();
+    //ABC_387_F();
 }
