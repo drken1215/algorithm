@@ -7359,7 +7359,7 @@ template<class T = long long> struct RunTree {
 
 // 連結な Functional Graph を、サイクルと森に分解する
 // G[v] の出次数が 1 でなければならない
-template<class T = long long> struct RunFunctionalGraph {
+template<class T = long long> struct RunConnectedFunctionalGraph {
     // cycle
     const int NOT_IN_CYCLE = -1;
     vector<int> roots;  // nodes in the cycle
@@ -7381,8 +7381,8 @@ template<class T = long long> struct RunFunctionalGraph {
     vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root)
 
     // constructor
-    RunFunctionalGraph() {}
-    RunFunctionalGraph(const Graph<T> &G, int s = 0) {
+    RunConnectedFunctionalGraph() {}
+    RunConnectedFunctionalGraph(const Graph<T> &G, int s = 0) {
         init(G, s);
     }
 
@@ -7527,11 +7527,8 @@ template<class T = long long> struct RunFunctionalGraph {
 };
 
 // 連結とは限らない Functional Graph を、サイクルと森に分解していく
-// G[v] := 頂点 v から出ている辺
-template<class T = long long> struct RunDisconnectedFunctionalGraph {
-    // input
-    vector<Edge<T>> G;
-
+// G[v] の出次数は 1 でなければならない
+template<class T = long long> struct RunFunctionalGraph {
     // cycles
     const int NOT_IN_CYCLE = -1;
     vector<vector<int>> roots;  // nodes in each cycle
@@ -7553,9 +7550,9 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
     vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root)
 
     // constructor
-    RunDisconnectedFunctionalGraph() { }
-    RunDisconnectedFunctionalGraph(const vector<Edge<T>> &graph) {
-        init(graph);
+    RunFunctionalGraph() { }
+    RunFunctionalGraph(const Graph<T> &G) {
+        init(G);
     }
 
     // get first / last id of node v in Euler tour
@@ -7635,7 +7632,7 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
     };
     
     // init
-    void detect_all_cycles() {
+    void detect_all_cycles(const Graph<T> &G) {
         int N = (int)G.size();
         roots.clear(), cycles.clear();
         cmp.assign(N, NOT_IN_CYCLE);
@@ -7652,7 +7649,7 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
             do {
                 seen[v] = true;
                 history.push_back(v);
-                v = G[v].to;
+                v = G[v][0].to;
                 if (finished[v]) {
                     v = -1;
                     break;
@@ -7661,32 +7658,37 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
             pop_history();
             return v;
         };
-        auto reconstruct = [&](int r) -> vector<Edge<T>> {
-            vector<int> which_roots;
+        auto reconstruct = [&](int r) -> pair<vector<int>, vector<Edge<T>>> {
+            vector<int> sub_roots;
             vector<Edge<T>> cycle;
             int v = r, iter = 0;
             do {
-                which_roots.emplace_back(v);
-                cycle.emplace_back(G[v]);
+                sub_roots.emplace_back(v);
+                cycle.emplace_back(G[v][0]);
                 cmp[v] = iter++;
-                v = G[v].to;
+                v = G[v][0].to;
             } while (v != r);
-            return cycle;
+            return {sub_roots, cycle};
         };
         for (int v = 0; v < (int)G.size(); ++v) {
             if (finished[v]) continue;
             int r = detect_a_node_in_the_cycle(v);
             if (r == -1) continue;
-            const auto &cycle = reconstruct(r);
-            if (!cycle.empty()) cycles.emplace_back(cycle);
+            auto [sub_roots, cycle] = reconstruct(r);
+            if (!cycle.empty()) {
+                roots.emplace_back(sub_roots);
+                cycles.emplace_back(cycle);
+            }
         }
     }
-    void init(const vector<Edge<T>> &graph, int s = 0) {
-        G = graph;
+    void init(const Graph<T> &G, int s = 0) {
         int N = (int)G.size();
 
+        // step 0: assertion
+        for (int v = 0; v < N; v++) assert(G[v].size() == 1);
+        
         // step 1: detect all cycles
-        detect_all_cycles();
+        detect_all_cycles(G);
 
         // step 2: construct trees
         int D = ceil_pow2(N);
@@ -7695,8 +7697,8 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
             if (cmp[v] != NOT_IN_CYCLE) {
                 parent[0][v] = v;
             } else {
-                childs[G[v].to].emplace_back(Edge<T>(G[v].to, v, G[v].val));
-                parent[0][v] = G[v].to;
+                childs[G[v][0].to].emplace_back(Edge<T>(G[v][0].to, v, G[v][0].val));
+                parent[0][v] = G[v][0].to;
             }
         }
         for (int i = 0; i < D; i++) for (int v = 0; v < N; v++) {
@@ -7716,7 +7718,7 @@ template<class T = long long> struct RunDisconnectedFunctionalGraph {
                 int ch = childs[v][i].to;
                 id[v][ch] = i;
                 e_id[ch * 2] = ord - 1;
-                sum += rec(rec, ch, d + 1, r);
+                sum += rec(rec, ch, d + 1, cid, r);
                 tour[ord] = v, v_t_id[v] = ord, e_id[ch * 2 + 1] = ord - 1;
                 ord++;
             }

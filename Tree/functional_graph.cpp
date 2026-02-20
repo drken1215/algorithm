@@ -168,7 +168,7 @@ template<class T = long long> struct Graph {
 
 // 連結な Functional Graph を、サイクルと森に分解する
 // G[v] の出次数が 1 でなければならない
-template<class T = long long> struct RunFunctionalGraph {
+template<class T = long long> struct RunConnectedFunctionalGraph {
     // cycle
     const int NOT_IN_CYCLE = -1;
     vector<int> roots;  // nodes in the cycle
@@ -190,8 +190,8 @@ template<class T = long long> struct RunFunctionalGraph {
     vector<int> e_id; // the index of edge e (v*2 + (0: root to leaf, 1: leaf to root)
 
     // constructor
-    RunFunctionalGraph() {}
-    RunFunctionalGraph(const Graph<T> &G, int s = 0) {
+    RunConnectedFunctionalGraph() {}
+    RunConnectedFunctionalGraph(const Graph<T> &G, int s = 0) {
         init(G, s);
     }
 
@@ -580,7 +580,7 @@ void The2ndSaikyoKonH() {
         ll A, C; cin >> A >> C, A--;
         G.add_edge(i, A, C);
     }
-    RunFunctionalGraph<ll> fg(G);
+    RunConnectedFunctionalGraph<ll> fg(G);
     int C = fg.cycle.size();
 
     // step 2: ひげ部分の imos 法処理と、サイクル上のパスの取得
