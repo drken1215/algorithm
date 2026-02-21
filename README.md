@@ -296,6 +296,13 @@
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
 
+## 最小カット
+
+- (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cut.cpp)
+- (★★★★) 全域最小カット（Stoer-Wanger 法）
+- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法)
+- (★★★★) Gomory-Hu 木
+
 ## 最小費用流
 
 - (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
@@ -310,13 +317,6 @@
 - (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
 - (★★★☆) [2 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
 - (★★★★) [3 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
-
-## カット
-
-- (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cut.cpp)
-- (★★★★) 全域最小カット（Stoer-Wanger 法）
-- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法)
-- (★★★★) Gomory-Hu 木
 
 ## マッチング
 
