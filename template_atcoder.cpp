@@ -7870,7 +7870,7 @@ template<class Monoid, class Weight = long long> struct ReRooting {
     }
 };
 
-// 辺に重みがある場合
+// 辺に重みがある場合の全方位木 DP
 /*
     通常の木 DP において、頂点 v を根とする部分根付き木に関する再帰関数 rec(v) について、
  　　　1. res = IDENTITY
