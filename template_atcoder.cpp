@@ -4480,6 +4480,8 @@ template<class FLOW, class COST> struct NetworkSimplex {
 
 // Hopcroft-Karp
 struct HopcroftKarp {
+    const int NOT_MATCHED = -1;
+    
     // input
     int size_left, size_right;
     vector<vector<int>> list; // left to right
@@ -4545,7 +4547,7 @@ struct HopcroftKarp {
         for (int i = 0; i < list[left].size(); ++i) {
             int right = list[left][i];
             int next = rl[right];
-            if (next == -1) next = size_left;
+            if (next == NOT_MATCHED) next = size_left;
             if (level[next] > level[left] && hodfs(next)) {
                 rl[right] = left;
                 return true;
@@ -4574,7 +4576,77 @@ struct HopcroftKarp {
             if (finished) break;
         }
         for (int r = 0; r < size_right; r++) {
-            if (rl[r] != -1) lr[rl[r]] = r;
+            if (rl[r] != NOT_MATCHED) lr[rl[r]] = r;
+        }
+        return res;
+    }
+
+    // various construction
+    // max matching
+    vector<pair<int,int>> get_matching() {
+        vector<pair<int,int>> res;
+        for (int v = 0; v < size_left; v++) {
+            if (lr[v] == NOT_MATCHED) continue;
+            res.emplace_back(v, lr[v]);
+        }
+        return res;
+    }
+
+    // enumerate reachable nodes (0: left, 1: right)
+    const int LEFT = 0, RIGHT = 1;
+    pair<vector<bool>, vector<bool>> get_reachable() {
+        vector<bool> can_left(size_left, false);
+        vector<bool> can_right(size_right, false);
+        queue<pair<int,int>> que;
+        for (int v = 0; v < size_left; v++) {
+            if (lr[v] == NOT_MATCHED) {
+                can_left[v] = true;
+                que.push({LEFT, v});
+            }
+        }
+        while (!que.empty()) {
+            auto [which, v] = que.front();
+            que.pop();
+            if (which == LEFT) {
+                for (auto r : list[v]) {
+                    if (!can_right[r]) {
+                        can_right[r] = true;
+                        que.push({RIGHT, r});
+                    }
+                }
+            } else {
+                ll l = rl[v];
+                if (l != NOT_MATCHED && !can_left[l]) {
+                    can_left[l] = true;
+                    que.push({LEFT, l});
+                }
+            }
+        }
+        return {can_left, can_right};
+    }
+
+    // max independent set (0: left, 1: right)
+    vector<pair<int,int>> get_independent_set() {
+        vector<pair<int,int>> res;
+        auto [can_left, can_right] = get_reachable();
+        for (int v = 0; v < size_left; v++) {
+            if (can_left[v]) res.emplace_back(LEFT, v);
+        }
+        for (int v = 0; v < size_right; v++) {
+            if (!can_right[v]) res.emplace_back(RIGHT, v);
+        }
+        return res;
+    }
+
+    // min vertex-cover (0: left, 1: right)
+    vector<pair<int,int>> get_vertex_cover() {
+        vector<pair<int,int>> res;
+        auto [can_left, can_right] = get_reachable();
+        for (int v = 0; v < size_left; v++) {
+            if (!can_left[v]) res.emplace_back(LEFT, v);
+        }
+        for (int v = 0; v < size_right; v++) {
+            if (can_right[v]) res.emplace_back(RIGHT, v);
         }
         return res;
     }
