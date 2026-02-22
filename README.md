@@ -319,9 +319,9 @@
 
 ## マッチングの応用
 
-- (★★★☆) 二部グラフの最大独立集合
-- (★★★☆) 二部グラフの最小点被覆
-- (★★★☆) 二部グラフの最小辺被覆
+- (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_independent_set_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_vertex_cover_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_edge_cover_of_bipartite_graph.cpp)
 - (★★★☆) DAG の最小パス被覆
 
 ## 最小費用流
