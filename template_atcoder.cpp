@@ -2765,7 +2765,7 @@ template<class SemiRing> struct SemiRingMatrix {
     vector<vector<SemiRing>> val;
 
     // operators
-    SemiRing ADD_IDENTITY = 0, MUL_IDENTITY = 1;
+    SemiRing ADD_IDENTITY = SemiRing(), MUL_IDENTITY = SemiRing(1);
     FuncOperator ADD = [](const SemiRing &a, const SemiRing &b) -> SemiRing { 
         return a + b;
     };

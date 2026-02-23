@@ -256,12 +256,12 @@
 
 ## 最短路問題 (基本)
 
-- (★☆☆☆) [重みなしグラフの最短路 (BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
-- (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
-- (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
-- (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
-- (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
-- (★★★☆) [全頂点対間最短路 (Johnson 法, O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
+- (★☆☆☆) [重みなしグラフの最短路 (BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
+- (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
+- (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, in O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
+- (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, in O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
+- (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
+- (★★★☆) [全頂点対間最短路 (Johnson 法, in O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
 - (★★★☆) [SPFA (Shortest Path Faster Algorithm)](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
 - (★★★☆) 最短路問題の双対問題 (俗称: 牛ゲー)
 - (★★★★) 補グラフの最短路
@@ -273,16 +273,16 @@
 - (★★★☆) [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
 - (★★★★) 最小有向全域木 (Chu-Liu/Edmonds 法)
 - (★★★★) [無向グラフの全域木の個数 (行列木定理)](https://github.com/drken1215/algorithm/blob/master/Graph/matrix_tree_theorem.cpp)
-- (★★★★) 最小シュタイナー木 (O(V 3^t + V^2 2^t + V^3))
+- (★★★★) 最小シュタイナー木 (in O(V 3^t + V^2 2^t + V^3))
 
 ## その他
 
 - (★★★☆) ランダムグラフ生成
-- (★★★☆) [最大安定集合問題 (O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/Graph/maximum_stable_set.cpp)
-- (★★★☆) 最大クリーク列挙（O(1.443^V)）
-- (★★★☆) [頂点彩色 (O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
+- (★★★☆) [最大安定集合問題 (in O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/Graph/maximum_stable_set.cpp)
+- (★★★☆) 最大クリーク列挙（in O(1.443^V)）
+- (★★★☆) [頂点彩色 (in O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
 - (★★★★) 辺彩色
-- (★★★★) 二部グラフの辺彩色 (Alon 法, O(E log E))
+- (★★★★) 二部グラフの辺彩色 (Alon 法, in O(E log E))
 
 
 　
@@ -350,38 +350,38 @@
 # 代数 (MATH : ALGEBRA)
 行列計算など代数的計算に関するアルゴリズムです
 
-## 行列の基本
+## 行列クラス
 
 - (★★★☆) [半環上の行列 (加法・乗法, 行列累乗)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_semiring.cpp)
-- (★★★☆) [環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_ring.cpp)
 - (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
+- (★★★★) [一般の環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4 M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_ring.cpp)
+
+## 行列式計算
+
+- (★★★★) [Euclid 環上の行列式 (例：任意 mod 行列式, in O(N^3 ML)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
+- (★★★★) [環上の除算なし行列式 (in O(N^4 M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_without_division.cpp)
+- (★★★★) 多項式行列の行列式 (by ラグランジュ補間, in O(N^3 d))
+- (★★★★) [特性多項式 (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
+- (★★★★) [行列式 det(M0 + M1x) (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
+
+## 行列のアルゴリズム
+
 - (★★★☆) XOR 基底 (俗称：noshi 基底)
-- (★★★★) F2 ベクトル空間の交差
+- (★★★☆) F2 ベクトル空間の交差
 - (★★★★) Strassen 法
-
-## いろいろな行列式計算
-
-- (★★★★) [除算なし行列式計算 (O(N^4 M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_without_division.cpp)
-- (★★★☆) [Euclid 環上の行列式計算 (例：任意 mod 行列式, O(N^3 ML)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
-- (★★★★) 多項式行列の行列式 (by ラグランジュ補間, O(N^3 d))
-- (★★★★) [特性多項式の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
-- (★★★★) [行列式 det(M0 + M1x) の計算 (O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
-
-## いろいろな行列の値
-
 - (★★★★) 余因子行列
 - (★★★★) 多項式行列の prefix product M(0)M(1)...M(K-1)
 - (★★★★) ハフニアン (完全マッチングの個数に帰着)
 - (★★★★) パフィアン
 
-## 特殊な行列の乗法、逆行列
+## さまざまな行列
 
-- (★★★★) Black Box Linear Algebra (行列式などが O(N^2 + N T(N)))
-- (★★★★) 巡回行列 (行列式などが O(N^2))
-- (★★★★) 上三角 Toeplitz 行列 (行列式などが O(N^2))
-- (★★★★) K 重対角行列 (行列式などが O(NK^2))
+- (★★★★) Black Box Linear Algebra (行列式計算 in O(N^2 + N T(N)))
+- (★★★★) 巡回行列 (行列式計算 in O(N^2))
+- (★★★★) 上三角 Toeplitz 行列 (行列式計算 in O(N^2))
+- (★★★★) K 重対角行列 (行列式計算 in O(NK^2))
 - (★★★★) 二項係数行列の作用
 - (★★★★) スターリング数行列の作用
 
@@ -416,6 +416,11 @@
 - (★★★★) 常微分方程式
 - (★★★★) 三角関数
 
+## さまざまな FPS
+
+- (★★★★) オンライン FPS
+- (★★★★) 多変数 FPS
+
 ## 多項式の基底変換
 
 - (★★★☆) [Polynomial Taylor Shift (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
@@ -425,7 +430,7 @@
 - (★★★★) [多項式補間 (等比数列のとき) (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
 - (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_monomial_to_newton.cpp)
 
-## 多項式のその他のアルゴリズム
+## 多項式のアルゴリズム
 
 - (★★★☆) [多項式マージテク (次数の総和が D の多項式の総積 in O(D (log D)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_merge_technique.cpp)
 - (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mod_pow.cpp)
@@ -434,11 +439,6 @@
 - (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
 - (★★★★) [多項式 GCD (by half-gcd) (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
 - (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_root_finding.cpp)
-
-## さまざまな FPS
-
-- (★★★★) オンライン FPS
-- (★★★★) 多変数 FPS
 
 ## さまざまな値の高速計算
 
