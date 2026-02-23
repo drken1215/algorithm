@@ -2510,6 +2510,24 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
 // Polynomial Algorithms
 //------------------------------//
 
+// polynomial merge technique
+template<class mint> FPS<mint> all_product(const vector<FPS<mint>> &fs) {
+    using Node = pair<int, FPS<mint>>;
+    priority_queue<Node, vector<Node>, greater<Node>> que;
+    que.push({0, FPS<mint>{1}});
+    for (const auto &f : fs) que.push({(int)f.size(), f});
+    while (que.size() >= 2) {
+        auto [df, f] = que.top();
+        que.pop();
+        auto [dg, g] = que.top();
+        que.pop();
+        auto h = f * g;
+        que.push({(int)h.size(), h});
+    }
+    auto [deg, res] = que.top();
+    return res;
+}
+
 // find f(x)^n mod g(x)
 template<class mint, class T_VAL = long long> 
 FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
