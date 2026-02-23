@@ -1,9 +1,9 @@
 //
 // 一般の可換環上の行列 (加法・乗法, 行列累乗, 行列式 (in O(N^4))
 //   Ring は「加法」「減法」「乗法」が定義されているクラス。コンストラクタで以下の情報を渡す。
-//　　・コンストラクタで、ADD (加法), MUL (乗法), ADD_IDENTITY (加法の単位元), MUL_IDENTITY (乗法の単位元)
+//　　・ADD (加法), SUB (減法), MUL (乗法), ADD_IDENTITY (加法の単位元), MUL_IDENTITY (乗法の単位元)
 //　　・何もしなければ、通常の演算子「+」「-」「*」が呼び出される
-//   行列式を除算なしで O(N^4) で求める方法がある。
+//   行列式を除算なしで O(N^4) で求める
 //
 // reference:
 //   https://noshi91.hatenablog.com/entry/2020/11/28/115621
@@ -27,34 +27,22 @@ template<class Ring> struct RingMatrix {
     vector<vector<Ring>> val;
 
     // operators
-    Ring ADD_IDENTITY = Ring(), MUL_IDENTITY = Ring(1);
-    FuncOperator ADD = [](const Ring &a, const Ring &b) -> Ring { return a + b; };
-    FuncOperator SUB = [](const Ring &a, const Ring &b) -> Ring { return a - b; };
-    FuncOperator MUL = [](const Ring &a, const Ring &b) -> Ring { return a * b; };
+    FuncOperator ADD, SUB, MUL;
+    Ring ADD_IDENTITY;
+    Ring MUL_IDENTITY;
     
     // constructors
-    RingMatrix() : H(0), W(0) {}
-    RingMatrix(int H, int W) : H(H), W(W), val(H, vector<Ring>(W, ADD_IDENTITY)) {}
-    RingMatrix(int H, int W, Ring v) : H(H), W(W), val(H, vector<Ring>(W, v)) {}
-    RingMatrix(const RingMatrix &mat) 
-        : H(mat.H), W(mat.W), val(mat.val)
-        , ADD(mat.ADD), SUB(mat.sub), MUL(mat.MUL)
-        , ADD_IDENTITY(mat.ADD_IDENTITY), MUL_IDENTITY(mat.MUL_IDENTITY) {}
-    RingMatrix(int H, int W
-        , const FuncOperator add, const FuncOperator sub, const FuncOperator mul
-        , const Ring &add_identity, const Ring &mul_identity) {
-        init(H, W, add, mul, add_identity, mul_identity);
-    }
-    void init(int h, int w, const Ring &x) {
-        H = h, W = w;
-        val.assign(h, vector<Ring>(w, x));
-    }
+    RingMatrix() {}
+    RingMatrix(int h, int w
+    , FuncOperator add, FuncOperator sub, FuncOperator mul, Ring add_id, Ring mul_id)
+        : H(h), W(w), val(h, vector<Ring>(w, add_id))
+        , ADD(add), SUB(sub), MUL(mul)
+        , ADD_IDENTITY(add_id), MUL_IDENTITY(mul_id) {}
     void init(int h, int w
-    , const FuncOperator add, const FuncOperator sub, const FuncOperator mul
-    , const Ring &add_identity, const Ring &mul_identity) {
+    , FuncOperator add, FuncOperator sub, FuncOperator mul, Ring add_id, Ring mul_id) {
         H = h, W = w;
         ADD = add, SUB = sub, MUL = mul;
-        ADD_IDENTITY = add_identity, MUL_IDENTITY = mul_identity;
+        ADD_IDENTITY = add_id, MUL_IDENTITY = mul_id;
         val.assign(h, vector<Ring>(w, ADD_IDENTITY));
     }
     void resize(int h, int w) {
@@ -62,6 +50,8 @@ template<class Ring> struct RingMatrix {
         val.resize(h);
         for (int i = 0; i < h; ++i) val[i].resize(w);
     }
+    RingMatrix(const RingMatrix&) = default;
+    RingMatrix& operator = (const RingMatrix&) = default;
     
     // getter and debugger
     constexpr int height() const { return H; }
@@ -69,7 +59,7 @@ template<class Ring> struct RingMatrix {
     constexpr bool empty() const { return height() == 0; }
     vector<Ring>& operator [] (int i) { return val[i]; }
     const vector<Ring>& operator [] (int i) const { return val[i]; }
-    friend constexpr ostream& operator << (ostream &os, const RingMatrix<Ring> &mat) {
+    friend constexpr ostream& operator << (ostream &os, const RingMatrix &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
                 if (j) os << ' ';
@@ -92,12 +82,21 @@ template<class Ring> struct RingMatrix {
     constexpr RingMatrix& operator += (const RingMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        assert(ADD_IDENTITY == r.ADD_IDENTITY), assert(MUL_IDENTITY == r.MUL_IDENTITY);
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        assert(ADD_IDENTITY == r.ADD_IDENTITY);
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
                 val[i][j] = ADD(val[i][j], r.val[i][j]);
-            }
-        }
+        return *this;
+    }
+    constexpr RingMatrix& operator -= (const RingMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        assert(ADD_IDENTITY == r.ADD_IDENTITY);
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = SUB(val[i][j], r.val[i][j]);
         return *this;
     }
     constexpr RingMatrix& operator *= (const Ring &v) {
@@ -108,7 +107,8 @@ template<class Ring> struct RingMatrix {
     }
     constexpr RingMatrix& operator *= (const RingMatrix &r) {
         assert(width() == r.height());
-        assert(ADD_IDENTITY == r.ADD_IDENTITY), assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        assert(ADD_IDENTITY == r.ADD_IDENTITY);
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
         RingMatrix<Ring> res(height(), r.width(), ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY);
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < r.width(); ++j)
@@ -121,6 +121,13 @@ template<class Ring> struct RingMatrix {
     }
     constexpr RingMatrix operator + (const RingMatrix &r) const { 
         return RingMatrix(*this) += r;
+    }
+    constexpr RingMatrix operator - () const {
+        RingMatrix res(*this);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res.val[i][j] = SUB(ADD_IDENTITY, res.val[i][j]);
+        return res;
     }
     constexpr RingMatrix operator * (const Ring &v) const { 
         return RingMatrix(*this) *= v;
@@ -145,7 +152,7 @@ template<class Ring> struct RingMatrix {
                 res[row][col] = val[col][row];
         return res;
     }
-    friend constexpr RingMatrix<Ring> trans(const RingMatrix<Ring> &mat) {
+    friend constexpr RingMatrix trans(const RingMatrix &mat) {
         return mat.trans();
     }
     
@@ -162,8 +169,36 @@ template<class Ring> struct RingMatrix {
         }
         return res;
     }
-    friend constexpr RingMatrix<Ring> pow(const RingMatrix<Ring> &mat, long long n) {
+    friend constexpr RingMatrix pow(const RingMatrix &mat, long long n) {
         return mat.pow(n);
+    }
+
+    // determinant (without division, O(N^4))
+    constexpr Ring det() const {
+        assert(height() == width());
+        if (height() == 0) return MUL_IDENTITY;
+        int N = height();
+        vector<vector<Ring>> dp(N + 1, vector<Ring>(N + 1, ADD_IDENTITY));
+        for (int i = 0; i <= N; i++) dp[i][i] = MUL_IDENTITY;
+        for (int step = 0; step < N; step++) {
+            vector<vector<Ring>> nex(N + 1, vector<Ring>(N + 1, ADD_IDENTITY));
+            for (int row = 0; row < N; row++) {
+                for (int col = row; col < N; col++) {
+                    for (int col2 = row + 1; col2 < N; col2++) {
+                        nex[row][col2] = SUB(nex[row][col2], MUL(dp[row][col], (*this)[col][col2]));
+                    }
+                    Ring tmp = MUL(dp[row][col], (*this)[col][row]);
+                    for (int col2 = row + 1; col2 <= N; col2++) {
+                        nex[col2][col2] = ADD(nex[col2][col2], tmp);
+                    }
+                }
+            }
+            swap(dp, nex);
+        }
+        return dp[N][N];
+    }
+    friend constexpr Ring det(const RingMatrix &mat) {
+        return mat.det();
     }
 };
 
@@ -173,7 +208,6 @@ template<class Ring> struct RingMatrix {
 //------------------------------//
 
 // yukicoder No.1303 Inconvenient Kingdom
-// Union-Find
 struct UnionFind {
     // core member
     vector<int> par, nex;
@@ -212,7 +246,7 @@ struct UnionFind {
     int size(int x) {
         return -par[root(x)];
     }
-    
+
     // get group
     vector<int> group(int x) {
         vector<int> res({x});
@@ -230,17 +264,6 @@ struct UnionFind {
         }
         return res;
     }
-    
-    // debug
-    friend ostream& operator << (ostream &s, UnionFind uf) {
-        const vector<vector<int>> &gs = uf.groups();
-        for (const vector<int> &g : gs) {
-            s << "group: ";
-            for (int v : g) s << v << " ";
-            s << endl;
-        }
-        return s;
-    }
 };
 
 // mod inv
@@ -257,60 +280,54 @@ constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
     return u;
 }
 
-// dynamic modint
-struct DynamicModint {
-    using mint = DynamicModint;
-    
-    // static menber
-    static int MOD;
-    
+// modint
+template<int MOD = 998244353, bool PRIME = true> struct Fp {
     // inner value
     unsigned int val;
     
     // constructor
-    DynamicModint() : val(0) { }
-    template<std::signed_integral T> DynamicModint(T v) {
+    constexpr Fp() : val(0) { }
+    template<std::signed_integral T> constexpr Fp(T v) {
         long long tmp = (long long)(v % (long long)(get_umod()));
         if (tmp < 0) tmp += get_umod();
         val = (unsigned int)(tmp);
     }
-    template<std::unsigned_integral T> DynamicModint(T v) {
+    template<std::unsigned_integral T> constexpr Fp(T v) {
         val = (unsigned int)(v % get_umod());
     }
-    long long get() const { return val; }
-    static int get_mod() { return MOD; }
-    static unsigned int get_umod() { return MOD; }
-    static void set_mod(int mod) { MOD = mod; }
+    constexpr long long get() const { return val; }
+    constexpr static int get_mod() { return MOD; }
+    constexpr static unsigned int get_umod() { return MOD; }
     
     // arithmetic operators
-    mint operator + () const { return mint(*this); }
-    mint operator - () const { return mint() - mint(*this); }
-    mint operator + (const mint &r) const { return mint(*this) += r; }
-    mint operator - (const mint &r) const { return mint(*this) -= r; }
-    mint operator * (const mint &r) const { return mint(*this) *= r; }
-    mint operator / (const mint &r) const { return mint(*this) /= r; }
-    mint& operator += (const mint &r) {
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp() - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) {
         val += r.val;
         if (val >= get_umod()) val -= get_umod();
         return *this;
     }
-    mint& operator -= (const mint &r) {
+    constexpr Fp& operator -= (const Fp &r) {
         val -= r.val;
         if (val >= get_umod()) val += get_umod();
         return *this;
     }
-    mint& operator *= (const mint &r) {
+    constexpr Fp& operator *= (const Fp &r) {
         unsigned long long tmp = val;
         tmp *= r.val;
         val = (unsigned int)(tmp % get_umod());
         return *this;
     }
-    mint& operator /= (const mint &r) {
+    constexpr Fp& operator /= (const Fp &r) {
         return *this = *this * r.inv(); 
     }
-    mint pow(long long n) const {
+    constexpr Fp pow(long long n) const {
         assert(n >= 0);
-        mint res(1), mul(*this);
+        Fp res(1), mul(*this);
         while (n) {
             if (n & 1) res *= mul;
             mul *= mul;
@@ -318,51 +335,56 @@ struct DynamicModint {
         }
         return res;
     }
-    mint inv() const {
-        assert(val);
-        return mod_inv((long long)(val), get_umod());
+    constexpr Fp inv() const {
+        if (PRIME) {
+            assert(val);
+            return pow(get_umod() - 2);
+        } else {
+            assert(val);
+            return mod_inv((long long)(val), get_umod());
+        }
     }
 
     // other operators
-    bool operator == (const mint &r) const {
+    constexpr bool operator == (const Fp &r) const {
         return this->val == r.val;
     }
-    bool operator != (const mint &r) const {
+    constexpr bool operator != (const Fp &r) const {
         return this->val != r.val;
     }
-    bool operator < (const mint &r) const {
+    constexpr bool operator < (const Fp &r) const {
         return this->val < r.val;
     }
-    bool operator > (const mint &r) const {
+    constexpr bool operator > (const Fp &r) const {
         return this->val > r.val;
     }
-    bool operator <= (const mint &r) const {
+    constexpr bool operator <= (const Fp &r) const {
         return this->val <= r.val;
     }
-    bool operator >= (const mint &r) const {
+    constexpr bool operator >= (const Fp &r) const {
         return this->val >= r.val;
     }
-    mint& operator ++ () {
+    constexpr Fp& operator ++ () {
         ++val;
         if (val == get_umod()) val = 0;
         return *this;
     }
-    mint& operator -- () {
+    constexpr Fp& operator -- () {
         if (val == 0) val = get_umod();
         --val;
         return *this;
     }
-    mint operator ++ (int) {
-        mint res = *this;
+    constexpr Fp operator ++ (int) {
+        Fp res = *this;
         ++*this;
         return res;
     }
-    mint operator -- (int) {
-        mint res = *this;
+    constexpr Fp operator -- (int) {
+        Fp res = *this;
         --*this;
         return res;
     }
-    friend istream& operator >> (istream &is, mint &x) {
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
         long long tmp = 1;
         is >> tmp;
         tmp = tmp % (long long)(get_umod());
@@ -370,17 +392,16 @@ struct DynamicModint {
         x.val = (unsigned int)(tmp);
         return is;
     }
-    friend ostream& operator << (ostream &os, const mint &x) {
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
         return os << x.val;
     }
-    friend mint pow(const mint &r, long long n) {
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
         return r.pow(n);
     }
-    friend mint inv(const mint &r) {
+    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
         return r.inv();
     }
 };
-int DynamicModint::MOD;
 
 void yukicoder_1303_general_det() {
     using mint = Fp<>;
@@ -396,10 +417,13 @@ void yukicoder_1303_general_det() {
     }
 
     auto calc = [&](const vector<int> &group) -> mint {
+        auto add = [&](mint a, mint b) -> mint { return a + b; };
+        auto sub = [&](mint a, mint b) -> mint { return a - b; };
+        auto mul = [&](mint a, mint b) -> mint { return a * b; };
         vector<int> conv(N, -1);
         int iter = 0;
         for (auto v : group) conv[v] = iter++;
-        GeneralMatrix<mint> L(iter, iter, mint(0), mint(1));
+        RingMatrix<mint> L(iter, iter, add, sub, mul, 0, 1);
         for (int i = 0; i < iter; i++) L[i][i] = 1;
         for (auto v1 : group) {
             int i = conv[v1];
@@ -416,16 +440,6 @@ void yukicoder_1303_general_det() {
 
     auto groups = uf.groups();
     if (groups.size() > 1) {
-        using Node = pair<mint, mint>;
-        auto add = [&](Node a, Node b) -> Node { 
-            return Node(a.first + b.first, a.second + b.second); 
-        };
-        auto sub = [&](Node a, Node b) -> Node { 
-            return Node(a.first - b.first, a.second - b.second); 
-        };
-        auto mul = [&](Node a, Node b) -> Node { 
-            return Node(a.first * b.first, a.first * b.second + a.second * b.first);
-        };
         mint res = 1;
         vector<long long> siz;
         for (auto group : groups) siz.push_back(group.size()), res *= calc(group);
@@ -446,9 +460,19 @@ void yukicoder_1303_general_det() {
         }
         cout << huben << endl << res << endl;
     } else {
+        using Node = pair<mint, mint>;
+        auto add = [&](Node a, Node b) -> Node { 
+            return Node(a.first + b.first, a.second + b.second); 
+        };
+        auto sub = [&](Node a, Node b) -> Node { 
+            return Node(a.first - b.first, a.second - b.second); 
+        };
+        auto mul = [&](Node a, Node b) -> Node { 
+            return Node(a.first * b.first, a.first * b.second + a.second * b.first);
+        };
         long long huben = 0;
         Node zero(0, 0), one(1, 0);
-        GeneralMatrix<Node> L(N, N, zero, one);
+        RingMatrix<Node> L(N, N, add, sub, mul, zero, one);
         for (int i = 0; i < N; i++) L[i][i] = one;
         for (int i = 0; i < N-1; i++) {
             L[i][i] = Node(mint(degs[i]), mint(N - 1 - degs[i]));
