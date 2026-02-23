@@ -352,10 +352,12 @@
 
 ## 行列の基本
 
-- (★★★☆) [行列累乗, 連立一次方程式 (実数)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
-- (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (mod. p)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
-- (★★★☆) [行列累乗, 行列式, 逆行列, ランク, 連立一次方程式 (F2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
-- (★★★☆) XOR 基底
+- (★★★☆) [半環上の行列 (加法・乗法, 行列累乗)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_semiring.cpp)
+- (★★★☆) [環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_ring.cpp)
+- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
+- (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
+- (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
+- (★★★☆) XOR 基底 (俗称：noshi 基底)
 - (★★★★) F2 ベクトル空間の交差
 - (★★★★) Strassen 法
 
