@@ -2765,34 +2765,23 @@ template<class SemiRing> struct SemiRingMatrix {
     vector<vector<SemiRing>> val;
 
     // operators
-    SemiRing ADD_IDENTITY = SemiRing(), MUL_IDENTITY = SemiRing(1);
-    FuncOperator ADD = [](const SemiRing &a, const SemiRing &b) -> SemiRing { 
-        return a + b;
-    };
-    FuncOperator MUL = [](const SemiRing &a, const SemiRing &b) -> SemiRing { 
-        return a * b;
-    };
+    FuncOperator ADD, MUL;
+    SemiRing ADD_IDENTITY, MUL_IDENTITY;
     
     // constructors
-    SemiRingMatrix() : H(0), W(0) {}
-    SemiRingMatrix(int H, int W) : H(H), W(W), val(H, vector<SemiRing>(W, ADD_IDENTITY)) {}
-    SemiRingMatrix(int H, int W, SemiRing v) : H(H), W(W), val(H, vector<SemiRing>(W, v)) {}
-    SemiRingMatrix(const SemiRingMatrix &mat) : H(mat.H), W(mat.W), val(mat.val)
-        , ADD(mat.ADD), MUL(mat.MUL)
-        , ADD_IDENTITY(mat.ADD_IDENTITY), MUL_IDENTITY(mat.MUL_IDENTITY) {}
-    SemiRingMatrix(int H, int W, const FuncOperator add, const FuncOperator mul
-        , const SemiRing &add_identity, const SemiRing &mul_identity) {
-        init(H, W, add, mul, add_identity, mul_identity);
-    }
-    void init(int h, int w, const SemiRing &x) {
-        H = h, W = w;
-        val.assign(h, vector<SemiRing>(w, x));
-    }
-    void init(int h, int w, const FuncOperator add, const FuncOperator mul
-    , const SemiRing &add_identity, const SemiRing &mul_identity) {
+    SemiRingMatrix() {}
+    SemiRingMatrix(const SemiRingMatrix&) = default;
+    SemiRingMatrix& operator = (const SemiRingMatrix&) = default;
+    SemiRingMatrix(int h, int w
+    , FuncOperator add, FuncOperator mul, SemiRing add_id, SemiRing mul_id)
+        : H(h), W(w), val(h, vector<SemiRing>(w, add_id))
+        , ADD(add), MUL(mul)
+        , ADD_IDENTITY(add_id), MUL_IDENTITY(mul_id) {}
+    void init(int h, int w
+    , FuncOperator add, FuncOperator mul, SemiRing add_id, SemiRing mul_id) {
         H = h, W = w;
         ADD = add, MUL = mul;
-        ADD_IDENTITY = add_identity, MUL_IDENTITY = mul_identity;
+        ADD_IDENTITY = add_id, MUL_IDENTITY = mul_id;
         val.assign(h, vector<SemiRing>(w, ADD_IDENTITY));
     }
     void resize(int h, int w) {
@@ -2807,7 +2796,7 @@ template<class SemiRing> struct SemiRingMatrix {
     constexpr bool empty() const { return height() == 0; }
     vector<SemiRing>& operator [] (int i) { return val[i]; }
     const vector<SemiRing>& operator [] (int i) const { return val[i]; }
-    friend constexpr ostream& operator << (ostream &os, const SemiRingMatrix<SemiRing> &mat) {
+    friend ostream& operator << (ostream &os, const SemiRingMatrix<SemiRing> &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
                 if (j) os << ' ';
@@ -2830,7 +2819,8 @@ template<class SemiRing> struct SemiRingMatrix {
     constexpr SemiRingMatrix& operator += (const SemiRingMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        assert(ADD_IDENTITY == r.ADD_IDENTITY), assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        assert(ADD_IDENTITY == r.ADD_IDENTITY); 
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
         for (int i = 0; i < height(); ++i) {
             for (int j = 0; j < width(); ++j) {
                 val[i][j] = ADD(val[i][j], r.val[i][j]);
@@ -2846,7 +2836,8 @@ template<class SemiRing> struct SemiRingMatrix {
     }
     constexpr SemiRingMatrix& operator *= (const SemiRingMatrix &r) {
         assert(width() == r.height());
-        assert(ADD_IDENTITY == r.ADD_IDENTITY), assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        assert(ADD_IDENTITY == r.ADD_IDENTITY); 
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
         SemiRingMatrix<SemiRing> res(height(), r.width(), ADD, MUL, ADD_IDENTITY, MUL_IDENTITY);
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < r.width(); ++j)
@@ -2902,6 +2893,191 @@ template<class SemiRing> struct SemiRingMatrix {
     }
     friend constexpr SemiRingMatrix<SemiRing> pow(const SemiRingMatrix<SemiRing> &mat, long long n) {
         return mat.pow(n);
+    }
+};
+
+// general ring matrix (define ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY)
+template<class Ring> struct RingMatrix {
+    using FuncOperator = function<Ring(Ring, Ring)>;
+
+    // inner value
+    int H, W;
+    vector<vector<Ring>> val;
+
+    // operators
+    FuncOperator ADD, SUB, MUL;
+    Ring ADD_IDENTITY, MUL_IDENTITY;
+    
+    // constructors
+    RingMatrix() {}
+    RingMatrix(const RingMatrix&) = default;
+    RingMatrix& operator = (const RingMatrix&) = default;
+    RingMatrix(int h, int w
+    , FuncOperator add, FuncOperator sub, FuncOperator mul
+    , Ring add_id, Ring mul_id)
+        : H(h), W(w), val(h, vector<Ring>(w, add_id))
+        , ADD(add), SUB(sub), MUL(mul)
+        , ADD_IDENTITY(add_id), MUL_IDENTITY(mul_id) {}
+    void init(int h, int w
+    , FuncOperator add, FuncOperator sub, FuncOperator mul
+    , Ring add_id, Ring mul_id) {
+        H = h, W = w;
+        ADD = add, SUB = sub, MUL = mul;
+        ADD_IDENTITY = add_id, MUL_IDENTITY = mul_id;
+        val.assign(h, vector<Ring>(w, ADD_IDENTITY));
+    }
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
+    }
+    
+    // getter and debugger
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
+    vector<Ring>& operator [] (int i) { return val[i]; }
+    const vector<Ring>& operator [] (int i) const { return val[i]; }
+    friend constexpr ostream& operator << (ostream &os, const RingMatrix &mat) {
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) {
+                if (j) os << ' ';
+                os << mat.val[i][j];
+            }
+            os << '\n';
+        }
+        return os;
+    }
+    
+    // comparison operators
+    constexpr bool operator == (const RingMatrix &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const RingMatrix &r) const {
+        return this->val != r.val;
+    }
+    
+    // arithmetic operators
+    constexpr RingMatrix& operator += (const RingMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        assert(ADD_IDENTITY == r.ADD_IDENTITY);
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = ADD(val[i][j], r.val[i][j]);
+        return *this;
+    }
+    constexpr RingMatrix& operator -= (const RingMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        assert(ADD_IDENTITY == r.ADD_IDENTITY);
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = SUB(val[i][j], r.val[i][j]);
+        return *this;
+    }
+    constexpr RingMatrix& operator *= (const Ring &v) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = MUL(val[i][j], v);
+        return *this;
+    }
+    constexpr RingMatrix& operator *= (const RingMatrix &r) {
+        assert(width() == r.height());
+        assert(ADD_IDENTITY == r.ADD_IDENTITY);
+        assert(MUL_IDENTITY == r.MUL_IDENTITY);
+        RingMatrix<Ring> res(height(), r.width(), ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < r.width(); ++j)
+                for (int k = 0; k < width(); ++k)
+                    res[i][j] = ADD(res[i][j], MUL(val[i][k], r.val[k][j]));
+        return (*this) = res;
+    }
+    constexpr RingMatrix operator + () const { 
+        return RingMatrix(*this);
+    }
+    constexpr RingMatrix operator + (const RingMatrix &r) const { 
+        return RingMatrix(*this) += r;
+    }
+    constexpr RingMatrix operator - () const {
+        RingMatrix res(*this);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res.val[i][j] = SUB(ADD_IDENTITY, res.val[i][j]);
+        return res;
+    }
+    constexpr RingMatrix operator * (const Ring &v) const { 
+        return RingMatrix(*this) *= v;
+    }
+    constexpr RingMatrix operator * (const RingMatrix &r) const { 
+        return RingMatrix(*this) *= r;
+    }
+    constexpr vector<Ring> operator * (const vector<Ring> &v) const {
+        assert(width() == v.size());
+        vector<Ring> res(height(), ADD_IDENTITY);
+        for (int i = 0; i < height(); i++)
+            for (int j = 0; j < width(); j++)
+                res[i] = ADD(res[i], MUL(val[i][j], v[j]));
+        return res;
+    }
+
+    // transpose
+    constexpr RingMatrix trans() const {
+        RingMatrix<Ring> res(width(), height(), ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY);
+        for (int row = 0; row < width(); row++)
+            for (int col = 0; col < height(); col++)
+                res[row][col] = val[col][row];
+        return res;
+    }
+    friend constexpr RingMatrix trans(const RingMatrix &mat) {
+        return mat.trans();
+    }
+    
+    // pow
+    constexpr RingMatrix pow(long long n) const {
+        assert(height() == width());
+        RingMatrix<Ring> res(height(), width(), ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY);
+        RingMatrix<Ring> mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = MUL_IDENTITY;
+        while (n > 0) {
+            if (n & 1) res = res * mul;
+            mul = mul * mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    friend constexpr RingMatrix pow(const RingMatrix &mat, long long n) {
+        return mat.pow(n);
+    }
+
+    // determinant (without division, O(N^4))
+    constexpr Ring det() const {
+        assert(height() == width());
+        if (height() == 0) return MUL_IDENTITY;
+        int N = height();
+        vector<vector<Ring>> dp(N + 1, vector<Ring>(N + 1, ADD_IDENTITY));
+        for (int i = 0; i <= N; i++) dp[i][i] = MUL_IDENTITY;
+        for (int step = 0; step < N; step++) {
+            vector<vector<Ring>> nex(N + 1, vector<Ring>(N + 1, ADD_IDENTITY));
+            for (int row = 0; row < N; row++) {
+                for (int col = row; col < N; col++) {
+                    for (int col2 = row + 1; col2 < N; col2++) {
+                        nex[row][col2] = SUB(nex[row][col2], MUL(dp[row][col], (*this)[col][col2]));
+                    }
+                    Ring tmp = MUL(dp[row][col], (*this)[col][row]);
+                    for (int col2 = row + 1; col2 <= N; col2++) {
+                        nex[col2][col2] = ADD(nex[col2][col2], tmp);
+                    }
+                }
+            }
+            swap(dp, nex);
+        }
+        return dp[N][N];
+    }
+    friend constexpr Ring det(const RingMatrix &mat) {
+        return mat.det();
     }
 };
 

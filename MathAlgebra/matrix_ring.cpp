@@ -18,7 +18,7 @@
 using namespace std;
 
 
-// general semiring matrix (define ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY)
+// general ring matrix (define ADD, SUB, MUL, ADD_IDENTITY, MUL_IDENTITY)
 template<class Ring> struct RingMatrix {
     using FuncOperator = function<Ring(Ring, Ring)>;
 
@@ -28,18 +28,21 @@ template<class Ring> struct RingMatrix {
 
     // operators
     FuncOperator ADD, SUB, MUL;
-    Ring ADD_IDENTITY;
-    Ring MUL_IDENTITY;
+    Ring ADD_IDENTITY, MUL_IDENTITY;
     
     // constructors
     RingMatrix() {}
+    RingMatrix(const RingMatrix&) = default;
+    RingMatrix& operator = (const RingMatrix&) = default;
     RingMatrix(int h, int w
-    , FuncOperator add, FuncOperator sub, FuncOperator mul, Ring add_id, Ring mul_id)
+    , FuncOperator add, FuncOperator sub, FuncOperator mul
+    , Ring add_id, Ring mul_id)
         : H(h), W(w), val(h, vector<Ring>(w, add_id))
         , ADD(add), SUB(sub), MUL(mul)
         , ADD_IDENTITY(add_id), MUL_IDENTITY(mul_id) {}
     void init(int h, int w
-    , FuncOperator add, FuncOperator sub, FuncOperator mul, Ring add_id, Ring mul_id) {
+    , FuncOperator add, FuncOperator sub, FuncOperator mul
+    , Ring add_id, Ring mul_id) {
         H = h, W = w;
         ADD = add, SUB = sub, MUL = mul;
         ADD_IDENTITY = add_id, MUL_IDENTITY = mul_id;
@@ -50,8 +53,6 @@ template<class Ring> struct RingMatrix {
         val.resize(h);
         for (int i = 0; i < h; ++i) val[i].resize(w);
     }
-    RingMatrix(const RingMatrix&) = default;
-    RingMatrix& operator = (const RingMatrix&) = default;
     
     // getter and debugger
     constexpr int height() const { return H; }

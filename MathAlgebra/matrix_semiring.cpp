@@ -23,34 +23,23 @@ template<class SemiRing> struct SemiRingMatrix {
     vector<vector<SemiRing>> val;
 
     // operators
-    SemiRing ADD_IDENTITY = SemiRing(), MUL_IDENTITY = SemiRing(1);
-    FuncOperator ADD = [](const SemiRing &a, const SemiRing &b) -> SemiRing { 
-        return a + b;
-    };
-    FuncOperator MUL = [](const SemiRing &a, const SemiRing &b) -> SemiRing { 
-        return a * b;
-    };
+    FuncOperator ADD, MUL;
+    SemiRing ADD_IDENTITY, MUL_IDENTITY;
     
     // constructors
-    SemiRingMatrix() : H(0), W(0) {}
-    SemiRingMatrix(int H, int W) : H(H), W(W), val(H, vector<SemiRing>(W, ADD_IDENTITY)) {}
-    SemiRingMatrix(int H, int W, SemiRing v) : H(H), W(W), val(H, vector<SemiRing>(W, v)) {}
-    SemiRingMatrix(const SemiRingMatrix &mat) : H(mat.H), W(mat.W), val(mat.val)
-        , ADD(mat.ADD), MUL(mat.MUL)
-        , ADD_IDENTITY(mat.ADD_IDENTITY), MUL_IDENTITY(mat.MUL_IDENTITY) {}
-    SemiRingMatrix(int H, int W, const FuncOperator add, const FuncOperator mul
-        , const SemiRing &add_identity, const SemiRing &mul_identity) {
-        init(H, W, add, mul, add_identity, mul_identity);
-    }
-    void init(int h, int w, const SemiRing &x) {
-        H = h, W = w;
-        val.assign(h, vector<SemiRing>(w, x));
-    }
-    void init(int h, int w, const FuncOperator add, const FuncOperator mul
-    , const SemiRing &add_identity, const SemiRing &mul_identity) {
+    SemiRingMatrix() {}
+    SemiRingMatrix(const SemiRingMatrix&) = default;
+    SemiRingMatrix& operator = (const SemiRingMatrix&) = default;
+    SemiRingMatrix(int h, int w
+    , FuncOperator add, FuncOperator mul, SemiRing add_id, SemiRing mul_id)
+        : H(h), W(w), val(h, vector<SemiRing>(w, add_id))
+        , ADD(add), MUL(mul)
+        , ADD_IDENTITY(add_id), MUL_IDENTITY(mul_id) {}
+    void init(int h, int w
+    , FuncOperator add, FuncOperator mul, SemiRing add_id, SemiRing mul_id) {
         H = h, W = w;
         ADD = add, MUL = mul;
-        ADD_IDENTITY = add_identity, MUL_IDENTITY = mul_identity;
+        ADD_IDENTITY = add_id, MUL_IDENTITY = mul_id;
         val.assign(h, vector<SemiRing>(w, ADD_IDENTITY));
     }
     void resize(int h, int w) {
