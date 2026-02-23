@@ -40,7 +40,7 @@ template<class T> struct Matrix {
     constexpr int height() const { return (int)val.size(); }
     constexpr int width() const { return (int)val[0].size(); }
     vector<T>& operator [] (int i) { return val[i]; }
-    constexpr vector<T>& operator [] (int i) const { return val[i]; }
+    const vector<T>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const Matrix<T> &mat) {
         os << endl;
         for (int i = 0; i < mat.height(); ++i) {

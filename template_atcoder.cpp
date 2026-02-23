@@ -2806,7 +2806,7 @@ template<class SemiRing> struct SemiRingMatrix {
     constexpr int width() const { return W; }
     constexpr bool empty() const { return height() == 0; }
     vector<SemiRing>& operator [] (int i) { return val[i]; }
-    constexpr vector<SemiRing>& operator [] (int i) const { return val[i]; }
+    const vector<SemiRing>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const SemiRingMatrix<SemiRing> &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
@@ -2877,7 +2877,7 @@ template<class SemiRing> struct SemiRingMatrix {
 
     // transpose
     constexpr SemiRingMatrix trans() const {
-        SemiRingMatrix<SemiRing> res(height(), width(), ADD, MUL, ADD_IDENTITY, MUL_IDENTITY);
+        SemiRingMatrix<SemiRing> res(width(), height(), ADD, MUL, ADD_IDENTITY, MUL_IDENTITY);
         for (int row = 0; row < width(); row++)
             for (int col = 0; col < height(); col++)
                 res[row][col] = val[col][row];
@@ -2931,7 +2931,7 @@ template<class mint> struct MintMatrix {
     constexpr int width() const { return W; }
     constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
-    constexpr vector<mint>& operator [] (int i) const { return val[i]; }
+    const vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {

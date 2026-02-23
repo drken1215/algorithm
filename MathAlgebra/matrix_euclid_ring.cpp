@@ -412,7 +412,7 @@ template<class mint> struct MintMatrix {
     constexpr int width() const { return W; }
     constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
-    const vector<mint>& operator [] (int i) const { return val[i]; }
+    constexpr vector<mint>& operator [] (int i) const { return val[i]; }
     friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
