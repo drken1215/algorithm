@@ -339,282 +339,6 @@ template<class T> T num_lattice_points(T x1, T y1, T x2, T y2) {
 
 
 //------------------------------//
-// Fast IO
-//------------------------------//
-
-struct FastRead {
-    static constexpr int BUF_SIZE = 1 << 17;
-
-private:
-    FILE *stream_;
-    array<char, BUF_SIZE> buf_;
-    char *begin_, *end_, *ptr_;
-
-    // reader
-    void skip_space() {
-        while (*ptr_ <= ' ') ++ptr_;
-    }
-    template<int N = 0> void read() {
-        if (const auto n = end_ - ptr_; n <= N) {
-            ignore = fread(copy_n(ptr_, n, begin_), 1, BUF_SIZE - n, stream_);
-            ptr_ = begin_;
-        }
-    }
-    
-    // parser
-    template<typename T> void parse(T &x) {
-        common_type_t<T, uint64_t> x2 = 0;
-        while (true) {
-            uint64_t v;
-            memcpy(&v, ptr_, 8);
-            if ((v -= 0x3030303030303030) & 0x8080808080808080) break;
-            v = (v * 10 + (v >> 8)) & 0xff00ff00ff00ff;
-            v = (v * 100 + (v >> 16)) & 0xffff0000ffff;
-            v = (v * 10000 + (v >> 32)) & 0xffffffff;
-            x2 = 100000000 * x2 + v;
-            ptr_ += 8;
-        }
-        while (true) {
-            uint32_t v;
-            memcpy(&v, ptr_, 4);
-            if ((v -= 0x30303030) & 0x80808080) break;
-            v = (v * 10 + (v >> 8)) & 0xff00ff;
-            v = (v * 100 + (v >> 16)) & 0xffff;
-            x2 = 10000 * x2 + v;
-            ptr_ += 4;
-            break;
-        }
-        while (true) {
-            uint16_t v;
-            memcpy(&v, ptr_, 2);
-            if ((v -= 0x3030) & 0x8080) break;
-            v = (v * 10 + (v >> 8)) & 0xff;
-            x2 = 100 * x2 + v;
-            ptr_ += 2;
-            break;
-        }
-        if (' ' < *ptr_) {
-            x2 *= 10;
-            x2 += *ptr_++ - '0';
-        }
-        ++ptr_;
-        x = static_cast<T>(x2);
-    }
-    
-public:
-    // constructor
-    FastRead() : FastRead(stdin) {}
-    explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
-    explicit FastRead(FILE *stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { 
-        read(); 
-    }
-    ~FastRead() { 
-        if (stream_ != stdin) fclose(stream_); 
-    }
-    FastRead(const FastRead&) = delete;
-    FastRead &operator = (const FastRead&) = delete;
-    
-    // operators
-    template<unsigned_integral T> void operator () (T &x) {
-        skip_space();
-        read<64>();
-        parse(x);
-    }
-    template<signed_integral T> void operator () (T &x) {
-        skip_space();
-        read<64>();
-        make_unsigned_t<T> u;
-        if (*ptr_ == '-') {
-            ++ptr_;
-            parse(u);
-            u = -u;
-        } else {
-            parse(u);
-        }
-        x = u;
-    }
-    void operator () (char &x) {
-        skip_space();
-        read<64>();
-        x = *ptr_;
-        ++ptr_;
-    }
-    void operator () (string &x) {
-        x = "";
-        skip_space();
-        read<64>();
-        while (*ptr_ > ' ' && *ptr_ != '\0') {
-            x.push_back(*ptr_);
-            ++ptr_;
-        }
-        ++ptr_;
-    }
-    template<class... Ts> requires(sizeof...(Ts) != 1) void operator () (Ts&... xs) {
-        ((*this)(xs), ...);
-    }
-    template<class T> FastRead& operator >> (T &x) { (*this)(x); return *this; }
-};
-
-class FastWrite {
-    static constexpr int BUF_SIZE = 1 << 17;
-
-private:
-    FILE *stream_;
-    array<char, BUF_SIZE> buf_;
-    char *begin_, *end_, *ptr_;
-    
-    // preparation
-    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
-    template<class T> static constexpr auto POW10 = [] {
-        array<T, DIGITS<T>> ret;
-        ret[0] = 1;
-        for (int i = 1; i < DIGITS<T>; ++i) {
-            ret[i] = 10 * ret[i - 1];
-        }
-        return ret;
-    } ();
-    static constexpr auto LUT = [] {
-        array<char, 40000> res;
-        char* p = res.data();
-        char a = '0', b = '0', c = '0', d = '0';
-        do {
-            *p++ = a, *p++ = b, *p++ = c, *p++ = d;
-        } while (d++ < '9'
-                 || (d = '0', c++ < '9'
-                     || (c = '0', b++ < '9'
-                         || (b = '0', a++ < '9'))));
-        return res;
-    } ();
-    
-    // flush
-    template<int N = BUF_SIZE> void flush() {
-        if (end_ - ptr_ <= N) {
-            fwrite(begin_, 1, ptr_ - begin_, stream_);
-            ptr_ = begin_;
-        }
-    }
-    
-    // writer
-    template<int N = 4> void le4(uint64_t x) {
-        if constexpr (1 < N) {
-            if (x < POW10<uint64_t>[N - 1]) {
-                le4<N - 1>(x);
-                return;
-            }
-        }
-        ptr_ = copy_n(&LUT[x * 4 + (4 - N)], N, ptr_);
-    }
-    template<int N> void w4(uint64_t x) {
-        if constexpr (0 < N) {
-            ptr_ = copy_n(&LUT[x / POW10<uint64_t>[N - 4] * 4], 4, ptr_);
-            w4<N - 4>(x % POW10<uint64_t>[N - 4]);
-        }
-    }
-    template<int N> void write(uint64_t x) {
-        if constexpr (N < DIGITS<uint64_t>) {
-            if (POW10<uint64_t>[N] <= x) {
-                write<N + 4>(x);
-                return;
-            }
-        }
-        le4(x / POW10<uint64_t>[N - 4]);
-        w4<N - 4>(x % POW10<uint64_t>[N - 4]);
-    }
-    template<typename T> void write(T x) {
-        write<4>(x);
-    }
-    void write_i128(i128 x) {
-        if (x < 0) {
-            *ptr_++ = '-';
-            write_u128(static_cast<__uint128_t>(-x));
-        } else {
-            write_u128(static_cast<__uint128_t>(x));
-        }
-    }
-    void write_u128(u128 x) {
-        if (x < POW10<__uint128_t>[16]) {
-            write(static_cast<uint64_t>(x));
-        } else if (x < POW10<__uint128_t>[32]) {
-            write(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
-            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
-        } else {
-            write(static_cast<uint64_t>(x / POW10<__uint128_t>[32]));
-            x %= POW10<__uint128_t>[32];
-            w4<16>(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
-            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
-        }
-    }
-    
-public:
-    // constructor
-    FastWrite() : FastWrite(stdout) {}
-    explicit FastWrite(const filesystem::path& p) : FastWrite(fopen(p.c_str(), "w")) {}
-    explicit FastWrite(FILE* stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(begin_) {}
-    ~FastWrite() {
-        flush();
-        if (stream_ != stdout) { fclose(stream_); }
-    }
-    FastWrite(const FastWrite&) = delete;
-    FastWrite& operator = (const FastWrite&) = delete;
-    
-    // operators
-    template<unsigned_integral T> void operator () (T x) {
-        flush<DIGITS<T>>();
-        write(x);
-    }
-    template<signed_integral T> void operator () (T x) {
-        flush<1 + DIGITS<T>>();
-        using U = make_unsigned_t<T>;
-        const U u = x;
-        if (x < 0) {
-            *ptr_++ = '-';
-            write(static_cast<U>(-u));
-        } else {
-            write(u);
-        }
-    }
-    void operator () (char c) {
-        flush<1>();
-        *ptr_++ = c;
-    }
-    void operator () (u128 x) {
-        flush<DIGITS<u128>>();
-        write_u128(x);
-    }
-    void operator () (i128 x) {
-        flush<1 + DIGITS<u128>>();
-        write_i128(x);
-    }
-    void operator () (string_view s) {
-        while (!s.empty()) {
-            flush<0>();
-            const auto n = min(ssize(s), end_ - ptr_);
-            if (n == BUF_SIZE) {
-                fwrite(s.data(), 1, BUF_SIZE, stream_);
-            } else {
-                ptr_ = copy_n(s.data(), n, ptr_);
-            }
-            s.remove_prefix(n);
-        }
-        flush<0>();
-    }
-    template <char End = '\n', char Sep = ' ', class T, class... Ts>
-    void ln(T&& x, Ts&&... xs) {
-        (*this)(std::forward<T>(x));
-        if constexpr (sizeof...(Ts) == 0) {
-            *ptr_++ = End;
-        } else {
-            *ptr_++ = Sep;
-            ln<End, Sep>(std::forward<Ts>(xs)...);
-        }
-    }
-    template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
-};
-
-
-//------------------------------//
 // mod algorithms
 //------------------------------//
 
@@ -3088,10 +2812,11 @@ template<class mint> struct MintMatrix {
     vector<vector<mint>> val;
     
     // constructors
-    MintMatrix() : H(0), W(0) {}
+    MintMatrix() {}
+    MintMatrix(const MintMatrix&) = default;
+    MintMatrix& operator = (const MintMatrix&) = default;
     MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
     MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
-    MintMatrix(const MintMatrix &mat) : H(mat.H), W(mat.W), val(mat.val) {}
     void init(int h, int w, mint x) {
         H = h, W = w;
         val.assign(h, vector<mint>(w, x));
@@ -3108,7 +2833,7 @@ template<class mint> struct MintMatrix {
     constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
     const vector<mint>& operator [] (int i) const { return val[i]; }
-    friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
+    friend constexpr ostream& operator << (ostream &os, const MintMatrix &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
                 if (j) os << ' ';
@@ -3131,21 +2856,17 @@ template<class mint> struct MintMatrix {
     constexpr MintMatrix& operator += (const MintMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
                 val[i][j] = val[i][j] + r.val[i][j];
-            }
-        }
         return *this;
     }
     constexpr MintMatrix& operator -= (const MintMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
                 val[i][j] = val[i][j] - r.val[i][j];
-            }
-        }
         return *this;
     }
     constexpr MintMatrix& operator *= (const mint &v) {
@@ -3163,12 +2884,28 @@ template<class mint> struct MintMatrix {
                     res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
         return (*this) = res;
     }
-    constexpr MintMatrix operator + () const { return MintMatrix(*this); }
-    constexpr MintMatrix operator - () const { return MintMatrix(*this) *= mint(-1); }
-    constexpr MintMatrix operator + (const MintMatrix &r) const { return MintMatrix(*this) += r; }
-    constexpr MintMatrix operator - (const MintMatrix &r) const { return MintMatrix(*this) -= r; }
-    constexpr MintMatrix operator * (const mint &v) const { return MintMatrix(*this) *= v; }
-    constexpr MintMatrix operator * (const MintMatrix &r) const { return MintMatrix(*this) *= r; }
+    constexpr MintMatrix operator + () const { 
+        return MintMatrix(*this);
+    }
+    constexpr MintMatrix operator - () const {
+        MintMatrix res(*this);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res.val[i][j] = -res.val[i][j];
+        return res;
+    }
+    constexpr MintMatrix operator + (const MintMatrix &r) const { 
+        return MintMatrix(*this) += r;
+    }
+    constexpr MintMatrix operator - (const MintMatrix &r) const {
+        return MintMatrix(*this) -= r;
+    }
+    constexpr MintMatrix operator * (const mint &v) const {
+        return MintMatrix(*this) *= v;
+    }
+    constexpr MintMatrix operator * (const MintMatrix &r) const {
+        return MintMatrix(*this) *= r;
+    }
     constexpr vector<mint> operator * (const vector<mint> &v) const {
         assert(width() == v.size());
         vector<mint> res(height(), mint(0));
@@ -3181,19 +2918,20 @@ template<class mint> struct MintMatrix {
     // transpose
     constexpr MintMatrix trans() const {
         MintMatrix<mint> res(width(), height());
-        for (int row = 0; row < width(); row++) for (int col = 0; col < height(); col++) {
-            res[row][col] = val[col][row];
-        }
+        for (int row = 0; row < width(); row++)
+            for (int col = 0; col < height(); col++)
+                res[row][col] = val[col][row];
         return res;
     }
-    friend constexpr MintMatrix<mint> trans(const MintMatrix<mint> &mat) {
+    friend constexpr MintMatrix trans(const MintMatrix &mat) {
         return mat.trans();
     }
     
     // pow
     constexpr MintMatrix pow(long long n) const {
         assert(height() == width());
-        MintMatrix<mint> res(height(), width()), mul(*this);
+        MintMatrix<mint> res(height(), width());
+        MintMatrix<mint> mul(*this);
         for (int row = 0; row < height(); ++row) res[row][row] = mint(1);
         while (n > 0) {
             if (n & 1) res = res * mul;
@@ -3202,7 +2940,7 @@ template<class mint> struct MintMatrix {
         }
         return res;
     }
-    friend constexpr MintMatrix<mint> pow(const MintMatrix<mint> &mat, long long n) {
+    friend constexpr MintMatrix pow(const MintMatrix &mat, long long n) {
         return mat.pow(n);
     }
     
@@ -3255,7 +2993,7 @@ template<class mint> struct MintMatrix {
         }
         return rank;
     }
-    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0, bool sweep_upper = true) {
+    friend constexpr int gauss_jordan(MintMatrix &mat, int not_sweep_width = 0, bool sweep_upper = true) {
         return mat.gauss_jordan(not_sweep_width, sweep_upper);
     }
 
@@ -3266,13 +3004,13 @@ template<class mint> struct MintMatrix {
         if (height() < width()) A = A.trans();
         return A.gauss_jordan(0, false);
     }
-    friend constexpr int get_rank(const MintMatrix<mint> &mat) {
+    friend constexpr int get_rank(const MintMatrix &mat) {
         return mat.get_rank();
     }
 
     // find one solution
     friend constexpr int linear_equation
-    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res) {
+    (const MintMatrix &mat, const vector<mint> &b, vector<mint> &res) {
         // extend
         MintMatrix<mint> A(mat.height(), mat.width() + 1);
         for (int i = 0; i < mat.height(); ++i) {
@@ -3289,14 +3027,14 @@ template<class mint> struct MintMatrix {
         for (int i = 0; i < rank; ++i) res[i] = A[i].back();
         return rank;
     }
-    friend constexpr int linear_equation(const MintMatrix<mint> &mat, const vector<mint> &b) {
+    friend constexpr int linear_equation(const MintMatrix &mat, const vector<mint> &b) {
         vector<mint> res;
         return linear_equation(mat, b, res);
     }
 
     // find all solutions
     friend int linear_equation
-    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
+    (const MintMatrix &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
         // extend
         MintMatrix<mint> A(mat.height(), mat.width() + 1);
         for (int i = 0; i < mat.height(); ++i) {
@@ -3345,7 +3083,7 @@ template<class mint> struct MintMatrix {
         }
         return res;
     }
-    friend constexpr mint det(const MintMatrix<mint> &mat) {
+    friend constexpr mint det(const MintMatrix &mat) {
         return mat.det();
     }
     constexpr mint det_nonprime_mod() const {
@@ -3372,7 +3110,7 @@ template<class mint> struct MintMatrix {
         for (int col = 0; col < height(); ++col) res *= A[col][col];
         return res;
     }
-    friend constexpr mint det_nonprime_mod(const MintMatrix<mint> &mat) {
+    friend constexpr mint det_nonprime_mod(const MintMatrix &mat) {
         return mat.det_nonprime_mod();
     }
 
@@ -3392,10 +3130,12 @@ template<class mint> struct MintMatrix {
         // gauss jordan
         if (rank < height()) return MintMatrix();
         MintMatrix<mint> res(height(), width());
-        for (int i = 0; i < height(); ++i) for (int j = 0; j < width(); ++j) res[i][j] = A[i][j+width()];
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res[i][j] = A[i][j+width()];
         return res;
     }
-    friend constexpr MintMatrix<mint> inv(const MintMatrix<mint> &mat) {
+    friend constexpr MintMatrix inv(const MintMatrix &mat) {
         return mat.inv();
     }
 };
@@ -4499,7 +4239,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
     }
 
     // solver
-    pair<bool, COST> solve() {
+    pair<bool, COST> solve(bool calc_potential = true) {
         // feasibility check
         FlowGraph<FLOW> sg(V + 2);
         int s = V, t = s + 1;
@@ -4534,8 +4274,10 @@ template<class FLOW, class COST> struct MinCostBFlow {
         }
 
         // find dual
-        G.calc_potential();
-        dual = G.pot;
+        if (calc_potential) {
+            G.calc_potential();
+            dual = G.pot;
+        }
         return {true, res};
     }
 };
@@ -8422,8 +8164,6 @@ void output_bigcase(string filepath = "./big.in") {
 int main() {
     cin.tie(nullptr);
     ios_base::sync_with_stdio(false);
-    // FastRead Read;
-    // FastWrite Write;
     
     
 }
