@@ -361,7 +361,7 @@
 
 - (★★★☆) [半環上の行列 (加法・乗法, 行列累乗)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_semiring.cpp)
 - (★★★★) [Euclid 環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 log M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_euclid_ring.cpp)
-- (★★★★) [多項式行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 D))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_polynomial.cpp)
+- (★★★★) [Fp 係数の多項式行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 D))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_polynomial.cpp)
 - (★★★★) [一般の可換環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_ring.cpp)
 
 ## 行列式
@@ -413,8 +413,8 @@
 - (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - (★★★★) [Berlekamp-Massey 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/berlekamp_massey.cpp)
 - (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/power_projection.cpp)
-- (★★★★) [FPS の合成 (Kinoshita-Li 法, O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
-- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
+- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
+- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
 - (★★★★) pow 列挙
 - (★★★★) 部分分数分解
 - (★★★★) 常微分方程式
@@ -427,12 +427,13 @@
 
 ## 多項式の基底変換
 
-- (★★★☆) [Polynomial Taylor Shift (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
-- (★★★★) [Multipoint Evaluation (O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation.cpp)
-- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation_in_geometric_sequence.cpp)
-- (★★★★) [多項式補間 (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation.cpp)
-- (★★★★) [多項式補間 (等比数列のとき) (O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
-- (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_monomial_to_newton.cpp)
+- (★★★☆) [Polynomial Taylor Shift (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
+- (★★★☆) [Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/lagrange_interpolation_point.cpp)
+- (★★★★) [多項式補間 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation.cpp)
+- (★★★★) [多項式補間 (等比数列のとき) (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
+- (★★★★) [Multipoint Evaluation (in O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation.cpp)
+- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation_in_geometric_sequence.cpp)
+- (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_monomial_to_newton.cpp)
 
 ## 多項式のアルゴリズム
 

@@ -3235,6 +3235,169 @@ FPS<mint> calc_det_linear_expression(MintMatrix<mint> M0, MintMatrix<mint> M1) {
     return pol;
 }
 
+// Polynomial Matrix
+template<class mint> struct MintPolynomialMatrix {
+    using Poly = FPS<mint>;
+
+    // inner value
+    int H, W;
+    vector<vector<Poly>> val;
+    
+    // constructors
+    MintPolynomialMatrix() {}
+    MintPolynomialMatrix(const MintPolynomialMatrix&) = default;
+    MintPolynomialMatrix& operator = (const MintPolynomialMatrix&) = default;
+    MintPolynomialMatrix(int h, int w) : H(h), W(w), val(h, vector<Poly>(w)) {}
+    MintPolynomialMatrix(int h, int w, const Poly &p) : H(h), W(w), val(h, vector<Poly>(w, p)) {}
+    void init(int h, int w, const Poly &p) {
+        H = h, W = w;
+        val.assign(h, vector<Poly>(w, p));
+    }
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
+    }
+    
+    // getter and debugger
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
+    vector<Poly>& operator [] (int i) { return val[i]; }
+    const vector<Poly>& operator [] (int i) const { return val[i]; }
+    friend constexpr ostream& operator << (ostream &os, const MintPolynomialMatrix &mat) {
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) {
+                if (j) os << ' ';
+                os << mat.val[i][j];
+            }
+            os << '\n';
+        }
+        return os;
+    }
+    
+    // comparison operators
+    constexpr bool operator == (const MintPolynomialMatrix &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const MintPolynomialMatrix &r) const {
+        return this->val != r.val;
+    }
+
+    // arithmetic operators
+    constexpr MintPolynomialMatrix& operator += (const MintPolynomialMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = val[i][j] + r.val[i][j];
+        return *this;
+    }
+    constexpr MintPolynomialMatrix& operator -= (const MintPolynomialMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = val[i][j] - r.val[i][j];
+        return *this;
+    }
+    constexpr MintPolynomialMatrix& operator *= (const Poly &v) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = val[i][j] * v;
+        return *this;
+    }
+    constexpr MintPolynomialMatrix& operator *= (const MintPolynomialMatrix &r) {
+        assert(width() == r.height());
+        MintPolynomialMatrix<mint> res(height(), r.width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < r.width(); ++j)
+                for (int k = 0; k < width(); ++k)
+                    res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
+        return (*this) = res;
+    }
+    constexpr MintPolynomialMatrix operator + () const { 
+        return MintPolynomialMatrix(*this);
+    }
+    constexpr MintPolynomialMatrix operator - () const {
+        MintPolynomialMatrix res(*this);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res.val[i][j] = -res.val[i][j];
+        return res;
+    }
+    constexpr MintPolynomialMatrix operator + (const MintPolynomialMatrix &r) const { 
+        return MintPolynomialMatrix(*this) += r;
+    }
+    constexpr MintPolynomialMatrix operator - (const MintPolynomialMatrix &r) const {
+        return MintPolynomialMatrix(*this) -= r;
+    }
+    constexpr MintPolynomialMatrix operator * (const Poly &v) const {
+        return MintPolynomialMatrix(*this) *= v;
+    }
+    constexpr MintPolynomialMatrix operator * (const MintPolynomialMatrix &r) const {
+        return MintPolynomialMatrix(*this) *= r;
+    }
+    constexpr vector<Poly> operator * (const vector<Poly> &v) const {
+        assert(width() == v.size());
+        vector<Poly> res(height());
+        for (int i = 0; i < height(); i++)
+            for (int j = 0; j < width(); j++)
+                res[i] += val[i][j] * v[j];
+        return res;
+    }
+
+    // transpose
+    constexpr MintPolynomialMatrix trans() const {
+        MintPolynomialMatrix<mint> res(width(), height());
+        for (int row = 0; row < width(); row++)
+            for (int col = 0; col < height(); col++)
+                res[row][col] = val[col][row];
+        return res;
+    }
+    friend constexpr MintPolynomialMatrix trans(const MintPolynomialMatrix &mat) {
+        return mat.trans();
+    }
+
+    // pow
+    constexpr MintPolynomialMatrix pow(long long n) const {
+        assert(height() == width());
+        MintPolynomialMatrix<mint> res(height(), width());
+        MintPolynomialMatrix<mint> mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = mint(1);
+        while (n > 0) {
+            if (n & 1) res = res * mul;
+            mul = mul * mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    friend constexpr MintPolynomialMatrix pow(const MintPolynomialMatrix &mat, long long n) {
+        return mat.pow(n);
+    }
+
+    // determinant
+    constexpr Poly det() const {
+        assert(height() == width());
+        if (height() == 0) return FPS<mint>{1};
+        int D = 0;
+        for (int i = 0; i < height(); i++) D += max(0, (int)val[i][i].size() - 1);
+        vector<mint> xs(D + 1), ys(D + 1);
+        MintMatrix<mint> M(height(), width());
+        for (int x = 0; x <= D; x++) {
+            xs[x] = x;
+            for (int row = 0; row < height(); row++)
+                for (int col = 0; col < width(); col++)
+                    M[row][col] = val[row][col].eval(x);
+            ys[x] = M.det();
+        }
+        return interpolate(xs, ys);
+    }
+    friend constexpr Poly det(const MintPolynomialMatrix &mat) {
+        return mat.det();
+    }
+};
+
 
 //------------------------------//
 // Graph
