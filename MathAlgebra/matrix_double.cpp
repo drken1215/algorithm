@@ -17,121 +17,154 @@
 using namespace std;
 
 
-// basic settings
-long double EPS = 1e-10;  // to be set appropriately
+// double matrix
+template<class DD> struct DoubleMatrix {
+    // basic settings
+    DD EPS = 1e-10;  // to be set appropriately
 
-// matrix
-template<class T> struct Matrix {
     // inner value
-    vector<vector<T>> val;
+    int H, W;
+    vector<vector<DD>> val;
     
     // constructors
-    Matrix(int H, int W, T x = 0) : val(H, vector<T>(W, x)) {}
-    Matrix(const Matrix &mat) : val(mat.val) {}
-    void init(int H, int W, T x = 0) {
-        val.assign(H, vector<T>(W, x));
+    DoubleMatrix() {}
+    DoubleMatrix(const DoubleMatrix&) = default;
+    DoubleMatrix& operator = (const DoubleMatrix&) = default;
+    DoubleMatrix(int h, int w) : H(h), W(w), val(h, vector<DD>(w)) {}
+    DoubleMatrix(int h, int w, DD x) : H(h), W(w), val(h, vector<DD>(w, x)) {}
+    void init(int h, int w, DD x) {
+        H = h, W = w;
+        val.assign(h, vector<DD>(w, x));
     }
-    void resize(int H, int W) {
-        val.resize(H);
-        for (int i = 0; i < H; ++i) val[i].resize(W);
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
     }
+    constexpr DD get_eps() { return EPS; }
+    constexpr void set_eps(DD eps) { EPS = eps; }
     
     // getter and debugger
-    constexpr int height() const { return (int)val.size(); }
-    constexpr int width() const { return (int)val[0].size(); }
-    vector<T>& operator [] (int i) { return val[i]; }
-    const vector<T>& operator [] (int i) const { return val[i]; }
-    friend constexpr ostream& operator << (ostream &os, const Matrix<T> &mat) {
-        os << endl;
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
+    vector<DD>& operator [] (int i) { return val[i]; }
+    const vector<DD>& operator [] (int i) const { return val[i]; }
+    friend constexpr ostream& operator << (ostream &os, const DoubleMatrix &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
-                if (j) os << ", ";
+                if (j) os << ' ';
                 os << mat.val[i][j];
             }
-            os << endl;
+            os << '\n';
         }
         return os;
     }
     
     // comparison operators
-    constexpr bool operator == (const Matrix &r) const {
+    constexpr bool operator == (const DoubleMatrix &r) const {
         return this->val == r.val;
     }
-    constexpr bool operator != (const Matrix &r) const {
+    constexpr bool operator != (const DoubleMatrix &r) const {
         return this->val != r.val;
     }
     
     // arithmetic operators
-    constexpr Matrix& operator += (const Matrix &r) {
+    constexpr DoubleMatrix& operator += (const DoubleMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
-                val[i][j] += r.val[i][j];
-            }
-        }
-        return *this;
-    }
-    constexpr Matrix& operator -= (const Matrix &r) {
-        assert(height() == r.height());
-        assert(width() == r.width());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
-                val[i][j] -= r.val[i][j];
-            }
-        }
-        return *this;
-    }
-    constexpr Matrix& operator *= (T v) {
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < width(); ++j)
-                val[i][j] *= v;
+                val[i][j] = val[i][j] + r.val[i][j];
         return *this;
     }
-    constexpr Matrix& operator *= (const Matrix &r) {
+    constexpr DoubleMatrix& operator -= (const DoubleMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = val[i][j] - r.val[i][j];
+        return *this;
+    }
+    constexpr DoubleMatrix& operator *= (const DD &v) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                val[i][j] = val[i][j] * v;
+        return *this;
+    }
+    constexpr DoubleMatrix& operator *= (const DoubleMatrix &r) {
         assert(width() == r.height());
-        Matrix<T> res(height(), r.width());
+        DoubleMatrix<DD> res(height(), r.width());
         for (int i = 0; i < height(); ++i)
             for (int j = 0; j < r.width(); ++j)
                 for (int k = 0; k < width(); ++k)
-                    res[i][j] += val[i][k] * r.val[k][j];
+                    res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
         return (*this) = res;
     }
-    constexpr Matrix operator + () const { return Matrix(*this); }
-    constexpr Matrix operator - () const { return Matrix(*this) *= T(-1); }
-    constexpr Matrix operator + (const Matrix &r) const { return Matrix(*this) += r; }
-    constexpr Matrix operator - (const Matrix &r) const { return Matrix(*this) -= r; }
-    constexpr Matrix operator * (T v) const { return Matrix(*this) *= v; }
-    constexpr Matrix operator * (const Matrix &r) const { return Matrix(*this) *= r; }
-    constexpr vector<T> operator * (const vector<T> &v) const {
+    constexpr DoubleMatrix operator + () const { 
+        return DoubleMatrix(*this);
+    }
+    constexpr DoubleMatrix operator - () const {
+        DoubleMatrix res(*this);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res.val[i][j] = -res.val[i][j];
+        return res;
+    }
+    constexpr DoubleMatrix operator + (const DoubleMatrix &r) const { 
+        return DoubleMatrix(*this) += r;
+    }
+    constexpr DoubleMatrix operator - (const DoubleMatrix &r) const {
+        return DoubleMatrix(*this) -= r;
+    }
+    constexpr DoubleMatrix operator * (const DD &v) const {
+        return DoubleMatrix(*this) *= v;
+    }
+    constexpr DoubleMatrix operator * (const DoubleMatrix &r) const {
+        return DoubleMatrix(*this) *= r;
+    }
+    constexpr vector<DD> operator * (const vector<DD> &v) const {
         assert(width() == v.size());
-        vector<T> res(height(), T(0));
+        vector<DD> res(height(), DD(0));
         for (int i = 0; i < height(); i++)
             for (int j = 0; j < width(); j++)
                 res[i] += val[i][j] * v[j];
         return res;
     }
+
+    // transpose
+    constexpr DoubleMatrix trans() const {
+        DoubleMatrix<DD> res(width(), height());
+        for (int row = 0; row < width(); row++)
+            for (int col = 0; col < height(); col++)
+                res[row][col] = val[col][row];
+        return res;
+    }
+    friend constexpr DoubleMatrix trans(const DoubleMatrix &mat) {
+        return mat.trans();
+    }
     
     // pow
-    constexpr Matrix pow(long long n) const {
+    constexpr DoubleMatrix pow(long long n) const {
         assert(height() == width());
-        Matrix<T> res(height(), width()), mul(*this);
-        for (int i = 0; i < height(); i++) res[i][i] = T(1);
+        DoubleMatrix<DD> res(height(), width());
+        DoubleMatrix<DD> mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = DD(1);
         while (n > 0) {
-            if (n & 1) res *= mul;
-            mul *= mul;
+            if (n & 1) res = res * mul;
+            mul = mul * mul;
             n >>= 1;
         }
         return res;
     }
-    friend constexpr Matrix<T> pow(const Matrix<T> &mat, long long n) {
+    friend constexpr DoubleMatrix pow(const DoubleMatrix &mat, long long n) {
         return mat.pow(n);
     }
     
     // gauss-jordan
     constexpr int find_pivot(int cur_rank, int col) const {
         int pivot = -1;
-        T max_v = EPS;
+        DD max_v = EPS;
         for (int row = cur_rank; row < height(); ++row) {
             if (abs(val[row][col]) > max_v) {
                 max_v = abs(val[row][col]);
@@ -165,12 +198,27 @@ template<class T> struct Matrix {
         }
         return rank;
     }
-    friend constexpr int gauss_jordan(Matrix<T> &mat, int not_sweep_width = 0) {
+    friend constexpr int gauss_jordan(DoubleMatrix<DD> &mat, int not_sweep_width = 0) {
         return mat.gauss_jordan(not_sweep_width);
     }
-    friend constexpr vector<T> linear_equation(const Matrix<T> &mat, const vector<T> &b) {
+
+    // rank
+    constexpr int get_rank() const {
+        if (height() == 0 || width() == 0) return 0;
+        DoubleMatrix A(*this);
+        if (height() < width()) A = A.trans();
+        return A.gauss_jordan(0, false);
+    }
+    friend constexpr int get_rank(const DoubleMatrix &mat) {
+        return mat.get_rank();
+    }
+
+    // find one solution
+    friend constexpr int linear_equation
+    (const DoubleMatrix &mat, const vector<DD> &b, vector<DD> &res) {
         // extend
-        Matrix<T> A(mat.height(), mat.width() + 1);
+        DoubleMatrix<DD> A(mat.height(), mat.width() + 1);
+        A.set_eps(mat.EPS);
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
             A[i].back() = b[i];
@@ -178,15 +226,97 @@ template<class T> struct Matrix {
         int rank = A.gauss_jordan(1);
         
         // check if it has no solution
-        vector<T> res;
-        for (int row = rank; row < mat.height(); ++row)
-            if (abs(A[row].back()) > EPS)
-                return res;
+        for (int row = rank; row < mat.height(); ++row) if (abs(A[row].back()) > A.EPS) return -1;
 
         // answer
         res.assign(mat.width(), 0);
         for (int i = 0; i < rank; ++i) res[i] = A[i].back();
+        return rank;
+    }
+    friend constexpr int linear_equation(const DoubleMatrix &mat, const vector<DD> &b) {
+        vector<DD> res;
+        return linear_equation(mat, b, res);
+    }
+
+    // find all solutions
+    friend int linear_equation
+    (const DoubleMatrix &mat, const vector<DD> &b, vector<DD> &res, vector<vector<DD>> &zeros) {
+        // extend
+        DoubleMatrix<DD> A(mat.height(), mat.width() + 1);
+        A.set_eps(mat.EPS);
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
+            A[i].back() = b[i];
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(core, 1);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) {
+            if (abs(A[row].back()) > A.EPS) return -1;
+        }
+
+        // construct the core solution
+        res.assign(mat.width(), DD(0));
+        for (int i = 0; i < (int)core.size(); i++) res[core[i]] = A[i].back();
+    
+        // construct the all solutions
+        zeros.clear();
+        vector<bool> use(mat.width(), 0);
+        for (auto c : core) use[c] = true;
+        for (int j = 0; j < mat.width(); j++) {
+            if (use[j]) continue;
+            vector<DD> zero(mat.width(), DD(0));
+            zero[j] = DD(1);
+            for (int i = 0; i < (int)core.size(); i++) zero[core[i]] = -A[i][j];
+            zeros.push_back(zero);
+        }
+        return rank;
+    }
+
+    // determinant
+    constexpr DD det() const {
+        assert(height() == width());
+        if (height() == 0) return DD(1);
+        DoubleMatrix<DD> A(*this);
+        int rank = 0;
+        DD res = DD(1);
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return DD(0);
+            if (pivot != rank) res = -res;
+            res *= A[pivot][rank];
+            A.sweep(rank++, col, pivot, false);
+        }
         return res;
+    }
+    friend constexpr DD det(const DoubleMatrix &mat) {
+        return mat.det();
+    }
+
+    // inv
+    constexpr DoubleMatrix inv() const {
+        assert(height() == width());
+
+        // extend
+        DoubleMatrix<DD> A(height(), width() + height());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) A[i][j] = val[i][j];
+            A[i][i+width()] = DD(1);
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(height(), true);
+
+        // gauss jordan
+        if (rank < height()) return DoubleMatrix();
+        DoubleMatrix<DD> res(height(), width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res[i][j] = A[i][j+width()];
+        return res;
+    }
+    friend constexpr DoubleMatrix inv(const DoubleMatrix &mat) {
+        return mat.inv();
     }
 };
 
@@ -235,7 +365,7 @@ void AOJ_2171() {
         }
 
         // 連立一次方程式を作る
-        Matrix<double> A(N, N, 0);
+        DoubleMatrix<double> A(N, N, 0);
         vector<double> b(N, 0);
         for (int v = 0; v < N; ++v) {
             if (v == t) {
@@ -259,7 +389,8 @@ void AOJ_2171() {
         }
           
         // 解く
-        auto res = linear_equation(A, b);
+        vector<double> res;
+        auto rank = linear_equation(A, b, res);
         if (res.empty()) cout << "impossible" << endl;
         else cout << fixed << setprecision(15) << res[s] << endl;
     }
@@ -268,7 +399,6 @@ void AOJ_2171() {
 // AOJ 1328 Find the Outlier
 void AOJ_1328() {
     using D = long double;
-    EPS = 1e-5;  // set EPS
     
     auto dpow = [&](D a, int n) -> D {
         D res = 1.0;
@@ -291,7 +421,8 @@ void AOJ_1328() {
         int res = 0;
         for (int i = 0; i < d + 3 && !finish; ++i) {
             for (int j = i + 1; j < d + 3 && !finish; ++j) {
-                Matrix<D> A(d + 1, d + 1);
+                DoubleMatrix<D> A(d + 1, d + 1);
+                A.set_eps(1e-5);
                 vector<D> b(d + 1);
                 for (int k = 0, iter = 0; k < d+3; ++k) {
                     if (k == i || k == j) continue;
@@ -301,12 +432,13 @@ void AOJ_1328() {
                     }
                     ++iter;
                 }
-                vector<D> ans = linear_equation(A, b);
+                vector<D> ans;
+                auto rank = linear_equation(A, b, ans);
                 if (ans.empty()) continue;
                 D vi = func(ans, i), vj = func(ans, j);
                 int num = 0;
-                if (fabs(vi - v[i]) > EPS) res = i, ++num;
-                if (fabs(vj - v[j]) > EPS) res = j, ++num;
+                if (fabs(vi - v[i]) > A.EPS) res = i, ++num;
+                if (fabs(vj - v[j]) > A.EPS) res = j, ++num;
                 if (num == 1) goto end;
             }
         }
@@ -325,7 +457,7 @@ void MathAlgo100() {
         long long T;
         cin >> X >> Y >> Z >> T;
 
-        Matrix<DD> A(3, 3, 0);
+        DoubleMatrix<DD> A(3, 3, 0);
         A[0][0] = 1.0 - X, A[0][1] = Y;
         A[1][1] = 1.0 - Y, A[1][2] = Z;
         A[2][2] = 1.0 - Z, A[2][0] = X;
@@ -339,7 +471,7 @@ void MathAlgo100() {
 
 
 int main() {
-    //AOJ_2171();
+    AOJ_2171();
     //AOJ_1328();
-    MathAlgo100();
+    //MathAlgo100();
 }
