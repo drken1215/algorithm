@@ -11,6 +11,9 @@
 //   yukicoder No.1303 Inconvenient Kingdom
 //     https://yukicoder.me/problems/no/1303
 //
+//   ABC 323 G - Inversion of Tree
+//     https://atcoder.jp/contests/abc323/tasks/abc323_g
+//
 
 
 #include <bits/stdc++.h>
@@ -1152,121 +1155,6 @@ template<class mint> struct FPS : vector<mint> {
 
 
 //------------------------------//
-// Polynomial Algorithms
-//------------------------------//
-
-// find f(x)^n mod g(x)
-template<class mint, class T_VAL = long long> 
-FPS<mint> mod_pow(const FPS<mint> &f, T_VAL e, const FPS<mint> &mod) {
-    assert(!mod.empty());
-    auto iv = mod.rev().inv();
-    auto calc_quo = [&](const FPS<mint> &pol) -> FPS<mint> {
-        if (pol.size() < mod.size()) return FPS<mint>();
-        int deg = (int)pol.size() - (int)mod.size() + 1;
-        return (pol.rev().pre(deg) * iv.pre(deg)).pre(deg).rev();
-    };
-    FPS<mint> res{1}, b(f);
-    while (e) {
-        if (e & 1) res *= b, res -= calc_quo(res) * mod;
-        b *= b;
-        b -= calc_quo(b) * mod;
-        e >>= 1;
-        assert(b.size() + 1 <= mod.size());
-        assert(res.size() + 1 <= mod.size());
-    }
-    return res;
-}
-
-// middle product 
-// c[i] = sum_j a[i+j]b[j] (deg(a) = n, deg(b) = m -> deg(c) = n-m)
-template<class mint>
-FPS<mint> middle_product(const FPS<mint> &a, const FPS<mint> &b) {
-    assert(a.size() >= b.size());
-    if (b.empty()) return FPS<mint>((int)a.size() - (int)b.size() + 1);
-    int N = 1;
-    while (N < (int)a.size()) N <<= 1;
-    FPS<mint> fa(N), fb(N);
-    copy(a.begin(), a.end(), fa.begin());
-    copy(b.rbegin(), b.rend(), fb.begin());
-    fa *= fb;
-    fa.resize(a.size());
-    fa.erase(fa.begin(), fa.begin() + (int)b.size() - 1);
-    return fa;
-}
-
-// multipoint evaluation, polynomial interpolation
-template<class mint> struct SubproductTree {
-    // inner data
-    int num_points, siz;
-    vector<FPS<mint>> tree;
-
-    // constructor
-    SubproductTree() {}
-    SubproductTree(const vector<mint> &x) {
-        num_points = (int)x.size();
-        siz = 1;
-        while (siz < num_points) siz <<= 1;
-        tree.resize(siz * 2);
-        for (int i = 0; i < siz; i++) tree[siz + i] = {1, (i < num_points ? -x[i] : 0)};
-        for (int i = siz - 1; i >= 1; i--) tree[i] = tree[i * 2] * tree[i * 2 + 1];
-    }
-
-    // multipoint evaluation
-    vector<mint> eval(FPS<mint> f) {
-        int N = (int)f.size();
-        if (N == 0) return vector<mint>(num_points, mint(0));
-        f.resize(N * 2 - 1);
-        vector<FPS<mint>> g(siz * 2);
-        g[1] = tree[1];
-        g[1].resize(N);
-        g[1] = inv(g[1]);
-        g[1] = middle_product(f, g[1]);
-        g[1].resize(siz);
-        for (int i = 1; i < siz; i++) {
-            g[i * 2] = middle_product(g[i], tree[i * 2 + 1]);
-            g[i * 2 + 1] = middle_product(g[i], tree[i * 2]);
-        }
-        vector<mint> res(num_points);
-        for (int i = 0; i < num_points; i++) res[i] = g[siz + i][0];
-        return res;
-    }
-
-    // polynomial interpolation
-    FPS<mint> interpolate(const vector<mint> &y) {
-        assert((int)y.size() == num_points);
-        vector<mint> p(num_points);
-        for (int i = 0; i < num_points; i++) p[i] = tree[1][num_points - i - 1] * (i + 1);
-        p = eval(p);
-        vector<FPS<mint>> t(siz * 2);
-        for (int i = 0; i < siz; i++) t[siz + i] = {(i < num_points ? y[i] / p[i] : 0)};
-        for (int i = siz - 1; i >= 1; i--) {
-            t[i] = t[i * 2] * tree[i * 2 + 1];
-            auto rt = t[i * 2 + 1] * tree[i * 2];
-            for (int k = 0; k < (int)t[i].size(); k++) t[i][k] += rt[k];
-        }
-        t[1].resize(num_points);
-        reverse(t[1].begin(), t[1].end());
-        return t[1];
-    }
-};
-
-// multipoint evaluation, polynomial interpolation
-template<class mint>
-vector<mint> multipoint_eval(const FPS<mint> &f, const vector<mint> &x) {
-    if (x.empty()) return {};
-    SubproductTree<mint> st(x);
-    return st.eval(f);
-}
-template<class mint>
-FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
-    assert(x.size() == y.size());
-    if (x.empty()) return {};
-    SubproductTree<mint> st(x);
-    return st.interpolate(y);
-}
-
-
-//------------------------------//
 // Modint Matrix
 //------------------------------//
 
@@ -1895,9 +1783,36 @@ void yukicoder_1303() {
     }
 }
 
+// ABC 323 G - Inversion of Tree
+void ABC_323_G() {
+    using mint = Fp<>;
+    int N;
+    cin >> N;
+    vector<int> P(N);
+    for (int i = 0; i < N; i++) cin >> P[i], P[i]--;
+
+    vector<long long> deg0(N, 0), deg1(N, 0);
+    for (int u = 0; u < N; u++) for (int v = u+1; v < N; v++) {
+        if (P[u] < P[v]) deg0[u]++, deg0[v]++;
+        else deg1[u]++, deg1[v]++;
+    }
+    MintMatrix<mint> M0(N-1, N-1), M1(N-1, N-1);
+    for (int v = 0; v < N-1; v++) M0[v][v] = deg0[v], M1[v][v] = deg1[v];
+    for (int u = 0; u < N-1; u++) {
+        for (int v = u+1; v < N-1; v++) {
+            if (P[u] < P[v]) M0[u][v] = M0[v][u] = -1;
+            else M1[u][v] = M1[v][u] = -1;
+        }
+    }
+    auto f = calc_det_linear_expression(M0, M1);
+    for (int d = 0; d < N; d++) cout << f[d] << " ";
+    cout << endl;
+}
+
 
 int main() {
     //yukicoder_1907();
     //ABC_412_G();
-    yukicoder_1303();
+    //yukicoder_1303();
+    ABC_323_G();
 }
