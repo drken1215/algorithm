@@ -2,7 +2,6 @@
 // 半環上の行列 (加法・乗法, 行列累乗)
 //   SemiRing は「加法」「乗法」が定義されているクラス。コンストラクタで以下の情報を渡す。
 //　　・コンストラクタで、ADD (加法), MUL (乗法), ADD_IDENTITY (加法の単位元), MUL_IDENTITY (乗法の単位元)
-//　　・何もしなければ、通常の演算子「+」「*」が呼び出される
 //
 // verified:
 //   AtCoder ABC 445 F - Exactly K Steps 2
