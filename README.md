@@ -355,7 +355,7 @@
 - (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
 - (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
-- (★★★★) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_field.cpp)
+- (★★★☆) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_field.cpp)
 
 ## 環上の行列
 

@@ -18,72 +18,6 @@ using namespace std;
 // Utility
 //------------------------------//
 
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-using tint = array<int, 3>;
-using tll = array<long long, 3>;
-using fint = array<int, 4>;
-using fll = array<long long, 4>;
-using qint = array<int, 5>;
-using qll = array<long long, 5>;
-using vint = vector<int>;
-using vll = vector<long long>;
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-template <class T>
-using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PB push_back
-#define MP make_pair
-#define MT make_tuple
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-// debug stream
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 3> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 4> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << ", " << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, unordered_set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-// 4-neighbor
-const vector<int> dx = {1, 0, -1, 0};
-const vector<int> dy = {0, 1, 0, -1};
-
-// 8-neighbor
-const vector<int> dx8 = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> dy8 = {0, 1, 0, -1, 1, 1, -1, -1};
-
 // min non-negative i such that n <= 2^i
 int ceil_pow2(int n) {
     int i = 0;
@@ -91,413 +25,11 @@ int ceil_pow2(int n) {
     return i;
 }
 
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-
 // min non-negative i such that (x & (1 << i)) != 0
 int bsf(int x) { return __builtin_ctz(x); }
 int bsf(unsigned int x) { return __builtin_ctz(x); }
 int bsf(long long x) { return __builtin_ctzll(x); }
 int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-
-// max non-negative i such that (x & (1 << i)) != 0
-int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
-int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
-int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
-int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
-
-// floor, ceil
-template<class T> T floor(T a, T b) {
-    if (a % b == 0 || a >= 0) return a / b;
-    else return -((-a) / b) - 1;
-}
-template<class T> T ceil(T x, T y) {
-    return floor(x + y - 1, y);
-}
-
-// kth root
-// N < 2^64, K <= 64
-uint64_t kth_root(uint64_t N, uint64_t K) {
-    assert(K >= 1);
-    if (N <= 1 || K == 1) return N;
-    if (K >= 64) return 1;
-    if (N == uint64_t(-1)) --N;
-    
-    auto mul = [&](uint64_t x, uint64_t y) -> uint64_t {
-        if (x < UINT_MAX && y < UINT_MAX) return x * y;
-        if (x == uint64_t(-1) || y == uint64_t(-1)) return uint64_t(-1);
-        return (x <= uint64_t(-1) / y ? x * y : uint64_t(-1));
-    };
-    auto power = [&](uint64_t x, uint64_t k) -> uint64_t {
-        if (k == 0) return 1ULL;
-        uint64_t res = 1ULL;
-        while (k) {
-            if (k & 1) res = mul(res, x);
-            x = mul(x, x);
-            k >>= 1;
-        }
-        return res;
-    };
-    
-    uint64_t res;
-    if (K == 2) res = sqrtl(N) - 1;
-    else if (K == 3) res = cbrt(N) - 1;
-    else res = pow(N, nextafter(1 / double(K), 0));
-    while (power(res + 1, K) <= N) ++res;
-    return res;
-}
-
-// xor128による乱数生成、周期は2^128-1
-unsigned int randInt() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-int randInt(int minv, int maxv) {
-    return randInt() % (maxv - minv + 1) + minv;
-}
-long long randInt(long long minv, long long maxv) {
-    long long a = randInt(), b = randInt();
-    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
-}
-template<class T> void shuffle(vector<T>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
-        int k = randInt() % (i + 1);
-        swap(vec[i], vec[k]);
-    }
-}
-
-// int 128
-i128 to_integer(const string &s) {
-    i128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    if (s[0] == '-') res *= -1;
-    return res;
-}
-istream& operator >> (istream &is, i128 &x) {
-    string s;
-    is >> s;
-    x = to_integer(s);
-    return is;
-}
-ostream& operator << (ostream &os, const i128 &x) {
-    i128 ax = (x >= 0 ? x : -x);
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
-}
-u128 to_uinteger(const string &s) {
-    u128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    return res;
-}
-istream& operator >> (istream &is, u128 &x) {
-    string s;
-    is >> s;
-    x = to_uinteger(s);
-    return is;
-}
-ostream& operator << (ostream &os, const u128 &x) {
-    u128 ax = x;
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
-}
-
-
-//------------------------------//
-// Fast IO
-//------------------------------//
-
-struct FastRead {
-    static constexpr int BUF_SIZE = 1 << 17;
-
-private:
-    FILE *stream_;
-    array<char, BUF_SIZE> buf_;
-    char *begin_, *end_, *ptr_;
-
-    // reader
-    void skip_space() {
-        while (*ptr_ <= ' ') ++ptr_;
-    }
-    template<int N = 0> void read() {
-        if (const auto n = end_ - ptr_; n <= N) {
-            ignore = fread(copy_n(ptr_, n, begin_), 1, BUF_SIZE - n, stream_);
-            ptr_ = begin_;
-        }
-    }
-    
-    // parser
-    template<typename T> void parse(T &x) {
-        common_type_t<T, uint64_t> x2 = 0;
-        while (true) {
-            uint64_t v;
-            memcpy(&v, ptr_, 8);
-            if ((v -= 0x3030303030303030) & 0x8080808080808080) break;
-            v = (v * 10 + (v >> 8)) & 0xff00ff00ff00ff;
-            v = (v * 100 + (v >> 16)) & 0xffff0000ffff;
-            v = (v * 10000 + (v >> 32)) & 0xffffffff;
-            x2 = 100000000 * x2 + v;
-            ptr_ += 8;
-        }
-        while (true) {
-            uint32_t v;
-            memcpy(&v, ptr_, 4);
-            if ((v -= 0x30303030) & 0x80808080) break;
-            v = (v * 10 + (v >> 8)) & 0xff00ff;
-            v = (v * 100 + (v >> 16)) & 0xffff;
-            x2 = 10000 * x2 + v;
-            ptr_ += 4;
-            break;
-        }
-        while (true) {
-            uint16_t v;
-            memcpy(&v, ptr_, 2);
-            if ((v -= 0x3030) & 0x8080) break;
-            v = (v * 10 + (v >> 8)) & 0xff;
-            x2 = 100 * x2 + v;
-            ptr_ += 2;
-            break;
-        }
-        if (' ' < *ptr_) {
-            x2 *= 10;
-            x2 += *ptr_++ - '0';
-        }
-        ++ptr_;
-        x = static_cast<T>(x2);
-    }
-    
-public:
-    // constructor
-    FastRead() : FastRead(stdin) {}
-    explicit FastRead(const filesystem::path& p) : FastRead(fopen(p.c_str(), "r")) {}
-    explicit FastRead(FILE *stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(end_) { 
-        read(); 
-    }
-    ~FastRead() { 
-        if (stream_ != stdin) fclose(stream_); 
-    }
-    FastRead(const FastRead&) = delete;
-    FastRead &operator = (const FastRead&) = delete;
-    
-    // operators
-    template<unsigned_integral T> void operator () (T &x) {
-        skip_space();
-        read<64>();
-        parse(x);
-    }
-    template<signed_integral T> void operator () (T &x) {
-        skip_space();
-        read<64>();
-        make_unsigned_t<T> u;
-        if (*ptr_ == '-') {
-            ++ptr_;
-            parse(u);
-            u = -u;
-        } else {
-            parse(u);
-        }
-        x = u;
-    }
-    void operator () (char &x) {
-        skip_space();
-        read<64>();
-        x = *ptr_;
-        ++ptr_;
-    }
-    void operator () (string &x) {
-        x = "";
-        skip_space();
-        read<64>();
-        while (*ptr_ > ' ' && *ptr_ != '\0') {
-            x.push_back(*ptr_);
-            ++ptr_;
-        }
-        ++ptr_;
-    }
-    template<class... Ts> requires(sizeof...(Ts) != 1) void operator () (Ts&... xs) {
-        ((*this)(xs), ...);
-    }
-    template<class T> FastRead& operator >> (T &x) { (*this)(x); return *this; }
-};
-
-class FastWrite {
-    static constexpr int BUF_SIZE = 1 << 17;
-
-private:
-    FILE *stream_;
-    array<char, BUF_SIZE> buf_;
-    char *begin_, *end_, *ptr_;
-    
-    // preparation
-    template<class T> static constexpr int DIGITS = numeric_limits<T>::digits10 + 1;
-    template<class T> static constexpr auto POW10 = [] {
-        array<T, DIGITS<T>> ret;
-        ret[0] = 1;
-        for (int i = 1; i < DIGITS<T>; ++i) {
-            ret[i] = 10 * ret[i - 1];
-        }
-        return ret;
-    } ();
-    static constexpr auto LUT = [] {
-        array<char, 40000> res;
-        char* p = res.data();
-        char a = '0', b = '0', c = '0', d = '0';
-        do {
-            *p++ = a, *p++ = b, *p++ = c, *p++ = d;
-        } while (d++ < '9'
-                 || (d = '0', c++ < '9'
-                     || (c = '0', b++ < '9'
-                         || (b = '0', a++ < '9'))));
-        return res;
-    } ();
-    
-    // flush
-    template<int N = BUF_SIZE> void flush() {
-        if (end_ - ptr_ <= N) {
-            fwrite(begin_, 1, ptr_ - begin_, stream_);
-            ptr_ = begin_;
-        }
-    }
-    
-    // writer
-    template<int N = 4> void le4(uint64_t x) {
-        if constexpr (1 < N) {
-            if (x < POW10<uint64_t>[N - 1]) {
-                le4<N - 1>(x);
-                return;
-            }
-        }
-        ptr_ = copy_n(&LUT[x * 4 + (4 - N)], N, ptr_);
-    }
-    template<int N> void w4(uint64_t x) {
-        if constexpr (0 < N) {
-            ptr_ = copy_n(&LUT[x / POW10<uint64_t>[N - 4] * 4], 4, ptr_);
-            w4<N - 4>(x % POW10<uint64_t>[N - 4]);
-        }
-    }
-    template<int N> void write(uint64_t x) {
-        if constexpr (N < DIGITS<uint64_t>) {
-            if (POW10<uint64_t>[N] <= x) {
-                write<N + 4>(x);
-                return;
-            }
-        }
-        le4(x / POW10<uint64_t>[N - 4]);
-        w4<N - 4>(x % POW10<uint64_t>[N - 4]);
-    }
-    template<typename T> void write(T x) {
-        write<4>(x);
-    }
-    void write(__uint128_t x) {
-        if (x < POW10<__uint128_t>[16]) {
-            write(static_cast<uint64_t>(x));
-        } else if (x < POW10<__uint128_t>[32]) {
-            write(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
-            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
-        } else {
-            write(static_cast<uint64_t>(x / POW10<__uint128_t>[32]));
-            x %= POW10<__uint128_t>[32];
-            w4<16>(static_cast<uint64_t>(x / POW10<__uint128_t>[16]));
-            w4<16>(static_cast<uint64_t>(x % POW10<__uint128_t>[16]));
-        }
-    }
-    
-public:
-    // constructor
-    FastWrite() : FastWrite(stdout) {}
-    explicit FastWrite(const filesystem::path& p) : FastWrite(fopen(p.c_str(), "w")) {}
-    explicit FastWrite(FILE* stream)
-    : stream_(stream), begin_(buf_.data()), end_(begin_ + BUF_SIZE), ptr_(begin_) {}
-    ~FastWrite() {
-        flush();
-        if (stream_ != stdout) { fclose(stream_); }
-    }
-    FastWrite(const FastWrite&) = delete;
-    FastWrite& operator = (const FastWrite&) = delete;
-    
-    // operators
-    template<unsigned_integral T> void operator () (T x) {
-        flush<DIGITS<T>>();
-        write(x);
-    }
-    template<signed_integral T> void operator () (T x) {
-        flush<1 + DIGITS<T>>();
-        using U = make_unsigned_t<T>;
-        const U u = x;
-        if (x < 0) {
-            *ptr_++ = '-';
-            write(static_cast<U>(-u));
-        } else {
-            write(u);
-        }
-    }
-    void operator () (char c) {
-        flush<1>();
-        *ptr_++ = c;
-    }
-    void operator () (string_view s) {
-        while (!s.empty()) {
-            flush<0>();
-            const auto n = min(ssize(s), end_ - ptr_);
-            if (n == BUF_SIZE) {
-                fwrite(s.data(), 1, BUF_SIZE, stream_);
-            } else {
-                ptr_ = copy_n(s.data(), n, ptr_);
-            }
-            s.remove_prefix(n);
-        }
-        flush<0>();
-    }
-    template <char End = '\n', char Sep = ' ', class T, class... Ts>
-    void ln(T&& x, Ts&&... xs) {
-        (*this)(std::forward<T>(x));
-        if constexpr (sizeof...(Ts) == 0) {
-            *ptr_++ = End;
-        } else {
-            *ptr_++ = Sep;
-            ln<End, Sep>(std::forward<Ts>(xs)...);
-        }
-    }
-    template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
-};
 
 
 //------------------------------//
@@ -2460,40 +1992,41 @@ template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y
 // Matrix
 //------------------------------//
 
-// matrix
+// modint matrix
 template<class mint> struct MintMatrix {
     // inner value
+    int H, W;
     vector<vector<mint>> val;
     
     // constructors
-    MintMatrix(int H, int W) : val(H, vector<mint>(W)) {}
-    MintMatrix(int H, int W, mint x) : val(H, vector<mint>(W, x)) {}
-    MintMatrix(const MintMatrix &mat) : val(mat.val) {}
-    void init(int H, int W, mint x) {
-        val.assign(H, vector<mint>(W, x));
+    MintMatrix() {}
+    MintMatrix(const MintMatrix&) = default;
+    MintMatrix& operator = (const MintMatrix&) = default;
+    MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
+    MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
+    void init(int h, int w, mint x) {
+        H = h, W = w;
+        val.assign(h, vector<mint>(w, x));
     }
-    void resize(int H, int W) {
-        val.resize(H);
-        for (int i = 0; i < H; ++i) val[i].resize(W);
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
     }
     
     // getter and debugger
-    constexpr int height() const { 
-        return (int)val.size();
-    }
-    constexpr int width() const { 
-        return (height() > 0 ? (int)val[0].size() : 0);
-    }
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
     vector<mint>& operator [] (int i) { return val[i]; }
-    constexpr vector<mint>& operator [] (int i) const { return val[i]; }
-    friend constexpr ostream& operator << (ostream &os, const MintMatrix<mint> &mat) {
-        os << endl;
+    const vector<mint>& operator [] (int i) const { return val[i]; }
+    friend constexpr ostream& operator << (ostream &os, const MintMatrix &mat) {
         for (int i = 0; i < mat.height(); ++i) {
             for (int j = 0; j < mat.width(); ++j) {
-                if (j) os << ", ";
+                if (j) os << ' ';
                 os << mat.val[i][j];
             }
-            os << endl;
+            os << '\n';
         }
         return os;
     }
@@ -2510,21 +2043,17 @@ template<class mint> struct MintMatrix {
     constexpr MintMatrix& operator += (const MintMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
                 val[i][j] = val[i][j] + r.val[i][j];
-            }
-        }
         return *this;
     }
     constexpr MintMatrix& operator -= (const MintMatrix &r) {
         assert(height() == r.height());
         assert(width() == r.width());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
                 val[i][j] = val[i][j] - r.val[i][j];
-            }
-        }
         return *this;
     }
     constexpr MintMatrix& operator *= (const mint &v) {
@@ -2542,12 +2071,28 @@ template<class mint> struct MintMatrix {
                     res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
         return (*this) = res;
     }
-    constexpr MintMatrix operator + () const { return MintMatrix(*this); }
-    constexpr MintMatrix operator - () const { return MintMatrix(*this) *= mint(-1); }
-    constexpr MintMatrix operator + (const MintMatrix &r) const { return MintMatrix(*this) += r; }
-    constexpr MintMatrix operator - (const MintMatrix &r) const { return MintMatrix(*this) -= r; }
-    constexpr MintMatrix operator * (const mint &v) const { return MintMatrix(*this) *= v; }
-    constexpr MintMatrix operator * (const MintMatrix &r) const { return MintMatrix(*this) *= r; }
+    constexpr MintMatrix operator + () const { 
+        return MintMatrix(*this);
+    }
+    constexpr MintMatrix operator - () const {
+        MintMatrix res(*this);
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res.val[i][j] = -res.val[i][j];
+        return res;
+    }
+    constexpr MintMatrix operator + (const MintMatrix &r) const { 
+        return MintMatrix(*this) += r;
+    }
+    constexpr MintMatrix operator - (const MintMatrix &r) const {
+        return MintMatrix(*this) -= r;
+    }
+    constexpr MintMatrix operator * (const mint &v) const {
+        return MintMatrix(*this) *= v;
+    }
+    constexpr MintMatrix operator * (const MintMatrix &r) const {
+        return MintMatrix(*this) *= r;
+    }
     constexpr vector<mint> operator * (const vector<mint> &v) const {
         assert(width() == v.size());
         vector<mint> res(height(), mint(0));
@@ -2556,11 +2101,24 @@ template<class mint> struct MintMatrix {
                 res[i] += val[i][j] * v[j];
         return res;
     }
+
+    // transpose
+    constexpr MintMatrix trans() const {
+        MintMatrix<mint> res(width(), height());
+        for (int row = 0; row < width(); row++)
+            for (int col = 0; col < height(); col++)
+                res[row][col] = val[col][row];
+        return res;
+    }
+    friend constexpr MintMatrix trans(const MintMatrix &mat) {
+        return mat.trans();
+    }
     
     // pow
     constexpr MintMatrix pow(long long n) const {
         assert(height() == width());
-        MintMatrix<mint> res(height(), width()), mul(*this);
+        MintMatrix<mint> res(height(), width());
+        MintMatrix<mint> mul(*this);
         for (int row = 0; row < height(); ++row) res[row][row] = mint(1);
         while (n > 0) {
             if (n & 1) res = res * mul;
@@ -2569,7 +2127,7 @@ template<class mint> struct MintMatrix {
         }
         return res;
     }
-    friend constexpr MintMatrix<mint> pow(const MintMatrix<mint> &mat, long long n) {
+    friend constexpr MintMatrix pow(const MintMatrix &mat, long long n) {
         return mat.pow(n);
     }
     
@@ -2577,39 +2135,40 @@ template<class mint> struct MintMatrix {
     constexpr int find_pivot(int cur_rank, int col) const {
         int pivot = -1;
         for (int row = cur_rank; row < height(); ++row) {
-            if (val[row][col] != 0) {
+            if (val[row][col] != mint(0)) {
                 pivot = row;
                 break;
             }
         }
         return pivot;
     }
-    constexpr void sweep(int cur_rank, int col, int pivot) {
+    constexpr void sweep(int cur_rank, int col, int pivot, bool sweep_upper = true) {
         swap(val[pivot], val[cur_rank]);
         auto ifac = val[cur_rank][col].inv();
-        for (int col2 = 0; col2 < width(); ++col2) {
+        for (int col2 = cur_rank; col2 < width(); ++col2) {
             val[cur_rank][col2] *= ifac;
         }
-        for (int row = 0; row < height(); ++row) {
-            if (row != cur_rank && val[row][col] != 0) {
+        int row_start = (sweep_upper ? 0 : cur_rank + 1);
+        for (int row = row_start; row < height(); ++row) {
+            if (row != cur_rank && val[row][col] != mint(0)) {
                 auto fac = val[row][col];
-                for (int col2 = 0; col2 < width(); ++col2) {
+                for (int col2 = cur_rank; col2 < width(); ++col2) {
                     val[row][col2] -= val[cur_rank][col2] * fac;
                 }
             }
         }
     }
-    constexpr int gauss_jordan(int not_sweep_width = 0) {
+    constexpr int gauss_jordan(int not_sweep_width = 0, bool sweep_upper = true) {
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
             if (col == width() - not_sweep_width) break;
             int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
-            sweep(rank++, col, pivot);
+            sweep(rank++, col, pivot, sweep_upper);
         }
         return rank;
     }
-    constexpr int gauss_jordan(int not_sweep_width, vector<int> &core) {
+    constexpr int gauss_jordan(vector<int> &core, int not_sweep_width, bool sweep_upper = true) {
         core.clear();
         int rank = 0;
         for (int col = 0; col < width(); ++col) {
@@ -2617,17 +2176,28 @@ template<class mint> struct MintMatrix {
             int pivot = find_pivot(rank, col);
             if (pivot == -1) continue;
             core.push_back(col);
-            sweep(rank++, col, pivot);
+            sweep(rank++, col, pivot, sweep_upper);
         }
         return rank;
     }
-    friend constexpr int gauss_jordan(MintMatrix<mint> &mat, int not_sweep_width = 0) {
-        return mat.gauss_jordan(not_sweep_width);
+    friend constexpr int gauss_jordan(MintMatrix &mat, int not_sweep_width = 0, bool sweep_upper = true) {
+        return mat.gauss_jordan(not_sweep_width, sweep_upper);
+    }
+
+    // rank
+    constexpr int get_rank() const {
+        if (height() == 0 || width() == 0) return 0;
+        MintMatrix A(*this);
+        if (height() < width()) A = A.trans();
+        return A.gauss_jordan(0, false);
+    }
+    friend constexpr int get_rank(const MintMatrix &mat) {
+        return mat.get_rank();
     }
 
     // find one solution
     friend constexpr int linear_equation
-    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res) {
+    (const MintMatrix &mat, const vector<mint> &b, vector<mint> &res) {
         // extend
         MintMatrix<mint> A(mat.height(), mat.width() + 1);
         for (int i = 0; i < mat.height(); ++i) {
@@ -2644,14 +2214,14 @@ template<class mint> struct MintMatrix {
         for (int i = 0; i < rank; ++i) res[i] = A[i].back();
         return rank;
     }
-    friend constexpr int linear_equation(const MintMatrix<mint> &mat, const vector<mint> &b) {
+    friend constexpr int linear_equation(const MintMatrix &mat, const vector<mint> &b) {
         vector<mint> res;
         return linear_equation(mat, b, res);
     }
 
     // find all solutions
     friend int linear_equation
-    (const MintMatrix<mint> &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
+    (const MintMatrix &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
         // extend
         MintMatrix<mint> A(mat.height(), mat.width() + 1);
         for (int i = 0; i < mat.height(); ++i) {
@@ -2659,7 +2229,7 @@ template<class mint> struct MintMatrix {
             A[i].back() = b[i];
         }
         vector<int> core;
-        int rank = A.gauss_jordan(1, core);
+        int rank = A.gauss_jordan(core, 1);
         
         // check if it has no solution
         for (int row = rank; row < mat.height(); ++row) {
@@ -2686,19 +2256,74 @@ template<class mint> struct MintMatrix {
     
     // determinant
     constexpr mint det() const {
+        assert(height() == width());
+        if (height() == 0) return mint(1);
         MintMatrix<mint> A(*this);
         int rank = 0;
-        mint res = 1;
+        mint res = mint(1);
         for (int col = 0; col < width(); ++col) {
             int pivot = A.find_pivot(rank, col);
             if (pivot == -1) return mint(0);
+            if (pivot != rank) res = -res;
             res *= A[pivot][rank];
-            A.sweep(rank++, col, pivot);
+            A.sweep(rank++, col, pivot, false);
         }
         return res;
     }
-    friend constexpr mint det(const MintMatrix<mint> &mat) {
+    friend constexpr mint det(const MintMatrix &mat) {
         return mat.det();
+    }
+    constexpr mint det_nonprime_mod() const {
+        assert(height() == width());
+        if (height() == 0) return mint(1);
+        MintMatrix<mint> A(*this);
+        int rank = 0;
+        mint res = mint(1);
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return mint(0);
+            if (pivot != rank) swap(A[pivot], A[rank]), res = -res;
+            for (int row = rank + 1; row < height(); ++row) {
+                while (A[row][col] != 0) {
+                    swap(A[rank], A[row]), res = -res;
+                    long long quo = A[row][col].get() / A[rank][col].get();
+                    for (int col2 = rank; col2 < width(); ++col2) {
+                        A[row][col2] -= A[rank][col2] * quo;
+                    }
+                }
+            }
+            rank++;
+        }
+        for (int col = 0; col < height(); ++col) res *= A[col][col];
+        return res;
+    }
+    friend constexpr mint det_nonprime_mod(const MintMatrix &mat) {
+        return mat.det_nonprime_mod();
+    }
+
+    // inv
+    constexpr MintMatrix inv() const {
+        assert(height() == width());
+
+        // extend
+        MintMatrix<mint> A(height(), width() + height());
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) A[i][j] = val[i][j];
+            A[i][i+width()] = mint(1);
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(height(), true);
+
+        // gauss jordan
+        if (rank < height()) return MintMatrix();
+        MintMatrix<mint> res(height(), width());
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < width(); ++j)
+                res[i][j] = A[i][j+width()];
+        return res;
+    }
+    friend constexpr MintMatrix inv(const MintMatrix &mat) {
+        return mat.inv();
     }
 };
 
@@ -2755,15 +2380,14 @@ FPS<mint> calc_characteristic_polynomial(MintMatrix<mint> B) {
 
 // Yosupo Library Checker - Characteristic Polynomial
 void Yosupo_Characteristic_Polynomial() {
-    FastRead Read; FastWrite Write;
     using mint = Fp<>;
     int N;
-    Read(N);
+    cin >> N;
     MintMatrix<mint> a(N, N);
-    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) Read(a[i][j].val);
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> a[i][j].val;
     auto res = calc_characteristic_polynomial(a);
-    for (int i = 0; i < res.size(); i++) Write(res[i].val), Write(' ');
-    Write('\n');
+    for (int i = 0; i < res.size(); i++) cout << res[i] << " ";
+    cout << endl;
 }
 
 
