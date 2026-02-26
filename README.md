@@ -360,13 +360,13 @@
 ## 環上の行列
 
 - (★★★☆) [半環上の行列 (加法・乗法, 行列累乗)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_semiring.cpp)
-- (★★★★) [Euclid 環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 log M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_euclid_ring.cpp)
-- (★★★★) [Fp 係数の多項式行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 D))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_polynomial.cpp)
-- (★★★★) [一般の可換環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_ring.cpp)
+- (★★★★) [Euclid 環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 log M)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_euclid_ring.cpp)
+- (★★★★) [Fp 係数の多項式行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 D)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_polynomial.cpp)
+- (★★★★) [一般の可換環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_ring.cpp)
 
 ## 行列式
 
-- (★★★★) [任意 mod 行列式 (by Euclid 環上の行列式計算 in O(N^3 log M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
+- (★★★★) [任意 mod 行列式 (by Euclid 環上の行列式計算 in O(N^3 log M)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_determinant_in_general_mod.cpp)
 - (★★★★) [Fp 体上の行列の特性多項式 (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
 - (★★★★) [Fp 体上の行列の行列式 det(M0 + M1x) (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
 
@@ -413,8 +413,8 @@
 - (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/bostan_mori.cpp)
 - (★★★★) [Berlekamp-Massey 法](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/berlekamp_massey.cpp)
 - (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/power_projection.cpp)
-- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
-- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
+- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/composition_formal_power_series.cpp)
+- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/compositional_inverse_formal_power_series.cpp)
 - (★★★★) pow 列挙
 - (★★★★) 部分分数分解
 - (★★★★) 常微分方程式
