@@ -83,7 +83,7 @@
 
 ## その他
 
-- (★★★☆) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/advanced_bitset.cpp)
+- (★★★☆) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/dynamic_bitset.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 - (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - (★★★★) Dynamic Connectivity
