@@ -134,6 +134,10 @@ int popcnt(int x) { return __builtin_popcount(x); }
 int popcnt(unsigned int x) { return __builtin_popcount(x); }
 int popcnt(long long x) { return __builtin_popcountll(x); }
 int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
+int popcnt_mod2(int x) { return __builtin_parity(x); }
+int popcnt_mod2(unsigned int x) { return __builtin_parity(x); }
+int popcnt_mod2(long long x) { return __builtin_parityll(x); }
+int popcnt_mod2(unsigned long long x) { return __builtin_parityll(x); }
 
 // min non-negative i such that (x & (1 << i)) != 0
 int bsf(int x) { return __builtin_ctz(x); }
@@ -337,7 +341,7 @@ template<class T> T num_lattice_points(T x1, T y1, T x2, T y2) {
     return floor_sum(dx, y2 - y1, dx * y1, dx);
 }
 
-// 動的 bitset
+// Dynamic Bitset
 struct DynamicBitset {
     using u64 = unsigned long long;
     int topbit(u64 x) { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
@@ -349,15 +353,14 @@ struct DynamicBitset {
     vector<u64> dat;
 
     // constructors
-    DynamicBitset() {}
-    DynamicBitset(const DynamicBitset&) = default;
-    DynamicBitset& operator = (const DynamicBitset&) = default;
     DynamicBitset(int N = 0, int x = 0) : N(N) {
         assert(x == 0 || x == 1);
         u64 v = (x == 0 ? 0 : -1);
         dat.assign((N + 63) >> 6, v);
         if (N) dat.back() >>= (64 * dat.size() - N);
     }
+    DynamicBitset(const DynamicBitset&) = default;
+    DynamicBitset& operator = (const DynamicBitset&) = default;
     DynamicBitset(const string &S) : N((int)S.size()) {
         dat.assign((N + 63) >> 6, 0);
         if (N) dat.back() >>= (64 * dat.size() - N);
@@ -437,6 +440,12 @@ struct DynamicBitset {
         assert(size() == r.size());
         int res = 0;
         for (int i = 0; i < (int)dat.size(); i++) res += popcnt(dat[i] & r.dat[i]);
+        return res;
+    }
+    int dot_mod2(const DynamicBitset &r) {
+        assert(size() == r.size());
+        int res = 0;
+        for (int i = 0; i < (int)dat.size(); i++) res ^= popcnt_mod2(dat[i] & r.dat[i]);
         return res;
     }
     int next(int val) {  // (include val)
@@ -604,7 +613,7 @@ struct DynamicBitset {
         int a = 0, b = db.size();
         while (L < R && (L & 63)) (*this)[L++] = bool(db[a++]);
         while (L < R && (R & 63)) (*this)[--R] = bool(db[--b]);
-        int l = L >> 6, r = R >> 6, s = a >> 6, t = b >> t, high = a & 63;
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
         if (!high) {
             for (int i = 0; i < r - l; i++) {
                 dat[i + l] = db.dat[i + s];
@@ -626,7 +635,7 @@ struct DynamicBitset {
             --b, --R;
             if (!db[b]) (*this)[R] = 0;
         }
-        int l = L >> 6, r = R >> 6, s = a >> 6, t = b >> t, high = a & 63;
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
         if (!high) {
             for (int i = 0; i < r - l; i++) {
                 dat[i + l] &= db.dat[i + s];
@@ -648,7 +657,7 @@ struct DynamicBitset {
             --b, --R;
             dat[R >> 6] |= u64(db[b]) << (R & 63);
         }
-        int l = L >> 6, r = R >> 6, s = a >> 6, t = b >> t, high = a & 63;
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
         if (!high) {
             for (int i = 0; i < r - l; i++) {
                 dat[i + l] |= db.dat[i + s];
@@ -670,7 +679,7 @@ struct DynamicBitset {
             --b, --R;
             dat[R >> 6] ^= u64(db[b]) << (R & 63);
         }
-        int l = L >> 6, r = R >> 6, s = a >> 6, t = b >> t, high = a & 63;
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
         if (!high) {
             for (int i = 0; i < r - l; i++) {
                 dat[i + l] ^= db.dat[i + s];
