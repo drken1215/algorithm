@@ -75,16 +75,16 @@
 - (★★★☆) ハッシュ関数
 - (★★★☆) ハッシュ構造体
 
-## N 以下の非負整数値の順序つき集合
+## N 以下の非負整数の順序つき集合
 
-- (★★☆☆) [BIT と BIT 上の二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
-- (★★★★) [64 分木](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
-- (★★★★) van Emde Boas 木
+- (★★☆☆) [N 以下の非負整数の順序つき集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
+- (★★★★) [N 以下の非負整数の順序つき集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
+- (★★★★) N 以下の非負整数値の順序つき集合 (by van Emde Boas 木)
 
 ## その他
 
-- (★★★☆) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/dynamic_bitset.cpp)
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
+- (★★★★) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/dynamic_bitset.cpp)
 - (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
 - (★★★★) Dynamic Connectivity
 - (★★★★) 永続配列
