@@ -41,8 +41,8 @@ int popcnt_mod2(unsigned long long x) { return __builtin_parityll(x); }
 
 struct DynamicBitset {
     using u64 = unsigned long long;
-    int topbit(u64 x) { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
-    int lowbit(u64 x) { return (x == 0 ? -1 : __builtin_ctzll(x)); }
+    constexpr int topbit(u64 x) const { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
+    constexpr int lowbit(u64 x) const { return (x == 0 ? -1 : __builtin_ctzll(x)); }
     static string CONV[256];  // for to_string()
     
     // inner values
@@ -66,6 +66,14 @@ struct DynamicBitset {
             if (S[i] == '1') set(i);
         }
     }
+    DynamicBitset(const vector<int> &v) : N((int)v.size()) {
+        dat.assign((N + 63) >> 6, 0);
+        if (N) dat.back() >>= (64 * dat.size() - N);
+        for (int i = 0; i < (int)v.size(); i++) {
+            assert(v[i] == 0 || v[i] == 1);
+            if (v[i] == 1) set(i);
+        }
+    }
     constexpr int size() const { return N; }
     void resize(int siz) {
         dat.resize((siz + 63) >> 6);
@@ -75,6 +83,17 @@ struct DynamicBitset {
             dat.back() &= mask;
         }
         N = siz;
+    }
+    void assign(int siz, int x = 0) {
+        assert(x == 0 || x == 1);
+        N = siz;
+        u64 v = (x == 0 ? 0 : -1);
+        dat.assign((N + 63) >> 6, v);
+        if (N) dat.back() >>= (64 * dat.size() - N);
+    }
+    int back() const {
+        assert(N > 0);
+        return (*this)[N - 1];
     }
     void push_back(bool v) {
         resize(N + 1);
@@ -105,6 +124,9 @@ struct DynamicBitset {
         operator bool () const {
             return (dat[index >> 6] >> (index & 63)) & 1;
         }
+        Proxy& operator = (const Proxy& v) {
+            return (*this) = bool(v);
+        }
         Proxy& operator = (u64 value) {
             dat[index >> 6] &= ~(u64(1) << (index & 63));
             dat[index >> 6] |= (value & 1) << (index & 63);
@@ -116,16 +138,16 @@ struct DynamicBitset {
     };
     Proxy operator [] (int i) { return Proxy(dat, i); }
     bool operator [] (int i) const { return (dat[i >> 6] >> (i & 63)) & 1; }
-    bool any() {  // [0, N)
+    bool any() const {  // [0, N)
         for (auto val : dat) if (val) return true;
         return false;
     }
-    int count() {  // [0, N)
+    int count() const {  // [0, N)
         int res = 0;
         for (auto val : dat) res += popcnt(val);
         return res;
     }
-    int count(int L, int R) {  // [L, R)
+    int count(int L, int R) const {  // [L, R)
         assert(L <= R);
         int res = 0;
         while ((L < R) && (L & 63)) res += (*this)[L++];
@@ -133,19 +155,19 @@ struct DynamicBitset {
         for (int i = (L >> 6); i < (R >> 6); i++) res += popcnt(dat[i]);
         return res;
     }
-    int dot(const DynamicBitset &r) {
+    int dot(const DynamicBitset &r) const {
         assert(size() == r.size());
         int res = 0;
         for (int i = 0; i < (int)dat.size(); i++) res += popcnt(dat[i] & r.dat[i]);
         return res;
     }
-    int dot_mod2(const DynamicBitset &r) {
+    int dot_mod2(const DynamicBitset &r) const {
         assert(size() == r.size());
         int res = 0;
         for (int i = 0; i < (int)dat.size(); i++) res ^= popcnt_mod2(dat[i] & r.dat[i]);
         return res;
     }
-    int next(int val) {  // (include val)
+    int next(int val) const {  // (include val)
         if (val < 0) val = 0;
         if (val >= N) return N;
         int k = val >> 6;
@@ -161,7 +183,7 @@ struct DynamicBitset {
         }
         return N;
     }
-    int prev(int val) {  // (include val)
+    int prev(int val) const {  // (include val)
         if (val < 0) return -1;
         if (val >= N) val = N - 1;
         int k = val >> 6;
@@ -177,8 +199,8 @@ struct DynamicBitset {
         }
         return -1;
     }
-    int get_min() { return next(0); }
-    int get_max() { return prev(N); }
+    int get_min() const { return next(0); }
+    int get_max() const { return prev(N); }
 
     // input/output operators
     friend istream& operator >> (istream &is, DynamicBitset &db) {
@@ -433,6 +455,8 @@ void small_test() {
     assert(a == DynamicBitset("00111111111100011000"));
     a.apply_xor(20-c.size(), 20, c);
     assert(a == DynamicBitset("00111111100111000100"));
+    a[5] = b[3];
+    assert(a == DynamicBitset("00111011100111000100"));
 }
 
 
