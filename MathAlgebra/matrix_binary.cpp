@@ -67,19 +67,15 @@ struct DynamicBitset {
     DynamicBitset(const DynamicBitset&) = default;
     DynamicBitset& operator = (const DynamicBitset&) = default;
     DynamicBitset(const string &S) : N((int)S.size()) {
-        dat.assign((N + 63) >> 6, 0);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-        for (int i = 0; i < (int)S.size(); i++) {
-            assert(S[i] == '0' || S[i] == '1');
-            if (S[i] == '1') set(i);
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (S[i] == '1') dat[i >> 6] |= u64(1) << (i & 63);
         }
     }
     DynamicBitset(const vector<int> &v) : N((int)v.size()) {
-        dat.assign((N + 63) >> 6, 0);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-        for (int i = 0; i < (int)v.size(); i++) {
-            assert(v[i] == 0 || v[i] == 1);
-            if (v[i] == 1) set(i);
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (v[i] == 1) dat[i >> 6] |= u64(1) << (i & 63);
         }
     }
     constexpr int size() const { return N; }
@@ -105,7 +101,7 @@ struct DynamicBitset {
     }
     void push_back(bool v) {
         resize(N + 1);
-        (*this)[N] = v;
+        (*this)[size() - 1] = v;
     }
     static void pre_to_string() {
         for (int s = 0; s < 256; s++) {
@@ -214,7 +210,10 @@ struct DynamicBitset {
     friend istream& operator >> (istream &is, DynamicBitset &db) {
         string S;
         is >> S;
-        db = DynamicBitset(S);
+        db.assign(S.size(), 0);
+        for (int i = 0; i < S.size(); i++) {
+            if (S[i] == '1') db.dat[i >> 6] |= u64(1) << (i & 63);
+        }
         return is;
     }
     friend ostream& operator << (ostream &os, const DynamicBitset &db) {
@@ -612,7 +611,6 @@ struct BinaryMatrix {
     int get_rank() const {
         if (height() == 0 || width() == 0) return 0;
         BinaryMatrix A(*this);
-        if (height() < width()) A = A.trans();
         return A.gauss_jordan(0, false);
     }
     friend int get_rank(const BinaryMatrix &mat) {
@@ -762,8 +760,24 @@ void Yosupo_Rank_of_Matrix_Mod2() {
     ios_base::sync_with_stdio(false);
     int N, M;
     cin >> N >> M;
+    if (N == 0 || M == 0) {
+        cout << 0 << endl;
+        return;
+    }
+    bool flip = false;
+    if (N > M) swap(N, M), flip = true;
     BinaryMatrix A(N, M);
-    for (int i = 0; i < N; i++) cin >> A[i];
+    if (!flip) {
+        for (int i = 0; i < N; i++) cin >> A[i];
+    } else {
+        for (int i = 0; i < M; i++) {
+            string S;
+            cin >> S;
+            for (int j = 0; j < N; j++) {
+                if (S[j] == '1') A[j].set(i);
+            }
+        }
+    }
     auto res = get_rank(A);
     cout << res << '\n';
 }
@@ -809,7 +823,7 @@ void Yosupo_Inverse_Matrix_Mod2() {
 int main() {
     //Yosupo_Matrix_Product_Mod2();
     //Yosupo_Determinant_of_Matrix_Mod2();
-    //Yosupo_Rank_of_Matrix_Mod2();
+    Yosupo_Rank_of_Matrix_Mod2();
     //Yosupo_System_of_Linear_Equations_Mod2();
-    Yosupo_Inverse_Matrix_Mod2();
+    //Yosupo_Inverse_Matrix_Mod2();
 }

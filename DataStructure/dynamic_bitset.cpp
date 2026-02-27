@@ -59,19 +59,15 @@ struct DynamicBitset {
     DynamicBitset(const DynamicBitset&) = default;
     DynamicBitset& operator = (const DynamicBitset&) = default;
     DynamicBitset(const string &S) : N((int)S.size()) {
-        dat.assign((N + 63) >> 6, 0);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-        for (int i = 0; i < (int)S.size(); i++) {
-            assert(S[i] == '0' || S[i] == '1');
-            if (S[i] == '1') set(i);
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (S[i] == '1') dat[i >> 6] |= u64(1) << (i & 63);
         }
     }
     DynamicBitset(const vector<int> &v) : N((int)v.size()) {
-        dat.assign((N + 63) >> 6, 0);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-        for (int i = 0; i < (int)v.size(); i++) {
-            assert(v[i] == 0 || v[i] == 1);
-            if (v[i] == 1) set(i);
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (v[i] == 1) dat[i >> 6] |= u64(1) << (i & 63);
         }
     }
     constexpr int size() const { return N; }
@@ -97,7 +93,7 @@ struct DynamicBitset {
     }
     void push_back(bool v) {
         resize(N + 1);
-        (*this)[N] = v;
+        (*this)[size() - 1] = v;
     }
     static void pre_to_string() {
         for (int s = 0; s < 256; s++) {
@@ -206,7 +202,10 @@ struct DynamicBitset {
     friend istream& operator >> (istream &is, DynamicBitset &db) {
         string S;
         is >> S;
-        db = DynamicBitset(S);
+        db.assign(S.size(), 0);
+        for (int i = 0; i < S.size(); i++) {
+            if (S[i] == '1') db.dat[i >> 6] |= u64(1) << (i & 63);
+        }
         return is;
     }
     friend ostream& operator << (ostream &os, const DynamicBitset &db) {

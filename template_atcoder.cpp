@@ -362,19 +362,15 @@ struct DynamicBitset {
     DynamicBitset(const DynamicBitset&) = default;
     DynamicBitset& operator = (const DynamicBitset&) = default;
     DynamicBitset(const string &S) : N((int)S.size()) {
-        dat.assign((N + 63) >> 6, 0);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-        for (int i = 0; i < (int)S.size(); i++) {
-            assert(S[i] == '0' || S[i] == '1');
-            if (S[i] == '1') set(i);
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (S[i] == '1') dat[i >> 6] |= u64(1) << (i & 63);
         }
     }
     DynamicBitset(const vector<int> &v) : N((int)v.size()) {
-        dat.assign((N + 63) >> 6, 0);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-        for (int i = 0; i < (int)v.size(); i++) {
-            assert(v[i] == 0 || v[i] == 1);
-            if (v[i] == 1) set(i);
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (v[i] == 1) dat[i >> 6] |= u64(1) << (i & 63);
         }
     }
     constexpr int size() const { return N; }
@@ -400,7 +396,7 @@ struct DynamicBitset {
     }
     void push_back(bool v) {
         resize(N + 1);
-        (*this)[N] = v;
+        (*this)[size() - 1] = v;
     }
     static void pre_to_string() {
         for (int s = 0; s < 256; s++) {
@@ -509,7 +505,10 @@ struct DynamicBitset {
     friend istream& operator >> (istream &is, DynamicBitset &db) {
         string S;
         is >> S;
-        db = DynamicBitset(S);
+        db.assign(S.size(), 0);
+        for (int i = 0; i < S.size(); i++) {
+            if (S[i] == '1') db.dat[i >> 6] |= u64(1) << (i & 63);
+        }
         return is;
     }
     friend ostream& operator << (ostream &os, const DynamicBitset &db) {
@@ -3362,6 +3361,300 @@ template<class mint> struct MintPolynomialMatrix {
     }
     friend constexpr Poly det(const MintPolynomialMatrix &mat) {
         return mat.det();
+    }
+};
+
+// binary matrix
+struct BinaryMatrix {
+    // inner value
+    int H, W;
+    vector<DynamicBitset> val;
+
+    // constructors
+    BinaryMatrix() {}
+    BinaryMatrix(const BinaryMatrix&) = default;
+    BinaryMatrix& operator = (const BinaryMatrix&) = default;
+    BinaryMatrix(int h, int w, int x = 0) : H(h), W(w), val(h, DynamicBitset(w, x)) {}
+    void init(int h, int w, int x = 0) {
+        H = h, W = w;
+        val.assign(h, DynamicBitset(w, x));
+    }
+    void resize(int h, int w) {
+        H = h, W = w;
+        val.resize(h);
+        for (int i = 0; i < h; ++i) val[i].resize(w);
+    }
+
+    // getter and debugger
+    constexpr int height() const { return H; }
+    constexpr int width() const { return W; }
+    constexpr bool empty() const { return height() == 0; }
+    DynamicBitset& operator [] (int i) { return val[i]; }
+    const DynamicBitset& operator [] (int i) const { return val[i]; }
+    friend ostream& operator << (ostream &os, const BinaryMatrix &mat) {
+        for (int i = 0; i < mat.height(); ++i) {
+            for (int j = 0; j < mat.width(); ++j) {
+                if (j) os << ' ';
+                os << mat.val[i][j];
+            }
+            os << '\n';
+        }
+        return os;
+    }
+    
+    // comparison operators
+    bool operator == (const BinaryMatrix &r) const {
+        return this->val == r.val;
+    }
+    bool operator != (const BinaryMatrix &r) const {
+        return this->val != r.val;
+    }
+
+    // arithmetic operators
+    const BinaryMatrix& operator += (const BinaryMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i) val[i] ^= r.val[i];
+        return *this;
+    }
+    const BinaryMatrix& operator -= (const BinaryMatrix &r) {
+        assert(height() == r.height());
+        assert(width() == r.width());
+        for (int i = 0; i < height(); ++i) val[i] ^= r.val[i];
+        return *this;
+    }
+    const BinaryMatrix& operator *= (int v) {
+        assert(v == 0 || v == 1);
+        if (v == 1) return *this;
+        else for (int i = 0; i < height(); ++i) val[i].reset();
+        return *this;
+    }
+    const BinaryMatrix& operator *= (const BinaryMatrix &r) {
+        assert(width() == r.height());
+        BinaryMatrix res(height(), r.width());
+        BinaryMatrix tr = r.trans();
+        for (int i = 0; i < height(); ++i)
+            for (int j = 0; j < r.width(); ++j)
+                res[i][j] = val[i].dot_mod2(tr[j]);
+        return (*this) = res;
+    }
+    BinaryMatrix operator + () const { 
+        return BinaryMatrix(*this);
+    }
+    BinaryMatrix operator - () const {
+        return BinaryMatrix(*this);
+    }
+    BinaryMatrix operator + (const BinaryMatrix &r) const { 
+        return BinaryMatrix(*this) += r;
+    }
+    BinaryMatrix operator - (const BinaryMatrix &r) const {
+        return BinaryMatrix(*this) -= r;
+    }
+    BinaryMatrix operator * (int v) const {
+        return BinaryMatrix(*this) *= v;
+    }
+    BinaryMatrix operator * (const BinaryMatrix &r) const {
+        return BinaryMatrix(*this) *= r;
+    }
+    DynamicBitset operator * (const DynamicBitset &v) const {
+        assert(width() == v.size());
+        DynamicBitset res(height(), 0);
+        for (int i = 0; i < height(); i++) res[i] = val[i].dot_mod2(v);
+        return res;
+    }
+
+    // transpose
+    BinaryMatrix trans() const {
+        BinaryMatrix res(width(), height());
+        for (int row = 0; row < width(); row++)
+            for (int col = 0; col < height(); col++)
+                res[row][col] = val[col][row];
+        return res;
+    }
+    friend BinaryMatrix trans(const BinaryMatrix &mat) {
+        return mat.trans();
+    }
+    
+    // pow
+    BinaryMatrix pow(long long n) const {
+        assert(height() == width());
+        BinaryMatrix res(height(), width());
+        BinaryMatrix mul(*this);
+        for (int row = 0; row < height(); ++row) res[row][row] = 1;
+        while (n > 0) {
+            if (n & 1) res = res * mul;
+            mul = mul * mul;
+            n >>= 1;
+        }
+        return res;
+    }
+    friend BinaryMatrix pow(const BinaryMatrix &mat, long long n) {
+        return mat.pow(n);
+    }
+
+    // gauss-jordan
+    int find_pivot(int cur_rank, int col) const {
+        int pivot = -1;
+        for (int row = cur_rank; row < height(); ++row) {
+            if (val[row][col] != 0) {
+                pivot = row;
+                break;
+            }
+        }
+        return pivot;
+    }
+    void sweep(int cur_rank, int col, int pivot, bool sweep_upper = true) {
+        swap(val[pivot], val[cur_rank]);
+        assert(val[cur_rank][col] != 0);
+        int row_start = (sweep_upper ? 0 : cur_rank + 1);
+        for (int row = row_start; row < height(); ++row) {
+            if (row != cur_rank && val[row][col] != 0) {
+                auto fac = val[row][col];
+                val[row].apply_xor(cur_rank, val[cur_rank]);
+            }
+        }
+    }
+    int gauss_jordan(int not_sweep_width = 0, bool sweep_upper = true) {
+        int rank = 0;
+        for (int col = 0; col < width(); ++col) {
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
+            if (pivot == -1) continue;
+            sweep(rank++, col, pivot, sweep_upper);
+        }
+        return rank;
+    }
+    int gauss_jordan(vector<int> &core, int not_sweep_width, bool sweep_upper = true) {
+        core.clear();
+        int rank = 0;
+        for (int col = 0; col < width(); ++col) {
+            if (col == width() - not_sweep_width) break;
+            int pivot = find_pivot(rank, col);
+            if (pivot == -1) continue;
+            core.push_back(col);
+            sweep(rank++, col, pivot, sweep_upper);
+        }
+        return rank;
+    }
+    friend int gauss_jordan(BinaryMatrix &mat, int not_sweep_width = 0, bool sweep_upper = true) {
+        return mat.gauss_jordan(not_sweep_width, sweep_upper);
+    }
+
+    // rank
+    int get_rank() const {
+        if (height() == 0 || width() == 0) return 0;
+        BinaryMatrix A(*this);
+        if (height() < width()) A = A.trans();
+        return A.gauss_jordan(0, false);
+    }
+    friend int get_rank(const BinaryMatrix &mat) {
+        return mat.get_rank();
+    }
+
+    // find one solution
+    friend int linear_equation
+    (const BinaryMatrix &mat, const DynamicBitset &b, DynamicBitset &res) {
+        assert(mat.height() == b.size());
+
+        // extend
+        BinaryMatrix A(mat.height(), mat.width() + 1);
+        for (int i = 0; i < mat.height(); ++i) {
+            A[i].apply(0, mat.width(), mat[i]);
+            A[i][A[i].size()-1] = b[i];
+        }
+        int rank = A.gauss_jordan(1);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) {
+            if (A[row].back() != 0) return -1;
+        }
+
+        // answer
+        res.assign(mat.width(), 0);
+        for (int i = 0; i < rank; ++i) res[i] = A[i].back();
+        return rank;
+    }
+    friend int linear_equation(const BinaryMatrix &mat, const DynamicBitset &b) {
+        DynamicBitset res;
+        return linear_equation(mat, b, res);
+    }
+
+    // find all solutions
+    friend int linear_equation
+    (const BinaryMatrix &mat, const DynamicBitset &b, DynamicBitset &res, vector<DynamicBitset> &zeros) {
+        // extend
+        BinaryMatrix A(mat.height(), mat.width() + 1);
+        for (int i = 0; i < mat.height(); ++i) {
+            A[i].apply(0, mat.width(), mat[i]);
+            A[i][A[i].size()-1] = b[i];
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(core, 1);
+        
+        // check if it has no solution
+        for (int row = rank; row < mat.height(); ++row) {
+            if (A[row].back() != 0) return -1;
+        }
+
+        // construct the core solution
+        res.assign(mat.width(), 0);
+        for (int i = 0; i < (int)core.size(); i++) res[core[i]] = A[i].back();
+    
+        // construct the all solutions
+        zeros.clear();
+        DynamicBitset used(mat.width(), 0);
+        for (auto c : core) used[c] = 1;
+        for (int j = 0; j < mat.width(); j++) {
+            if (used[j]) continue;
+            DynamicBitset zero(mat.width(), 0);
+            zero[j] = 1;
+            for (int i = 0; i < (int)core.size(); i++) zero[core[i]] = -A[i][j];
+            zeros.push_back(zero);
+        }
+        return rank;
+    }
+    
+    // determinant
+    int det() const {
+        assert(height() == width());
+        if (height() == 0) return 1;
+        BinaryMatrix A(*this);
+        int rank = 0, res = 1;
+        for (int col = 0; col < width(); ++col) {
+            int pivot = A.find_pivot(rank, col);
+            if (pivot == -1) return 0;
+            res *= A[pivot][rank];
+            A.sweep(rank++, col, pivot, false);
+        }
+        return res;
+    }
+    friend int det(const BinaryMatrix &mat) {
+        return mat.det();
+    }
+
+    // inv
+    BinaryMatrix inv() const {
+        assert(height() == width());
+
+        // extend
+        BinaryMatrix A(height(), width() + height());
+        for (int i = 0; i < height(); ++i) {
+            A[i].apply(0, width(), val[i]);
+            A[i][i + width()] = 1;
+        }
+        vector<int> core;
+        int rank = A.gauss_jordan(height(), true);
+
+        // gauss jordan
+        if (rank < height()) return BinaryMatrix(0, 0);
+        BinaryMatrix res(height(), width());
+        for (int i = 0; i < height(); ++i) {
+            res[i].apply(0, width(), A[i].slice(width(), width() + height()));
+        }
+        return res;
+    }
+    friend BinaryMatrix inv(const BinaryMatrix &mat) {
+        return mat.inv();
     }
 };
 
