@@ -79,10 +79,11 @@
 
 - (★★☆☆) [N 以下の非負整数の順序つき集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
 - (★★★★) [N 以下の非負整数の順序つき集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
-- (★★★★) N 以下の非負整数値の順序つき集合 (by van Emde Boas 木)
+- (★★★★) N 以下の非負整数の順序つき集合 (by van Emde Boas 木)
 
 ## その他
 
+- (★★☆☆) ダブリング
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 - (★★★★) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/dynamic_bitset.cpp)
 - (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
@@ -148,7 +149,6 @@
 
 - (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum.cpp)
 - (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum_2D.cpp)
-- (★★☆☆) ダブリング
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sliding_minimum.cpp)
 - (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/mo.cpp)
@@ -733,8 +733,9 @@
 
 - (★☆☆☆) ランレングス圧縮
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
-- (★★★☆) [文字列の相異なる subsequence の個数 (O(cN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
-- (★★★☆) [文字列の相異なる substring の個数 (O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
+- (★★★☆) [文字列の相異なる subsequence の個数 (by 配る DP (in O(cN)))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
+- (★★★☆) 文字列の相異なる subsequence の個数 (by 集める DP (in O(N)))
+- (★★★☆) [文字列の相異なる substring の個数 (by Suffix Array (in O(N)))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
 - (★★★★) ワイルドカードパターンマッチング
 
 
