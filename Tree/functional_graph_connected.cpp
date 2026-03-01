@@ -221,7 +221,7 @@ template<class T = long long> struct RunConnectedFunctionalGraph {
         if (k > depth[v]) return root[v];
         int goal_depth = depth[v] - k;
         for (int i = (int)parent.size()-1; i >= 0; i--)
-            if (parent[i][v] != -1 && depth[parent[i][v]] > goal_depth) 
+            if (parent[i][v] != -1 && depth[parent[i][v]] >= goal_depth) 
                 v = parent[i][v];
         return v;
     }
