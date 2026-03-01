@@ -1647,11 +1647,10 @@ void ntt_trans_inv(vector<mint> &v) {
 }
 
 // naive convolution
-template<class T>
-vector<T> sub_convolution_naive(const vector<T> &a, const vector<T> &b) {
+template<class VEC> VEC sub_convolution_naive(const VEC &a, const VEC &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
-    vector<T> res(n + m - 1);
+    VEC res(n + m - 1);
     if (n < m) {
         for (int j = 0; j < m; j++) for (int i = 0; i < n; i++) res[i + j] += a[i] * b[j];
     } else {
@@ -1714,59 +1713,38 @@ vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
     return res;
 }
 
-// convolution long long (especially, mod 2^64)
-vector<unsigned long long> convolution_ull(const vector<unsigned long long> &a, const vector<unsigned long long> &b) {
+// convolution long long (if u64 is necessary, use convolution_ull)
+template<class VEC> VEC convolution_ll(const VEC &a, const VEC &b) {
     int n = (int)a.size(), m = (int)b.size();
-    if (!n || !m) return {};
+    if (!n || !m) return VEC();
     if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
 
     static constexpr int MOD0 = 754974721;  // 2^24
     static constexpr int MOD1 = 167772161;  // 2^25
     static constexpr int MOD2 = 469762049;  // 2^26
-    static constexpr int MOD3 = 998244353;  // 2^23
-    static constexpr int MOD4 = 645922817;  // 2^23
-    static constexpr int MOD5 = 897581057;  // 2^23
     using mint0 = Fp<MOD0>;
     using mint1 = Fp<MOD1>;
     using mint2 = Fp<MOD2>;
-    using mint3 = Fp<MOD3>;
-    using mint4 = Fp<MOD4>;
-    using mint5 = Fp<MOD5>;
+    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
+    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
+    static const mint2 imod01 = 187290749; // imod1 / MOD0;
 
     vector<mint0> a0(n, 0), b0(m, 0);
     vector<mint1> a1(n, 0), b1(m, 0);
     vector<mint2> a2(n, 0), b2(m, 0);
-    vector<mint3> a3(n, 0), b3(m, 0);
-    vector<mint4> a4(n, 0), b4(m, 0);
-    vector<mint5> a5(n, 0), b5(m, 0);
-    for (int i = 0; i < n; ++i) {
-        a0[i] = a[i] % MOD0;
-        a1[i] = a[i] % MOD1;
-        a2[i] = a[i] % MOD2;
-        a3[i] = a[i] % MOD3;
-        a4[i] = a[i] % MOD4;
-        a5[i] = a[i] % MOD5;
-    }
-    for (int i = 0; i < m; ++i) {
-        b0[i] = b[i] % MOD0;
-        b1[i] = b[i] % MOD1;
-        b2[i] = b[i] % MOD2;
-        b3[i] = b[i] % MOD3;
-        b4[i] = b[i] % MOD4;
-        b5[i] = b[i] % MOD5;
-    }
+    for (int i = 0; i < n; ++i) a0[i] = a[i], a1[i] = a[i], a2[i] = a[i];
+    for (int i = 0; i < m; ++i) b0[i] = b[i], b1[i] = b[i], b2[i] = b[i];
     auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
     auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
     auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
-    auto c3 = sub_convolution_ntt(std::move(a3), std::move(b3));
-    auto c4 = sub_convolution_ntt(std::move(a4), std::move(b4));
-    auto c5 = sub_convolution_ntt(std::move(a5), std::move(b5));
 
-    vector<unsigned long long> res(n + m - 1);
-    for (int i = 0; i < n + m - 1; i++) {
-        vector<unsigned long long> rems = {c0[i].val, c1[i].val, c2[i].val, c3[i].val, c4[i].val, c5[i].val};
-        vector<unsigned long long> mods = {MOD0, MOD1, MOD2, MOD3, MOD4, MOD5};
-        res[i] = Garner(rems, mods);
+    VEC res(n + m - 1);
+    long long mod0 = MOD0, mod01 = mod0 * MOD1;
+    for (int i = 0; i < n + m - 1; ++i) {
+        unsigned int y0 = c0[i].val;
+        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
+        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
+        res[i] = mod01 * y2 + mod0 * y1 + y0;
     }
     return res;
 }
