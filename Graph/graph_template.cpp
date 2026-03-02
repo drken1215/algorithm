@@ -31,6 +31,7 @@ template<class T = long long> struct Graph {
         list = g.list, reversed_list = g.reversed_list;
         return *this;
     }
+    vector<Edge<T>> &operator [] (int i) { return list[i]; }
     const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
     const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
     const size_t size() const { return list.size(); }
