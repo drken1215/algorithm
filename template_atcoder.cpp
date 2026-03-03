@@ -1722,7 +1722,7 @@ void ntt_trans_inv(vector<mint> &v) {
 }
 
 // naive convolution
-template<class VEC> VEC sub_convolution_naive(const VEC &a, const VEC &b) {
+template<class VEC> VEC convolution_naive(const VEC &a, const VEC &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
     VEC res(n + m - 1);
@@ -1736,7 +1736,7 @@ template<class VEC> VEC sub_convolution_naive(const VEC &a, const VEC &b) {
 
 // ntt convolution
 template<class mint>
-vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
+vector<mint> convolution_ntt(vector<mint> a, vector<mint> b) {
     int MOD = mint::get_mod();
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
@@ -1750,49 +1750,11 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     return a;
 }
 
-// convolution in general mod
-template<class mint>
-vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
-    int n = (int)a.size(), m = (int)b.size();
-    if (!n || !m) return {};
-    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
-    if constexpr (std::is_same_v<mint, Fp<998244353>>) return sub_convolution_ntt(a, b);
-
-    static constexpr int MOD0 = 754974721;  // 2^24
-    static constexpr int MOD1 = 167772161;  // 2^25
-    static constexpr int MOD2 = 469762049;  // 2^26
-    using mint0 = Fp<MOD0>;
-    using mint1 = Fp<MOD1>;
-    using mint2 = Fp<MOD2>;
-    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
-    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
-    static const mint2 imod01 = 187290749; // imod1 / MOD0;
-
-    vector<mint0> a0(n, 0), b0(m, 0);
-    vector<mint1> a1(n, 0), b1(m, 0);
-    vector<mint2> a2(n, 0), b2(m, 0);
-    for (int i = 0; i < n; ++i) a0[i] = a[i].val, a1[i] = a[i].val, a2[i] = a[i].val;
-    for (int i = 0; i < m; ++i) b0[i] = b[i].val, b1[i] = b[i].val, b2[i] = b[i].val;
-    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
-    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
-    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
-
-    vector<mint> res(n + m - 1);
-    mint mod0 = MOD0, mod01 = mod0 * MOD1;
-    for (int i = 0; i < n + m - 1; ++i) {
-        unsigned int y0 = c0[i].val;
-        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
-        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
-        res[i] = mod01 * y2 + mod0 * y1 + y0;
-    }
-    return res;
-}
-
 // convolution long long (if u64 is necessary, use convolution_ull)
 template<class VEC> VEC convolution_ll(const VEC &a, const VEC &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return VEC();
-    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
+    if (min(n, m) <= 60) return convolution_naive(a, b);
 
     static constexpr int MOD0 = 754974721;  // 2^24
     static constexpr int MOD1 = 167772161;  // 2^25
@@ -1809,19 +1771,67 @@ template<class VEC> VEC convolution_ll(const VEC &a, const VEC &b) {
     vector<mint2> a2(n, 0), b2(m, 0);
     for (int i = 0; i < n; ++i) a0[i] = a[i], a1[i] = a[i], a2[i] = a[i];
     for (int i = 0; i < m; ++i) b0[i] = b[i], b1[i] = b[i], b2[i] = b[i];
-    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
-    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
-    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
+    auto c0 = convolution_ntt(std::move(a0), std::move(b0));
+    auto c1 = convolution_ntt(std::move(a1), std::move(b1));
+    auto c2 = convolution_ntt(std::move(a2), std::move(b2));
 
     VEC res(n + m - 1);
     long long mod0 = MOD0, mod01 = mod0 * MOD1;
     for (int i = 0; i < n + m - 1; ++i) {
         unsigned int y0 = c0[i].val;
-        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
-        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
+        unsigned int y1 = (imod0 * (c1[i] - mint1(y0))).val;
+        unsigned int y2 = (imod01 * (c2[i] - mint2(y0)) - imod1 * y1).val;
         res[i] = mod01 * y2 + mod0 * y1 + y0;
     }
     return res;
+}
+
+// convolution in general mod
+template<class mint>
+vector<mint> convolution_general_mod(const vector<mint> &a, const vector<mint> &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
+    if (min(n, m) <= 60) return convolution_naive(a, b);
+    if constexpr (std::is_same_v<mint, Fp<998244353>>) return convolution_ntt(a, b);
+
+    static constexpr int MOD0 = 754974721;  // 2^24
+    static constexpr int MOD1 = 167772161;  // 2^25
+    static constexpr int MOD2 = 469762049;  // 2^26
+    using mint0 = Fp<MOD0>;
+    using mint1 = Fp<MOD1>;
+    using mint2 = Fp<MOD2>;
+    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
+    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
+    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+
+    vector<mint0> a0(n, 0), b0(m, 0);
+    vector<mint1> a1(n, 0), b1(m, 0);
+    vector<mint2> a2(n, 0), b2(m, 0);
+    for (int i = 0; i < n; ++i) a0[i] = a[i].val, a1[i] = a[i].val, a2[i] = a[i].val;
+    for (int i = 0; i < m; ++i) b0[i] = b[i].val, b1[i] = b[i].val, b2[i] = b[i].val;
+    auto c0 = convolution_ntt(std::move(a0), std::move(b0));
+    auto c1 = convolution_ntt(std::move(a1), std::move(b1));
+    auto c2 = convolution_ntt(std::move(a2), std::move(b2));
+
+    vector<mint> res(n + m - 1);
+    mint mod0 = MOD0, mod01 = mod0 * MOD1;
+    for (int i = 0; i < n + m - 1; ++i) {
+        unsigned int y0 = c0[i].val;
+        unsigned int y1 = (imod0 * (c1[i] - mint1(y0))).val;
+        unsigned int y2 = (imod01 * (c2[i] - mint2(y0)) - imod1 * y1).val;
+        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    }
+    return res;
+}
+
+// convolution overall
+template<class T> vector<T> convolution(const vector<T> &a, const vector<T> &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
+    if (min(n, m) <= 60) return convolution_naive(a, b);
+    if constexpr (std::is_same_v<T, Fp<998244353>>) return convolution_ntt(a, b);
+    else if constexpr (std::is_integral_v<T>) return convolution_ll(a, b);
+    else return convolution_general_mod(a, b);
 }
 
 
