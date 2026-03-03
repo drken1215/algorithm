@@ -1950,11 +1950,21 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS& operator *= (const FPS &r) {
         return *this = convolution((*this), r);
     }
-    constexpr FPS& operator /= (const mint &v) {
+    constexpr FPS& divide_by_modint(const mint &v) {
         assert(v != 0);
         mint iv = v.inv();
         for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
         return *this;
+    }
+    constexpr FPS& divide_by_integer(const mint &v) {
+        assert(v != 0);
+        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] /= v;
+        return *this;
+    }
+    constexpr FPS& operator /= (const mint &v) {
+        assert(v != 0);
+        if constexpr (std::is_integral_v<mint>) return divide_by_integer(v);
+        else return divide_by_modint(v);
     }
     
     // division, r must be normalized (r.back() must not be 0)
