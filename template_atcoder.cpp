@@ -11,19 +11,13 @@ using namespace std;
 //------------------------------//
 
 using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
 using i128 = __int128_t;
 using u128 = __uint128_t;
 using pint = pair<int, int>;
 using pll = pair<long long, long long>;
-using tint = array<int, 3>;
 using tll = array<long long, 3>;
-using fint = array<int, 4>;
 using fll = array<long long, 4>;
-using qint = array<int, 5>;
 using qll = array<long long, 5>;
-using sint = array<int, 6>;
 using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
@@ -31,7 +25,6 @@ using dint = deque<int>;
 using dll = deque<long long>;
 using vvint = vector<vector<int>>;
 using vvll = vector<vector<long long>>;
-using vpint = vector<pair<int, int>>;
 using vpll = vector<pair<long long, long long>>;
 template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
@@ -42,7 +35,7 @@ template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)
 template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
 template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
 template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto argmin(const T &a) { return *min_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
 template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
 template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
 
@@ -51,9 +44,9 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 #define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
 #define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
 #define EB emplace_back
+#define PF push_front
 #define PB push_back
 #define MP make_pair
-#define MT make_tuple
 #define FI first
 #define SE second
 #define ALL(x) x.begin(), x.end()
@@ -97,82 +90,8 @@ template<class S, class T> ostream& operator << (ostream &s, const unordered_map
 void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
 void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
 void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
-
-// 4-neighbor
-const vector<int> DX = {1, 0, -1, 0};
-const vector<int> DY = {0, 1, 0, -1};
-
-// 8-neighbor
-const vector<int> DX8 = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> DY8 = {0, 1, 0, -1, 1, -1, -1, 1};
-
-// 10^n
-constexpr long long TEN[] = {
-    1LL,
-    10LL,
-    100LL,
-    1000LL,
-    10000LL,
-    100000LL,
-    1000000LL,
-    10000000LL,
-    100000000LL,
-    1000000000LL,
-    10000000000LL,
-    100000000000LL,
-    1000000000000LL,
-    10000000000000LL,
-    100000000000000LL,
-    1000000000000000LL,
-    10000000000000000LL,
-    100000000000000000LL,
-    1000000000000000000LL,
-};
-
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-int popcnt_mod2(int x) { return __builtin_parity(x); }
-int popcnt_mod2(unsigned int x) { return __builtin_parity(x); }
-int popcnt_mod2(long long x) { return __builtin_parityll(x); }
-int popcnt_mod2(unsigned long long x) { return __builtin_parityll(x); }
-
-// min non-negative i such that (x & (1 << i)) != 0
-int bsf(int x) { return __builtin_ctz(x); }
-int bsf(unsigned int x) { return __builtin_ctz(x); }
-int bsf(long long x) { return __builtin_ctzll(x); }
-int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-
-// max non-negative i such that (x & (1 << i)) != 0
-int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
-int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
-int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
-int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
-
-// floor, ceil
-template<class T> T floor(T a, T b) {
-    if (a % b == 0 || a >= 0) return a / b;
-    else return -((-a) / b) - 1;
-}
-template<class T> T ceil(T x, T y) {
-    return floor(x + y - 1, y);
-}
-
-// min non-negative i such that 2^i <= n
-template<class T> T floor_pow2(T n) {
-    T i = 0;
-    while ((T(1) << (i + 1)) <= T(n)) i++;
-    return i;
-}
-
-// min non-negative i such that n <= 2^i
-template<class T> T ceil_pow2(T n) {
-    T i = 0;
-    while ((T(1) << i) < T(n)) i++;
-    return i;
-}
+const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
 
 // Edge Class
 template<class T = long long> struct Edge {
@@ -247,6 +166,74 @@ template<class T = long long> struct Graph {
         }
         return s;
     }
+};
+
+// floor, ceil
+template<class T> T floor(T a, T b) {
+    if (a % b == 0 || a >= 0) return a / b;
+    else return -((-a) / b) - 1;
+}
+template<class T> T ceil(T x, T y) {
+    return floor(x + y - 1, y);
+}
+
+// min non-negative i such that 2^i <= n
+template<class T> T floor_pow2(T n) {
+    T i = 0;
+    while ((T(1) << (i + 1)) <= T(n)) i++;
+    return i;
+}
+
+// min non-negative i such that n <= 2^i
+template<class T> T ceil_pow2(T n) {
+    T i = 0;
+    while ((T(1) << i) < T(n)) i++;
+    return i;
+}
+
+// num of i such that (x & (1 << i)) != 0
+int popcnt(int x) { return __builtin_popcount(x); }
+int popcnt(unsigned int x) { return __builtin_popcount(x); }
+int popcnt(long long x) { return __builtin_popcountll(x); }
+int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
+int popcnt_mod2(int x) { return __builtin_parity(x); }
+int popcnt_mod2(unsigned int x) { return __builtin_parity(x); }
+int popcnt_mod2(long long x) { return __builtin_parityll(x); }
+int popcnt_mod2(unsigned long long x) { return __builtin_parityll(x); }
+
+// min non-negative i such that (x & (1 << i)) != 0
+int bsf(int x) { return __builtin_ctz(x); }
+int bsf(unsigned int x) { return __builtin_ctz(x); }
+int bsf(long long x) { return __builtin_ctzll(x); }
+int bsf(unsigned long long x) { return __builtin_ctzll(x); }
+
+// max non-negative i such that (x & (1 << i)) != 0
+int bsr(int x) { return 8 * (int)sizeof(int) - 1 - __builtin_clz(x); }
+int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_clz(x); }
+int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
+int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
+
+// 10^n
+constexpr long long TEN[] = {
+    1LL,
+    10LL,
+    100LL,
+    1000LL,
+    10000LL,
+    100000LL,
+    1000000LL,
+    10000000LL,
+    100000000LL,
+    1000000000LL,
+    10000000000LL,
+    100000000000LL,
+    1000000000000LL,
+    10000000000000LL,
+    100000000000000LL,
+    1000000000000000LL,
+    10000000000000000LL,
+    100000000000000000LL,
+    1000000000000000000LL,
 };
 
 // kth root
@@ -375,426 +362,6 @@ ostream& operator << (ostream &os, const u128 &x) {
     }
     return os;
 }
-
-// sum_{i=0}^{n-1} floor((a * i + b) / m)
-template<class T> T floor_sum(T n, T a, T b, T m) {
-    assert(n >= 0 && m >= 1);
-    T res = 0;
-    if (a < 0) {
-        T a2 = (a % m + m) % m;
-        res -= n * (n - 1) / 2 * ((a2 - a) / m);
-        a = a2;
-    }
-    if (b < 0) {
-        T b2 = (b % m + m) % m;
-        res -= n * ((b2 - b) / m);
-        b = b2;
-    }
-    
-    while (true) {
-        if (a >= m) {
-            res += n * (n - 1) / 2 * (a / m);
-            a %= m;
-        }
-        if (b >= m) {
-            res += n * (b / m);
-            b %= m;
-        }
-        T y_max = a * n + b;
-        if (y_max < m) break;
-        n = y_max / m;
-        b = y_max % m;
-        swap(m, a);
-    }
-    return res;
-}
-
-// #lp under (and on) the segment (x1, y1)-(x2, y2)
-// not including y = 0, x = x2
-template<class T> T num_lattice_points(T x1, T y1, T x2, T y2) {
-    T dx = x2 - x1;
-    return floor_sum(dx, y2 - y1, dx * y1, dx);
-}
-
-// Dynamic Bitset
-struct DynamicBitset {
-    using u64 = unsigned long long;
-    constexpr int topbit(u64 x) const { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
-    constexpr int lowbit(u64 x) const { return (x == 0 ? -1 : __builtin_ctzll(x)); }
-    static string CONV[256];  // for to_string()
-    
-    // inner values
-    int N;
-    vector<u64> dat;
-
-    // constructors
-    DynamicBitset(int N = 0, int x = 0) : N(N) {
-        assert(x == 0 || x == 1);
-        u64 v = (x == 0 ? 0 : -1);
-        dat.assign((N + 63) >> 6, v);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-    }
-    DynamicBitset(const DynamicBitset&) = default;
-    DynamicBitset& operator = (const DynamicBitset&) = default;
-    DynamicBitset(const string &S) : N((int)S.size()) {
-        assign(N, 0);
-        for (int i = 0; i < N; i++) {
-            if (S[i] == '1') dat[i >> 6] |= u64(1) << (i & 63);
-        }
-    }
-    DynamicBitset(const vector<int> &v) : N((int)v.size()) {
-        assign(N, 0);
-        for (int i = 0; i < N; i++) {
-            if (v[i] == 1) dat[i >> 6] |= u64(1) << (i & 63);
-        }
-    }
-    constexpr int size() const { return N; }
-    void resize(int siz) {
-        dat.resize((siz + 63) >> 6);
-        int rem = siz & 63;
-        if (rem != 0) {
-            u64 mask = (u64(1) << rem) - 1;
-            dat.back() &= mask;
-        }
-        N = siz;
-    }
-    void assign(int siz, int x = 0) {
-        assert(x == 0 || x == 1);
-        N = siz;
-        u64 v = (x == 0 ? 0 : -1);
-        dat.assign((N + 63) >> 6, v);
-        if (N) dat.back() >>= (64 * dat.size() - N);
-    }
-    int back() const {
-        assert(N > 0);
-        return (*this)[N - 1];
-    }
-    void push_back(bool v) {
-        resize(N + 1);
-        (*this)[size() - 1] = v;
-    }
-    static void pre_to_string() {
-        for (int s = 0; s < 256; s++) {
-            string x;
-            for (int i = 0; i < 8; i++) x += '0' + (s >> i & 1);
-            CONV[s] = x;
-        }
-    }
-    string to_string() const {
-        if (CONV[0].empty()) pre_to_string();
-        string S;
-        for (auto &x : dat) { 
-            for (int i = 0; i < 8; i++) S += CONV[(x >> (8 * i) & 255)];
-        }
-        S.resize(N);
-        return S;
-    }
-    
-    // getters
-    struct Proxy {
-        int index;
-        vector<u64> &dat;
-        Proxy(vector<u64> &d, int i) : dat(d), index(i) {}
-        operator bool () const {
-            return (dat[index >> 6] >> (index & 63)) & 1;
-        }
-        Proxy& operator = (const Proxy& v) {
-            return (*this) = bool(v);
-        }
-        Proxy& operator = (u64 value) {
-            dat[index >> 6] &= ~(u64(1) << (index & 63));
-            dat[index >> 6] |= (value & 1) << (index & 63);
-            return *this;
-        }
-        void flip() {
-            dat[index >> 6] ^= (u64(1) << (index & 63));
-        }
-    };
-    Proxy operator [] (int i) { return Proxy(dat, i); }
-    bool operator [] (int i) const { return (dat[i >> 6] >> (i & 63)) & 1; }
-    bool any() const {  // [0, N)
-        for (auto val : dat) if (val) return true;
-        return false;
-    }
-    int count() const {  // [0, N)
-        int res = 0;
-        for (auto val : dat) res += popcnt(val);
-        return res;
-    }
-    int count(int L, int R) const {  // [L, R)
-        assert(L <= R);
-        int res = 0;
-        while ((L < R) && (L & 63)) res += (*this)[L++];
-        while ((L < R) && (R & 63)) res += (*this)[--R];
-        for (int i = (L >> 6); i < (R >> 6); i++) res += popcnt(dat[i]);
-        return res;
-    }
-    int dot(const DynamicBitset &r) const {
-        assert(size() == r.size());
-        int res = 0;
-        for (int i = 0; i < (int)dat.size(); i++) res += popcnt(dat[i] & r.dat[i]);
-        return res;
-    }
-    int dot_mod2(const DynamicBitset &r) const {
-        assert(size() == r.size());
-        int res = 0;
-        for (int i = 0; i < (int)dat.size(); i++) res ^= popcnt_mod2(dat[i] & r.dat[i]);
-        return res;
-    }
-    int next(int val) const {  // (include val)
-        if (val < 0) val = 0;
-        if (val >= N) return N;
-        int k = val >> 6;
-        {
-            u64 x = dat[val >> 6];
-            int s = val & 63;
-            x = (x >> s) << s;
-            if (x) return (k << 6) | lowbit(x);
-        }
-        for (int i = k + 1; i < (int)dat.size(); i++) {
-            if (dat[i] == 0) continue;
-            return (i << 6) |  lowbit(dat[i]);
-        }
-        return N;
-    }
-    int prev(int val) const {  // (include val)
-        if (val < 0) return -1;
-        if (val >= N) val = N - 1;
-        int k = val >> 6;
-        if ((val & 63) < 63) {
-            u64 x = dat[k];
-            x &= (u64(1) << ((val & 63) + 1)) - 1;
-            if (x) return (k << 6) | topbit(x);
-            --k;
-        }
-        for (int i = k; i >= 0; i--) {
-            if (dat[i] == 0) continue;
-            return (i << 6) | topbit(dat[i]);
-        }
-        return -1;
-    }
-    int get_min() const { return next(0); }
-    int get_max() const { return prev(N); }
-
-    // input/output operators
-    friend istream& operator >> (istream &is, DynamicBitset &db) {
-        string S;
-        is >> S;
-        db.assign(S.size(), 0);
-        for (int i = 0; i < S.size(); i++) {
-            if (S[i] == '1') db.dat[i >> 6] |= u64(1) << (i & 63);
-        }
-        return is;
-    }
-    friend ostream& operator << (ostream &os, const DynamicBitset &db) {
-        return os << db.to_string();
-    }
-
-    // comparison operators
-    bool operator == (const DynamicBitset &r) const {
-        assert(size() == r.size());
-        for (int i = 0; i < (int)dat.size(); i++) if (dat[i] != r.dat[i]) return false;
-        return true;
-    }
-    bool operator != (const DynamicBitset &r) const {
-        assert(size() == r.size());
-        return !((*this) == r);
-    }
-
-    // set (change to 1)
-    void set() {
-        fill(dat.begin(), dat.end(), u64(-1));
-        resize(N);
-    }
-    void set(int i) {
-        (*this)[i] = 1;
-    }
-    void set(int L, int R) {
-        assert(L <= R);
-        while (L < R && (L & 63)) set(L++);
-        while (L < R && (R & 63)) set(--R);
-        for (int i = (L >> 6); i < (R >> 6); i++) dat[i] = u64(-1);
-    }
-
-    // reset (change to 0)
-    void reset() {
-        fill(dat.begin(), dat.end(), u64(0));
-        resize(N);
-    }
-    void reset(int i) { 
-        (*this)[i] = 0;
-    }
-    void reset(int L, int R) {
-        assert(L <= R);
-        while (L < R && (L & 63)) reset(L++);
-        while (L < R && (R & 63)) reset(--R);
-        for (int i = (L >> 6); i < (R >> 6); i++) dat[i] = u64(0);
-    }
-
-    // flip (change 0-1)
-    void flip() {
-        for (int i = 0; i < (int)dat.size() - 1; i++) dat[i] = u64(-1) ^ dat[i];
-        int i = (int)dat.size() - 1;
-        for (int k = 0; k < 64; k++) {
-            if (i * 64 + k >= size()) break;
-            flip(i * 64 + k);
-        }
-    }
-    void flip(int i) {
-        (*this)[i].flip();
-    }
-    void flip(int L, int R) {
-        assert(L <= R);
-        while (L < R && (L & 63)) flip(L++);
-        while (L < R && (R & 63)) flip(--R);
-        for (int i = (L >> 6); i < (R >> 6); i++) dat[i] ^= u64(-1);
-    }
-
-    // logic operators
-    DynamicBitset &operator &= (const DynamicBitset &r) {
-        assert(size() == r.size());
-        for (int i = 0; i < (int)dat.size(); i++) dat[i] &= r.dat[i];
-        return *this;
-    }
-    DynamicBitset &operator |= (const DynamicBitset &r) {
-        assert(size() == r.size());
-        for (int i = 0; i < (int)dat.size(); i++) dat[i] |= r.dat[i];
-        return *this;
-    }
-    DynamicBitset &operator ^= (const DynamicBitset &r) {
-        assert(size() == r.size());
-        for (int i = 0; i < (int)dat.size(); i++) dat[i] ^= r.dat[i];
-        return *this;
-    }
-    DynamicBitset operator & (const DynamicBitset &r) const {
-        return DynamicBitset(*this) &= r;
-    }
-    DynamicBitset operator | (const DynamicBitset &r) const {
-        return DynamicBitset(*this) |= r;
-    }
-    DynamicBitset operator ^ (const DynamicBitset &r) const {
-        return DynamicBitset(*this) ^= r;
-    }
-    DynamicBitset operator ~ () const {
-        DynamicBitset res(*this);
-        res.flip();
-        return res;
-    }
-
-    // slice [L, R)
-    DynamicBitset slice(int L, int R) {
-        assert(L <= R);
-        DynamicBitset res(R - L);
-        int rm = (R - L) & 63;
-        for (int i = 0; i < rm; i++) {
-            res[R - L - 1] = bool((*this)[R - 1]);
-            --R;
-        }
-        int n = (R - L) >> 6, high = L & 63, s = L >> 6;
-        if (!high) {
-            for (int i = 0; i < n; i++) {
-                res.dat[i] = dat[i + s];
-            }
-        } else {
-            for (int i = 0; i < n; i++) {
-                res.dat[i] ^= (dat[i + s] >> high) ^ (dat[i + s + 1] << (64 - high));
-            }
-        }
-        return res;
-    }
-    
-    // apply another DynamicBitset for range [L, R)
-    void apply(int L, int R, const DynamicBitset &db) {
-        assert(db.size() == R - L);
-        int a = 0, b = db.size();
-        while (L < R && (L & 63)) (*this)[L++] = bool(db[a++]);
-        while (L < R && (R & 63)) (*this)[--R] = bool(db[--b]);
-        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
-        if (!high) {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] = db.dat[i + s];
-            }
-        } else {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] = (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
-            }
-        }
-    }
-    void apply_and(int L, int R, const DynamicBitset &db) {
-        assert(db.size() == R - L);
-        int a = 0, b = db.size();
-        while (L < R && (L & 63)) {
-            if (!db[a]) (*this)[L] = 0;
-            a++, L++;
-        }
-        while (L < R && (R & 63)) {
-            --b, --R;
-            if (!db[b]) (*this)[R] = 0;
-        }
-        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
-        if (!high) {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] &= db.dat[i + s];
-            }
-        } else {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] &= (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
-            }
-        }
-    }
-    void apply_or(int L, int R, const DynamicBitset &db) {
-        assert(db.size() == R - L);
-        int a = 0, b = db.size();
-        while (L < R && (L & 63)) {
-            dat[L >> 6] |= u64(db[a]) << (L & 63);
-            ++a, ++L;
-        }
-        while (L < R && (R & 63)) {
-            --b, --R;
-            dat[R >> 6] |= u64(db[b]) << (R & 63);
-        }
-        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
-        if (!high) {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] |= db.dat[i + s];
-            }
-        } else {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] |= (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
-            }
-        }
-    }
-    void apply_xor(int L, int R, const DynamicBitset &db) {
-        assert(db.size() == R - L);
-        int a = 0, b = db.size();
-        while (L < R && (L & 63)) {
-            dat[L >> 6] ^= u64(db[a]) << (L & 63);
-            ++a, ++L;
-        }
-        while (L < R && (R & 63)) {
-            --b, --R;
-            dat[R >> 6] ^= u64(db[b]) << (R & 63);
-        }
-        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
-        if (!high) {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] ^= db.dat[i + s];
-            }
-        } else {
-            for (int i = 0; i < r - l; i++) {
-                dat[i + l] ^= (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
-            }
-        }
-    }
-
-    // apply xor for [L, N) (use in matrix sweeping)
-    void apply_xor(int L, const DynamicBitset &db) {
-        assert(size() == db.size());
-        assert(0 <= L && L < size());
-        for (int i = (L >> 6); i < (int)dat.size(); i++) dat[i] ^= db.dat[i];
-    }
-};
-string DynamicBitset::CONV[256];
 
 
 //------------------------------//
@@ -3436,6 +3003,386 @@ template<class mint> struct MintPolynomialMatrix {
         return mat.det();
     }
 };
+
+// Dynamic Bitset
+struct DynamicBitset {
+    using u64 = unsigned long long;
+    constexpr int topbit(u64 x) const { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
+    constexpr int lowbit(u64 x) const { return (x == 0 ? -1 : __builtin_ctzll(x)); }
+    static string CONV[256];  // for to_string()
+    
+    // inner values
+    int N;
+    vector<u64> dat;
+
+    // constructors
+    DynamicBitset(int N = 0, int x = 0) : N(N) {
+        assert(x == 0 || x == 1);
+        u64 v = (x == 0 ? 0 : -1);
+        dat.assign((N + 63) >> 6, v);
+        if (N) dat.back() >>= (64 * dat.size() - N);
+    }
+    DynamicBitset(const DynamicBitset&) = default;
+    DynamicBitset& operator = (const DynamicBitset&) = default;
+    DynamicBitset(const string &S) : N((int)S.size()) {
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (S[i] == '1') dat[i >> 6] |= u64(1) << (i & 63);
+        }
+    }
+    DynamicBitset(const vector<int> &v) : N((int)v.size()) {
+        assign(N, 0);
+        for (int i = 0; i < N; i++) {
+            if (v[i] == 1) dat[i >> 6] |= u64(1) << (i & 63);
+        }
+    }
+    constexpr int size() const { return N; }
+    void resize(int siz) {
+        dat.resize((siz + 63) >> 6);
+        int rem = siz & 63;
+        if (rem != 0) {
+            u64 mask = (u64(1) << rem) - 1;
+            dat.back() &= mask;
+        }
+        N = siz;
+    }
+    void assign(int siz, int x = 0) {
+        assert(x == 0 || x == 1);
+        N = siz;
+        u64 v = (x == 0 ? 0 : -1);
+        dat.assign((N + 63) >> 6, v);
+        if (N) dat.back() >>= (64 * dat.size() - N);
+    }
+    int back() const {
+        assert(N > 0);
+        return (*this)[N - 1];
+    }
+    void push_back(bool v) {
+        resize(N + 1);
+        (*this)[size() - 1] = v;
+    }
+    static void pre_to_string() {
+        for (int s = 0; s < 256; s++) {
+            string x;
+            for (int i = 0; i < 8; i++) x += '0' + (s >> i & 1);
+            CONV[s] = x;
+        }
+    }
+    string to_string() const {
+        if (CONV[0].empty()) pre_to_string();
+        string S;
+        for (auto &x : dat) { 
+            for (int i = 0; i < 8; i++) S += CONV[(x >> (8 * i) & 255)];
+        }
+        S.resize(N);
+        return S;
+    }
+    
+    // getters
+    struct Proxy {
+        int index;
+        vector<u64> &dat;
+        Proxy(vector<u64> &d, int i) : dat(d), index(i) {}
+        operator bool () const {
+            return (dat[index >> 6] >> (index & 63)) & 1;
+        }
+        Proxy& operator = (const Proxy& v) {
+            return (*this) = bool(v);
+        }
+        Proxy& operator = (u64 value) {
+            dat[index >> 6] &= ~(u64(1) << (index & 63));
+            dat[index >> 6] |= (value & 1) << (index & 63);
+            return *this;
+        }
+        void flip() {
+            dat[index >> 6] ^= (u64(1) << (index & 63));
+        }
+    };
+    Proxy operator [] (int i) { return Proxy(dat, i); }
+    bool operator [] (int i) const { return (dat[i >> 6] >> (i & 63)) & 1; }
+    bool any() const {  // [0, N)
+        for (auto val : dat) if (val) return true;
+        return false;
+    }
+    int count() const {  // [0, N)
+        int res = 0;
+        for (auto val : dat) res += popcnt(val);
+        return res;
+    }
+    int count(int L, int R) const {  // [L, R)
+        assert(L <= R);
+        int res = 0;
+        while ((L < R) && (L & 63)) res += (*this)[L++];
+        while ((L < R) && (R & 63)) res += (*this)[--R];
+        for (int i = (L >> 6); i < (R >> 6); i++) res += popcnt(dat[i]);
+        return res;
+    }
+    int dot(const DynamicBitset &r) const {
+        assert(size() == r.size());
+        int res = 0;
+        for (int i = 0; i < (int)dat.size(); i++) res += popcnt(dat[i] & r.dat[i]);
+        return res;
+    }
+    int dot_mod2(const DynamicBitset &r) const {
+        assert(size() == r.size());
+        int res = 0;
+        for (int i = 0; i < (int)dat.size(); i++) res ^= popcnt_mod2(dat[i] & r.dat[i]);
+        return res;
+    }
+    int next(int val) const {  // (include val)
+        if (val < 0) val = 0;
+        if (val >= N) return N;
+        int k = val >> 6;
+        {
+            u64 x = dat[val >> 6];
+            int s = val & 63;
+            x = (x >> s) << s;
+            if (x) return (k << 6) | lowbit(x);
+        }
+        for (int i = k + 1; i < (int)dat.size(); i++) {
+            if (dat[i] == 0) continue;
+            return (i << 6) |  lowbit(dat[i]);
+        }
+        return N;
+    }
+    int prev(int val) const {  // (include val)
+        if (val < 0) return -1;
+        if (val >= N) val = N - 1;
+        int k = val >> 6;
+        if ((val & 63) < 63) {
+            u64 x = dat[k];
+            x &= (u64(1) << ((val & 63) + 1)) - 1;
+            if (x) return (k << 6) | topbit(x);
+            --k;
+        }
+        for (int i = k; i >= 0; i--) {
+            if (dat[i] == 0) continue;
+            return (i << 6) | topbit(dat[i]);
+        }
+        return -1;
+    }
+    int get_min() const { return next(0); }
+    int get_max() const { return prev(N); }
+
+    // input/output operators
+    friend istream& operator >> (istream &is, DynamicBitset &db) {
+        string S;
+        is >> S;
+        db.assign(S.size(), 0);
+        for (int i = 0; i < S.size(); i++) {
+            if (S[i] == '1') db.dat[i >> 6] |= u64(1) << (i & 63);
+        }
+        return is;
+    }
+    friend ostream& operator << (ostream &os, const DynamicBitset &db) {
+        return os << db.to_string();
+    }
+
+    // comparison operators
+    bool operator == (const DynamicBitset &r) const {
+        assert(size() == r.size());
+        for (int i = 0; i < (int)dat.size(); i++) if (dat[i] != r.dat[i]) return false;
+        return true;
+    }
+    bool operator != (const DynamicBitset &r) const {
+        assert(size() == r.size());
+        return !((*this) == r);
+    }
+
+    // set (change to 1)
+    void set() {
+        fill(dat.begin(), dat.end(), u64(-1));
+        resize(N);
+    }
+    void set(int i) {
+        (*this)[i] = 1;
+    }
+    void set(int L, int R) {
+        assert(L <= R);
+        while (L < R && (L & 63)) set(L++);
+        while (L < R && (R & 63)) set(--R);
+        for (int i = (L >> 6); i < (R >> 6); i++) dat[i] = u64(-1);
+    }
+
+    // reset (change to 0)
+    void reset() {
+        fill(dat.begin(), dat.end(), u64(0));
+        resize(N);
+    }
+    void reset(int i) { 
+        (*this)[i] = 0;
+    }
+    void reset(int L, int R) {
+        assert(L <= R);
+        while (L < R && (L & 63)) reset(L++);
+        while (L < R && (R & 63)) reset(--R);
+        for (int i = (L >> 6); i < (R >> 6); i++) dat[i] = u64(0);
+    }
+
+    // flip (change 0-1)
+    void flip() {
+        for (int i = 0; i < (int)dat.size() - 1; i++) dat[i] = u64(-1) ^ dat[i];
+        int i = (int)dat.size() - 1;
+        for (int k = 0; k < 64; k++) {
+            if (i * 64 + k >= size()) break;
+            flip(i * 64 + k);
+        }
+    }
+    void flip(int i) {
+        (*this)[i].flip();
+    }
+    void flip(int L, int R) {
+        assert(L <= R);
+        while (L < R && (L & 63)) flip(L++);
+        while (L < R && (R & 63)) flip(--R);
+        for (int i = (L >> 6); i < (R >> 6); i++) dat[i] ^= u64(-1);
+    }
+
+    // logic operators
+    DynamicBitset &operator &= (const DynamicBitset &r) {
+        assert(size() == r.size());
+        for (int i = 0; i < (int)dat.size(); i++) dat[i] &= r.dat[i];
+        return *this;
+    }
+    DynamicBitset &operator |= (const DynamicBitset &r) {
+        assert(size() == r.size());
+        for (int i = 0; i < (int)dat.size(); i++) dat[i] |= r.dat[i];
+        return *this;
+    }
+    DynamicBitset &operator ^= (const DynamicBitset &r) {
+        assert(size() == r.size());
+        for (int i = 0; i < (int)dat.size(); i++) dat[i] ^= r.dat[i];
+        return *this;
+    }
+    DynamicBitset operator & (const DynamicBitset &r) const {
+        return DynamicBitset(*this) &= r;
+    }
+    DynamicBitset operator | (const DynamicBitset &r) const {
+        return DynamicBitset(*this) |= r;
+    }
+    DynamicBitset operator ^ (const DynamicBitset &r) const {
+        return DynamicBitset(*this) ^= r;
+    }
+    DynamicBitset operator ~ () const {
+        DynamicBitset res(*this);
+        res.flip();
+        return res;
+    }
+
+    // slice [L, R)
+    DynamicBitset slice(int L, int R) {
+        assert(L <= R);
+        DynamicBitset res(R - L);
+        int rm = (R - L) & 63;
+        for (int i = 0; i < rm; i++) {
+            res[R - L - 1] = bool((*this)[R - 1]);
+            --R;
+        }
+        int n = (R - L) >> 6, high = L & 63, s = L >> 6;
+        if (!high) {
+            for (int i = 0; i < n; i++) {
+                res.dat[i] = dat[i + s];
+            }
+        } else {
+            for (int i = 0; i < n; i++) {
+                res.dat[i] ^= (dat[i + s] >> high) ^ (dat[i + s + 1] << (64 - high));
+            }
+        }
+        return res;
+    }
+    
+    // apply another DynamicBitset for range [L, R)
+    void apply(int L, int R, const DynamicBitset &db) {
+        assert(db.size() == R - L);
+        int a = 0, b = db.size();
+        while (L < R && (L & 63)) (*this)[L++] = bool(db[a++]);
+        while (L < R && (R & 63)) (*this)[--R] = bool(db[--b]);
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
+        if (!high) {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] = db.dat[i + s];
+            }
+        } else {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] = (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
+            }
+        }
+    }
+    void apply_and(int L, int R, const DynamicBitset &db) {
+        assert(db.size() == R - L);
+        int a = 0, b = db.size();
+        while (L < R && (L & 63)) {
+            if (!db[a]) (*this)[L] = 0;
+            a++, L++;
+        }
+        while (L < R && (R & 63)) {
+            --b, --R;
+            if (!db[b]) (*this)[R] = 0;
+        }
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
+        if (!high) {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] &= db.dat[i + s];
+            }
+        } else {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] &= (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
+            }
+        }
+    }
+    void apply_or(int L, int R, const DynamicBitset &db) {
+        assert(db.size() == R - L);
+        int a = 0, b = db.size();
+        while (L < R && (L & 63)) {
+            dat[L >> 6] |= u64(db[a]) << (L & 63);
+            ++a, ++L;
+        }
+        while (L < R && (R & 63)) {
+            --b, --R;
+            dat[R >> 6] |= u64(db[b]) << (R & 63);
+        }
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
+        if (!high) {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] |= db.dat[i + s];
+            }
+        } else {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] |= (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
+            }
+        }
+    }
+    void apply_xor(int L, int R, const DynamicBitset &db) {
+        assert(db.size() == R - L);
+        int a = 0, b = db.size();
+        while (L < R && (L & 63)) {
+            dat[L >> 6] ^= u64(db[a]) << (L & 63);
+            ++a, ++L;
+        }
+        while (L < R && (R & 63)) {
+            --b, --R;
+            dat[R >> 6] ^= u64(db[b]) << (R & 63);
+        }
+        int l = L >> 6, r = R >> 6, s = a >> 6, high = a & 63;
+        if (!high) {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] ^= db.dat[i + s];
+            }
+        } else {
+            for (int i = 0; i < r - l; i++) {
+                dat[i + l] ^= (db.dat[i + s] >> high) | (db.dat[i + s + 1] << (64 - high));
+            }
+        }
+    }
+
+    // apply xor for [L, N) (use in matrix sweeping)
+    void apply_xor(int L, const DynamicBitset &db) {
+        assert(size() == db.size());
+        assert(0 <= L && L < size());
+        for (int i = (L >> 6); i < (int)dat.size(); i++) dat[i] ^= db.dat[i];
+    }
+};
+string DynamicBitset::CONV[256];
 
 // binary matrix
 struct BinaryMatrix {
@@ -6424,7 +6371,6 @@ template<class T> struct WaveletMatrix {
     }
 };
 
-
 // 2D queries
 template<class POS, class VAL> struct BITonWaveletMatrix {
     // inner data
@@ -7113,15 +7059,6 @@ template<class DD> int ccw
     return 0;
 }
 
-// 点と三角形の包含関係(辺上については判定していない)
-template<class DD> bool is_contain
- (const Point<DD> &p, const Point<DD> &a, const Point<DD> &b, const Point<DD> &c) {
-    int r1 = simple_ccw(p, b, c), r2 = simple_ccw(p, c, a), r3 = simple_ccw(p, a, b);
-    if (r1 == 1 && r2 == 1 && r3 == 1) return true;
-    if (r1 == -1 && r2 == -1 && r3 == -1) return true;
-    return false;
-}
-
 // 線分の交差判定や距離計算
 template<class DD> int ccw_for_dis
  (const Point<DD> &a, const Point<DD> &b, const Point<DD> &c) {
@@ -7219,71 +7156,6 @@ template<class DD> vector<Point<DD>> crosspoint(const Circle<DD> &e, const Line<
     return res;
 }
 
-// tanline
-template<class DD> vector<Point<DD>> tanline(const Point<DD> &p, const Circle<DD> &c) {
-    vector<Point<DD>> res;
-    DD d = norm(p - c);
-    DD l = d - c.r * c.r;
-    if (l < -EPS) return res;
-    if (l <= 0.0) l = 0.0;
-    Point<DD> cq = (p - c) * (c.r * c.r / d);
-    Point<DD> qs = rot90((p - c) * (c.r * sqrt(l) / d));
-    Point<DD> s1 = c + cq + qs, s2 = c + cq - qs;
-    res.push_back(s1);
-    res.push_back(s2);
-    return res;
-}
-
-// common tanline, a and b must be different!
-// Line[0] is tangent point in a
-template<class DD> vector<Line<DD>> com_tanline(const Circle<DD> &a, const Circle<DD> &b) {
-    vector<Line<DD>> res;
-    // intersect
-    if (abs(a - b) > abs(a.r - b.r) + EPS) {
-        if (abs(a.r - b.r) < EPS) {
-            Point<DD> dir = b - a;
-            dir = rot90(dir * (a.r / abs(dir)));
-            res.push_back(Line(a + dir, b + dir));
-            res.push_back(Line(a - dir, b - dir));
-        }
-        else {
-            Point<DD> p = a * -b.r + b * a.r;
-            p = p * (1.0 / (a.r - b.r));
-            vector<Point<DD>> bs = tanline(p, a);
-            vector<Point<DD>> as = tanline(p, b);
-            for (int i = 0; i < min(as.size(), bs.size()); ++i) {
-                res.push_back(Line(bs[i], as[i]));
-            }
-        }
-    }
-    // inscribed
-    else if (abs(abs(a - b) - abs(a.r - b.r)) <= EPS) {
-        Point<DD> dir = b - a;
-        if (a.r > b.r) dir = dir * (a.r / abs(dir));
-        else dir = dir * (-a.r / abs(dir));
-        Point<DD> p = a + dir;
-        res.push_back(Line(p, p + rot90(dir)));
-    }
-    // disjoint
-    if (abs(a - b) > a.r + b.r + EPS) {
-        Point<DD> p = a * b.r + b * a.r;
-        p = p * (1.0 / (a.r + b.r));
-        vector<Point<DD>> bs = tanline(p, a);
-        vector<Point<DD>> as = tanline(p, b);
-        for (int i = 0; i < min(as.size(), bs.size()); ++i) {
-            res.push_back(Line(bs[i], as[i]));
-        }
-    }
-    // circumscribed
-    else if (abs(abs(a - b) - (a.r + b.r)) <= EPS) {
-        Point<DD> dir = b - a;
-        dir = dir * (a.r / abs(dir));
-        Point<DD> p = a + dir;
-        res.push_back(Line(p, p + rot90(dir)));
-    }
-    return res;
-}
-
 // 多角形の符号付面積
 template<class DD> DD calc_area(const vector<Point<DD>> &pol) {
     DD res = 0.0;
@@ -7291,37 +7163,6 @@ template<class DD> DD calc_area(const vector<Point<DD>> &pol) {
         res += cross(pol[i], pol[(i+1)%pol.size()]);
     }
     return res/2.0L;
-}
-
-// 点と多角形の包含関係
-// 2: in, 1: on, 0: out
-template<class DD> int is_contain(const vector<Point<DD>> &pol, const Point<DD> &p) {
-    int n = (int)pol.size();
-    int isin = 0;
-    for (int i = 0; i < n; ++i) {
-        Point<DD> a = pol[i] - p, b = pol[(i+1)%n] - p;
-        if (a.y > b.y) swap(a, b);
-        if (a.y <= 0 && b.y > 0) if (cross(a, b) < 0) isin = 1-isin;
-        if (cross(a, b) == 0 && dot(a, b) <= 0) return 1;
-    }
-    if (isin) return 2;
-    else return 0;
-}
-
-
-// 凸性判定
-template<class DD> int ccw_for_isconvex
- (const Point<DD> &a, const Point<DD> &b, const Point<DD> &c) {
-    if (cross(b-a, c-a) > EPS) return 1;
-    if (cross(b-a, c-a) < -EPS) return -1;
-    return 0;
-}
-template<class DD> bool is_convex(const vector<Point<DD>> &ps) {
-    int n = (int)ps.size();
-    for (int i = 0; i < n; ++i) {
-        if (ccw_for_isconvex(ps[i], ps[(i+1)%n], ps[(i+2)%n]) == -1) return false;
-    }
-    return true;
 }
 
 // 凸包 (一直線上の3点を含めない)
@@ -7388,206 +7229,6 @@ template<class DD> vector<Point<DD>> convex_hull_colinear(vector<Point<DD>> &ps)
     }
     res.resize(k-1);
     return res;
-}
-
-// Convex Cut
-template<class DD> int ccw_for_convexcut
- (const Point<DD> &a, const Point<DD> &b, const Point<DD> &c) {
-    if (cross(b-a, c-a) > EPS) return 1;
-    if (cross(b-a, c-a) < -EPS) return -1;
-    if (dot(b-a, c-a) < -EPS) return 2;
-    if (norm(b-a) < norm(c-a) - EPS) return -2;
-    return 0;
-}
-template<class DD> vector<Point<DD>> crosspoint_for_convexcut
- (const Line<DD> &l, const Line<DD> &m) {
-    vector<Point<DD>> res;
-    DD d = cross(m[1] - m[0], l[1] - l[0]);
-    if (abs(d) < EPS) return vector<Point<DD>>();
-    res.push_back(l[0] + (l[1] - l[0]) * cross(m[1] - m[0], m[1] - l[0]) / d);
-    return res;
-}
-template<class DD> vector<Point<DD>> convex_cut
- (const vector<Point<DD>> &pol, const Line<DD> &l) {
-    vector<Point<DD>> res;
-    for (int i = 0; i < pol.size(); ++i) {
-        Point<DD> p = pol[i], q = pol[(i+1)%pol.size()];
-        if (ccw_for_convexcut(l[0], l[1], p) != -1) {
-            if (res.size() == 0) res.push_back(p);
-            else if (!eq(p, res[res.size()-1])) res.push_back(p);
-        }
-        if (ccw_for_convexcut(l[0], l[1], p) * ccw_for_convexcut(l[0], l[1], q) < 0) {
-            vector<Point<DD>> temp = crosspoint_for_convexcut(Line(p, q), l);
-            if (temp.size() == 0) continue;
-            else if (res.size() == 0) res.push_back(temp[0]);
-            else if (!eq(temp[0], res[res.size()-1])) res.push_back(temp[0]);
-        }
-    }
-    return res;
-}
-
-// Voronoi Diagram
-// pol: outer polygon, ps: points
-// find the polygon nearest to ps[ind]
-template<class DD> Line<DD> bisector(const Point<DD> &p, const Point<DD> &q) {
-    Point<DD> c = (p + q) / 2.0L;
-    Point<DD> v = (q - p) * Point(0.0L, 1.0L);
-    v = v / abs(v);
-    return Line(c - v, c + v);
-}
-
-template<class DD> vector<Point<DD>> voronoi
- (const vector<Point<DD>> &pol, const vector<Point<DD>> &ps, int ind) {
-    vector<Point<DD>> res = pol;
-    for (int i = 0; i < ps.size(); ++i) {
-        if (i == ind) continue;
-        Line<DD> l = bisector(ps[ind], ps[i]);
-        res = convex_cut(res, l);
-    }
-    return res;
-}
-
-// 円と円の共通部分の面積
-template<class DD> DD calc_common_area(const Circle<DD> &p, const Circle<DD> &q) {
-    DD d = abs(p - q);
-    if (d >= p.r + q.r - EPS) return 0;
-    else if (d <= abs(p.r - q.r) + EPS) return min(p.r, q.r) * min(p.r, q.r) * PI;
-    DD pcos = (p.r*p.r + d*d - q.r*q.r) / (p.r*d*2);
-    DD pang = acosl(pcos);
-    DD parea = p.r*p.r*pang - p.r*p.r*sin(pang*2)/2;
-    DD qcos = (q.r*q.r + d*d - p.r*p.r) / (q.r*d*2);
-    DD qang = acosl(qcos);
-    DD qarea = q.r*q.r*qang - q.r*q.r*sin(qang*2)/2;
-    return parea + qarea;
-}
-
-// 交点
-template<class DD> int ccw_for_crosspoint_CS
- (const Point<DD> &a, const Point<DD> &b, const Point<DD> &c) {
-    if (cross(b-a, c-a) > EPS) return 1;
-    if (cross(b-a, c-a) < -EPS) return -1;
-    if (dot(b-a, c-a) < -EPS) return 2;
-    if (norm(b-a) < norm(c-a) - EPS) return -2;
-    return 0;
-}
-template<class DD> bool isinterPS_crosspoint_CS(const Point<DD> &p, const Line<DD> &s) {
-    return (ccw_for_crosspoint_CS(s[0], s[1], p) == 0);
-}
-template<class DD> Point<DD> proj_for_crosspoint_CS(const Point<DD> &p, const Line<DD> &l) {
-    DD t = dot(p - l[0], l[1] - l[0]) / norm(l[1] - l[0]);
-    return l[0] + (l[1] - l[0]) * t;
-}
-template<class DD> vector<Point<DD>> crosspoint_CS(const Circle<DD> &e, const Line<DD> &s) {
-    vector<Point<DD>> res;
-    Point<DD> p = proj_for_crosspoint_CS(e, s);
-    DD rcos = abs(e - p), rsin;
-    if (rcos > e.r + EPS) return vector<Point<DD>>();
-    else if (e.r - rcos < EPS) rsin = 0;
-    else rsin = sqrt(e.r * e.r - rcos * rcos);
-    Point<DD> dir = (s[1] - s[0]) / abs(s[1] - s[0]);
-    Point<DD> p1 = p - dir * rsin;
-    Point<DD> p2 = p + dir * rsin;
-    if (isinterPS_crosspoint_CS(p1, s)) res.push_back(p1);
-    if (isinterPS_crosspoint_CS(p2, s) && !eq(p1, p2)) res.push_back(p2);
-    return res;
-}
-
-// 原点, 点 x, 点 y とで囲まれる領域の面積 (三角形 ver と扇型 ver)
-template<class DD> DD calc_element
- (const Point<DD> &x, const Point<DD> &y, DD r, bool triangle = true) {
-    if (triangle) return cross(x, y) / 2;
-    else {
-        Point<DD> tmp = y * Point(x.x, -x.y);
-        DD ang = atan2(tmp.y, tmp.x);
-        return r * r * ang / 2;
-    }
-}
-
-// 円 C と、三角形 ((0, 0), ia, ib) との共通部分の面積
-template<class DD> DD calc_common_area
- (const Circle<DD> &c, const Point<DD> &ia, const Point<DD> &ib) {
-    Point<DD> a = ia - c, b = ib - c;
-    if (abs(a - b) < EPS) return 0;
-    bool isin_a = (abs(a) < c.r + EPS);
-    bool isin_b = (abs(b) < c.r + EPS);
-    if (isin_a && isin_b) return calc_element(a, b, c.r, true);
-    Circle<DD> oc(Point<DD>(0, 0), c.r);
-    Line<DD> seg(a, b);
-    auto cr = crosspoint_CS(oc, seg);
-    if (cr.empty()) return calc_element(a, b, c.r, false);
-    auto s = cr[0], t = cr.back();
-    return calc_element(s, t, c.r, true)
-        + calc_element(a, s, c.r, isin_a) + calc_element(t, b, c.r, isin_b);
-}
-
-// 円 c と多角形 pol の共通部分の面積
-template<class DD> DD calc_common_area(const Circle<DD> &c, const vector<Point<DD>> &pol) {
-    DD res = 0;
-    int n = (int)pol.size();
-    for (int i = 0; i < n; ++i) {
-        res += calc_common_area(c, pol[i], pol[(i+1)%n]);
-    }
-    return res;
-}
-
-// 垂直二等分線
-template<class DD> Line<DD> Bisector(const Point<DD> &p, const Point<DD> &q) {
-    Point<DD> m = (p + q) / 2;
-    Point<DD> x = m + rot90(q - p);
-    return Line(m, x);
-}
-
-// 3 点を通る円
-template<class DD> Circle<DD> CircumscribedCircle
-(const Point<DD> &p, const Point<DD> &q, const Point<DD> &r) {
-    if (simple_ccw(p, q, r) == 0) return Circle<DD>();
-    Line<DD> pq = Bisector(p, q);
-    Line<DD> pr = Bisector(p, r);
-    vector<Point<DD>> centers = crosspoint(pq, pr);
-    if (centers.empty()) return Circle<DD>();
-    Point<DD> center = centers[0];
-    DD radius = abs(center - p);
-    return Circle(center, radius);
-}
-
-// 2 点の比率 a : b のアポロニウスの円 (AOJ 1039)
-template<class DD> Circle<DD> Apporonius(const Point<DD> &p, const Point<DD> &q, DD a, DD b) {
-    if (abs(a-b) < EPS) return Circle<DD>(Point<DD>(0, 0), 0);
-    Point<DD> c1 = (p * b + q * a) / (a + b);
-    Point<DD> c2 = (p * b - q * a) / (b - a);
-    Point<DD> c = (c1 + c2) / 2;
-    DD r = abs(c - c1);
-    return Circle<DD>(c, r);
-}
-
-// 最近点対
-template<class DD> DD Cloest(vector<Point<DD>> &ps) {
-    typedef typename vector<Point<DD>>::iterator Iterator;
-    auto dac = [&](auto self, const Iterator &it, int n) -> DD {
-        if (n <= 1) return numeric_limits<DD>::max();
-        int m = n/2;
-        DD x = it[m].x;
-        DD d = min(self(self, it, m), self(self, it+m, n-m));
-        inplace_merge(it, it+m, it+n, [&](const Point<DD> &a, const Point<DD> &b){return a.y < b.y;});
-        
-        vector<Point<DD>> vec;
-        for (int i = 0; i < n; ++i) {
-            if (fabs(it[i].x - x) >= d) continue;
-            for (int j = 0; j < vec.size(); ++j) {
-                DD dx = it[i].x - vec[vec.size()-j-1].x;
-                DD dy = it[i].y - vec[vec.size()-j-1].y;
-                if (dy >= d) break;
-                d = min(d, sqrt(dx*dx+dy*dy));
-            }
-            vec.push_back(it[i]);
-        }
-        return d;
-    };
-    auto cmp = [&](const Point<DD> &p, const Point<DD> &q) -> bool {
-        return (abs(p.x - q.x) > EPS ? p.x < q.x : p.y < q.y);
-    };
-    sort(ps.begin(), ps.end(), cmp);
-    return dac(dac, ps.begin(), (int)ps.size());
 }
 
 
