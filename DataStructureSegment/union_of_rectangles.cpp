@@ -324,7 +324,24 @@ void Yosupo_Area_of_Union_of_Rectangles() {
     cout << res << endl;
 }
 
+// AtCoder ABC 449 F - Grid Clipping
+void ABC_449_F() {
+    long long H, W, h, w, N;
+    cin >> H >> W >> h >> w >> N;
+    RectangleUnion<long long> ru;
+    for (int i = 0; i < N; i++) {
+        long long R, C;
+        cin >> R >> C;
+        R--, C--;
+        ru.add_rect(max(0LL, R-h+1), min(H-h+1, R+1), max(0LL, C-w+1), min(W-w+1, C+1));
+    }
+    long long black = ru.solve();
+    long long res = (H - h + 1) * (W - w + 1) - black;
+    cout << res << endl;
+}
+
 
 int main() {
-    Yosupo_Area_of_Union_of_Rectangles();
+    //Yosupo_Area_of_Union_of_Rectangles();
+    ABC_449_F();
 }
