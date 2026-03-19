@@ -7,19 +7,13 @@ using namespace std;
 //------------------------------//
 
 using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
 using i128 = __int128_t;
 using u128 = __uint128_t;
 using pint = pair<int, int>;
 using pll = pair<long long, long long>;
-using tint = array<int, 3>;
 using tll = array<long long, 3>;
-using fint = array<int, 4>;
 using fll = array<long long, 4>;
-using qint = array<int, 5>;
 using qll = array<long long, 5>;
-using sint = array<int, 6>;
 using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
@@ -27,6 +21,7 @@ using dint = deque<int>;
 using dll = deque<long long>;
 using vvint = vector<vector<int>>;
 using vvll = vector<vector<long long>>;
+using vpll = vector<pair<long long, long long>>;
 template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
 
 template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
