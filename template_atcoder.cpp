@@ -106,13 +106,15 @@ template<class T = long long> struct Edge {
 
 // graph class
 template<class T = long long> struct Graph {
+    int V, E;
     vector<vector<Edge<T>>> list;
     vector<vector<Edge<T>>> reversed_list;
     vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
 
     // constructors
-    Graph(int n = 0) : list(n), reversed_list(n), id(n) { }
-    void init(int n = 0) {
+    Graph(int n = 0, int m = 0) : V(n), E(m), list(n), reversed_list(n), id(n) { }
+    void init(int n = 0, int m = 0) {
+        V = n, E = m;
         list.assign(n, vector<Edge<T>>());
         reversed_list.assign(n, vector<Edge<T>>());
         id.assign(n, unordered_map<int, int>());
@@ -125,8 +127,8 @@ template<class T = long long> struct Graph {
     const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
     const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
     const size_t size() const { return list.size(); }
-    const void clear() { list.clear(); }
-    const void resize(int n) { list.resize(n); }
+    const void clear() { V = 0; list.clear(); }
+    const void resize(int n) { V = n; list.resize(n); }
     Edge<T> &get_edge(int u, int v) {
         assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
         assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
@@ -154,17 +156,26 @@ template<class T = long long> struct Graph {
         }
     }
 
-    friend ostream &operator << (ostream &s, const Graph &G) {
-        s << endl;
-        for (int i = 0; i < G.size(); ++i) {
-            s << i << " -> ";
-            for (int j = 0; j < G[i].size(); j++) {
-                if (j) s << ", ";
-                s << G[i][j].to << "(" << G[i][j].val << ")";
-            }
-            s << endl;
+    // input / output
+    friend istream& operator >> (istream &is, Graph &G) {
+        for (int i = 0; i < G.E; i++) {
+            int u, v;
+            is >> u >> v, u--, v--;
+            G.add_bidirected_edge(u, v);
         }
-        return s;
+        return is;
+    }
+    friend ostream &operator << (ostream &os, const Graph &G) {
+        os << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            os << i << " -> ";
+            for (int j = 0; j < G[i].size(); j++) {
+                if (j) os << ", ";
+                os << G[i][j].to << "(" << G[i][j].val << ")";
+            }
+            os << endl;
+        }
+        return os;
     }
 };
 
