@@ -241,6 +241,68 @@ constexpr long long TEN[] = {
     1000000000000000000LL,
 };
 
+// Associative Array
+template<class Key, class Val, uint32_t N = 20> struct FastMap {
+    static constexpr uint32_t SIZE  = 1u << N;
+    static constexpr uint32_t MASK  = SIZE - 1;
+    static constexpr uint32_t SHIFT = 64 - N;
+    static constexpr uint64_t MAGIC = 11995408973635179863ULL;
+    static constexpr uint32_t get_hash(const Key& k) { return k * MAGIC >> SHIFT; }
+
+    // inner values
+    array<Key, SIZE> key;
+    array<Val, SIZE> val;
+    bitset<SIZE> used;
+
+    // constructors
+    FastMap() { clear(); }
+    void clear() { used.reset(); }
+    FastMap(const FastMap&) = default;
+    FastMap& operator = (const FastMap&) = default;
+
+    // getters
+    Val &operator [] (const Key &k) {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) {
+                used[hash] = 1;
+                key[hash] = k;
+                return val[hash] = Val();
+            }
+            if (key[hash] == k) return val[hash];
+            ++hash &= MASK;
+        }
+    }
+    const Val &operator [] (const Key &k) const {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) {
+                used[hash] = 1;
+                key[hash] = k;
+                return val[hash] = Val();
+            }
+            if (key[hash] == k) return val[hash];
+            ++hash &= MASK;
+        }
+    }
+    Val get(const Key &k) const {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) return Val();
+            if (key[hash] == k) return val[hash];
+            ++hash &= MASK;
+        }
+    }
+    bool count(const Key &k) const {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) return false;
+            if (key[hash] == k) return true;
+            ++hash &= MASK;
+        }
+    }
+};
+
 // kth root
 // N < 2^64, K <= 64
 uint64_t kth_root(uint64_t N, uint64_t K = 2) {
