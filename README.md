@@ -102,14 +102,17 @@
 
 - (★★☆☆) [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree.cpp)
 - (★★★☆) [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
-- (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
-- (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
-- (★★★☆) [マージソート過程木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
 - (★★★☆) [二次元セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_2d.cpp)
 - (★★★★) 動的セグメント木
 - (★★★★) 動的二次元セグメント木
 - (★★★★) 永続セグメント木
 - (★★★★) Segment Tree Beats (俗称)
+
+## さまざまなセグメント木
+
+- (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
+- (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
+- (★★★☆) [マージソート過程木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
 
 ## Binary Indexed 木
 
@@ -119,6 +122,12 @@
 - (★★★★) [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D_RAQ.cpp)
 - (★★★★) 動的 BIT
 - (★★★★) 動的二次元 BIT
+
+## セグメント木・Binary Indexed 木の応用
+
+- (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/inversion_number.cpp)
+- (★★★☆) [転倒距離 (多重集合として一致する 2 系列)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/inversion_number_general.cpp)
+- (★★★☆) [長方形の和集合](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/union_of_rectangles.cpp)
 
 ## Sparse Table
 
@@ -150,15 +159,13 @@
 - (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum.cpp)
 - (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum_2D.cpp)
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sliding_minimum.cpp)
-- (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/mo.cpp)
 
 ## その他
 
 - (★★★☆) [区間の集合を set で管理する（del and add must be invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set.cpp)
 - (★★★☆) [区間の集合を set で管理する（del and add can be non-invertible）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set_with_noninvertible_del.cpp)
-- (★★★☆) [長方形の和集合](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/union_of_rectangles.cpp)
-
+- (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
 
 
 
@@ -529,8 +536,6 @@
 ## その他
 
 - (★★☆☆) [LIS and LDS](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/LIS_and_LDS.cpp)
-- (★★☆☆) [転倒数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number.cpp)
-- (★★★☆) [転倒距離 (多重集合として一致する 2 系列)](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/inversion_number_general.cpp)
 - (★★★★) プリューファーコード
 - (★★★★) 半環
 
