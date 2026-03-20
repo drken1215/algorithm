@@ -71,7 +71,7 @@
 
 ## ハッシュテーブル
 
-- (★★★☆) ハッシュマップ
+- (★★★☆) [ハッシュテーブル (64 bit 整数用)](https://github.com/drken1215/algorithm/blob/master/DataStructure/fast_hash_table.cpp)
 - (★★★☆) ハッシュ関数
 - (★★★☆) ハッシュ構造体
 
@@ -101,7 +101,7 @@
 ## セグメント木
 
 - (★★☆☆) [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree.cpp)
-- (★★★☆) [セグメント木 (遅延評価)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
+- (★★★☆) [遅延評価セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
 - (★★★☆) [二次元セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_2d.cpp)
 - (★★★★) 動的セグメント木
 - (★★★★) 動的二次元セグメント木
@@ -110,7 +110,7 @@
 
 ## さまざまなセグメント木
 
-- (★★☆☆) [RMQ (セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
+- (★★☆☆) [RMQ (by セグメント木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/range_minimum_query.cpp)
 - (★★★☆) [Starry Sky 木 (俗称)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/starry_sky_tree.cpp)
 - (★★★☆) [マージソート過程木 (領域木)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/merge_sort_tree.cpp)
 

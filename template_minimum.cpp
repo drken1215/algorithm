@@ -13,8 +13,6 @@ using pint = pair<int, int>;
 using pll = pair<long long, long long>;
 using tll = array<long long, 3>;
 using fll = array<long long, 4>;
-using qll = array<long long, 5>;
-using sll = array<long long, 6>;
 using vint = vector<int>;
 using vll = vector<long long>;
 using dint = deque<int>;
@@ -63,10 +61,6 @@ template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
 { return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
 template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
 { return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 5> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << "," << P[4] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 6> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << "," << P[4] << "," << P[5] << '>'; }
 template<class T> ostream& operator << (ostream &s, const vector<T> &P)
 { for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
 template<class T> ostream& operator << (ostream &s, const deque<T> &P)

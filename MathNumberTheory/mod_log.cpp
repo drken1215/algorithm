@@ -6,8 +6,6 @@
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
 // verified
-//   m <= 500 まで単純解法と比較した
-//
 //   Yosupo Library Checker - Discrete Logarithm
 //     https://judge.yosupo.jp/problem/discrete_logarithm_mod
 //
