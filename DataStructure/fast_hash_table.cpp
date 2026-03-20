@@ -1,24 +1,85 @@
 //
-// Fast IO
-//
-// references:
-//   maspy: [Library Checker] Many A + B
-//     https://maspypy.com/library-checker-many-a-b
-//
-//   Al.Cash: Fast and furious C++ I/O
-//     https://codeforces.com/blog/entry/45835
+// 連想配列 (64 bit 整数用)
 //
 // verified:
-//   Yosupo Library Checker - Many A + B
-//     https://judge.yosupo.jp/problem/many_aplusb
+//   Yosupo Library Checker - Associative Array
+//     https://judge.yosupo.jp/problem/associative_array
 //
 
 
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
+
 #include <bits/stdc++.h>
 using namespace std;
 
+
+// Associative Array
+template<class Key, class Val, uint32_t N = 20> struct FastMap {
+    static constexpr uint32_t SIZE  = 1u << N;
+    static constexpr uint32_t MASK  = SIZE - 1;
+    static constexpr uint32_t SHIFT = 64 - N;
+    static constexpr uint64_t MAGIC = 11995408973635179863ULL;
+    static constexpr uint32_t get_hash(const Key& k) { return k * MAGIC >> SHIFT; }
+
+    // inner values
+    array<Key, SIZE> key;
+    array<Val, SIZE> val;
+    bitset<SIZE> used;
+
+    // constructors
+    FastMap() { clear(); }
+    void clear() { used.reset(); }
+    FastMap(const FastMap&) = default;
+    FastMap& operator = (const FastMap&) = default;
+
+    // getters
+    Val &operator [] (const Key &k) {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) {
+                used[hash] = 1;
+                key[hash] = k;
+                return val[hash] = Val();
+            }
+            if (key[hash] == k) return val[hash];
+            ++hash &= MASK;
+        }
+    }
+    const Val &operator [] (const Key &k) const {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) {
+                used[hash] = 1;
+                key[hash] = k;
+                return val[hash] = Val();
+            }
+            if (key[hash] == k) return val[hash];
+            ++hash &= MASK;
+        }
+    }
+    Val get(const Key &k) const {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) return Val();
+            if (key[hash] == k) return val[hash];
+            ++hash &= MASK;
+        }
+    }
+    bool count(const Key &k) const {
+        auto hash = get_hash(k);
+        while (true) {
+            if (!used[hash]) return false;
+            if (key[hash] == k) return true;
+            ++hash &= MASK;
+        }
+    }
+};
+
+
+//------------------------------//
+// Fast IO
+//------------------------------//
 
 static constexpr int BUF_SIZE = 1 << 17;
 
@@ -274,26 +335,34 @@ public:
 };
 
 
-
 //------------------------------//
 // Examples
 //------------------------------//
 
-// Yosupo Library Checker - Many A + B
-void Yosupo_A_puls_B() {
+// Yosupo Library Checker - Associative Array
+void Yosupo_Associative_Array() {
     FastRead Read;
     FastWrite Write;
-    
-    int T;
-    Read(T);
-    for (int t = 0; t < T; ++t) {
-        long long a, b;
-        Read(a, b);
-        Write.ln(a + b);
+
+    FastMap<long long, long long> mp;
+    int Q;
+    Read(Q);
+    for (int q = 0; q < Q; q++) {
+        int typ;
+        Read(typ);
+        if (typ == 0) {
+            long long k, v;
+            Read(k, v);
+            mp[k] = v;
+        } else {
+            long long k;
+            Read(k);
+            Write.ln(mp[k]);
+        }
     }
 }
 
 
 int main() {
-    Yosupo_A_puls_B();
+    Yosupo_Associative_Array();
 }
