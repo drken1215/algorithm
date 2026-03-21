@@ -218,29 +218,6 @@ int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_c
 int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
 int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
 
-// 10^n
-constexpr long long TEN[] = {
-    1LL,
-    10LL,
-    100LL,
-    1000LL,
-    10000LL,
-    100000LL,
-    1000000LL,
-    10000000LL,
-    100000000LL,
-    1000000000LL,
-    10000000000LL,
-    100000000000LL,
-    1000000000000LL,
-    10000000000000LL,
-    100000000000000LL,
-    1000000000000000LL,
-    10000000000000000LL,
-    100000000000000000LL,
-    1000000000000000000LL,
-};
-
 // Associative Array
 template<class Key, class Val, uint32_t N = 20> struct FastMap {
     static constexpr uint32_t SIZE  = 1u << N;
@@ -396,38 +373,6 @@ i128 gcd(i128 a, i128 b) {
     if (b < 0) b = -b;
     if (b == 0) return a;
     else return gcd(b, a % b);
-}
-u128 to_uinteger(const string &s) {
-    u128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    return res;
-}
-istream& operator >> (istream &is, u128 &x) {
-    string s;
-    is >> s;
-    x = to_uinteger(s);
-    return is;
-}
-ostream& operator << (ostream &os, const u128 &x) {
-    u128 ax = x;
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
 }
 
 
@@ -769,85 +714,8 @@ template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
 }
 
 
-// Garner's algorithm
-// for each step, we solve "coeffs[k] * t[k] + constants[k] = b[k] (mod. m[k])"
-//      coeffs[k] = m[0]m[1]...m[k-1]
-//      constants[k] = t[0] + t[1]m[0] + ... + t[k-1]m[0]m[1]...m[k-2]
-
-// if m is not coprime, call this function first
-template<class T_VAL>
-bool preGarner(vector<T_VAL> &b, vector<T_VAL> &m) {
-    assert(b.size() == m.size());
-    T_VAL res = 1;
-    for (int i = 0; i < (int)b.size(); i++) {
-        for (int j = 0; j < i; ++j) {
-            T_VAL g = gcd(m[i], m[j]);
-            if ((b[i] - b[j]) % g != 0) return false;
-            m[i] /= g, m[j] /= g;
-            T_VAL gi = gcd(m[i], g), gj = g/gi;
-            do {
-                g = gcd(gi, gj);
-                gi *= g, gj /= g;
-            } while (g != 1);
-            m[i] *= gi, m[j] *= gj;
-            b[i] %= m[i], b[j] %= m[j];
-        }
-    }
-    vector<T_VAL> b2, m2;
-    for (int i = 0; i < (int)b.size(); i++) {
-        if (m[i] == 1) continue;
-        b2.emplace_back(b[i]), m2.emplace_back(m[i]);
-    }
-    b = b2, m = m2;
-    return true;
-}
-
-// find x (%MOD), LCM (%MOD) (m must be coprime)
-template<class T_VAL>
-T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m) {
-    assert(b.size() == m.size());
-    using mint = DynamicModint;
-    int num = (int)m.size();
-    T_VAL res = 0, lcm = 1;
-    vector<long long> coeffs(num, 1), constants(num, 0);
-    for (int k = 0; k < num; k++) {
-        mint::set_mod(m[k]);
-        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
-        for (int i = k + 1; i < num; i++) {
-            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
-            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
-        }
-        res += t * lcm;
-        lcm *= m[k];
-    }
-    return res;
-}
-
-// find x, LCM (m must be coprime)
-template<class T_VAL, class T_MOD>
-T_VAL Garner(vector<T_VAL> b, vector<T_VAL> m, T_MOD MOD) {
-    assert(b.size() == m.size());
-    assert(MOD > 0);
-    using mint = DynamicModint;
-    int num = (int)m.size();
-    T_VAL res = 0, lcm = 1;
-    vector<long long> coeffs(num, 1), constants(num, 0);
-    for (int k = 0; k < num; k++) {
-        mint::set_mod(m[k]);
-        T_VAL t = ((mint(b[k]) - constants[k]) / coeffs[k]).val;
-        for (int i = k + 1; i < num; i++) {
-            constants[i] = safe_mod(constants[i] + t * coeffs[i], m[i]);
-            coeffs[i] = safe_mod(coeffs[i] * m[k], m[i]);
-        }
-        res = safe_mod(res + t * lcm, MOD);
-        lcm = safe_mod(lcm * m[k], MOD);
-    }
-    return res;
-}
-
-
 //------------------------------//
-// Prime
+// Number Theory
 //------------------------------//
 
 // isprime[n] := is n prime?
