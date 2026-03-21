@@ -5758,6 +5758,41 @@ template<class T = long long> struct RunTree {
     }
 };
 
+// find diameter of tree
+template<class Weight = long long> pair<Weight, vector<Edge<Weight>>> calc_diameter
+(const Graph<Weight> &G) {
+    Weight length = 0;
+    vector<Edge<Weight>> path;
+    vector<Edge<Weight>> prev(G.size(), Edge<Weight>(-1, -1));
+
+    auto dfs = [&](auto &&dfs, int v, int p, bool record = true) -> pair<int, Weight> {
+        pair<int, Weight> res{v, 0};
+        for (const auto &e : G[v]) {
+            if (e.to == p) continue;
+            auto tmp = dfs(dfs, e.to, v, record);
+            tmp.second += e.val;
+            if (tmp.second > res.second) {
+                res = tmp;
+                if (record) prev[e.to] = e;
+            }
+        }
+        return res;
+    };
+
+    auto [leaf, distance] = dfs(dfs, 0, -1, false);
+    prev.assign((int)G.size(), Edge<Weight>(-1, -1));
+    auto [most_distant_v, distance2] = dfs(dfs, leaf, -1, true);
+    int cur = most_distant_v;
+    while (cur != -1) {
+        const auto &e = prev[cur];
+        if (e.from == -1) break;
+        length += e.val, path.emplace_back(e);
+        cur = e.from;
+    }
+    reverse(path.begin(), path.end());
+    return {length, path};
+}
+
 
 //------------------------------//
 // Solver
