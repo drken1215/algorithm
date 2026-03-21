@@ -1001,6 +1001,69 @@ vector<pair<long long, long long>> prime_factorize(long long N) {
     return res;
 }
 
+// ax + by = gcd(a, b)
+// return: gcd(a, b)
+template<class T_VAL> T_VAL ext_gcd(T_VAL a, T_VAL b, T_VAL &x, T_VAL &y) {
+    T_VAL xsign = 1, ysign = 1;
+    if (a < 0) {
+        a = -a, xsign *= -1;
+    }
+    if (b < 0) {
+        b = -b, ysign *= -1;
+    }
+    
+    if (b == 0) {
+        x = xsign, y = 0;
+        return a;
+    }
+    T_VAL d = ext_gcd(b, a % b, y, x);
+    y -= a / b * x;
+    x *= xsign, y *= ysign;
+    return d;
+}
+
+// calc order
+template<class T_VAL, class T_MOD>
+constexpr T_VAL calc_order(T_VAL a, T_MOD m) {
+    assert(gcd(a, m) == 1);
+    T_VAL euler = m;
+    for (const auto &[p, exp] : prime_factorize(m)) euler -= euler / p;
+    T_VAL res = euler;
+    for (const auto &[p, exp] : prime_factorize(euler)) {
+        while (res % p == 0 && mod_pow(a, res / p, m) == 1) res /= p;
+    }
+    return res;
+}
+
+// Discrete Logarithm (in O(√m))
+// find non-negative x s.t. a^x = b (mod m)
+// return (c, d) where solution is x = c (mod d)
+template<class T_VAL, class T_MOD>
+constexpr pair<T_VAL, T_MOD> mod_log(T_VAL a, T_VAL b, T_MOD m) {
+    if (m == 1) return {0, 1};
+    if (a == 0 && b == 0) return {1, 1};
+    T_VAL m1 = m, pw = 1, div = gcd(a, m1), res = 0, x, y;
+    for (; (div = gcd(a, m1)) > 1; res++, m1 /= div, pw = pw * a % m) {
+        if (pw == b) return {res, 0};  // aperiodic solution
+    }
+    auto g = ext_gcd(pw, m, x, y);
+    if (b % g > 0) return {-1, 0};  // no solution
+    b = x * (b / g) % m;
+    if (b < 0) b += m;
+    T_VAL order = calc_order(a, m1), sq = kth_root(order, 2) + 1, an = mod_pow(a, sq, m1);
+    FastMap<T_VAL, T_VAL> half;
+    pw = an;
+    for (T_VAL p = 1; p <= sq; p++, pw = pw * an % m1) half[pw] = p;
+    pw = b % m1;
+    for (T_VAL q = 0; q <= sq; q++, pw = pw * a % m1) {
+        if (half.count(pw)) {
+            res += (sq * half[pw] - q) % order;
+            return {res, order};  // periodic solution
+        }
+    }
+    return {-1, 0};  // no solution
+}
+
 // various methods mod prime P
 struct PrimeProcessor {
     using mint = MontgomeryModInt64;
