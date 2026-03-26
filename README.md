@@ -739,9 +739,10 @@
 
 - (★☆☆☆) ランレングス圧縮
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
-- (★★★☆) [文字列の相異なる subsequence の個数 (by 配る DP (in O(cN)))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
-- (★★★☆) 文字列の相異なる subsequence の個数 (by 集める DP (in O(N)))
-- (★★★☆) [文字列の相異なる substring の個数 (by Suffix Array (in O(N)))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
+- (★★★☆) [文字列の相異なる subsequence の個数 (by 配る DP, in O(σN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
+- (★★★☆) [文字列の相異なる subsequence の個数 (by 集める DP, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences_faster.cpp)
+- (★★★☆) [文字列の相異なる substring の個数 (by Suffix Array, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
+- (★★★☆) [N 個の文字列の concat のうち、辞書順最小のもの](https://github.com/drken1215/algorithm/blob/master/String/smallest_concat.cpp)
 - (★★★★) ワイルドカードパターンマッチング
 
 
