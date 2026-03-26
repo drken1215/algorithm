@@ -448,9 +448,9 @@
 - (★★★☆) [多項式マージテク (次数の総和が D の多項式の総積 in O(D (log D)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_merge_technique.cpp)
 - (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_mod_pow.cpp)
 - (★★★☆) [多項式の middle product (c[i] = sum_j a[i+j]b[j])](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_middle_product.cpp)
-- (★★★★) [多項式の評価点シフト (O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_shift_sampling.cpp)
-- (★★★★) [多項式の除算 (by NTT, inv of FPS, O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
-- (★★★★) [多項式 GCD (by half-gcd) (O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
+- (★★★★) [多項式の評価点シフト (in O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_shift_sampling.cpp)
+- (★★★★) [多項式の除算 (by NTT, inv of FPS, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_div.cpp)
+- (★★★★) [多項式 GCD (by half-gcd, in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_gcd.cpp)
 - (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_root_finding.cpp)
 
 ## さまざまな値の高速計算
@@ -484,8 +484,8 @@
 
 - (★★☆☆) [重複組合せ](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/combination_with_repetition.cpp)
 - (★★★☆) [カタラン数](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/catalan_number.cpp)
-- (★★★☆) [分割数 P(N, K) (O(NK))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
-- (★★★★) [分割数 P(N) (O(N√N))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
+- (★★★☆) [分割数 P(N, K) (in O(NK))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pnk.cpp)
+- (★★★★) [分割数 P(N) (in O(N√N))](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/partition_number_pn.cpp)
 - (★★★☆) 第一種スターリング数
 - (★★★☆) 第二種スターリング数
 - (★★★☆) ベル数
@@ -657,12 +657,12 @@
 
 ## Monge 性を活用する DP 高速化技法
 
-- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) TM 行最小値問題 (SMAWK, O(H + W))
-- (★★★☆) TM 単一始点最短路問題 (D&D SMAWK, O(N log N))
-- (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, O(N log N))
-- (★★★★) Monge 単一始点最短路問題（by LARSCH, O(N))
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) TM 行最小値問題 (SMAWK, in O(H + W))
+- (★★★☆) TM 単一始点最短路問題 (D&D SMAWK, in O(N log N))
+- (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, in O(N log N))
+- (★★★★) Monge 単一始点最短路問題（by LARSCH, in O(N))
 - (★★★★) Monge グラフ上の d-辺最短路
 - (★★★★) Monge グラフ上の d-辺最短路の d = 1, 2, ..., N における列挙
 - (★★★★) Aliens DP
@@ -737,7 +737,7 @@
 
 ### その他
 
-- (★☆☆☆) ランレングス圧縮
+- (★☆☆☆) [ランレングス圧縮](https://github.com/drken1215/algorithm/blob/master/String/run_length_compression.cpp)
 - (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
 - (★★★☆) [文字列の相異なる subsequence の個数 (by 配る DP, in O(σN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
 - (★★★☆) [文字列の相異なる subsequence の個数 (by 集める DP, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences_faster.cpp)
