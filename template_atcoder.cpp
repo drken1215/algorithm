@@ -220,6 +220,18 @@ int bsr(unsigned int x) { return 8 * (int)sizeof(unsigned int) - 1 - __builtin_c
 int bsr(long long x) { return 8 * (int)sizeof(long long) - 1 - __builtin_clzll(x); }
 int bsr(unsigned long long x) { return 8 * (int)sizeof(unsigned long long) - 1 - __builtin_clzll(x); }
 
+// compression
+template<class T> vector<T> compress(const vector<T> &v) {
+    auto alt = v;
+    sort(alt.begin(), alt.end());
+    alt.erase(unique(alt.begin(), alt.end()), alt.end());
+    vector<T> res(v.size());
+    for (int i = 0; i < res.size(); i++) {
+        res[i] = lower_bound(alt.begin(), alt.end(), v[i]) - alt.begin();
+    }
+    return res;
+}
+
 // Associative Array
 template<class Key, class Val, uint32_t N = 20> struct FastMap {
     static constexpr uint32_t SIZE  = 1u << N;
