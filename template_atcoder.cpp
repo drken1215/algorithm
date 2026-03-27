@@ -3456,9 +3456,9 @@ struct HopcroftKarp {
         while (!que.empty()) {
             int left = que.front();
             que.pop();
-            for (int i = 0; i < list[left].size(); ++i) {
-                int right = list[left][i];
+            for (int right : list[left]) {
                 int next = rl[right];
+                if (next == NOT_MATCHED) next = size_left;
                 if (level[next] == -1) {
                     level[next] = level[left] + 1;
                     que.push(next);
@@ -3470,11 +3470,11 @@ struct HopcroftKarp {
         if (left == size_left) return true;
         if (seen[left]) return false;
         seen[left] = true;
-        for (int i = 0; i < list[left].size(); ++i) {
-            int right = list[left][i];
+        for (int right : list[left]) {
             int next = rl[right];
             if (next == NOT_MATCHED) next = size_left;
             if (level[next] > level[left] && hodfs(next)) {
+                lr[left] = right;
                 rl[right] = left;
                 return true;
             }

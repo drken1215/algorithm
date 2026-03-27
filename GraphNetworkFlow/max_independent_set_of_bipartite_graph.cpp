@@ -18,6 +18,7 @@ struct HopcroftKarp {
     // input
     int size_left, size_right;
     vector<vector<int>> list; // left to right
+    vector<vector<int>> rlist; // right to left
 
     // results
     vector<int> lr, rl;
@@ -27,9 +28,12 @@ struct HopcroftKarp {
     vector<int> level;
     
     // constructor
-    HopcroftKarp(int l, int r) : size_left(l), size_right(r), list(l, vector<int>()) { }
+    HopcroftKarp(int L, int R) : size_left(L), size_right(R), list(L), rlist(R) {}
     void add_edge(int from, int to) {
-        list[from].push_back(to);
+        assert(from >= 0 && from < size_left);
+        assert(to >= 0 && to < size_right);
+        list[from].emplace_back(to);
+        rlist[to].emplace_back(from);
     }
 
     // getter, debugger
@@ -63,9 +67,9 @@ struct HopcroftKarp {
         while (!que.empty()) {
             int left = que.front();
             que.pop();
-            for (int i = 0; i < list[left].size(); ++i) {
-                int right = list[left][i];
+            for (int right : list[left]) {
                 int next = rl[right];
+                if (next == NOT_MATCHED) next = size_left;
                 if (level[next] == -1) {
                     level[next] = level[left] + 1;
                     que.push(next);
@@ -77,11 +81,11 @@ struct HopcroftKarp {
         if (left == size_left) return true;
         if (seen[left]) return false;
         seen[left] = true;
-        for (int i = 0; i < list[left].size(); ++i) {
-            int right = list[left][i];
+        for (int right : list[left]) {
             int next = rl[right];
             if (next == NOT_MATCHED) next = size_left;
             if (level[next] > level[left] && hodfs(next)) {
+                lr[left] = right;
                 rl[right] = left;
                 return true;
             }
@@ -180,6 +184,20 @@ struct HopcroftKarp {
         }
         for (int v = 0; v < size_right; v++) {
             if (can_right[v]) res.emplace_back(RIGHT, v);
+        }
+        return res;
+    }
+
+    // min edge-cover (0: left, 1: right)
+    vector<pair<int,int>> get_edge_cover() {
+        vector<pair<int,int>> res = get_matching();
+        for (int v = 0; v < size_left; v++) {
+            if (list[v].empty()) return vector<pair<int,int>>();  // infeasible
+            if (lr[v] == NOT_MATCHED) res.emplace_back(v, list[v][0]);
+        }
+        for (int v = 0; v < size_right; v++) {
+            if (rlist[v].empty()) return vector<pair<int,int>>();  // infeasible
+            if (rl[v] == NOT_MATCHED) res.emplace_back(rlist[v][0], v);
         }
         return res;
     }
