@@ -83,6 +83,92 @@ void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
 void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
 void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
 
+// Edge Class
+template<class T = long long> struct Edge {
+    int from, to;
+    T val;
+    Edge() : from(-1), to(-1) { }
+    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& e) {
+        return s << e.from << "->" << e.to << "(" << e.val << ")";
+    }
+};
+
+// graph class
+template<class T = long long> struct Graph {
+    int V, E;
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
+
+    // constructors
+    Graph(int n = 0, int m = 0) : V(n), E(m), list(n), reversed_list(n), id(n) { }
+    void init(int n = 0, int m = 0) {
+        V = n, E = m;
+        list.assign(n, vector<Edge<T>>());
+        reversed_list.assign(n, vector<Edge<T>>());
+        id.assign(n, unordered_map<int, int>());
+    }
+    Graph(const Graph&) = default;
+    Graph& operator = (const Graph&) = default;
+
+    // getters
+    vector<Edge<T>> &operator [] (int i) { return list[i]; }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
+    const size_t size() const { return list.size(); }
+    const void clear() { V = 0; list.clear(); }
+    const void resize(int n) { V = n; list.resize(n); }
+    Edge<T> &get_edge(int u, int v) {
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
+        return list[u][id[u][v]];
+    }
+    const Edge<T> &get_edge(int u, int v) const {
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < list[u].size());
+        return list[u][id[u].at(v)];
+    }
+
+    // add edge
+    void add_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        id[from][to] = (int)list[from].size(), list[from].push_back(Edge(from, to, val));
+        reversed_list[to].push_back(Edge(to, from, val));
+    }
+    void add_bidirected_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        id[from][to] = (int)list[from].size(), list[from].push_back(Edge(from, to, val));
+        reversed_list[from].push_back(Edge(from, to, val));
+        if (from != to) {
+            id[to][from] = (int)list[to].size(), list[to].push_back(Edge(to, from, val));
+            reversed_list[to].push_back(Edge(to, from, val));
+        }
+    }
+
+    // input / output
+    friend istream& operator >> (istream &is, Graph &G) {
+        for (int i = 0; i < G.E; i++) {
+            int u, v;
+            is >> u >> v, u--, v--;
+            G.add_bidirected_edge(u, v);
+        }
+        return is;
+    }
+    friend ostream &operator << (ostream &os, const Graph &G) {
+        os << endl;
+        for (int i = 0; i < G.size(); ++i) {
+            os << i << " -> ";
+            for (int j = 0; j < G[i].size(); j++) {
+                if (j) os << ", ";
+                os << G[i][j].to << "(" << G[i][j].val << ")";
+            }
+            os << endl;
+        }
+        return os;
+    }
+};
+
 // mod inv
 template<class T_VAL, class T_MOD>
 constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
