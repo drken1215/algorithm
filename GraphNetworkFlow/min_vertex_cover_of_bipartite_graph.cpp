@@ -2,8 +2,8 @@
 // 二部グラフの最小点被覆, by Hopcroft-Karp, in O(E√V)
 //
 // verified
-//
-//
+//   NAPC 2025 K - Eat Bombs
+//     https://judge.tuna.camp/contests/OPEN-NAPC2025-OPEN/problems/ZZ_M/statement
 //
 
 #include <bits/stdc++.h>
@@ -207,6 +207,37 @@ struct HopcroftKarp {
 // Examples
 //------------------------------//
 
+// NAPC 2025 K - Eat Bombs
+// compression
+template<class T> vector<T> compress(const vector<T> &v) {
+    auto alt = v;
+    sort(alt.begin(), alt.end());
+    alt.erase(unique(alt.begin(), alt.end()), alt.end());
+    vector<T> res(v.size());
+    for (int i = 0; i < res.size(); i++) {
+        res[i] = lower_bound(alt.begin(), alt.end(), v[i]) - alt.begin();
+    }
+    return res;
+}
+void NAPC_2025_K() {
+    auto solve = [&]() -> void {
+        int N;
+        cin >> N;
+        vector<long long> X(N), Y(N);
+        for (int i = 0; i < N; i++) cin >> X[i] >> Y[i];
+        X = compress(X), Y = compress(Y);
+
+        HopcroftKarp hk(X.size(), Y.size());
+        for (int i = 0; i < N; i++) hk.add_edge(X[i], Y[i]);
+        hk.solve();
+        auto res = hk.get_vertex_cover();
+        cout << res.size() << endl;
+    };
+    int T; cin >> T;
+    while (T--) solve();
+}
+
+
 int main() {
-    
+    NAPC_2025_K();
 }
