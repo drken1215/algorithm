@@ -51,6 +51,8 @@ template<class T> istream& operator >> (istream &is, vector<T> &P)
 { for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
 template<class T> istream& operator >> (istream &is, deque<T> &P)
 { for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
+{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
 
 // output
 template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
