@@ -39,8 +39,8 @@ template<class T> struct WeightedUnionFind {
 
     // constructor
     WeightedUnionFind() { }
-    WeightedUnionFind(int N, T zero = 0) : par(N, -1), weight(N, zero) {}
-    void init(int N, T zero = 0) {
+    WeightedUnionFind(int N, T zero = T()) : par(N, -1), weight(N, zero) {}
+    void init(int N, T zero = T()) {
         par.assign(N, -1);
         weight.assign(N, zero);
     }
@@ -62,11 +62,13 @@ template<class T> struct WeightedUnionFind {
     }
     
     // v[y] - v[x] = w
-    bool merge(int x, int y, T w) {
+    bool merge(int x, int y, T w, bool merge_technique = false) {
         w += get_weight(x), w -= get_weight(y);
         x = root(x), y = root(y);
         if (x == y) return false;
-        if (par[x] > par[y]) swap(x, y), w = -w; // merge technique
+        if (merge_technique) {
+            if (par[x] > par[y]) swap(x, y), w = -w; // merge technique
+        }
         par[x] += par[y];
         par[y] = x;
         weight[y] = w;

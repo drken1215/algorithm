@@ -3957,7 +3957,7 @@ struct UnionFind {
         return root(x) == root(y);
     }
     
-    bool merge(int x, int y, bool merge_technique = true) {
+    bool merge(int x, int y, bool merge_technique = false) {
         x = root(x), y = root(y);
         if (x == y) return false;
         if (merge_technique) if (par[x] > par[y]) swap(x, y); // merge technique
