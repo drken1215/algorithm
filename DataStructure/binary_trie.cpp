@@ -103,11 +103,12 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
         return erase(v);
     }
 
-    // max (with xor-addition of val) and min (with xor-addition of val)
-    Node* get_max(INT val = 0) {
-        INT nval = val ^ lazy;
+    // max (with xor-addition of val) and min (with xor-addition of add)
+    Node* get_max(INT add = 0) {
+        INT nval = add ^ lazy;
         Node* v = root;
         for (int i = MAX_DIGIT-1; i >= 0; --i) {
+            if (!v) break;
             bool flag = (nval >> i) & 1;
             if (!v->right) v = v->left;
             else if (!v->left) v = v->right;
@@ -116,8 +117,8 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
         }
         return v;
     }
-    Node* get_min(INT val = 0) {
-        return get_max(~val & ((INT(1)<<MAX_DIGIT)-1));
+    Node* get_min(INT add = 0) {
+        return get_max(~add & ((INT(1)<<MAX_DIGIT)-1));
     }
    
     // lower_bound, upper_bound
@@ -140,6 +141,7 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
         INT nval = val ^ lazy;
         Node *v = root;
         for (int i = MAX_DIGIT-1; i >= 0; --i) {
+            if (!v) break;
             bool flag = (nval >> i) & 1;
             if (flag && v->right) v = v->right;
             else if (!flag && v->left) v = v->left;
@@ -151,12 +153,17 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
     Node* upper_bound(INT val) {
         return lower_bound(val + 1);
     }
-    size_t order_of_val(INT val) {
+
+    // find #{x | (x ^ add) < val}
+    size_t count_lower(INT val, INT add = 0) {
+        if (!root) return 0;
+        INT addlazy = add ^ lazy;
         Node *v = root;
         size_t res = 0;
         for (int i = MAX_DIGIT-1; i >= 0; --i) {
+            if (!v) break;
             Node *left = v->left, *right = v->right;
-            if ((lazy >> i) & 1) swap(left, right);
+            if ((addlazy >> i) & 1) swap(left, right);
             bool flag = (val >> i) & 1;
             if (flag) {
                 res += get_count(left);
@@ -167,11 +174,12 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
         return res;
     }
 
-    // k-th, k is 0-indexed
+    // find k-th val, k is 0-indexed
     Node* get_kth(size_t k, INT val = 0) {
         Node *v = root;
         if (get_count(v) <= k) return nullptr;
         for (int i = MAX_DIGIT-1; i >= 0; --i) {
+            if (!v) break;
             bool flag = (lazy >> i) & 1;
             Node *left = (flag ? v->right : v->left);
             Node *right = (flag ? v->left : v->right);
@@ -216,7 +224,6 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
         return os;
     }
 };
-
 
 
 //------------------------------//
