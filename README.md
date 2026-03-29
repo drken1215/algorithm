@@ -380,7 +380,7 @@
 
 ## 行列のアルゴリズム
 
-- (★★★☆) XOR 基底 (俗称：noshi 基底)
+- (★★★☆) [XOR 基底 (俗称：noshi 基底)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/xor_basis.cpp)
 - (★★★☆) F2 ベクトル空間の交差
 - (★★★★) Strassen 法
 - (★★★★) 余因子行列
