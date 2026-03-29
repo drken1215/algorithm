@@ -102,11 +102,6 @@ template<typename INT, size_t MAX_DIGIT> struct BinaryTrie {
         auto v = find(val);
         return erase(v, k);
     }
-    bool erase_all(INT val) {
-        auto v = find(val);
-        if (!v) return false;
-        return erase(val, get_count(v));
-    }
 
     // counter
     size_t size() const { return get_count(root); }
@@ -272,7 +267,7 @@ void YosupoSetXorMin() {
         if (type == 0) {
             if (!bt.count(x)) bt.insert(x);
         } else if (type == 1) {
-            if (bt.count(x)) bt.erase_all(x);
+            if (bt.count(x)) bt.erase(x);
         } else {
             cout << bt.get_min(x) << endl;
         }
