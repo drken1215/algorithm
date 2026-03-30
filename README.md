@@ -83,6 +83,7 @@
 
 ## その他
 
+- (★★☆☆) [オンライン二部グラフ判定](https://github.com/drken1215/algorithm/blob/master/DataStructure/online_bipartite_judging.cpp)
 - (★★☆☆) ダブリング
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
 - (★★★★) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/dynamic_bitset.cpp)
