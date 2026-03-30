@@ -5,6 +5,9 @@
 //   ABC 451 G - Minimum XOR Walk
 //     https://atcoder.jp/contests/abc451/tasks/abc451_g
 //
+//   KUPC 2012 K - XOR回廊
+//     https://atcoder.jp/contests/kupc2012/tasks/kupc2012_11
+//
 
 
 #include <bits/stdc++.h>
@@ -362,6 +365,30 @@ void ABC_451_G() {
 }
 
 
+// KUPC 2012 K - XOR回廊
+void KUPC_2012_K() {
+    int N, M, Q;
+    cin >> N >> M >> Q;
+    Graph<long long> G(N);
+    for (int i = 0; i < M; i++) {
+        long long f, t, p;
+        cin >> f >> t >> p;
+        G.add_bidirected_edge(f, t, p);
+    }
+    vector<long long> depth(N, -1);
+    auto base = cycle_basis(G, depth, 0);
+    sort(base.begin(), base.end(), greater<long long>());
+    for (int q = 0; q < Q; q++) {
+        int a, b;
+        cin >> a >> b;
+        long long val = depth[a] ^ depth[b];
+        for (auto e : base) val = max(val, val ^ e);
+        cout << val << endl;
+    }
+}
+
+
 int main() {
-    ABC_451_G();
+    //ABC_451_G();
+    KUPC_2012_K();
 }
