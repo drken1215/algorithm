@@ -251,9 +251,6 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         val = (unsigned int)(tmp % get_umod());
         return *this;
     }
-    constexpr Fp& operator /= (const Fp &r) {
-        return *this = *this * r.inv(); 
-    }
     constexpr Fp pow(long long n) const {
         assert(n >= 0);
         Fp res(1), mul(*this);
