@@ -2,6 +2,9 @@
 // 抽象化した全方位木 DP (木 DP パートで辺に関する処理も行う場合)
 //
 // verified:
+//   Yosupo Library Checker - Tree Path Composite Sum
+//     https://judge.yosupo.jp/problem/tree_path_composite_sum
+//
 //   AtCoder ABC 222 F - Expensive Expense
 //     https://atcoder.jp/contests/abc222/tasks/abc222_f
 //
@@ -206,6 +209,149 @@ void ABC_222_F() {
 }
 
 
+// Yosupo Library Checker - Tree Path Composite Sum
+template<int MOD = 998244353, bool PRIME = true> struct Fp {
+    // inner value
+    unsigned int val;
+    
+    // constructor
+    constexpr Fp() : val(0) { }
+    template<std::signed_integral T> constexpr Fp(T v) {
+        long long tmp = (long long)(v % (long long)(get_umod()));
+        if (tmp < 0) tmp += get_umod();
+        val = (unsigned int)(tmp);
+    }
+    template<std::unsigned_integral T> constexpr Fp(T v) {
+        val = (unsigned int)(v % get_umod());
+    }
+    constexpr long long get() const { return val; }
+    constexpr static int get_mod() { return MOD; }
+    constexpr static unsigned int get_umod() { return MOD; }
+    
+    // arithmetic operators
+    constexpr Fp operator + () const { return Fp(*this); }
+    constexpr Fp operator - () const { return Fp() - Fp(*this); }
+    constexpr Fp operator + (const Fp &r) const { return Fp(*this) += r; }
+    constexpr Fp operator - (const Fp &r) const { return Fp(*this) -= r; }
+    constexpr Fp operator * (const Fp &r) const { return Fp(*this) *= r; }
+    constexpr Fp operator / (const Fp &r) const { return Fp(*this) /= r; }
+    constexpr Fp& operator += (const Fp &r) {
+        val += r.val;
+        if (val >= get_umod()) val -= get_umod();
+        return *this;
+    }
+    constexpr Fp& operator -= (const Fp &r) {
+        val -= r.val;
+        if (val >= get_umod()) val += get_umod();
+        return *this;
+    }
+    constexpr Fp& operator *= (const Fp &r) {
+        unsigned long long tmp = val;
+        tmp *= r.val;
+        val = (unsigned int)(tmp % get_umod());
+        return *this;
+    }
+    constexpr Fp& operator /= (const Fp &r) {
+        return *this = *this * r.inv(); 
+    }
+    constexpr Fp pow(long long n) const {
+        assert(n >= 0);
+        Fp res(1), mul(*this);
+        while (n) {
+            if (n & 1) res *= mul;
+            mul *= mul;
+            n >>= 1;
+        }
+        return res;
+    }
+
+    // other operators
+    constexpr bool operator == (const Fp &r) const {
+        return this->val == r.val;
+    }
+    constexpr bool operator != (const Fp &r) const {
+        return this->val != r.val;
+    }
+    constexpr bool operator < (const Fp &r) const {
+        return this->val < r.val;
+    }
+    constexpr bool operator > (const Fp &r) const {
+        return this->val > r.val;
+    }
+    constexpr bool operator <= (const Fp &r) const {
+        return this->val <= r.val;
+    }
+    constexpr bool operator >= (const Fp &r) const {
+        return this->val >= r.val;
+    }
+    constexpr Fp& operator ++ () {
+        ++val;
+        if (val == get_umod()) val = 0;
+        return *this;
+    }
+    constexpr Fp& operator -- () {
+        if (val == 0) val = get_umod();
+        --val;
+        return *this;
+    }
+    constexpr Fp operator ++ (int) {
+        Fp res = *this;
+        ++*this;
+        return res;
+    }
+    constexpr Fp operator -- (int) {
+        Fp res = *this;
+        --*this;
+        return res;
+    }
+    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+        long long tmp = 1;
+        is >> tmp;
+        tmp = tmp % (long long)(get_umod());
+        if (tmp < 0) tmp += get_umod();
+        x.val = (unsigned int)(tmp);
+        return is;
+    }
+    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+        return os << x.val;
+    }
+    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+        return r.pow(n);
+    }
+};
+void YosupoTreePathCompositeSum() {
+    using mint = Fp<>;
+    using Weight = pair<mint,mint>;
+    using Monoid = pair<mint,int>;
+
+    int N;
+    cin >> N;
+    vector<mint> A(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    Graph<Weight> G(N);
+    for (int i = 0; i < N-1; i++) {
+        long long u, v;
+        mint b, c;
+        cin >> u >> v >> b >> c;
+        G.add_bidirected_edge(u, v, make_pair(b, c));
+    }
+
+    auto addedge = [&](const Edge<Weight> &e, Monoid a) -> Monoid {
+        return Monoid(e.val.first * a.first + e.val.second * a.second, a.second);
+    };
+    auto merge = [&](Monoid a, Monoid b) -> Monoid { 
+        return Monoid(a.first + b.first, a.second + b.second);
+    };
+    auto addnode = [&](int v, Monoid a) -> Monoid { 
+        return Monoid(a.first + A[v], a.second + 1);
+    };
+    WeightedReRooting<Monoid, Weight> rr(G, addedge, merge, addnode, make_pair(0, 0));
+    for (int v = 0; v < N; v++) cout << rr.get(v).first << " ";
+    cout << endl;
+}
+
+
 int main() {
-    ABC_222_F();
+    //ABC_222_F();
+    YosupoTreePathCompositeSum();
 }
