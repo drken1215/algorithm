@@ -737,26 +737,28 @@ template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
 // min_factor[n] := the min prime-factor of n
 // euler[n] := euler function value of n
 struct Eratos {
+    int N;
     vector<int> primes;
     vector<bool> isprime;
     vector<int> mebius, min_factor, euler;
 
     // constructor, getter
-    Eratos(int MAX) : primes(),
-                      isprime(MAX+1, true),
-                      mebius(MAX+1, 1),
-                      min_factor(MAX+1, -1),
-                      euler(MAX+1) {
+    Eratos(int n) : N(n), 
+                    primes(),
+                    isprime(n, true),
+                    mebius(n, 1),
+                    min_factor(n, -1),
+                    euler(n) {
         isprime[0] = isprime[1] = false;
         min_factor[0] = 0, min_factor[1] = 1;
-        for (int i = 1; i <= MAX; i++) euler[i] = i;
-        for (int i = 2; i <= MAX; ++i) {
+        for (int i = 1; i < N; i++) euler[i] = i;
+        for (int i = 2; i < N; ++i) {
             if (!isprime[i]) continue;
             primes.push_back(i);
             mebius[i] = -1;
             min_factor[i] = i;
             euler[i] = i - 1;
-            for (int j = i*2; j <= MAX; j += i) {
+            for (int j = i*2; j < N; j += i) {
                 isprime[j] = false;
                 if ((j / i) % i == 0) mebius[j] = 0;
                 else mebius[j] = -mebius[j];
@@ -768,7 +770,8 @@ struct Eratos {
 
     // prime factorization
     vector<pair<int,int>> prime_factors(int n) {
-        vector<pair<int,int> > res;
+        assert(n >= 1 && n < N);
+        vector<pair<int,int>> res;
         while (n != 1) {
             int prime = min_factor[n];
             int exp = 0;
@@ -783,6 +786,7 @@ struct Eratos {
 
     // enumerate divisors
     vector<int> divisors(int n) {
+        assert(n >= 1 && n < N);
         vector<int> res({1});
         auto pf = prime_factors(n);
         for (auto p : pf) {
