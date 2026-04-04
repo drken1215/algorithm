@@ -1,3 +1,7 @@
+// code template is in https://github.com/drken1215/algorithm/blob/master/template_minimum.cpp
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -38,9 +42,9 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 #define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
 #define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
 #define EB emplace_back
+#define PF push_front
 #define PB push_back
 #define MP make_pair
-#define MT make_tuple
 #define FI first
 #define SE second
 #define ALL(x) x.begin(), x.end()
@@ -48,11 +52,11 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 
 // input
 template<class T> istream& operator >> (istream &is, vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
 template<class T> istream& operator >> (istream &is, deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
 template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
 
 // output
 template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
@@ -82,6 +86,8 @@ template<class S, class T> ostream& operator << (ostream &s, const unordered_map
 void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
 void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
 void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
+const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
 
 // Edge Class
 template<class T = long long> struct Edge {
