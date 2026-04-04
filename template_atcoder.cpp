@@ -52,11 +52,11 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 
 // input
 template<class T> istream& operator >> (istream &is, vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
 template<class T> istream& operator >> (istream &is, deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
 template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
 
 // output
 template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
@@ -122,9 +122,9 @@ template<class T = long long> struct Graph {
     vector<Edge<T>> &operator [] (int i) { return list[i]; }
     const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
     const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
-    const size_t size() const { return list.size(); }
-    const void clear() { V = 0; list.clear(); }
-    const void resize(int n) { V = n; list.resize(n); }
+    constexpr size_t size() const { return list.size(); }
+    constexpr void clear() { V = 0; list.clear(); }
+    constexpr void resize(int n) { V = n; list.resize(n); }
     Edge<T> &get_edge(int u, int v) {
         assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
         assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
@@ -3447,11 +3447,11 @@ struct HopcroftKarp {
     }
     friend ostream& operator << (ostream& s, const HopcroftKarp& G) {
         s << endl;
-        for (int i = 0; i < G.list.size(); ++i) {
+        for (int i = 0; i < (int)G.list.size(); ++i) {
             s << i << ": ";
-            for (int j = 0; j < G.list[i].size(); ++j) {
+            for (int j = 0; j < (int)G.list[i].size(); ++j) {
                 s << G.list[i][j];
-                if (j + 1 != G.list[i].size()) s << ", ";
+                if (j + 1 != (int)G.list[i].size()) s << ", ";
             }
             s << endl;
         }
@@ -4874,7 +4874,7 @@ struct BitVector {
     }
     unsigned int get(const unsigned int i) const {
         assert((i >> 6) < block.size());
-        return (const unsigned int)(block[i >> 6] >> (i & 63)) & 1;
+        return (unsigned int)(block[i >> 6] >> (i & 63)) & 1;
     }
     void build() {
         for (unsigned int i = 1; i < block.size(); i++) {
