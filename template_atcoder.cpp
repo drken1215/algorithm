@@ -4234,7 +4234,7 @@ template<class Abel = int> struct FastMultiSetByBIT {
     // debug
     friend ostream& operator << (ostream &s, const FastMultiSetByBIT &fs) {
         for (int x = fs.get_min(); x < fs.lim; x = fs.next(x + 1)) {
-            s << x << " ";
+            for (int i = 0; i < fs.count(x); i++) s << x << " ";
         }
         return s;
     }
