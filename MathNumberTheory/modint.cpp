@@ -5,10 +5,6 @@
 //   drken: 「1000000007 で割ったあまり」の求め方を総特集！ ～ 逆元から離散対数まで ～
 //     https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 //
-// verified:
-//   ABC 127 E - Cell Distance
-//     https://atcoder.jp/contests/abc127/tasks/abc127_e
-//
 
 
 #include <bits/stdc++.h>
@@ -76,15 +72,13 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
             return pow(get_umod() - 2);
         } else {
             assert(gcd(val, get_umod()) == 1);
-            auto b = m, u = 1, v = 0;
+            long long m = get_umod(), a = val, b = m, u = 1, v = 0;
             while (b > 0) {
                 auto t = a / b;
                 a -= t * b, swap(a, b);
                 u -= t * v, swap(u, v);
             }
-            u %= m;
-            if (u >= get_umod()) u += get_umod();
-            return u;
+            return Fp(u);
         }
     }
 
@@ -127,7 +121,7 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         --*this;
         return res;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+    friend constexpr istream& operator >> (istream &is, Fp &x) {
         long long tmp = 1;
         is >> tmp;
         tmp = tmp % (long long)(get_umod());
@@ -135,51 +129,16 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         x.val = (unsigned int)(tmp);
         return is;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+    friend constexpr ostream& operator << (ostream &os, const Fp &x) {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+    friend constexpr Fp pow(const Fp &r, long long n) {
         return r.pow(n);
     }
-    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+    friend constexpr Fp inv(const Fp &r) {
         return r.inv();
     }
 };
-
-// Binomial coefficient
-template<class mint> struct BiCoef {
-    vector<mint> fact_, inv_, finv_;
-    constexpr BiCoef() {}
-    constexpr BiCoef(int n) : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-        init(n);
-    }
-    constexpr void init(int n) {
-        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].get_mod();
-        for(int i = 2; i < n; i++){
-            fact_[i] = fact_[i-1] * i;
-            inv_[i] = -inv_[MOD%i] * (MOD/i);
-            finv_[i] = finv_[i-1] * inv_[i];
-        }
-    }
-    constexpr mint com(int n, int k) const {
-        if (n < k || n < 0 || k < 0) return 0;
-        return fact_[n] * finv_[k] * finv_[n-k];
-    }
-    constexpr mint fact(int n) const {
-        if (n < 0) return 0;
-        return fact_[n];
-    }
-    constexpr mint inv(int n) const {
-        if (n < 0) return 0;
-        return inv_[n];
-    }
-    constexpr mint finv(int n) const {
-        if (n < 0) return 0;
-        return finv_[n];
-    }
-};
-
 
 
 //------------------------------//
@@ -232,27 +191,7 @@ void small_test() {
     check(b.inv(), 499122177);
 }
 
-void ABC_127_E() {
-    const int MOD = 1000000007;
-    using mint = Fp<MOD>;
-
-    long long N, M, K;
-    cin >> N >> M >> K;
-    
-    BiCoef<mint> bc(N * M);
-    mint sum = 0;
-    for (int i = 0; i <= N-1; ++i) {
-        for (int j = 0; j <= M-1; ++j) {
-            mint tmp = mint(N - i) * mint(M - j) * mint(i + j);
-            if (i != 0 && j != 0) tmp *= 2;
-            sum += tmp;
-        }
-    }
-    cout << sum * bc.com(N * M - 2, K - 2) << endl;
-}
-
 
 int main() {
     small_test();
-    //ABC_127_E();
 }
