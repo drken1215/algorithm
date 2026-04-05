@@ -14,8 +14,9 @@
 using namespace std;
 
 
+// kth root
 // N < 2^64, K <= 64
-uint64_t kth_root(uint64_t N, uint64_t K) {
+uint64_t kth_root(uint64_t N, uint64_t K = 2) {
     assert(K >= 1);
     if (N <= 1 || K == 1) return N;
     if (K >= 64) return 1;
@@ -46,13 +47,15 @@ uint64_t kth_root(uint64_t N, uint64_t K) {
 }
 
 
-
 //------------------------------//
 // Examples
 //------------------------------//
 
 // Yosupo Library Checker - Kth Root (Integer)
 void Yosupo_Kth_Root() {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    
     int T;
     cin >> T;
     while (T--) {
@@ -85,9 +88,6 @@ void ABC_361_F() {
     
 
 int main() {
-    cin.tie(nullptr);
-    ios_base::sync_with_stdio(false);
-    
-    //Yosupo_Kth_Root();
-    ABC_361_F();
+    Yosupo_Kth_Root();
+    //ABC_361_F();
 }

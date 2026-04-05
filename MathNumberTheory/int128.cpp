@@ -13,7 +13,7 @@ using namespace std;
 
 // int 128
 using i128 = __int128;
-constexpr i128 to_integer(const string &s) {
+i128 to_integer(const string &s) {
     i128 res = 0;
     for (auto c : s) {
          if (isdigit(c)) res = res * 10 + (c - '0');
@@ -134,6 +134,6 @@ void YosupoSumOfFloorOfLinear() {
 }
 
 int main() {
-    //mini_test();
-    YosupoSumOfFloorOfLinear();
+    mini_test();
+    //YosupoSumOfFloorOfLinear();
 }

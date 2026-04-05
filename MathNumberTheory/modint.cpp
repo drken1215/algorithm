@@ -15,32 +15,6 @@
 using namespace std;
 
 
-// mod pow
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
-    T_VAL res = 1;
-    while (n > 0) {
-        if (n % 2 == 1) res = res * a % m;
-        a = a * a % m;
-        n >>= 1;
-    }
-    return res;
-}
-
-// mod inv
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
-    T_VAL b = m, u = 1, v = 0;
-    while (b > 0) {
-        T_VAL t = a / b;
-        a -= t * b, swap(a, b);
-        u -= t * v, swap(u, v);
-    }
-    u %= m;
-    if (u < 0) u += m;
-    return u;
-}
-
 // modint
 template<int MOD = 998244353, bool PRIME = true> struct Fp {
     // inner value
@@ -97,12 +71,20 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         return res;
     }
     constexpr Fp inv() const {
+        assert(val);
         if (PRIME) {
-            assert(val);
             return pow(get_umod() - 2);
         } else {
-            assert(val);
-            return mod_inv((long long)(val), get_umod());
+            assert(gcd(val, get_umod()) == 1);
+            auto b = m, u = 1, v = 0;
+            while (b > 0) {
+                auto t = a / b;
+                a -= t * b, swap(a, b);
+                u -= t * v, swap(u, v);
+            }
+            u %= m;
+            if (u >= get_umod()) u += get_umod();
+            return u;
         }
     }
 

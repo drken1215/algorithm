@@ -402,41 +402,6 @@ i128 gcd(i128 a, i128 b) {
 // mod algorithms
 //------------------------------//
 
-// safe mod
-template<class T_VAL, class T_MOD>
-constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
-    assert(m > 0);
-    a %= m;
-    if (a < 0) a += m;
-    return a;
-}
-
-// mod pow
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
-    T_VAL res = 1;
-    while (n > 0) {
-        if (n % 2 == 1) res = res * a % m;
-        a = a * a % m;
-        n >>= 1;
-    }
-    return res;
-}
-
-// mod inv
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
-    T_VAL b = m, u = 1, v = 0;
-    while (b > 0) {
-        T_VAL t = a / b;
-        a -= t * b, swap(a, b);
-        u -= t * v, swap(u, v);
-    }
-    u %= m;
-    if (u < 0) u += m;
-    return u;
-}
-
 // modint
 template<int MOD = 998244353, bool PRIME = true> struct Fp {
     // inner value
@@ -493,12 +458,18 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         return res;
     }
     constexpr Fp inv() const {
+        assert(val);
         if (PRIME) {
-            assert(val);
             return pow(get_umod() - 2);
         } else {
-            assert(val);
-            return mod_inv((long long)(val), get_umod());
+            assert(gcd(val, get_umod()) == 1);
+            long long m = get_umod(), a = val, b = m, u = 1, v = 0;
+            while (b > 0) {
+                auto t = a / b;
+                a -= t * b, swap(a, b);
+                u -= t * v, swap(u, v);
+            }
+            return Fp(u);
         }
     }
 
@@ -541,7 +512,7 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         --*this;
         return res;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+    friend constexpr istream& operator >> (istream &is, Fp &x) {
         long long tmp = 1;
         is >> tmp;
         tmp = tmp % (long long)(get_umod());
@@ -549,16 +520,51 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         x.val = (unsigned int)(tmp);
         return is;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+    friend constexpr ostream& operator << (ostream &os, const Fp &x) {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+    friend constexpr Fp pow(const Fp &r, long long n) {
         return r.pow(n);
     }
-    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+    friend constexpr Fp inv(const Fp &r) {
         return r.inv();
     }
 };
+
+// safe mod
+template<class T_VAL, class T_MOD>
+constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
+    assert(m > 0);
+    a %= m;
+    if (a < 0) a += m;
+    return a;
+}
+
+// mod pow
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
+    T_VAL res = 1;
+    while (n > 0) {
+        if (n % 2 == 1) res = res * a % m;
+        a = a * a % m;
+        n >>= 1;
+    }
+    return res;
+}
+
+// mod inv
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
+    T_VAL b = m, u = 1, v = 0;
+    while (b > 0) {
+        T_VAL t = a / b;
+        a -= t * b, swap(a, b);
+        u -= t * v, swap(u, v);
+    }
+    u %= m;
+    if (u < 0) u += m;
+    return u;
+}
 
 // Binomial coefficient
 template<class mint> struct BiCoef {
@@ -1143,7 +1149,16 @@ constexpr int calc_primitive_root(long long m) {
     if (m == 754974721) return 11;
     if (m == 645922817) return 3;
     if (m == 897581057) return 3;
-    
+
+    auto mod_pow = [&](long long a, long long n, long long m) {
+        long long res = 1;
+        while (n > 0) {
+            if (n % 2 == 1) res = res * a % m;
+            a = a * a % m;
+            n >>= 1;
+        }
+        return res;
+    };
     long long divs[20] = {};
     divs[0] = 2;
     long long cnt = 1;
@@ -1210,7 +1225,8 @@ struct ntt_setup {
 template<class mint, int MOD = mint::get_mod()> 
 void ntt_trans(vector<mint> &v) {
     int n = (int)v.size();
-    int h = ceil_pow2(n);
+    int h = 0;
+    while ((1U << h) < (unsigned int)(n)) h++;
     static const ntt_setup<mint> setup;
 
     int len = 0;
@@ -1227,7 +1243,7 @@ void ntt_trans(vector<mint> &v) {
                     v[i + offset + p] = l - r;
                 }
                 if (s + 1 != (1 << len)) {
-                    rot *= setup.rate2[bsf(~(unsigned int)(s))];
+                    rot *= setup.rate2[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len++;
@@ -1251,7 +1267,7 @@ void ntt_trans(vector<mint> &v) {
                     v[i + offset + p * 3] = a0 + na2 + (mod2 - tmp);
                 }
                 if (s + 1 != (1 << len)) {
-                    rot *= setup.rate3[bsf(~(unsigned int)(s))];
+                    rot *= setup.rate3[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len += 2;
@@ -1263,7 +1279,8 @@ void ntt_trans(vector<mint> &v) {
 template<class mint, int MOD = mint::get_mod()> 
 void ntt_trans_inv(vector<mint> &v) {
     int n = (int)v.size();
-    int h = ceil_pow2(n);
+    int h = 0;
+    while ((1U << h) < (unsigned int)(n)) h++;
     static const ntt_setup<mint> setup;
 
     int len = h;
@@ -1280,7 +1297,7 @@ void ntt_trans_inv(vector<mint> &v) {
                     v[i + offset + p] = (unsigned long long)((long long)(MOD) + l.val - r.val) * irot.val;
                 }
                 if (s + 1 != (1 << (len - 1))) {
-                    irot *= setup.irate2[bsf(~(unsigned int)(s))];
+                    irot *= setup.irate2[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len--;
@@ -1302,7 +1319,7 @@ void ntt_trans_inv(vector<mint> &v) {
                     v[i + offset + p * 3] = (a0 + (MOD - a1) + (MOD - tmp)) * irot3.val;
                 }
                 if (s + 1 != (1 << (len - 2))) {
-                    irot *= setup.irate3[bsf(~(unsigned int)(s))];
+                    irot *= setup.irate3[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len -= 2;
