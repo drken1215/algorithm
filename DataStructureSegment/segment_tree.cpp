@@ -38,24 +38,40 @@ template<class Monoid> struct SegmentTree {
 
     // constructor
     SegmentTree() {}
+    SegmentTree(const Func &op, const Monoid &identity) : OP(op), IDENTITY(identity) { }
     SegmentTree(int n, const Func &op, const Monoid &identity) {
         init(n, op, identity);
     }
     SegmentTree(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
         init(v, op, identity);
     }
-    void init(int n, const Func &op, const Monoid &identity) {
-        N = n;
+    void init(const Func &op, const Monoid &identity) {
         OP = op;
         IDENTITY = identity;
+    }
+    void init(int n) {
+        N = n;
         log = 0, offset = 1;
         while (offset < N) ++log, offset <<= 1;
         dat.assign(offset * 2, IDENTITY);
+    }
+    void init(const vector<Monoid> &v) {
+        init((int)v.size());
+        build(v);
+    } 
+    void init(int n, const Func &op, const Monoid &identity) {
+        init(op, identity);
+        init(n);
     }
     void init(const vector<Monoid> &v, const Func &op, const Monoid &identity) {
         init((int)v.size(), op, identity);
         build(v);
     }
+    int size() const {
+        return N;
+    }
+
+    // pull, build
     void pull(int k) {
         dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
     }
@@ -64,22 +80,20 @@ template<class Monoid> struct SegmentTree {
         for (int i = 0; i < N; ++i) dat[i + offset] = v[i];
         for (int k = offset - 1; k > 0; --k) pull(k);
     }
-    void clear() {
-        dat.assign(dat.size(), IDENTITY);
-    }
-    int size() const {
-        return N;
-    }
-    Monoid operator [] (int i) const {
-        return dat[i + offset];
-    }
     
-    // update A[i], i is 0-indexed, O(log N)
+    // setter and getter, set: update A[i], i is 0-indexed, O(log N)
     void set(int i, const Monoid &v) {
         assert(0 <= i && i < N);
         int k = i + offset;
         dat[k] = v;
         while (k >>= 1) pull(k);
+    }
+    Monoid get(int i) const {
+        assert(0 <= i && i < N);
+        return dat[i + offset];
+    }
+    Monoid operator [] (int i) const {
+        return get(i);
     }
     
     // get [l, r), l and r are 0-indexed, O(log N)
@@ -97,7 +111,7 @@ template<class Monoid> struct SegmentTree {
         return dat[1];
     }
     
-    // get max r such that f(v) = True (v = prod(l, r)), O(log N)
+    // get max r that f(get(l, r)) = True (0-indexed), O(log N)
     // f(IDENTITY) need to be True
     int max_right(const function<bool(Monoid)> f, int l = 0) {
         if (l == N) return N;
@@ -164,7 +178,6 @@ template<class Monoid> struct SegmentTree {
         }
     }
 };
-
 
 
 //------------------------------//

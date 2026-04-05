@@ -59,15 +59,15 @@ using namespace std;
 // Lazy Segment Tree
 template<class Monoid, class Action> struct LazySegmentTree {
     // various function types
-    using FuncOperator = function<Monoid(Monoid, Monoid)>;
-    using FuncMapping = function<Monoid(Action, Monoid)>;
+    using FuncMonoid = function<Monoid(Monoid, Monoid)>;
+    using FuncAction = function<Monoid(Action, Monoid)>;
     using FuncComposition = function<Action(Action, Action)>;
 
     // core member
     int N;
-    FuncOperator OP;
-    FuncMapping MAPPING;
-    FuncComposition COMPOSITION;
+    FuncMonoid OP;
+    FuncAction ACT;
+    FuncComposition COMP;
     Monoid IDENTITY_MONOID;
     Action IDENTITY_ACTION;
     
@@ -78,42 +78,44 @@ template<class Monoid, class Action> struct LazySegmentTree {
     
     // constructor
     LazySegmentTree() {}
-    LazySegmentTree(int n,
-                    const FuncOperator op,
-                    const FuncMapping mapping,
-                    const FuncComposition composition,
-                    const Monoid &identity_monoid,
-                    const Action &identity_action) {
-        init(n, op, mapping, composition, identity_monoid, identity_action);
+    LazySegmentTree(const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+                    const Monoid &identity_monoid, const Action &identity_action) 
+                    : OP(op), ACT(act), COMP(comp), 
+                    IDENTITY_MONOID(identity_monoid), IDENTITY_ACTION(identity_action) {}
+    LazySegmentTree(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+                    const Monoid &identity_monoid, const Action &identity_action) {
+        init(n, op, act, comp, identity_monoid, identity_action);
     }
     LazySegmentTree(const vector<Monoid> &v,
-                    const FuncOperator op,
-                    const FuncMapping mapping,
-                    const FuncComposition composition,
-                    const Monoid &identity_monoid,
-                    const Action &identity_action) {
-        init(v, op, mapping, composition, identity_monoid, identity_action);
+                    const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+                    const Monoid &identity_monoid, const Action &identity_action) {
+        init(v, op, act, comp, identity_monoid, identity_action);
     }
-    void init(int n,
-              const FuncOperator op,
-              const FuncMapping mapping,
-              const FuncComposition composition,
-              const Monoid &identity_monoid,
-              const Action &identity_action) {
-        N = n, OP = op, MAPPING = mapping, COMPOSITION = composition;
-        IDENTITY_MONOID = identity_monoid, IDENTITY_ACTION = identity_action;
+    void init(const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+              const Monoid &identity_monoid, const Action &identity_action) {
+        OP = op, ACT = act, COMP = comp;
+        IDENTITY_MONOID = identity_monoid, IDENTITY_ACTION = identity_action;      
+    }
+    void init(int n) {
+        N = n, 
         log = 0, offset = 1;
         while (offset < N) ++log, offset <<= 1;
         dat.assign(offset * 2, IDENTITY_MONOID);
         lazy.assign(offset * 2, IDENTITY_ACTION);
     }
+    void init(const vector<Monoid> &v) {
+        init((int)v.size());
+        build(v);
+    }
+    void init(int n, const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+              const Monoid &identity_monoid, const Action &identity_action) {
+        init(op, act, comp, identity_monoid, identity_action);
+        init(n);
+    }
     void init(const vector<Monoid> &v,
-              const FuncOperator op,
-              const FuncMapping mapping,
-              const FuncComposition composition,
-              const Monoid &identity_monoid,
-              const Action &identity_action) {
-        init((int)v.size(), op, mapping, composition, identity_monoid, identity_action);
+              const FuncMonoid op, const FuncAction act, const FuncComposition comp,
+              const Monoid &identity_monoid, const Action &identity_action) {
+        init((int)v.size(), op, act, comp, identity_monoid, identity_action);
         build(v);
     }
     void build(const vector<Monoid> &v) {
@@ -130,8 +132,8 @@ template<class Monoid, class Action> struct LazySegmentTree {
         dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
     }
     void apply_lazy(int k, const Action &f) {
-        dat[k] = MAPPING(f, dat[k]);
-        if (k < offset) lazy[k] = COMPOSITION(f, lazy[k]);
+        dat[k] = ACT(f, dat[k]);
+        if (k < offset) lazy[k] = COMP(f, lazy[k]);
     }
     void push_lazy(int k) {
         apply_lazy(k * 2, lazy[k]);
@@ -168,7 +170,7 @@ template<class Monoid, class Action> struct LazySegmentTree {
         assert(0 <= i && i < N);
         int k = i + offset;
         push_lazy_deep(k);
-        dat[k] = MAPPING(f, dat[k]);
+        dat[k] = ACT(f, dat[k]);
         pull_dat_deep(k);
     }
     // apply f for interval [l, r)
@@ -212,7 +214,7 @@ template<class Monoid, class Action> struct LazySegmentTree {
         return dat[1];
     }
     
-    // get max r such that f(v) = True (v = prod(l, r)), O(log N)
+    // get max r that f(get(l, r)) = True (0-indexed), O(log N)
     // f(IDENTITY) need to be True
     int max_right(const function<bool(Monoid)> f, int l = 0) {
         if (l == N) return N;
@@ -284,7 +286,6 @@ template<class Monoid, class Action> struct LazySegmentTree {
         }
     }
 };
-
 
 
 //------------------------------//
