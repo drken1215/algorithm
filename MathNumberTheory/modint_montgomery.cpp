@@ -1,12 +1,9 @@
 //
-// モンゴメリ乗算を用いた modint (mod は 2^62 未満の奇数)
+// モンゴメリ乗算を用いた modint (mod は 2^62 未満の奇素数)
 //
 // verified:
 //   AOJ 2353 Four Arithmetic Operations
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2353
-//
-//   Yosupo Judge Factorize
-//     https://judge.yosupo.jp/problem/factorize
 //
 
 
@@ -14,7 +11,7 @@
 using namespace std;
 
 
-// montgomery modint (MOD < 2^62, MOD is odd)
+// montgomery modint (MOD < 2^62, MOD: odd prime number)
 struct MontgomeryModInt64 {
     using mint = MontgomeryModInt64;
     using u64 = uint64_t;
@@ -77,7 +74,6 @@ struct MontgomeryModInt64 {
         *this *= r.inv();
         return *this;
     }
-    mint inv() const { return pow(MOD - 2); }
     mint pow(u128 n) const {
         mint res(1), mul(*this);
         while (n > 0) {
@@ -86,6 +82,9 @@ struct MontgomeryModInt64 {
             n >>= 1;
         }
         return res;
+    }
+    mint inv() const { 
+        return pow(MOD - 2); 
     }
 
     // other operators

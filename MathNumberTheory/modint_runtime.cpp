@@ -1,5 +1,5 @@
 //
-// 実行時に法が決まる Modular Arithmetics
+// 実行時に法が決まる modint
 //
 // cf.
 //   noshi91: modint 構造体を使ってみませんか？ (C++)
@@ -12,40 +12,11 @@
 //   Yosupo Library Checker - Binomial Coefficient (Prime Mod)
 //     https://judge.yosupo.jp/problem/binomial_coefficient_prime_mod
 //
-//   ARC 096 E - Everything on It
-//     https://atcoder.jp/contests/arc096/tasks/arc096_c
-//
 
 
 #include <bits/stdc++.h>
 using namespace std;
 
-
-// mod pow
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
-    T_VAL res = 1;
-    while (n > 0) {
-        if (n % 2 == 1) res = res * a % m;
-        a = a * a % m;
-        n >>= 1;
-    }
-    return res;
-}
-
-// mod inv
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
-    T_VAL b = m, u = 1, v = 0;
-    while (b > 0) {
-        T_VAL t = a / b;
-        a -= t * b, swap(a, b);
-        u -= t * v, swap(u, v);
-    }
-    u %= m;
-    if (u < 0) u += m;
-    return u;
-}
 
 // dynamic modint
 struct DynamicModint {
@@ -110,7 +81,14 @@ struct DynamicModint {
     }
     mint inv() const {
         assert(val);
-        return mod_inv((long long)(val), get_umod());
+        assert(gcd(val, get_umod()) == 1);
+        long long m = get_umod(), a = val, b = m, u = 1, v = 0;
+        while (b > 0) {
+            auto t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        return mint(u);
     }
 
     // other operators
@@ -211,6 +189,7 @@ template<class mint> struct BiCoef {
     }
 };
 
+// Yosupo Library Checker - Binomial Coefficient (Prime Mod)
 void Yosupo_Binomial_Coefficient() {
     const int MAX = 11000000;
     int T, M;
@@ -226,60 +205,7 @@ void Yosupo_Binomial_Coefficient() {
     }
 }
 
-// スターリング数 (n 個を k グループにわける、n >= k)
-template<class mint> struct Stirling {
-    vector<vector<mint>> S;
-    constexpr Stirling(int MAX) : S(MAX, vector<mint>(MAX, 0)) {
-        S[0][0] = 1;
-        for (int n = 1; n < MAX; ++n) {
-            for (int k = 1; k <= n; ++k) {
-                S[n][k] = S[n-1][k-1] + S[n-1][k] * k;
-            }
-        }
-    }
-    constexpr mint get(int n, int k) {
-        if (n < 0 || k < 0 || n < k) return 0;
-        return S[n][k];
-    }
-};
-
-void ARC_096_E() {
-    // 入力
-    long long N, M;
-    cin >> N >> M;
-    using mint = DynamicModint;
-    mint::set_mod(M);
-    
-    // 前計算
-    const int MAX = 3100;
-    BiCoef<mint> bc(MAX); // 二項係数計算の前処理
-    Stirling<mint> sl(MAX); // スターリング数の前処理
-
-    // 2^n や 2^2^n の前計算、2^2^(n+1) = (2^2^n)^2
-    vector<mint> two(MAX*MAX, 0), dtwo(MAX, 0);
-    two[0] = 1, dtwo[0] = 2;
-    for (int i = 1; i < MAX; ++i) dtwo[i] = dtwo[i-1] * dtwo[i-1];
-    for (int i = 1; i < MAX*MAX; ++i) two[i] = two[i-1] * 2;
-    
-    // 求める
-    mint res = 0;
-    for (int n = 0; n <= N; ++n) {
-        mint add = 0;
-        for (int k = 0; k <= n; ++k) {
-            mint jiyudo = two[(N-n)*k] * dtwo[N-n];
-            mint core = sl.get(n, k) + sl.get(n, k+1) * (k+1);
-            add += core * jiyudo;
-        }
-        mint choose = bc.com(N, n);
-        add *= choose;
-        if (n % 2 == 0) res += add;
-        else res -= add;
-    }
-    cout << res << endl;
-}
-
 
 int main() {
     Yosupo_Binomial_Coefficient();
-    //ARC_096_E();
 }

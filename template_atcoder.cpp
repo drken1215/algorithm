@@ -565,46 +565,6 @@ template<class mint> struct BiCoef {
     }
 };
 
-
-//------------------------------//
-// mod algorithms
-//------------------------------//
-
-// safe mod
-template<class T_VAL, class T_MOD>
-constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
-    assert(m > 0);
-    a %= m;
-    if (a < 0) a += m;
-    return a;
-}
-
-// mod pow
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
-    T_VAL res = 1;
-    while (n > 0) {
-        if (n % 2 == 1) res = res * a % m;
-        a = a * a % m;
-        n >>= 1;
-    }
-    return res;
-}
-
-// mod inv
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
-    T_VAL b = m, u = 1, v = 0;
-    while (b > 0) {
-        T_VAL t = a / b;
-        a -= t * b, swap(a, b);
-        u -= t * v, swap(u, v);
-    }
-    u %= m;
-    if (u < 0) u += m;
-    return u;
-}
-
 // dynamic modint
 struct DynamicModint {
     using mint = DynamicModint;
@@ -668,7 +628,14 @@ struct DynamicModint {
     }
     mint inv() const {
         assert(val);
-        return mod_inv((long long)(val), get_umod());
+        assert(gcd(val, get_umod()) == 1);
+        long long m = get_umod(), a = val, b = m, u = 1, v = 0;
+        while (b > 0) {
+            auto t = a / b;
+            a -= t * b, swap(a, b);
+            u -= t * v, swap(u, v);
+        }
+        return mint(u);
     }
 
     // other operators
@@ -730,22 +697,22 @@ struct DynamicModint {
 };
 int DynamicModint::MOD;
 
-// all inverse
-template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
-    for (auto &&vi : v) assert(vi != mint(0));
-    int N = (int)v.size();
-    vector<mint> res(N + 1, mint(1));
-    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
-    mint t = res.back().inv();
-    res.pop_back();
-    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
-    return res;
-}
-
 
 //------------------------------//
 // Number Theory
 //------------------------------//
+
+// mod pow
+template<class T_VAL, class T_MOD>
+constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
+    T_VAL res = 1;
+    while (n > 0) {
+        if (n % 2 == 1) res = res * a % m;
+        a = a * a % m;
+        n >>= 1;
+    }
+    return res;
+}
 
 // isprime[n] := is n prime?
 // mebius[n] := mebius value of n
@@ -818,7 +785,7 @@ struct Eratos {
     }
 };
 
-// montgomery modint (MOD < 2^62, MOD is odd)
+// montgomery modint (MOD < 2^62, MOD: odd prime number)
 struct MontgomeryModInt64 {
     using mint = MontgomeryModInt64;
     using u64 = uint64_t;
@@ -881,7 +848,6 @@ struct MontgomeryModInt64 {
         *this *= r.inv();
         return *this;
     }
-    mint inv() const { return pow(MOD - 2); }
     mint pow(u128 n) const {
         mint res(1), mul(*this);
         while (n > 0) {
@@ -890,6 +856,9 @@ struct MontgomeryModInt64 {
             n >>= 1;
         }
         return res;
+    }
+    mint inv() const { 
+        return pow(MOD - 2); 
     }
 
     // other operators
@@ -935,6 +904,9 @@ struct MontgomeryModInt64 {
         return r.inv();
     }
 };
+
+typename MontgomeryModInt64::u64
+MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
 
 typename MontgomeryModInt64::u64
 MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
@@ -1096,44 +1068,6 @@ constexpr pair<T_VAL, T_MOD> mod_log(T_VAL a, T_VAL b, T_MOD m) {
     }
     return {-1, 0};  // no solution
 }
-
-// various methods mod prime P
-struct PrimeProcessor {
-    using mint = MontgomeryModInt64;
-    
-    // input prime
-    long long prime;
-    vector<pair<long long, long long>> pf;  // prime factorization of p-1
-    
-    // constructors
-    PrimeProcessor() {}
-    PrimeProcessor(long long p) : prime(p) {
-        init(p);
-    }
-    
-    // initializer
-    void init(long long p) {
-        assert(is_prime(p));
-        prime = p;
-        if (p % 2 == 1) {
-            assert(p < (1LL<<62));
-            prime = p;
-            pf = prime_factorize(prime - 1);
-            mint::set_mod(prime);
-        }
-    }
-    
-    // min: x s.t. a^x \equiv 1 (mod prime)
-    long long calc_order(long long a) {
-        assert(a != 0);
-        if (prime == 2) return 1;
-        long long res = prime - 1;
-        for (const auto &[p, num] : pf) {
-            while (res % p == 0 && mint(a).pow(res / p) == 1) res /= p;
-        }
-        return res;
-    }
-};
 
 
 //------------------------------//
@@ -2206,6 +2140,18 @@ FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
 //------------------------------//
 // Polynomial Algorithms
 //------------------------------//
+
+// all inverse
+template<class mint> vector<mint> all_inverse(const vector<mint> &v) {
+    for (auto &&vi : v) assert(vi != mint(0));
+    int N = (int)v.size();
+    vector<mint> res(N + 1, mint(1));
+    for (int i = 0; i < N; i++) res[i + 1] = res[i] * v[i];
+    mint t = res.back().inv();
+    res.pop_back();
+    for (int i = N - 1; i >= 0; i--) res[i] *= t, t *= v[i];
+    return res;
+}
 
 // polynomial merge technique
 template<class mint> FPS<mint> all_product(const vector<FPS<mint>> &fs) {

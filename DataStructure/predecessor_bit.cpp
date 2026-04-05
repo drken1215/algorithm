@@ -28,7 +28,7 @@ using namespace std;
 // multiset by BIT
 // manage integers x (0 <= x < lim), where lim <= 10^7
 // Abel: type of the number of inserted values (not the tyep of the value)
-template<class Abel> struct FastMultiSetByBIT {
+template<class Abel = int> struct FastMultiSetByBIT {
     int topbit(int x) const { return (x == 0 ? -1 : 31 - __builtin_clz(x)); }
     int lowbit(int x) const { return (x == 0 ? -1 : __builtin_ctz(x)); }
     int lim;
@@ -157,7 +157,7 @@ template<class Abel> struct FastMultiSetByBIT {
     // debug
     friend ostream& operator << (ostream &s, const FastMultiSetByBIT &fs) {
         for (int x = fs.get_min(); x < fs.lim; x = fs.next(x + 1)) {
-            s << x << " ";
+            for (int i = 0; i < fs.count(x); i++) s << x << " ";
         }
         return s;
     }
@@ -281,8 +281,8 @@ int main() {
     cin.tie(nullptr);
     ios_base::sync_with_stdio(false);
     
-    //Yosupo_Predecessor_Problem();
+    Yosupo_Predecessor_Problem();
     //ARC_033_C();
     //ARC_197_C();
-    ABC_229_G();
+    //ABC_229_G();
 }
