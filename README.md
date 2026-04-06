@@ -747,7 +747,6 @@
 ### その他
 
 - (★☆☆☆) [ランレングス圧縮](https://github.com/drken1215/algorithm/blob/master/String/run_length_compression.cpp)
-- (★★☆☆) [各 index 以降で各文字が最初に登場する index を求める関数](https://github.com/drken1215/algorithm/blob/master/String/next.cpp)
 - (★★★☆) [文字列の相異なる subsequence の個数 (by 配る DP, in O(σN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
 - (★★★☆) [文字列の相異なる subsequence の個数 (by 集める DP, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences_faster.cpp)
 - (★★★☆) [文字列の相異なる substring の個数 (by Suffix Array, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
