@@ -1,9 +1,9 @@
 //
 // min-cut (Dinic's algorithm)
 //
-// example:
-//   KUPC 2016 E - 柵
-//     https://atcoder.jp/contests/kupc2016/tasks/kupc2016_e
+// verified:
+//   AOJ 2594 Reverse a Road II
+//     https://onlinejudge.u-aizu.ac.jp/challenges/sources/JAG/Regional/2594?year=2014
 //
 
 
@@ -11,15 +11,15 @@
 using namespace std;
 
 
-// edge class (for network-flow)
-template<class FLOWTYPE> struct FlowEdge {
+// edge class (for max-flow)
+template<class FLOW> struct FlowEdge {
     // core members
     int rev, from, to;
-    FLOWTYPE cap, icap, flow;
+    FLOW cap, icap, flow;
     
     // constructor
-    FlowEdge(int r, int f, int t, FLOWTYPE c)
-    : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
+    FlowEdge() {}
+    FlowEdge(int r, int f, int t, FLOW c) : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
     void reset() { cap = icap, flow = 0; }
     
     // debug
@@ -28,41 +28,45 @@ template<class FLOWTYPE> struct FlowEdge {
     }
 };
 
-// graph class (for network-flow)
-template<class FLOWTYPE> struct FlowGraph {
+// graph class (for max-flow)
+template<class FLOW> struct FlowGraph {
     // core members
-    vector<vector<FlowEdge<FLOWTYPE>>> list;
+    vector<vector<FlowEdge<FLOW>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
     
     // constructor
     FlowGraph(int n = 0) : list(n) { }
     void init(int n = 0) {
-        list.assign(n, FlowEdge<FLOWTYPE>());
+        list.clear(), list.resize(n);
         pos.clear();
+    }
+    void clear() {
+        list.clear(), pos.clear();
     }
     
     // getter
-    vector<FlowEdge<FLOWTYPE>> &operator [] (int i) {
+    vector<FlowEdge<FLOW>> &operator [] (int i) {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
-    const vector<FlowEdge<FLOWTYPE>> &operator [] (int i) const {
+    const vector<FlowEdge<FLOW>> &operator [] (int i) const {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
     size_t size() const {
         return list.size();
     }
-    FlowEdge<FLOWTYPE> &get_rev_edge(const FlowEdge<FLOWTYPE> &e) {
-        if (e.from != e.to) return list[e.to][e.rev];
-        else return list[e.to][e.rev + 1];
+    FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
+        return list[e.to][e.rev];
     }
-    FlowEdge<FLOWTYPE> &get_edge(int i) {
+    FlowEdge<FLOW> &get_edge(int i) {
         return list[pos[i].first][pos[i].second];
     }
-    const FlowEdge<FLOWTYPE> &get_edge(int i) const {
+    const FlowEdge<FLOW> &get_edge(int i) const {
         return list[pos[i].first][pos[i].second];
     }
-    vector<FlowEdge<FLOWTYPE>> get_edges() const {
-        vector<FlowEdge<FLOWTYPE>> edges;
+    vector<FlowEdge<FLOW>> get_edges() const {
+        vector<FlowEdge<FLOW>> edges;
         for (int i = 0; i < (int)pos.size(); ++i) {
             edges.push_back(get_edge(i));
         }
@@ -72,20 +76,68 @@ template<class FLOWTYPE> struct FlowGraph {
     // change edges
     void reset() {
         for (int i = 0; i < (int)list.size(); ++i) {
-            for (FlowEdge<FLOWTYPE> &e : list[i]) e.reset();
+            for (FlowEdge<FLOW> &e : list[i]) e.reset();
         }
     }
-    void change_edge(FlowEdge<FLOWTYPE> &e, FLOWTYPE new_cap, FLOWTYPE new_flow) {
-        FlowEdge<FLOWTYPE> &re = get_rev_edge(e);
+    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_flow) {
+        assert(0 <= new_flow && new_flow <= new_cap);
+        FlowEdge<FLOW> &re = get_rev_edge(e);
         e.cap = new_cap - new_flow, e.icap = new_cap, e.flow = new_flow;
         re.cap = new_flow;
     }
     
     // add_edge
-    void add_edge(int from, int to, FLOWTYPE cap) {
-        pos.emplace_back(from, (int)list[from].size());
-        list[from].push_back(FlowEdge<FLOWTYPE>((int)list[to].size(), from, to, cap));
-        list[to].push_back(FlowEdge<FLOWTYPE>((int)list[from].size() - 1, to, from, 0));
+    void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
+        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
+    }
+
+    // augment
+    FLOW augment(int s, int t, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        return dfs(dfs, s, up_flow);
+    };
+
+    // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
+    vector<int> find_cut(int s, int t) {
+        vector<int> res(size(), 0);
+        auto dfs_s = [&](auto &&dfs_s, int v) -> void {
+            res[v] = 1;
+            for (const auto &e : list[v]) {
+                if (res[e.to] || e.cap <= 0) continue;
+                dfs_s(dfs_s, e.to);
+            }
+        };
+        auto dfs_t = [&](auto &&dfs_t, int v) -> void {
+            res[v] = -1;
+            for (const auto &e : list[v]) {
+                auto re = get_rev_edge(e);
+                if (res[e.to] || re.cap <= 0) continue;
+                dfs_t(dfs_t, e.to);
+            }
+        };
+        dfs_s(dfs_s, s), dfs_t(dfs_t, t);
+        return res;
     }
 
     // debug
@@ -97,10 +149,9 @@ template<class FLOWTYPE> struct FlowGraph {
 };
 
 // Dinic
-template<class FLOWTYPE> FLOWTYPE Dinic
- (FlowGraph<FLOWTYPE> &G, int s, int t, FLOWTYPE limit_flow)
-{
-    FLOWTYPE current_flow = 0;
+template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
+    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     
     // Dinic BFS
@@ -112,7 +163,7 @@ template<class FLOWTYPE> FLOWTYPE Dinic
         while (!que.empty()) {
             int v = que.front();
             que.pop();
-            for (const FlowEdge<FLOWTYPE> &e : G[v]) {
+            for (const FlowEdge<FLOW> &e : G[v]) {
                 if (level[e.to] < 0 && e.cap > 0) {
                     level[e.to] = level[v] + 1;
                     if (e.to == t) return;
@@ -123,13 +174,13 @@ template<class FLOWTYPE> FLOWTYPE Dinic
     };
     
     // Dinic DFS
-    auto dfs = [&](auto self, int v, FLOWTYPE up_flow) {
+    auto dfs = [&](auto self, int v, FLOW up_flow) {
         if (v == t) return up_flow;
-        FLOWTYPE res_flow = 0;
+        FLOW res_flow = 0;
         for (int &i = iter[v]; i < (int)G[v].size(); ++i) {
-            FlowEdge<FLOWTYPE> &e = G[v][i], &re = G.get_rev_edge(e);
+            FlowEdge<FLOW> &e = G[v][i], &re = G.get_rev_edge(e);
             if (level[v] >= level[e.to] || e.cap == 0) continue;
-            FLOWTYPE flow = self(self, e.to, min(up_flow - res_flow, e.cap));
+            FLOW flow = self(self, e.to, min(up_flow - res_flow, e.cap));
             if (flow <= 0) continue;
             res_flow += flow;
             e.cap -= flow, e.flow += flow;
@@ -145,7 +196,7 @@ template<class FLOWTYPE> FLOWTYPE Dinic
         if (level[t] < 0) break;
         iter.assign((int)iter.size(), 0);
         while (current_flow < limit_flow) {
-            FLOWTYPE flow = dfs(dfs, s, limit_flow - current_flow);
+            FLOW flow = dfs(dfs, s, limit_flow - current_flow);
             if (!flow) break;
             current_flow += flow;
         }
@@ -153,8 +204,8 @@ template<class FLOWTYPE> FLOWTYPE Dinic
     return current_flow;
 };
 
-template<class FLOWTYPE> FLOWTYPE Dinic(FlowGraph<FLOWTYPE> &G, int s, int t) {
-    return Dinic(G, s, t, numeric_limits<FLOWTYPE>::max());
+template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
+    return Dinic(G, s, t, numeric_limits<FLOW>::max());
 }
 
 
@@ -163,54 +214,31 @@ template<class FLOWTYPE> FLOWTYPE Dinic(FlowGraph<FLOWTYPE> &G, int s, int t) {
 // Examples
 //------------------------------//
 
-void KUPC_2016_E() {
-    const vector<int> dx = {1, 0, -1, 0};
-    const vector<int> dy = {0, 1, 0, -1};
-    
-    int H, W;
-    cin >> H >> W;
-    vector<string> S(H);
-    for (int i = 0; i < H; ++i) cin >> S[i];
-    
-    // (i,j) を表す index
-    auto ind = [&](int i, int j) -> int { return i * W + j; };
-    
-    // フローネットワークの構築
-    const int INF = 1<<29;
-    int N = H * W;
-    int s = N * 2, t = N * 2 + 1;
-    FlowGraph<int> G(N * 2 + 2);
-    for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W; ++j) {
-            // in -> out
-            G.add_edge(ind(i, j), ind(i, j) + N, (S[i][j] == '.' ? 1 : INF));
-            
-            // s -> ヤギ
-            if (S[i][j] == 'X') {
-                G.add_edge(s, ind(i, j), INF);
-            }
-            
-            // 外周 -> t
-            if (i == 0 || i == H-1 || j == 0 || j == W-1) {
-                G.add_edge(ind(i, j) + N, t, INF);
-            }
-            
-            // 上下左右
-            for (int d = 0; d < 4; ++d) {
-                int i2 = i + dx[d], j2 = j + dy[d];
-                if (i2 < 0 || i2 >= H || j2 < 0 || j2 >= W) continue;
-                G.add_edge(ind(i, j) + N, ind(i2, j2), INF);
-            }
+// AOJ 2594 Reverse a Road II
+void AOJ_2594() {
+    int N, M, s, t;
+    while (cin >> N >> M >> s >> t) {
+        if (N == 0) break;
+        --s, --t;
+        FlowGraph<long long> G(N);
+        for (int i = 0; i < M; ++i) {
+            int a, b;
+            cin >> a >> b;
+            --a, --b;
+            G.add_edge(a, b, 1);
         }
+        int B = Dinic(G, s, t);
+        auto cut = G.find_cut(s, t);
+        int num = 0;
+        const auto edges = G.get_edges();
+        for (auto e : edges) {
+            if (cut[e.from] == -1 && cut[e.to] == 1 && e.flow == 0) num++;
+        }
+        cout << (num ? B+1 : B) << " " << num << endl;
     }
-    
-    int res = Dinic(G, s, t);
-    cout << (res < N ? res : -1) << endl;
 }
 
 
 int main() {
-    KUPC_2016_E();
+    AOJ_2594();
 }
-
-

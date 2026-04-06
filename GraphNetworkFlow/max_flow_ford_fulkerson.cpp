@@ -14,15 +14,15 @@
 using namespace std;
 
 
-// edge class (for network-flow)
-template<class FLOWTYPE> struct FlowEdge {
+// edge class (for max-flow)
+template<class FLOW> struct FlowEdge {
     // core members
     int rev, from, to;
-    FLOWTYPE cap, icap, flow;
+    FLOW cap, icap, flow;
     
     // constructor
-    FlowEdge(int r, int f, int t, FLOWTYPE c)
-    : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
+    FlowEdge() {}
+    FlowEdge(int r, int f, int t, FLOW c) : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
     void reset() { cap = icap, flow = 0; }
     
     // debug
@@ -31,41 +31,45 @@ template<class FLOWTYPE> struct FlowEdge {
     }
 };
 
-// graph class (for network-flow)
-template<class FLOWTYPE> struct FlowGraph {
+// graph class (for max-flow)
+template<class FLOW> struct FlowGraph {
     // core members
-    vector<vector<FlowEdge<FLOWTYPE>>> list;
+    vector<vector<FlowEdge<FLOW>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
     
     // constructor
     FlowGraph(int n = 0) : list(n) { }
     void init(int n = 0) {
-        list.assign(n, FlowEdge<FLOWTYPE>());
+        list.clear(), list.resize(n);
         pos.clear();
+    }
+    void clear() {
+        list.clear(), pos.clear();
     }
     
     // getter
-    vector<FlowEdge<FLOWTYPE>> &operator [] (int i) {
+    vector<FlowEdge<FLOW>> &operator [] (int i) {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
-    const vector<FlowEdge<FLOWTYPE>> &operator [] (int i) const {
+    const vector<FlowEdge<FLOW>> &operator [] (int i) const {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
     size_t size() const {
         return list.size();
     }
-    FlowEdge<FLOWTYPE> &get_rev_edge(const FlowEdge<FLOWTYPE> &e) {
-        if (e.from != e.to) return list[e.to][e.rev];
-        else return list[e.to][e.rev + 1];
+    FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
+        return list[e.to][e.rev];
     }
-    FlowEdge<FLOWTYPE> &get_edge(int i) {
+    FlowEdge<FLOW> &get_edge(int i) {
         return list[pos[i].first][pos[i].second];
     }
-    const FlowEdge<FLOWTYPE> &get_edge(int i) const {
+    const FlowEdge<FLOW> &get_edge(int i) const {
         return list[pos[i].first][pos[i].second];
     }
-    vector<FlowEdge<FLOWTYPE>> get_edges() const {
-        vector<FlowEdge<FLOWTYPE>> edges;
+    vector<FlowEdge<FLOW>> get_edges() const {
+        vector<FlowEdge<FLOW>> edges;
         for (int i = 0; i < (int)pos.size(); ++i) {
             edges.push_back(get_edge(i));
         }
@@ -75,20 +79,68 @@ template<class FLOWTYPE> struct FlowGraph {
     // change edges
     void reset() {
         for (int i = 0; i < (int)list.size(); ++i) {
-            for (FlowEdge<FLOWTYPE> &e : list[i]) e.reset();
+            for (FlowEdge<FLOW> &e : list[i]) e.reset();
         }
     }
-    void change_edge(FlowEdge<FLOWTYPE> &e, FLOWTYPE new_cap, FLOWTYPE new_flow) {
-        FlowEdge<FLOWTYPE> &re = get_rev_edge(e);
+    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_flow) {
+        assert(0 <= new_flow && new_flow <= new_cap);
+        FlowEdge<FLOW> &re = get_rev_edge(e);
         e.cap = new_cap - new_flow, e.icap = new_cap, e.flow = new_flow;
         re.cap = new_flow;
     }
     
     // add_edge
-    void add_edge(int from, int to, FLOWTYPE cap) {
-        pos.emplace_back(from, (int)list[from].size());
-        list[from].push_back(FlowEdge<FLOWTYPE>((int)list[to].size(), from, to, cap));
-        list[to].push_back(FlowEdge<FLOWTYPE>((int)list[from].size() - 1, to, from, 0));
+    void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
+        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
+    }
+
+    // augment
+    FLOW augment(int s, int t, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        return dfs(dfs, s, up_flow);
+    };
+
+    // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
+    vector<int> find_cut(int s, int t) {
+        vector<int> res(size(), 0);
+        auto dfs_s = [&](auto &&dfs_s, int v) -> void {
+            res[v] = 1;
+            for (const auto &e : list[v]) {
+                if (res[e.to] || e.cap <= 0) continue;
+                dfs_s(dfs_s, e.to);
+            }
+        };
+        auto dfs_t = [&](auto &&dfs_t, int v) -> void {
+            res[v] = -1;
+            for (const auto &e : list[v]) {
+                auto re = get_rev_edge(e);
+                if (res[e.to] || re.cap <= 0) continue;
+                dfs_t(dfs_t, e.to);
+            }
+        };
+        dfs_s(dfs_s, s), dfs_t(dfs_t, t);
+        return res;
     }
 
     // debug
