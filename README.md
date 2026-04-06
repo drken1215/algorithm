@@ -244,9 +244,14 @@
 # グラフ (GRAPH)
 グラフアルゴリズムです
 
-## グラフ探索
+## グラフ
 
 - (★☆☆☆) [グラフテンプレート](https://github.com/drken1215/algorithm/blob/master/Graph/graph_template.cpp)
+- (★★★☆) ランダムツリー生成
+- (★★★☆) ランダムグラフ生成
+
+## グラフ探索
+
 - (★☆☆☆) [連結成分の個数 (by DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/dfs.cpp)
 - (★☆☆☆) [連結成分の個数 (by BFS)](https://github.com/drken1215/algorithm/blob/master/Graph/bfs.cpp)
 - (★☆☆☆) [二部グラフ判定 (by DFS)](https://github.com/drken1215/algorithm/blob/master/Graph/is_bipartite_dfs.cpp)
@@ -263,7 +268,7 @@
 - (★★★☆) [二重頂点連結成分分解 (Block-Cut 木)](https://github.com/drken1215/algorithm/blob/master/Graph/biconnected_components.cpp)
 - (★★★★) 三重辺連結成分分解 (SPQR 木)
 
-## 最短路問題 (基本)
+## 最短路問題
 
 - (★☆☆☆) [重みなしグラフの最短路 (BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
 - (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
@@ -275,23 +280,25 @@
 - (★★★☆) 最短路問題の双対問題 (俗称: 牛ゲー)
 - (★★★★) 補グラフの最短路
 
-## 全域木, 路に関する問題
+## 全域木, 路
 
 - (★★☆☆) 最小全域木 (Kruskal 法)
 - (★★★☆) 有向 Euler 路
 - (★★★☆) [無向 Euler 路](https://github.com/drken1215/algorithm/blob/master/Graph/euler_tour_undirected.cpp)
 - (★★★★) 最小有向全域木 (Chu-Liu/Edmonds 法)
 - (★★★★) [無向グラフの全域木の個数 (行列木定理)](https://github.com/drken1215/algorithm/blob/master/Graph/matrix_tree_theorem.cpp)
-- (★★★★) 最小シュタイナー木 (in O(V 3^t + V^2 2^t + V^3))
 
-## その他
+## FPT アルゴリズム
 
-- (★★★☆) ランダムグラフ生成
-- (★★★☆) [サイクル基底 (XOR 和をとるもの)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_basis.cpp)
 - (★★★☆) [最大安定集合問題 (in O(1.381^V))](https://github.com/drken1215/algorithm/blob/master/Graph/maximum_stable_set.cpp)
 - (★★★☆) 最大クリーク列挙（in O(1.443^V)）
 - (★★★☆) [頂点彩色 (in O(2^V V))](https://github.com/drken1215/algorithm/blob/master/Graph/vertex_coloring.cpp)
 - (★★★★) 辺彩色
+- (★★★★) 最小シュタイナー木 (in O(V 3^t + V^2 2^t + V^3))
+
+## その他
+
+- (★★★☆) [サイクル基底 (XOR 和をとるもの)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_basis.cpp)
 - (★★★★) 二部グラフの辺彩色 (Alon 法, in O(E log E))
 
 

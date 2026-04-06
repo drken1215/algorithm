@@ -34,44 +34,152 @@
 */
 
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-using Graph = vector<vector<int> >;
-struct LowLink {
-    // main results
-    vector<int> aps; // articulation points
-    vector<pair<int,int> > brs; // brideges
-    
-    // intermediate results
-    vector<int> seen, ord, low;
-    void dfs_lowlink(const Graph &G, int v, int p = -1) {
-        static int time = 0;
-        seen[v] = true;
-        ord[v] = low[v] = time++;
-        int num_of_child = 0;
-        bool exist = false; // for articulation point
-        for (auto ch : G[v]) {
-            if (seen[ch]) {
-                if (ch != p) low[v] = min(low[v], ord[ch]); // back edge
-                continue;
-            }
-            dfs_lowlink(G, ch, v);
-            low[v] = min(low[v], low[ch]); // forward edge of DFS-tree
-            if (ord[v] < low[ch]) brs.emplace_back(v, ch);
-            if (ord[v] <= low[ch]) exist = true;
-            ++num_of_child;
-        }
-        if ((p == -1 && num_of_child > 1) || (p != -1 && exist)) aps.emplace_back(v);
+// Edge Class
+template<class T = long long> struct Edge {
+    int from, to;
+    T val;
+    Edge() : from(-1), to(-1) { }
+    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& e) {
+        return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
-    void solve(const Graph &G) {
-        int N = (int)G.size();
-        seen.assign(N, 0); ord.resize(N); low.resize(N);
-        aps.clear(); brs.clear();
-        for (int v = 0; v < N; ++v) if (!seen[v]) dfs_lowlink(G, v);
+};
+
+// graph class
+template<class T = long long> struct Graph {
+    int V, E;
+    bool record_reversed_edges = false, record_edge_index = false;
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
+
+    // constructors
+    Graph(int n = 0, int m = 0, bool rre = false, bool rei = false) { 
+        init(n, m, rre, rei);
+    }
+    void init(int n = 0, int m = 0, bool rre = false, bool rei = false) {
+        V = n, E = m, record_reversed_edges = rre, record_edge_index = rei;
+        list.assign(n, vector<Edge<T>>());
+        if (record_reversed_edges) reversed_list.assign(n, vector<Edge<T>>());
+        if (record_edge_index) id.assign(n, unordered_map<int, int>());
+    }
+    Graph(const Graph&) = default;
+    Graph& operator = (const Graph&) = default;
+
+    // getters
+    vector<Edge<T>> &operator [] (int i) { return list[i]; }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    constexpr size_t size() const { return list.size(); }
+    constexpr void clear() { V = 0; list.clear(); }
+    constexpr void resize(int n) { V = n; list.resize(n); }
+    const vector<Edge<T>> &get_rev_edges(int i) const { 
+        assert(record_reversed_edges);
+        return reversed_list[i];
+    }
+    Edge<T> &get_edge(int u, int v) {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
+        return list[u][id[u][v]];
+    }
+    const Edge<T> &get_edge(int u, int v) const {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < list[u].size());
+        return list[u][id[u].at(v)];
+    }
+
+    // add edge
+    void add_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+    }
+    void add_bidirected_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
+        if (from != to) {
+            if (record_edge_index) id[to][from] = (int)list[to].size(); 
+            list[to].push_back(Edge(to, from, val));
+            if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+        }
+    }
+
+    // input / output
+    friend istream& operator >> (istream &is, Graph &G) {
+        for (int i = 0; i < G.E; i++) {
+            int u, v;
+            is >> u >> v, u--, v--;
+            G.add_bidirected_edge(u, v);
+        }
+        return is;
+    }
+    friend ostream &operator << (ostream &os, const Graph &G) {
+        os << endl;
+        for (int i = 0; i < (int)G.size(); ++i) {
+            os << i << " -> ";
+            for (int j = 0; j < (int)G[i].size(); j++) {
+                if (j) os << ", ";
+                os << G[i][j].to << "(" << G[i][j].val << ")";
+            }
+            os << endl;
+        }
+        return os;
+    }
+};
+
+// low-link
+template<class T> struct LowLink {
+    // results
+    vector<int> ord, low;
+    vector<int> aps;         // articulation points
+    vector<Edge<T>> brs;     // brideges
+
+    // constructor
+    LowLink() { }
+    LowLink(const Graph<T> &G) {
+        solve(G);
+    }
+    void init(const Graph<T> &G) {
+        solve(G);
+    }
+
+    // solver
+    int dfs(const Graph<T> &G, int t, int v, int p) {
+        ord[v] = low[v] = t++;
+        int num_of_children = 0;
+        bool exist_articulation = false, is_multiple_edge = false;
+        for (const auto &e : G[v]) {
+            if (ord[e.to] == -1) {
+                num_of_children++;
+                t = dfs(G, t, e.to, v);
+                low[v] = min(low[v], low[e.to]);  // forward edge of DFS-tree
+                exist_articulation |= (p != -1) && (low[e.to] >= ord[v]);
+                if (ord[v] < low[e.to]) brs.push_back(e);
+            } else if (e.to != p || is_multiple_edge) {
+                low[v] = min(low[v], ord[e.to]);  // back edge
+            } else {
+                is_multiple_edge = true;
+            }
+        }
+        if (exist_articulation || (p == -1 && num_of_children > 1)) {
+            aps.emplace_back(v);
+        }
+        return t;
+    }
+
+    void solve(const Graph<T> &G) {
+        ord.assign(G.size(), -1), low.assign(G.size(), -1);
+        for (int v = 0, k = 0; v < (int)G.size(); v++) {
+            if (ord[v] == -1) k = dfs(G, k, v, -1);
+        }
     }
 };
 
@@ -81,24 +189,44 @@ struct LowLink {
 // Examples
 //------------------------------//
 
-int main() {
+// AOJ Course GRL_3_B Connected Components - Bridges
+void AOJ_GRL_3_B() {
     int V, E;
     cin >> V >> E;
     Graph G(V);
     for (int i = 0; i < E; ++i) {
-        int s, t; cin >> s >> t;
-        G[s].push_back(t);
-        G[t].push_back(s);
+        int s, t;
+        cin >> s >> t;
+        G.add_bidirected_edge(s, t);
     }
-    LowLink ll;
-    ll.solve(G);
+    LowLink link(G);
     
     // 橋
-    for (auto &br : ll.brs) if (br.first > br.second) swap(br.first, br.second);
-    sort(ll.brs.begin(), ll.brs.end());
-    for (auto br : ll.brs) cout << br.first << " " << br.second << endl;
+    vector<pair<int,int>> res;
+    for (auto &e : link.brs) res.emplace_back(min(e.from, e.to), max(e.from, e.to));
+    sort(res.begin(), res.end());
+    for (auto [u, v] : res) cout << u << " " << v << endl;
+}
+
+// AOJ Course GRL_3_A Connected Components - Articulation Points
+void AOJ_GRL_3_A() {
+    int V, E;
+    cin >> V >> E;
+    Graph G(V);
+    for (int i = 0; i < E; ++i) {
+        int s, t;
+        cin >> s >> t;
+        G.add_bidirected_edge(s, t);
+    }
+    LowLink link(G);
     
     // 関節点
-    sort(ll.aps.begin(), ll.aps.end());
-    //for (auto v : ll.aps) cout << v << endl;
+    sort(link.aps.begin(), link.aps.end());
+    for (auto v : link.aps) cout << v << endl;
+}
+
+
+int main() {
+    AOJ_GRL_3_B();
+    //AOJ_GRL_3_A();
 }
