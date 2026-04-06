@@ -15,107 +15,9 @@
 using namespace std;
 
 
-//------------------------------//
-// Utility
-//------------------------------//
-
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-using tint = array<int, 3>;
-using tll = array<long long, 3>;
-using fint = array<int, 4>;
-using fll = array<long long, 4>;
-using qint = array<int, 5>;
-using qll = array<long long, 5>;
-using vint = vector<int>;
-using vll = vector<long long>;
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-template <class T>
-using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PB push_back
-#define MP make_pair
-#define MT make_tuple
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-// debug stream
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 3> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 4> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << ", " << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, unordered_set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-// int 128
-i128 to_integer(const string &s) {
-    i128 res = 0;
-    for (auto c : s) {
-         if (isdigit(c)) res = res * 10 + (c - '0');
-    }
-    if (s[0] == '-') res *= -1;
-    return res;
-}
-istream& operator >> (istream &is, i128 &x) {
-    string s;
-    is >> s;
-    x = to_integer(s);
-    return is;
-}
-ostream& operator << (ostream &os, const i128 &x) {
-    i128 ax = (x >= 0 ? x : -x);
-    char buffer[128];
-    char *d = end(buffer);
-    do {
-         --d;
-        *d = "0123456789"[ax % 10];
-        ax /= 10;
-    } while (ax != 0);
-    if (x < 0) {
-        --d;
-        *d = '-';
-    }
-    int len = end(buffer) - d;
-    if (os.rdbuf()->sputn(d, len) != len) {
-        os.setstate(ios_base::badbit);
-    }
-    return os;
-}
-
-
-//------------------------------//
-// Flow
-//------------------------------//
+//--------------------------------//
+// Max Flow (for feasibility-check)
+//--------------------------------//
 
 // edge class (for max-flow)
 template<class FLOW> struct FlowEdge {
@@ -145,6 +47,9 @@ template<class FLOW> struct FlowGraph {
     void init(int n = 0) {
         list.clear(), list.resize(n);
         pos.clear();
+    }
+    void clear() {
+        list.clear(), pos.clear();
     }
     
     // getter
@@ -198,6 +103,49 @@ template<class FLOW> struct FlowGraph {
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
         list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
+    }
+
+    // augment
+    FLOW augment(int s, int t, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        return dfs(dfs, s, up_flow);
+    };
+
+    // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
+    vector<int> find_cut(int s, int t) {
+        vector<int> res(size(), 0);
+        auto dfs_s = [&](auto &&dfs_s, int v) -> void {
+            res[v] = 1;
+            for (const auto &e : list[v]) {
+                if (res[e.to] || e.cap <= 0) continue;
+                dfs_s(dfs_s, e.to);
+            }
+        };
+        auto dfs_t = [&](auto &&dfs_t, int v) -> void {
+            res[v] = -1;
+            for (const auto &e : list[v]) {
+                auto re = get_rev_edge(e);
+                if (res[e.to] || re.cap <= 0) continue;
+                dfs_t(dfs_t, e.to);
+            }
+        };
+        dfs_s(dfs_s, s), dfs_t(dfs_t, t);
+        return res;
     }
 
     // debug
@@ -269,6 +217,10 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
 }
 
 
+//--------------------------------//
+// Min Cost b-Flow
+//--------------------------------//
+
 // edge class (for min-cost flow)
 template<class FLOW, class COST> struct FlowCostEdge {
     // core members
@@ -293,12 +245,16 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // core members
     vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
+    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool include_negative_edge = false;
     
     // constructor
-    FlowCostGraph(int n = 0) : list(n) { }
+    FlowCostGraph(int n = 0) : list(n), pot(n), include_negative_edge(false) { }
     void init(int n = 0) {
         list.clear(), list.resize(n);
         pos.clear();
+        pot.assign(n, 0);
+        include_negative_edge = false;
     }
     
     // getter
@@ -346,6 +302,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
         list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+        if (cost < 0) include_negative_edge = true;
     }
     void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
         assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
@@ -355,6 +312,57 @@ template<class FLOW, class COST> struct FlowCostGraph {
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
         list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
+        if (cost < 0) include_negative_edge = true;
+    }
+
+    // find initial potential (to resolve initial negative-edge)
+    // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool calc_potential_dag() {
+        pot.assign(size(), 0);
+        vector<int> deg(size(), 0), st;
+        for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
+        st.reserve(size());
+        for (int v = 0; v < size(); v++) if (!deg[v]) st.emplace_back(v);
+        for (int i = 0; i < size(); i++) {
+            if (st.size() == i) return false;  // not DAG
+            int cur = st[i];
+            for (const auto &e : list[cur]) {
+                if (!e.cap) continue;
+                deg[e.to]--;
+                if (deg[e.to] == 0) st.emplace_back(e.to);
+                if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
+            }
+        }
+        return true;
+    }
+    bool calc_potential_spfa() {
+        pot.assign(size(), 0);
+        queue<int> que;
+        vector<bool> inque(size(), false);
+        vector<int> cnt(size(), 0);
+        for (int v = 0; v < size(); v++) que.push(v), inque[v] = true;
+        while (!que.empty()) {
+            int cur = que.front();
+            que.pop();
+            inque[cur] = false;
+            if (cnt[cur] > size()) return false;  // include negative-cycle
+            cnt[cur]++;
+            for (const auto &e : list[cur]) {
+                if (!e.cap) continue;
+                if (pot[e.to] > pot[cur] + e.cost) {
+                    pot[e.to] = pot[cur] + e.cost;
+                    if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
+                }
+            }
+        }
+        return true;
+    }
+    bool calc_potential() {
+        return calc_potential_dag() || calc_potential_spfa();
+    }
+    bool init_potential() {
+        if (!include_negative_edge) return true;
+        return calc_potential();
     }
 
     // debug
@@ -472,6 +480,10 @@ template<class FLOW, class COST> struct MinCostBFlow {
     MinCostBFlow(int V) : V(V), dss(V) {}
 
     // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.push_back({from, to, 0, cap, 0, cost});
+    }
     void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
         assert(lower_cap <= upper_cap);
         edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
@@ -482,7 +494,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
     }
 
     // solver
-    pair<bool, COST> solve() {
+    pair<bool, COST> solve(bool calc_potential = true) {
         // feasibility check
         FlowGraph<FLOW> sg(V + 2);
         int s = V, t = s + 1;
@@ -517,20 +529,9 @@ template<class FLOW, class COST> struct MinCostBFlow {
         }
 
         // find dual
-        dual.resize(V);
-        while (true) {
-            bool update = false;
-            for (int v = 0; v < V; v++) {
-                for (const auto &e : G[v]) {
-                    if (!e.cap) continue;
-                    auto cost2 = dual[v] + e.cost;
-                    if (cost2 < dual[e.to]) {
-                        dual[e.to] = cost2;
-                        update = true;
-                    }
-                }
-            }
-            if (!update) break;
+        if (calc_potential) {
+            G.calc_potential();
+            dual = G.pot;
         }
         return {true, res};
     }
@@ -542,6 +543,41 @@ template<class FLOW, class COST> struct MinCostBFlow {
 //------------------------------//
 
 // Yosupo Libray Checker - Minimum Cost b-flow
+// int 128
+using i128 = __int128_t;
+i128 to_integer(const string &s) {
+    i128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    if (s[0] == '-') res *= -1;
+    return res;
+}
+istream& operator >> (istream &is, i128 &x) {
+    string s;
+    is >> s;
+    x = to_integer(s);
+    return is;
+}
+ostream& operator << (ostream &os, const i128 &x) {
+    i128 ax = (x >= 0 ? x : -x);
+    char buffer[128];
+    char *d = end(buffer);
+    do {
+         --d;
+        *d = "0123456789"[ax % 10];
+        ax /= 10;
+    } while (ax != 0);
+    if (x < 0) {
+        --d;
+        *d = '-';
+    }
+    int len = end(buffer) - d;
+    if (os.rdbuf()->sputn(d, len) != len) {
+        os.setstate(ios_base::badbit);
+    }
+    return os;
+}
 void Yosupo_Minimum_Cost_b_flow() {
     cin.tie(nullptr);
     ios_base::sync_with_stdio(false);
