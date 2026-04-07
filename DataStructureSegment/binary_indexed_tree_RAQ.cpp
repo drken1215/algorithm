@@ -7,23 +7,25 @@
 //
 
 
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-// BIT
-template <class Abel> struct BIT {
+// RangeAddRangeSum by BIT
+template<class Abel> struct RangeAddRangeSum {
     Abel UNITY_SUM = 0;
     vector<Abel> dat[2];
 
     // [0, n)
-    BIT(int n, Abel unity = 0) : UNITY_SUM(unity) {
+    RangeAddRangeSum(int n, Abel unity = 0) : UNITY_SUM(unity) {
         init(n);
     }
     void init(int n) {
         for (int iter = 0; iter < 2; ++iter)
             dat[iter].assign(n + 1, UNITY_SUM);
+    }
+    int size() const {
+        return (int)dat[0].size();
     }
     
     // [a, b), a and b are 0-indexed
@@ -51,12 +53,14 @@ template <class Abel> struct BIT {
             - sub_sum(0, a)
             - sub_sum(1, a) * a;
     }
+    inline Abel operator [] (int i) const {
+        return sum(i, i + 1);
+    }
     
     // debug
-    void print() {
-        for (int i = 0; i < (int)dat[0].size(); ++i)
-            cout << sum(i, i + 1) << ",";
-        cout << endl;
+    friend ostream& operator << (ostream &s, const RangeAddRangeSum &bit) {
+        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
+        return s;
     }
 };
 
@@ -66,10 +70,11 @@ template <class Abel> struct BIT {
 // Examples
 //------------------------------//
 
-int main() {
+// AOJ Course DSL_2_G RSQ and RAQ
+void AOJ_Course_DSL_2() {
     int N, Q;
     cin >> N >> Q;
-    BIT<long long> bit(N);
+    RangeAddRangeSum<long long> bit(N);
     for (int query = 0; query < Q; ++query) {
         int type, s, t;
         cin >> type >> s >> t;
@@ -83,4 +88,9 @@ int main() {
             cout << bit.sum(s, t) << endl;
         }
     }
+}
+
+
+int main() {
+    AOJ_Course_DSL_2();
 }

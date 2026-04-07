@@ -16,31 +16,17 @@
 using namespace std;
 
 
-//------------------------------//
-// Utility
-//------------------------------//
-
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-int popcnt_mod2(int x) { return __builtin_parity(x); }
-int popcnt_mod2(unsigned int x) { return __builtin_parity(x); }
-int popcnt_mod2(long long x) { return __builtin_parityll(x); }
-int popcnt_mod2(unsigned long long x) { return __builtin_parityll(x); }
-
-
-//------------------------------//
 // 動的 bitset
-//------------------------------//
-
 struct DynamicBitset {
     using u64 = unsigned long long;
+    constexpr int popcnt(int x) const { return __builtin_popcount(x); }
+    constexpr int popcnt(unsigned int x) const { return __builtin_popcount(x); }
+    constexpr int popcnt(long long x) const { return __builtin_popcountll(x); }
+    constexpr int popcnt(unsigned long long x) const{ return __builtin_popcountll(x); }
+    constexpr int popcnt_mod2(int x) const { return __builtin_parity(x); }
+    constexpr int popcnt_mod2(unsigned int x) const { return __builtin_parity(x); }
+    constexpr int popcnt_mod2(long long x) const { return __builtin_parityll(x); }
+    constexpr int popcnt_mod2(unsigned long long x) const { return __builtin_parityll(x); }
     constexpr int topbit(u64 x) const { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
     constexpr int lowbit(u64 x) const { return (x == 0 ? -1 : __builtin_ctzll(x)); }
     static string CONV[256];  // for to_string()

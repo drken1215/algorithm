@@ -27,39 +27,6 @@
 using namespace std;
 
 
-//------------------------------//
-// Utility
-//------------------------------//
-
-// min non-negative i such that (x & (1 << i)) != 0
-int bsf(int x) { return __builtin_ctz(x); }
-int bsf(unsigned int x) { return __builtin_ctz(x); }
-int bsf(long long x) { return __builtin_ctzll(x); }
-int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-
-// min non-negative i such that n <= 2^i
-template<class T> T ceil_pow2(T n) {
-    T i = 0;
-    while ((T(1) << i) < T(n)) i++;
-    return i;
-}
-
-// xor128による乱数生成、周期は2^128-1
-unsigned int rand_int() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-int rand_int(int minv, int maxv) {
-    return rand_int() % (maxv - minv + 1) + minv;
-}
-
-
-//------------------------------//
-// Matrix
-//------------------------------//
-
 // general Euclid ring matrix (define ADD, SUB, MUL, DIV, ADD_IDENTITY, MUL_IDENTITY)
 template<class Ring> struct EuclidRingMatrix {
     using FuncOperator = function<Ring(Ring, Ring)>;

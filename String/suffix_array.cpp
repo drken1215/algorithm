@@ -66,7 +66,7 @@ template<class MeetSemiLattice> struct SparseTable {
 };
 
 // SA-IS (O(N))
-template<class Str> struct SuffixArray {
+template<class Str = string> struct SuffixArray {
     // data
     Str str;
     vector<int> sa;    // sa[i] : the starting index of the i-th smallest suffix (i = 0, 1, ..., n)
@@ -292,7 +292,6 @@ template<class Str> struct SuffixArray {
         }
     }
 };
-
 
 
 //------------------------------//
@@ -530,4 +529,3 @@ int main() {
     //AOJ_2644();
     //ABC_207_D();
 }
-

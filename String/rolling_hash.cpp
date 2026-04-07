@@ -7,10 +7,7 @@
 //
 
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -73,12 +70,12 @@ template<class Str = string> struct RollingHash {
 };
 
 
-
 //------------------------------//
 // Examples
 //------------------------------//
 
-int main() {
+// ABC 141 E - Who Says a Pun?
+void ABC_141_E() {
     int N;
     string S;
     cin >> N >> S;
@@ -95,6 +92,10 @@ int main() {
             res = max(res, lcp);
         }
     }
-        
     cout << res << endl;
+}
+
+
+int main() {
+    ABC_141_E();
 }

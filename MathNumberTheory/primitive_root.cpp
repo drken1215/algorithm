@@ -1,5 +1,5 @@
 //
-// (最小の) 原始根を求める
+// (最小の) 原始根を求める (p <= 10^18)
 //
 // verified:
 //   Yosupo Judge Primitive Root
@@ -10,10 +10,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
-//------------------------------//
-// Prime Functions
-//------------------------------//
 
 // montgomery modint (MOD < 2^62, MOD is odd)
 struct MontgomeryModInt64 {
@@ -216,8 +212,8 @@ vector<long long> prime_factorize(long long N) {
 }
 
 
-// calc min primitive root
-long long calc_primitive_root(long long p) {
+// calc min primitive root (p <= 10^18)
+long long calc_primitive_root_ll(long long p) {
     if (p == 1) return -1;
     if (p == 2) return 1;
     if (p == 998244353) return 3;
@@ -257,7 +253,7 @@ void YosupoJudgePrimitiveRoot() {
     for (int i = 0; i < Q; ++i) {
         long long P;
         cin >> P;
-        cout << calc_primitive_root(P) << endl;
+        cout << calc_primitive_root_ll(P) << endl;
     }
 }
 

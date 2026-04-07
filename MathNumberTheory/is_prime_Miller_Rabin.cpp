@@ -16,7 +16,7 @@
 using namespace std;
 
 
-// montgomery modint (MOD < 2^62, MOD is odd)
+// montgomery modint (MOD < 2^62, MOD: odd prime number)
 struct MontgomeryModInt64 {
     using mint = MontgomeryModInt64;
     using u64 = uint64_t;
@@ -79,7 +79,6 @@ struct MontgomeryModInt64 {
         *this *= r.inv();
         return *this;
     }
-    mint inv() const { return pow(MOD - 2); }
     mint pow(u128 n) const {
         mint res(1), mul(*this);
         while (n > 0) {
@@ -88,6 +87,9 @@ struct MontgomeryModInt64 {
             n >>= 1;
         }
         return res;
+    }
+    mint inv() const { 
+        return pow(MOD - 2); 
     }
 
     // other operators
@@ -137,9 +139,10 @@ struct MontgomeryModInt64 {
 typename MontgomeryModInt64::u64
 MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
 
-
 // Miller-Rabin
-bool MillerRabin(long long N, vector<long long> A) {
+bool MillerRabin(long long N, const vector<long long> &A) {
+    assert(N % 2 == 1);
+    assert(N < (1LL<<62));
     using mint = MontgomeryModInt64;
     mint::set_mod(N);
     
@@ -172,7 +175,6 @@ bool is_prime(long long N) {
     else
         return MillerRabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
 }
-
 
 
 //------------------------------//

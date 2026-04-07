@@ -908,9 +908,6 @@ struct MontgomeryModInt64 {
 typename MontgomeryModInt64::u64
 MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
 
-typename MontgomeryModInt64::u64
-MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
-
 // Miller-Rabin
 bool MillerRabin(long long N, const vector<long long> &A) {
     assert(N % 2 == 1);
@@ -4212,52 +4209,6 @@ template<class Abel = int> struct FastMultiSetByBIT {
     }
 };
 
-// mapping[i]: A[i] に対応する B の要素の index
-template<class T> vector<long long> find_mapping(vector<T> A, vector<T> B) {
-    // 多重集合として等しいことを保証して、座標圧縮する
-    int N = (int)A.size();
-    auto A2 = A, B2 = B;
-    sort(A2.begin(), A2.end()), sort(B2.begin(), B2.end());
-    assert(A2 == B2);
-    A2.erase(unique(A2.begin(), A2.end()), A2.end());
-    for (int i = 0; i < N; i++) {
-        A[i] = lower_bound(A2.begin(), A2.end(), A[i]) - A2.begin();
-        B[i] = lower_bound(A2.begin(), A2.end(), B[i]) - A2.begin();
-    }
-
-    // B の各値ごとに index を求める
-    vector<vector<long long>> pb(N);
-    for (int i = 0; i < N; i++) pb[B[i]].emplace_back(i);
-
-    // A[i] が B で何番目なのかを求める
-    vector<long long> res(N), iter(N, 0);
-    for (int i = 0; i < N; i++) res[i] = pb[A[i]][iter[A[i]]++];
-    return res;
-}
-
-// A の転倒数
-template<class T> T inversion_number(vector<T> A) {
-    int N = (int)A.size();
-    auto A2 = A;
-    sort(A2.begin(), A2.end());
-    A2.erase(unique(A2.begin(), A2.end()), A2.end());
-    for (int i = 0; i < N; i++) A[i] = lower_bound(A2.begin(), A2.end(), A[i]) - A2.begin();
-
-    T res = 0;
-    FastMultiSetByBIT<T> S(N);
-    for (int i = 0; i < N; i++) {
-        res += S.count(A[i] + 1, N);
-        S.add(A[i], 1);
-    }
-    return res;
-}
-
-// A, B の間の転倒数
-template<class T> T inversion_number(vector<T> A, vector<T> B) {
-    auto mapping = find_mapping(A, B);
-    return inversion_number(mapping);
-}
-
 // Sparse Table
 template<class MeetSemiLattice> struct SparseTable {
     using Func = function<MeetSemiLattice(MeetSemiLattice, MeetSemiLattice)>;
@@ -4693,10 +4644,7 @@ template<class Monoid, class Action> struct LazySegmentTree {
 // various segment trees
 template<class Monoid> auto seg_op_min = [](Monoid p, Monoid q) { return min(p, q); };
 template<class Monoid> auto seg_op_max = [](Monoid p, Monoid q) { return max(p, q); };
-template<class Monoid> auto seg_op_add = [](Monoid p, Monoid q) { return p + q; };
-template<class Monoid> auto seg_op_add_with_sum = [](pair<Monoid, long long> p, pair<Monoid, long long> q) { 
-    return make_pair(p.first + q.first, p.second + q.second);
-};
+template<class Monoid> auto seg_op_sum = [](Monoid p, Monoid q) { return p + q; };
 template<class Monoid> SegmentTree<Monoid> RangeMin(int N = 0) {
     return SegmentTree<Monoid>(N, seg_op_min<Monoid>, numeric_limits<Monoid>::max()/2);
 }
@@ -4709,14 +4657,17 @@ template<class Monoid> SegmentTree<Monoid> RangeMax(int N = 0) {
 template<class Monoid> SegmentTree<Monoid> RangeMax(const vector<Monoid> &v) {
     return SegmentTree<Monoid>(v, seg_op_max<Monoid>, -numeric_limits<Monoid>::max()/2);
 }
-template<class Monoid> SegmentTree<Monoid> RangeAdd(int N = 0) {
-    return SegmentTree<Monoid>(N, seg_op_add<Monoid>, Monoid(0));
+template<class Monoid> SegmentTree<Monoid> RangeSum(int N = 0) {
+    return SegmentTree<Monoid>(N, seg_op_sum<Monoid>, Monoid(0));
 }
-template<class Monoid> SegmentTree<Monoid> RangeAdd(const vector<Monoid> &v) {
-    return SegmentTree<Monoid>(v, seg_op_add<Monoid>, Monoid(0));
+template<class Monoid> SegmentTree<Monoid> RangeSum(const vector<Monoid> &v) {
+    return SegmentTree<Monoid>(v, seg_op_sum<Monoid>, Monoid(0));
 }
 
 // various lazy segment trees
+template<class Monoid> auto seg_op_sum_with_sum = [](pair<Monoid, long long> p, pair<Monoid, long long> q) { 
+    return make_pair(p.first + q.first, p.second + q.second);
+};
 template<class Monoid, class Action> auto seg_act_change = [](Action f, Monoid x) {
     return (f != Action(-1) ? f : x);
 };
@@ -4766,12 +4717,12 @@ template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChange
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid, long long>, Action> RangeChangeRangeSum(int N = 0) {
     return LazySegmentTree<pair<Monoid, long long>, Action>(
-        N, seg_op_add_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
+        N, seg_op_sum_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
         make_pair(Monoid(0), 1), Action(-1));
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid, long long>, Action> RangeChangeRangeSum(const vector<Monoid> &v) {
     return LazySegmentTree<pair<Monoid, long long>, Action>(
-        v, seg_op_add_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
+        v, seg_op_sum_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
         make_pair(Monoid(0), 1), Action(-1));
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChminRangeMin(int N = 0) {

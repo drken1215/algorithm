@@ -15,11 +15,7 @@
 using namespace std;
 
 
-//------------------------------//
-// Prime Functions
-//------------------------------//
-
-// montgomery modint (MOD < 2^62, MOD is odd)
+// montgomery modint (MOD < 2^62, MOD: odd prime number)
 struct MontgomeryModInt64 {
     using mint = MontgomeryModInt64;
     using u64 = uint64_t;
@@ -82,7 +78,6 @@ struct MontgomeryModInt64 {
         *this *= r.inv();
         return *this;
     }
-    mint inv() const { return pow(MOD - 2); }
     mint pow(u128 n) const {
         mint res(1), mul(*this);
         while (n > 0) {
@@ -91,6 +86,9 @@ struct MontgomeryModInt64 {
             n >>= 1;
         }
         return res;
+    }
+    mint inv() const { 
+        return pow(MOD - 2); 
     }
 
     // other operators
@@ -140,9 +138,10 @@ struct MontgomeryModInt64 {
 typename MontgomeryModInt64::u64
 MontgomeryModInt64::MOD, MontgomeryModInt64::INV_MOD, MontgomeryModInt64::T128;
 
-
 // Miller-Rabin
-bool MillerRabin(long long N, vector<long long> A) {
+bool MillerRabin(long long N, const vector<long long> &A) {
+    assert(N % 2 == 1);
+    assert(N < (1LL<<62));
     using mint = MontgomeryModInt64;
     mint::set_mod(N);
     
@@ -176,7 +175,6 @@ bool is_prime(long long N) {
         return MillerRabin(N, {2, 325, 9375, 28178, 450775, 9780504, 1795265022});
 }
 
-
 // Pollard's Rho
 unsigned int xor_shift_rng() {
     static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
@@ -189,6 +187,7 @@ long long pollard(long long N) {
     if (N % 2 == 0) return 2;
     if (is_prime(N)) return N;
     
+    assert(N < (1LL<<62));
     using mint = MontgomeryModInt64;
     mint::set_mod(N);
     
@@ -207,17 +206,32 @@ long long pollard(long long N) {
     }
 }
 
-vector<long long> prime_factorize(long long N) {
+vector<long long> pollard_prime_factorize(long long N) {
     if (N == 1) return {};
     long long p = pollard(N);
     if (p == N) return {p};
-    vector<long long> left = prime_factorize(p);
-    vector<long long> right = prime_factorize(N / p);
+    vector<long long> left = pollard_prime_factorize(p);
+    vector<long long> right = pollard_prime_factorize(N / p);
+    if (left.size() > right.size()) swap(left, right);
     left.insert(left.end(), right.begin(), right.end());
     sort(left.begin(), left.end());
     return left;
 }
 
+vector<pair<long long, long long>> prime_factorize(long long N) {
+    vector<pair<long long, long long>> res;
+    const auto &prs = pollard_prime_factorize(N);
+    long long prev = -1, num = 0;
+    for (const auto &pr : prs) {
+        if (pr == prev) ++num;
+        else {
+            if (prev != -1) res.emplace_back(prev, num);
+            prev = pr, num = 1;
+        }
+    }
+    if (prev != -1) res.emplace_back(prev, num);
+    return res;
+}
 
 
 //------------------------------//
@@ -232,7 +246,7 @@ void YosupoJudgeFactorize() {
     for (int i = 0; i < N; ++i) {
         long long a;
         cin >> a;
-        const auto &res = prime_factorize(a);
+        const auto &res = pollard_prime_factorize(a);
         cout << res.size();
         for (auto p : res) cout << " " << p;
         cout << endl;

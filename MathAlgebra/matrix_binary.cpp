@@ -23,32 +23,17 @@
 using namespace std;
 
 
-//------------------------------//
-// Utility
-//------------------------------//
-
-// output
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, const vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-
-// num of i such that (x & (1 << i)) != 0
-int popcnt(int x) { return __builtin_popcount(x); }
-int popcnt(unsigned int x) { return __builtin_popcount(x); }
-int popcnt(long long x) { return __builtin_popcountll(x); }
-int popcnt(unsigned long long x) { return __builtin_popcountll(x); }
-int popcnt_mod2(int x) { return __builtin_parity(x); }
-int popcnt_mod2(unsigned int x) { return __builtin_parity(x); }
-int popcnt_mod2(long long x) { return __builtin_parityll(x); }
-int popcnt_mod2(unsigned long long x) { return __builtin_parityll(x); }
-
 // 動的 bitset
 struct DynamicBitset {
     using u64 = unsigned long long;
+    constexpr int popcnt(int x) const { return __builtin_popcount(x); }
+    constexpr int popcnt(unsigned int x) const { return __builtin_popcount(x); }
+    constexpr int popcnt(long long x) const { return __builtin_popcountll(x); }
+    constexpr int popcnt(unsigned long long x) const{ return __builtin_popcountll(x); }
+    constexpr int popcnt_mod2(int x) const { return __builtin_parity(x); }
+    constexpr int popcnt_mod2(unsigned int x) const { return __builtin_parity(x); }
+    constexpr int popcnt_mod2(long long x) const { return __builtin_parityll(x); }
+    constexpr int popcnt_mod2(unsigned long long x) const { return __builtin_parityll(x); }
     constexpr int topbit(u64 x) const { return (x == 0 ? -1 : 63 - __builtin_clzll(x)); }
     constexpr int lowbit(u64 x) const { return (x == 0 ? -1 : __builtin_ctzll(x)); }
     static string CONV[256];  // for to_string()
@@ -426,10 +411,6 @@ struct DynamicBitset {
 };
 string DynamicBitset::CONV[256];
 
-
-//------------------------------//
-// Mod 2 Matrix
-//------------------------------//
 
 // binary matrix
 struct BinaryMatrix {
