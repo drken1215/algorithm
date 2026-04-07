@@ -113,7 +113,8 @@ template<class FLOW, class COST> struct FlowCostGraph {
 
     // find initial potential (to resolve initial negative-edge)
     // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
-    bool init_potential_dag() {
+    bool calc_potential_dag() {
+        pot.assign(size(), 0);
         vector<int> deg(size(), 0), st;
         for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
         st.reserve(size());
@@ -130,11 +131,12 @@ template<class FLOW, class COST> struct FlowCostGraph {
         }
         return true;
     }
-    bool init_potential_spfa() {
+    bool calc_potential_spfa() {
+        pot.assign(size(), 0);
         queue<int> que;
-        vector<bool> inque(size(), true);
+        vector<bool> inque(size(), false);
         vector<int> cnt(size(), 0);
-        for (int v = 0; v < size(); v++) que.push(v);
+        for (int v = 0; v < size(); v++) que.push(v), inque[v] = true;
         while (!que.empty()) {
             int cur = que.front();
             que.pop();
@@ -151,9 +153,12 @@ template<class FLOW, class COST> struct FlowCostGraph {
         }
         return true;
     }
+    bool calc_potential() {
+        return calc_potential_dag() || calc_potential_spfa();
+    }
     bool init_potential() {
         if (!include_negative_edge) return true;
-        return init_potential_dag() || init_potential_spfa();
+        return calc_potential();
     }
 
     // debug

@@ -5,9 +5,6 @@
 //   Yosupo Judge - Strongly Connected Components
 //     https://judge.yosupo.jp/problem/scc
 //
-//   AOJ Course GRL_3_C - 強連結成分分解
-//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_3_C&lang=ja
-//
 
 
 #include <bits/stdc++.h>
@@ -15,50 +12,99 @@ using namespace std;
 
 
 // Edge Class
-template<class T> struct Edge {
+template<class T = long long> struct Edge {
     int from, to;
     T val;
-    Edge() : from(-1), to(-1), val(-1) { }
-    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
-    friend ostream& operator << (ostream& s, const Edge& E) {
-        return s << E.from << "->" << E.to;
+    Edge() : from(-1), to(-1) { }
+    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& e) {
+        return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
 };
 
 // graph class
-template<class T> struct Graph {
+template<class T = long long> struct Graph {
+    int V, E;
+    bool record_reversed_edges = false, record_edge_index = false;
     vector<vector<Edge<T>>> list;
     vector<vector<Edge<T>>> reversed_list;
-    
-    Graph(int n = 0) : list(n), reversed_list(n) { }
-    void init(int n = 0) {
+    vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
+
+    // constructors
+    Graph(int n = 0, int m = 0, bool rre = false, bool rei = false) { 
+        init(n, m, rre, rei);
+    }
+    void init(int n = 0, int m = 0, bool rre = false, bool rei = false) {
+        V = n, E = m, record_reversed_edges = rre, record_edge_index = rei;
         list.assign(n, vector<Edge<T>>());
-        reversed_list.assign(n, vector<Edge<T>>());
+        if (record_reversed_edges) reversed_list.assign(n, vector<Edge<T>>());
+        if (record_edge_index) id.assign(n, unordered_map<int, int>());
     }
+    Graph(const Graph&) = default;
+    Graph& operator = (const Graph&) = default;
+
+    // getters
+    vector<Edge<T>> &operator [] (int i) { return list[i]; }
     const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
-    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
-    const size_t size() const { return list.size(); }
-        
-    void add_edge(int from, int to, T val = -1) {
-        list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
+    constexpr size_t size() const { return list.size(); }
+    constexpr void clear() { V = 0; list.clear(); }
+    constexpr void resize(int n) { V = n; list.resize(n); }
+    const vector<Edge<T>> &get_rev_edges(int i) const { 
+        assert(record_reversed_edges);
+        return reversed_list[i];
     }
-    
-    void add_bidirected_edge(int from, int to, T val = -1) {
-        list[from].push_back(Edge(from, to, val));
-        list[to].push_back(Edge(to, from, val));
-        reversed_list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
+    Edge<T> &get_edge(int u, int v) {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
+        return list[u][id[u][v]];
+    }
+    const Edge<T> &get_edge(int u, int v) const {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < list[u].size());
+        return list[u][id[u].at(v)];
     }
 
-    friend ostream &operator << (ostream &s, const Graph &G) {
-        s << endl;
-        for (int i = 0; i < G.size(); ++i) {
-            s << i << " -> ";
-            for (const auto &e : G[i]) s << e.to << " ";
-            s << endl;
+    // add edge
+    void add_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+    }
+    void add_bidirected_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
+        if (from != to) {
+            if (record_edge_index) id[to][from] = (int)list[to].size(); 
+            list[to].push_back(Edge(to, from, val));
+            if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
         }
-        return s;
+    }
+
+    // input / output
+    friend istream& operator >> (istream &is, Graph &G) {
+        for (int i = 0; i < G.E; i++) {
+            int u, v;
+            is >> u >> v, u--, v--;
+            G.add_bidirected_edge(u, v);
+        }
+        return is;
+    }
+    friend ostream &operator << (ostream &os, const Graph &G) {
+        os << endl;
+        for (int i = 0; i < (int)G.size(); ++i) {
+            os << i << " -> ";
+            for (int j = 0; j < (int)G[i].size(); j++) {
+                if (j) os << ", ";
+                os << G[i][j].to << "(" << G[i][j].val << ")";
+            }
+            os << endl;
+        }
+        return os;
     }
 };
 
@@ -152,13 +198,12 @@ void Yosupo_Strongly_Connected_Components() {
     // 入力
     int N, M;
     cin >> N >> M;
-    Graph<int> G(N);
+    Graph<int> G(N, M, true);
     for (int i = 0; i < M; ++i) {
         int u, v;
         cin >> u >> v;
         G.add_edge(u, v);
     }
-    //cout << G << endl;
     
     // SCC (not build dag)
     SCC<int> scc(G);
@@ -173,33 +218,7 @@ void Yosupo_Strongly_Connected_Components() {
     }
 }
 
-void AOJ_GRL_3_C() {
-    // 入力
-    int N, M;
-    cin >> N >> M;
-    Graph<int> G(N);
-    for (int i = 0; i < M; ++i) {
-        int u, v;
-        cin >> u >> v;
-        G.add_edge(u, v);
-    }
-    
-    // SCC
-    SCC<int> scc(G);
-    
-    // クエリ
-    int Q;
-    cin >> Q;
-    while (Q--) {
-        int u, v;
-        cin >> u >> v;
-        if (scc.cmp[u] == scc.cmp[v]) cout << 1 << endl;
-        else cout << 0 << endl;
-    }
-}
-
 
 int main() {
-    //Yosupo_Strongly_Connected_Components();
-    AOJ_GRL_3_C();
+    Yosupo_Strongly_Connected_Components();
 }

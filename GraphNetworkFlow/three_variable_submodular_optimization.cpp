@@ -62,11 +62,11 @@ using namespace std;
 template<class COST> struct ThreeVariableSubmodularOpt {
     // constructors
     ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
-    ThreeVariableSubmodularOpt(int n, COST inf = 0)
+    ThreeVariableSubmodularOpt(int n, COST inf = numeric_limits<COST>::max() / 2)
     : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
     
     // initializer
-    void init(int n, COST inf = 0) {
+    void init(int n, COST inf = numeric_limits<COST>::max() / 2) {
         N = n, S = n, T = n + 1;
         OFFSET = 0, INF = inf;
         list.assign(N + 2, Edge());
@@ -346,7 +346,7 @@ private:
         return current_flow;
     };
     COST dinic() {
-        return dinic(numeric_limits<COST>::max());
+        return dinic(numeric_limits<COST>::max() / 2);
     }
 };
 
@@ -539,10 +539,10 @@ void AOJ_2903() {
 
 
 int main() {
-    //Kyopro_Typical_90_040();
+    Kyopro_Typical_90_040();
     //ARC_085_E();
     //ABC_259_G();
     //ABC_326_G();
-    ABC_225_G();
+    //ABC_225_G();
     //AOJ_2903();
 }

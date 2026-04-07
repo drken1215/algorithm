@@ -103,19 +103,19 @@ template<class T = long long> struct Edge {
 // graph class
 template<class T = long long> struct Graph {
     int V, E;
-    bool record_edge_index = false;
+    bool record_reversed_edges = false, record_edge_index = false;
     vector<vector<Edge<T>>> list;
     vector<vector<Edge<T>>> reversed_list;
     vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
 
     // constructors
-    Graph(int n = 0, int m = 0, bool rei = false) 
-        : V(n), E(m), record_edge_index(rei)
-        , list(n), reversed_list(n), id(n) { }
-    void init(int n = 0, int m = 0, bool rei = false) {
-        V = n, E = m, record_edge_index = rei;
+    Graph(int n = 0, int m = 0, bool rre = false, bool rei = false) { 
+        init(n, m, rre, rei);
+    }
+    void init(int n = 0, int m = 0, bool rre = false, bool rei = false) {
+        V = n, E = m, record_reversed_edges = rre, record_edge_index = rei;
         list.assign(n, vector<Edge<T>>());
-        reversed_list.assign(n, vector<Edge<T>>());
+        if (record_reversed_edges) reversed_list.assign(n, vector<Edge<T>>());
         if (record_edge_index) id.assign(n, unordered_map<int, int>());
     }
     Graph(const Graph&) = default;
@@ -124,10 +124,13 @@ template<class T = long long> struct Graph {
     // getters
     vector<Edge<T>> &operator [] (int i) { return list[i]; }
     const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
-    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
     constexpr size_t size() const { return list.size(); }
     constexpr void clear() { V = 0; list.clear(); }
     constexpr void resize(int n) { V = n; list.resize(n); }
+    const vector<Edge<T>> &get_rev_edges(int i) const { 
+        assert(record_reversed_edges);
+        return reversed_list[i];
+    }
     Edge<T> &get_edge(int u, int v) {
         assert(record_edge_index);
         assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
@@ -146,17 +149,17 @@ template<class T = long long> struct Graph {
         assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
         if (record_edge_index) id[from][to] = (int)list[from].size(); 
         list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
+        if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
     }
     void add_bidirected_edge(int from, int to, T val = 1) {
         assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
         if (record_edge_index) id[from][to] = (int)list[from].size(); 
         list[from].push_back(Edge(from, to, val));
-        reversed_list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
         if (from != to) {
             if (record_edge_index) id[to][from] = (int)list[to].size(); 
             list[to].push_back(Edge(to, from, val));
-            reversed_list[to].push_back(Edge(to, from, val));
+            if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
         }
     }
 
