@@ -1871,21 +1871,6 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS sqrt_sparse_constant1(int deg) const {
         return pow_sparse_constant1(mint(2).inv(), deg);
     }
-
-    // polynomial taylor shift
-    constexpr FPS taylor_shift(long long c) const {
-        int N = (int)this->size() - 1;
-        BiCoef<mint> bc(N + 1);
-        FPS<mint> p(N + 1), q(N + 1);
-        for (int i = 0; i <= N; i++) {
-            p[i] = (*this)[i] * bc.fact(i);
-            q[N - i] = mint(c).pow(i) * bc.finv(i);
-        }
-        FPS<mint> pq = p * q;
-        FPS<mint> res(N + 1);
-        for (int i = 0; i <= N; i++) res[i] = pq[i + N] * bc.finv(i);
-        return res;
-    }
     
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
@@ -1895,7 +1880,6 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
     friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
     friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
-    friend constexpr FPS taylor_shift(const FPS &f, long long c) { return f.taylor_shift(c); }
 };
 
 // Bostan-Mori
@@ -2208,6 +2192,21 @@ FPS<mint> middle_product(const FPS<mint> &a, const FPS<mint> &b) {
     fa.resize(a.size());
     fa.erase(fa.begin(), fa.begin() + (int)b.size() - 1);
     return fa;
+}
+
+// Polynomial Taylor Shift
+template<class mint> FPS<mint> taylor_shift(const FPS<mint> &f, long long c) {
+    int N = (int)f.size() - 1;
+    BiCoef<mint> bc(N + 1);
+    FPS<mint> p(N + 1), q(N + 1);
+    for (int i = 0; i <= N; i++) {
+        p[i] = f[i] * bc.fact(i);
+        q[N - i] = mint(c).pow(i) * bc.finv(i);
+    }
+    FPS<mint> pq = p * q;
+    FPS<mint> res(N + 1);
+    for (int i = 0; i <= N; i++) res[i] = pq[i + N] * bc.finv(i);
+    return res;
 }
 
 // multipoint evaluation, polynomial interpolation
