@@ -1385,7 +1385,7 @@ template<class T> vector<T> convolution(const vector<T> &a, const vector<T> &b) 
 // mod sqrt
 template<class T_VAL, class T_MOD>
 T_VAL mod_sqrt(T_VAL a, T_MOD p) {
-    a = safe_mod(a, p);
+    a = (a % p + p) % p;
     if (a <= 1) return a;
     using mint = DynamicModint;
     mint::set_mod(p);
