@@ -16,141 +16,8 @@ using namespace std;
 
 
 //------------------------------//
-// Utility
-//------------------------------//
-
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-using tint = array<int, 3>;
-using tll = array<long long, 3>;
-using fint = array<int, 4>;
-using fll = array<long long, 4>;
-using qint = array<int, 5>;
-using qll = array<long long, 5>;
-using vint = vector<int>;
-using vll = vector<long long>;
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-template <class T>
-using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PB push_back
-#define MP make_pair
-#define MT make_tuple
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-// debug stream
-template<class T1, class T2> ostream& operator << (ostream &s, pair<T1,T2> P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 3> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, array<T, 4> P)
-{ return s << '<' << P[0] << ", " << P[1] << ", " << P[2] << ", " << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, vector<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, deque<T> P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, vector<vector<T> > P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, multiset<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, unordered_set<T> P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class T1, class T2> ostream& operator << (ostream &s, unordered_map<T1,T2> P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-// min non-negative i such that n <= 2^i
-int ceil_pow2(int n) {
-    int i = 0;
-    while ((1U << i) < (unsigned int)(n)) i++;
-    return i;
-}
-
-// min non-negative i such that (x & (1 << i)) != 0
-int bsf(int x) { return __builtin_ctz(x); }
-int bsf(unsigned int x) { return __builtin_ctz(x); }
-int bsf(long long x) { return __builtin_ctzll(x); }
-int bsf(unsigned long long x) { return __builtin_ctzll(x); }
-
-// xor128による乱数生成、周期は2^128-1
-unsigned int randInt() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-int randInt(int minv, int maxv) {
-    return randInt() % (maxv - minv + 1) + minv;
-}
-long long randInt(long long minv, long long maxv) {
-    long long a = randInt(), b = randInt();
-    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
-}
-template<class T> void shuffle(vector<T>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
-        int k = randInt() % (i + 1);
-        swap(vec[i], vec[k]);
-    }
-}
-
-
-//------------------------------//
 // mod algorithms
 //------------------------------//
-
-// safe mod
-template<class T_VAL, class T_MOD>
-constexpr T_VAL safe_mod(T_VAL a, T_MOD m) {
-    assert(m > 0);
-    a %= m;
-    if (a < 0) a += m;
-    return a;
-}
-
-// mod pow
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_pow(T_VAL a, T_VAL n, T_MOD m) {
-    T_VAL res = 1;
-    while (n > 0) {
-        if (n % 2 == 1) res = res * a % m;
-        a = a * a % m;
-        n >>= 1;
-    }
-    return res;
-}
-
-// mod inv
-template<class T_VAL, class T_MOD>
-constexpr T_VAL mod_inv(T_VAL a, T_MOD m) {
-    T_VAL b = m, u = 1, v = 0;
-    while (b > 0) {
-        T_VAL t = a / b;
-        a -= t * b, swap(a, b);
-        u -= t * v, swap(u, v);
-    }
-    u %= m;
-    if (u < 0) u += m;
-    return u;
-}
 
 // modint
 template<int MOD = 998244353, bool PRIME = true> struct Fp {
@@ -208,12 +75,18 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         return res;
     }
     constexpr Fp inv() const {
+        assert(val);
         if (PRIME) {
-            assert(val);
             return pow(get_umod() - 2);
         } else {
-            assert(val);
-            return mod_inv((long long)(val), get_umod());
+            assert(gcd(val, get_umod()) == 1);
+            long long m = get_umod(), a = val, b = m, u = 1, v = 0;
+            while (b > 0) {
+                auto t = a / b;
+                a -= t * b, swap(a, b);
+                u -= t * v, swap(u, v);
+            }
+            return Fp(u);
         }
     }
 
@@ -256,7 +129,7 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         --*this;
         return res;
     }
-    friend constexpr istream& operator >> (istream &is, Fp<MOD> &x) {
+    friend constexpr istream& operator >> (istream &is, Fp &x) {
         long long tmp = 1;
         is >> tmp;
         tmp = tmp % (long long)(get_umod());
@@ -264,13 +137,13 @@ template<int MOD = 998244353, bool PRIME = true> struct Fp {
         x.val = (unsigned int)(tmp);
         return is;
     }
-    friend constexpr ostream& operator << (ostream &os, const Fp<MOD> &x) {
+    friend constexpr ostream& operator << (ostream &os, const Fp &x) {
         return os << x.val;
     }
-    friend constexpr Fp<MOD> pow(const Fp<MOD> &r, long long n) {
+    friend constexpr Fp pow(const Fp &r, long long n) {
         return r.pow(n);
     }
-    friend constexpr Fp<MOD> inv(const Fp<MOD> &r) {
+    friend constexpr Fp inv(const Fp &r) {
         return r.inv();
     }
 };
@@ -324,7 +197,16 @@ constexpr int calc_primitive_root(long long m) {
     if (m == 754974721) return 11;
     if (m == 645922817) return 3;
     if (m == 897581057) return 3;
-    
+
+    auto mod_pow = [&](long long a, long long n, long long m) {
+        long long res = 1;
+        while (n > 0) {
+            if (n % 2 == 1) res = res * a % m;
+            a = a * a % m;
+            n >>= 1;
+        }
+        return res;
+    };
     long long divs[20] = {};
     divs[0] = 2;
     long long cnt = 1;
@@ -391,7 +273,8 @@ struct ntt_setup {
 template<class mint, int MOD = mint::get_mod()> 
 void ntt_trans(vector<mint> &v) {
     int n = (int)v.size();
-    int h = ceil_pow2(n);
+    int h = 0;
+    while ((1U << h) < (unsigned int)(n)) h++;
     static const ntt_setup<mint> setup;
 
     int len = 0;
@@ -408,7 +291,7 @@ void ntt_trans(vector<mint> &v) {
                     v[i + offset + p] = l - r;
                 }
                 if (s + 1 != (1 << len)) {
-                    rot *= setup.rate2[bsf(~(unsigned int)(s))];
+                    rot *= setup.rate2[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len++;
@@ -432,7 +315,7 @@ void ntt_trans(vector<mint> &v) {
                     v[i + offset + p * 3] = a0 + na2 + (mod2 - tmp);
                 }
                 if (s + 1 != (1 << len)) {
-                    rot *= setup.rate3[bsf(~(unsigned int)(s))];
+                    rot *= setup.rate3[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len += 2;
@@ -444,7 +327,8 @@ void ntt_trans(vector<mint> &v) {
 template<class mint, int MOD = mint::get_mod()> 
 void ntt_trans_inv(vector<mint> &v) {
     int n = (int)v.size();
-    int h = ceil_pow2(n);
+    int h = 0;
+    while ((1U << h) < (unsigned int)(n)) h++;
     static const ntt_setup<mint> setup;
 
     int len = h;
@@ -461,7 +345,7 @@ void ntt_trans_inv(vector<mint> &v) {
                     v[i + offset + p] = (unsigned long long)((long long)(MOD) + l.val - r.val) * irot.val;
                 }
                 if (s + 1 != (1 << (len - 1))) {
-                    irot *= setup.irate2[bsf(~(unsigned int)(s))];
+                    irot *= setup.irate2[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len--;
@@ -483,7 +367,7 @@ void ntt_trans_inv(vector<mint> &v) {
                     v[i + offset + p * 3] = (a0 + (MOD - a1) + (MOD - tmp)) * irot3.val;
                 }
                 if (s + 1 != (1 << (len - 2))) {
-                    irot *= setup.irate3[bsf(~(unsigned int)(s))];
+                    irot *= setup.irate3[setup.bsf_constexpr(~(unsigned int)(s))];
                 }
             }
             len -= 2;
@@ -494,10 +378,10 @@ void ntt_trans_inv(vector<mint> &v) {
 }
 
 // naive convolution
-template<class T>
-vector<T> sub_convolution_naive(const vector<T> &a, const vector<T> &b) {
+template<class VEC> VEC convolution_naive(const VEC &a, const VEC &b) {
     int n = (int)a.size(), m = (int)b.size();
-    vector<T> res(n + m - 1);
+    if (!n || !m) return {};
+    VEC res(n + m - 1);
     if (n < m) {
         for (int j = 0; j < m; j++) for (int i = 0; i < n; i++) res[i + j] += a[i] * b[j];
     } else {
@@ -508,7 +392,7 @@ vector<T> sub_convolution_naive(const vector<T> &a, const vector<T> &b) {
 
 // ntt convolution
 template<class mint>
-vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
+vector<mint> convolution_ntt(vector<mint> a, vector<mint> b) {
     int MOD = mint::get_mod();
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
@@ -522,13 +406,49 @@ vector<mint> sub_convolution_ntt(vector<mint> a, vector<mint> b) {
     return a;
 }
 
+// convolution long long (if u64 is necessary, use convolution_ull)
+template<class VEC> VEC convolution_ll(const VEC &a, const VEC &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return VEC();
+    if (min(n, m) <= 60) return convolution_naive(a, b);
+
+    static constexpr int MOD0 = 754974721;  // 2^24
+    static constexpr int MOD1 = 167772161;  // 2^25
+    static constexpr int MOD2 = 469762049;  // 2^26
+    using mint0 = Fp<MOD0>;
+    using mint1 = Fp<MOD1>;
+    using mint2 = Fp<MOD2>;
+    static const mint1 imod0 = 95869806; // modinv(MOD0, MOD1);
+    static const mint2 imod1 = 104391568; // modinv(MOD1, MOD2);
+    static const mint2 imod01 = 187290749; // imod1 / MOD0;
+
+    vector<mint0> a0(n, 0), b0(m, 0);
+    vector<mint1> a1(n, 0), b1(m, 0);
+    vector<mint2> a2(n, 0), b2(m, 0);
+    for (int i = 0; i < n; ++i) a0[i] = a[i], a1[i] = a[i], a2[i] = a[i];
+    for (int i = 0; i < m; ++i) b0[i] = b[i], b1[i] = b[i], b2[i] = b[i];
+    auto c0 = convolution_ntt(std::move(a0), std::move(b0));
+    auto c1 = convolution_ntt(std::move(a1), std::move(b1));
+    auto c2 = convolution_ntt(std::move(a2), std::move(b2));
+
+    VEC res(n + m - 1);
+    long long mod0 = MOD0, mod01 = mod0 * MOD1;
+    for (int i = 0; i < n + m - 1; ++i) {
+        unsigned int y0 = c0[i].val;
+        unsigned int y1 = (imod0 * (c1[i] - mint1(y0))).val;
+        unsigned int y2 = (imod01 * (c2[i] - mint2(y0)) - imod1 * y1).val;
+        res[i] = mod01 * y2 + mod0 * y1 + y0;
+    }
+    return res;
+}
+
 // convolution in general mod
 template<class mint>
-vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
+vector<mint> convolution_general_mod(const vector<mint> &a, const vector<mint> &b) {
     int n = (int)a.size(), m = (int)b.size();
     if (!n || !m) return {};
-    if (min(n, m) <= 60) return sub_convolution_naive(std::move(a), std::move(b));
-    if constexpr (std::is_same_v<mint, Fp<998244353>>) return sub_convolution_ntt(a, b);
+    if (min(n, m) <= 60) return convolution_naive(a, b);
+    if constexpr (std::is_same_v<mint, Fp<998244353>>) return convolution_ntt(a, b);
 
     static constexpr int MOD0 = 754974721;  // 2^24
     static constexpr int MOD1 = 167772161;  // 2^25
@@ -545,19 +465,29 @@ vector<mint> convolution(const vector<mint> &a, const vector<mint> &b) {
     vector<mint2> a2(n, 0), b2(m, 0);
     for (int i = 0; i < n; ++i) a0[i] = a[i].val, a1[i] = a[i].val, a2[i] = a[i].val;
     for (int i = 0; i < m; ++i) b0[i] = b[i].val, b1[i] = b[i].val, b2[i] = b[i].val;
-    auto c0 = sub_convolution_ntt(std::move(a0), std::move(b0));
-    auto c1 = sub_convolution_ntt(std::move(a1), std::move(b1));
-    auto c2 = sub_convolution_ntt(std::move(a2), std::move(b2));
+    auto c0 = convolution_ntt(std::move(a0), std::move(b0));
+    auto c1 = convolution_ntt(std::move(a1), std::move(b1));
+    auto c2 = convolution_ntt(std::move(a2), std::move(b2));
 
     vector<mint> res(n + m - 1);
     mint mod0 = MOD0, mod01 = mod0 * MOD1;
     for (int i = 0; i < n + m - 1; ++i) {
         unsigned int y0 = c0[i].val;
-        unsigned int y1 = (imod0 * (c1[i] - y0)).val;
-        unsigned int y2 = (imod01 * (c2[i] - y0) - imod1 * y1).val;
+        unsigned int y1 = (imod0 * (c1[i] - mint1(y0))).val;
+        unsigned int y2 = (imod01 * (c2[i] - mint2(y0)) - imod1 * y1).val;
         res[i] = mod01 * y2 + mod0 * y1 + y0;
     }
     return res;
+}
+
+// convolution overall
+template<class T> vector<T> convolution(const vector<T> &a, const vector<T> &b) {
+    int n = (int)a.size(), m = (int)b.size();
+    if (!n || !m) return {};
+    if (min(n, m) <= 60) return convolution_naive(a, b);
+    if constexpr (std::is_same_v<T, Fp<998244353>>) return convolution_ntt(a, b);
+    else if constexpr (std::is_integral_v<T>) return convolution_ll(a, b);
+    else return convolution_general_mod(a, b);
 }
 
 
@@ -644,11 +574,21 @@ template<class mint> struct FPS : vector<mint> {
     constexpr FPS& operator *= (const FPS &r) {
         return *this = convolution((*this), r);
     }
-    constexpr FPS& operator /= (const mint &v) {
+    constexpr FPS& divide_by_modint(const mint &v) {
         assert(v != 0);
         mint iv = v.inv();
         for (int i = 0; i < (int)this->size(); ++i) (*this)[i] *= iv;
         return *this;
+    }
+    constexpr FPS& divide_by_integer(const mint &v) {
+        assert(v != 0);
+        for (int i = 0; i < (int)this->size(); ++i) (*this)[i] /= v;
+        return *this;
+    }
+    constexpr FPS& operator /= (const mint &v) {
+        assert(v != 0);
+        if constexpr (std::is_integral_v<mint>) return divide_by_integer(v);
+        else return divide_by_modint(v);
     }
     
     // division, r must be normalized (r.back() must not be 0)
@@ -955,64 +895,6 @@ template<class mint> struct FPS : vector<mint> {
         return res;
     }
     
-    // sqrt(f)
-    constexpr FPS sqrt(int deg = -1) const {
-        if (count_terms() <= SPARSE_BOARDER) return sqrt_sparse(deg);
-        if (deg < 0) deg = (int)this->size();
-        if ((int)this->size() == 0) return FPS(deg, 0);
-        if ((*this)[0] == mint(0)) {
-            for (int i = 1; i < (int)this->size(); i++) {
-                if ((*this)[i] != mint(0)) {
-                    if (i & 1) return FPS();
-                    if (deg - i / 2 <= 0) return FPS(deg, 0);
-                    auto res = ((*this) >> i).sqrt(deg - i / 2);
-                    if (res.empty()) return FPS();
-                    res = res << (i / 2);
-                    if ((int)res.size() < deg) res.resize(deg, mint(0));
-                    return res;
-                }
-            }
-            return FPS(deg, 0);
-        }
-        long long sqr = mod_sqrt<long long>((*this)[0].val, mint::get_mod());
-        if (sqr == -1) return FPS();
-        assert((*this)[0].val == sqr * sqr % mint::get_mod());
-        FPS res = {mint(sqr)};
-        mint iv2 = mint(2).inv();
-        for (int d = 1; d < deg; d <<= 1) {
-            res = (res + pre(d << 1) * res.inv(d << 1)).pre(d << 1) * iv2;
-        }
-        res.resize(deg);
-        return res;
-    }
-    constexpr FPS sqrt_sparse(int deg) const {
-        if (deg < 0) deg = (int)this->size();
-        if ((int)this->size() == 0) return FPS(deg, 0);
-        if ((*this)[0] == mint(0)) {
-            for (int i = 1; i < (int)this->size(); i++) {
-                if ((*this)[i] != mint(0)) {
-                    if (i & 1) return FPS();
-                    if (deg - i / 2 <= 0) return FPS(deg, 0);
-                    auto res = ((*this) >> i).sqrt_sparse(deg - i / 2);
-                    if (res.empty()) return FPS();
-                    res = res << (i / 2);
-                    if ((int)res.size() < deg) res.resize(deg, mint(0));
-                    return res;
-                }
-            }
-            return FPS(deg, 0);
-        }
-        mint con = (*this)[0], icon = con.inv();
-        long long sqr = mod_sqrt<long long>(con.val, mint::get_mod());
-        if (sqr == -1) return FPS();
-        assert(con.val == sqr * sqr % mint::get_mod());
-        auto res = (*this) * icon;
-        return res.sqrt_sparse_constant1(deg) * sqr;
-    }
-    constexpr FPS sqrt_sparse_constant1(int deg) const {
-        return pow_sparse_constant1(mint(2).inv(), deg);
-    }
-    
     // friend operators
     friend constexpr FPS diff(const FPS &f) { return f.diff(); }
     friend constexpr FPS integral(const FPS &f) { return f.integral(); }
@@ -1020,13 +902,8 @@ template<class mint> struct FPS : vector<mint> {
     friend constexpr FPS log(const FPS &f, int deg = -1) { return f.log(deg); }
     friend constexpr FPS exp(const FPS &f, int deg = -1) { return f.exp(deg); }
     friend constexpr FPS pow(const FPS &f, long long e, int deg = -1) { return f.pow(e, deg); }
-    friend constexpr FPS sqrt(const FPS &f, int deg = -1) { return f.sqrt(deg); }
 };
 
-
-//------------------------------//
-// Polynomial Algorithms
-//------------------------------//
 
 // middle product 
 // c[i] = sum_j a[i+j]b[j] (deg(a) = n, deg(b) = m -> deg(c) = n-m)
@@ -1118,7 +995,7 @@ FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
 
 
 //------------------------------//
-// Modint Matrix
+// Modint Matrix (which is necessary)
 //------------------------------//
 
 // modint matrix
@@ -1631,6 +1508,16 @@ template<class mint> struct MintPolynomialMatrix {
 
 // ABC 412 G - Degree Harmony
 void ABC_412_G() {
+    auto rand_int = [&]() -> unsigned int {
+        static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
+        unsigned int tt = (tx^(tx<<11));
+        tx = ty; ty = tz; tz = tw;
+        return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
+    };
+    auto rand_range_int = [&](int minv, int maxv) -> int {
+        return rand_int() % (maxv - minv + 1) + minv;
+    };
+
     int N, M;
     cin >> N >> M;
     vector<int> A(N), id(N+1, 0), u(M), v(M);
@@ -1645,7 +1532,7 @@ void ABC_412_G() {
         for (int j = id[i]; j < id[i+1]; j++) {
             for (int k = id[i]; k < id[i+1]; k++) {
                 if (j >= k) continue;
-                int val = randInt(0, MOD-1);
+                int val = rand_range_int(0, MOD-1);
                 mat[j][k][0] = val, mat[k][j][0] = -val;
             }
         }
@@ -1653,7 +1540,7 @@ void ABC_412_G() {
     for (int i = 0; i < M; i++) {
         for (int j = id[u[i]]; j < id[u[i]+1]; j++) {
             for (int k = id[v[i]]; k < id[v[i]+1]; k++) {
-                int val = randInt(0, MOD-1);
+                int val = rand_range_int(0, MOD-1);
                 mat[j][k][1] = val, mat[k][j][1] = -val;
             }
         }
