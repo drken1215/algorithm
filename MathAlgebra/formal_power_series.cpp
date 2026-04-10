@@ -30,7 +30,7 @@ using namespace std;
 
 
 //------------------------------//
-// modint
+// mod algorithms
 //------------------------------//
 
 // modint
