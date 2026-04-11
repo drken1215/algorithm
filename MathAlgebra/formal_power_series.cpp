@@ -1230,57 +1230,6 @@ template<typename mint> mint BMBM(const vector<mint> &A, long long K) {
     return BostanMori(P, Q, K);   
 }
 
-// composition of FPS, calc g(f(x)), O(N (log N)^2)
-template<class mint>
-FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
-    auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
-        if (n == 0) {
-            FPS<mint> T{begin(Q), begin(Q) + k};
-            T.emplace_back(mint(1));
-            FPS<mint> u = g * T.rev().inv().rev();
-            FPS<mint> P(h * k);
-            for (int i = 0; i < (int)g.size(); i++) P[k - i - 1] = u[i + k];
-            return P;
-        }
-        FPS<mint> nQ(h * k * 4), nR(h * k * 2);
-        for (int i = 0; i < k; i++) {
-            copy(begin(Q) + i * h, begin(Q) + i * h + n + 1, begin(nQ) + i * h * 2);
-        }
-        nQ[h * k * 2] += 1;
-        ntt_trans(nQ);
-        for (int i = 0; i < h * k * 4; i += 2) swap(nQ[i], nQ[i + 1]);
-        for (int i = 0; i < h * k * 2; i++) nR[i] = nQ[i * 2] * nQ[i * 2 + 1];
-        ntt_trans_inv(nR);
-        nR[0] -= 1;
-        Q.assign(h * k, 0);
-        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
-            Q[i * h / 2 + j] = nR[i * h + j];
-        }
-        auto P = rec(rec, Q, n / 2, h / 2, k * 2);
-        FPS<mint> nP(h * k * 4);
-        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
-            nP[i * h * 2 + j * 2 + n % 2] = P[i * h / 2 + j];
-        }
-        ntt_trans(nP);
-        for (int i = 1; i < h * k * 4; i <<= 1) reverse(begin(nQ) + i, begin(nQ) + i * 2);
-        for (int i = 0; i < h * k * 4; i++) nP[i] *= nQ[i];
-        ntt_trans_inv(nP);
-        P.assign(h * k, 0);
-        for (int i = 0; i < k; i++) {
-            copy(begin(nP) + i * h * 2, begin(nP) + i * h * 2 + n + 1, begin(P) + i * h);
-        }
-        return P;
-    };
-    if (deg == -1) deg = max((int)f.size(), (int)g.size());
-    f.resize(deg), g.resize(deg);
-    int n = (int)f.size() - 1, h = 1, k = 1;
-    while (h < n + 1) h *= 2;
-    FPS<mint> Q(h * k);
-    for (int i = 0; i <= n; i++) Q[i] = -f[i];
-    FPS<mint> P = rec(rec, Q, n, h, k);
-    return P.pre(n + 1).rev();
-}
-
 // Power Projection, O(N (log N)^2)
 // for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
 template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
@@ -1362,6 +1311,57 @@ FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
     T[0]--;
     if (T[0] == 0) return S.rev().pre(m + 1);
     else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
+}
+
+// composition of FPS, calc g(f(x)), O(N (log N)^2)
+template<class mint>
+FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
+    auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
+        if (n == 0) {
+            FPS<mint> T{begin(Q), begin(Q) + k};
+            T.emplace_back(mint(1));
+            FPS<mint> u = g * T.rev().inv().rev();
+            FPS<mint> P(h * k);
+            for (int i = 0; i < (int)g.size(); i++) P[k - i - 1] = u[i + k];
+            return P;
+        }
+        FPS<mint> nQ(h * k * 4), nR(h * k * 2);
+        for (int i = 0; i < k; i++) {
+            copy(begin(Q) + i * h, begin(Q) + i * h + n + 1, begin(nQ) + i * h * 2);
+        }
+        nQ[h * k * 2] += 1;
+        ntt_trans(nQ);
+        for (int i = 0; i < h * k * 4; i += 2) swap(nQ[i], nQ[i + 1]);
+        for (int i = 0; i < h * k * 2; i++) nR[i] = nQ[i * 2] * nQ[i * 2 + 1];
+        ntt_trans_inv(nR);
+        nR[0] -= 1;
+        Q.assign(h * k, 0);
+        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
+            Q[i * h / 2 + j] = nR[i * h + j];
+        }
+        auto P = rec(rec, Q, n / 2, h / 2, k * 2);
+        FPS<mint> nP(h * k * 4);
+        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
+            nP[i * h * 2 + j * 2 + n % 2] = P[i * h / 2 + j];
+        }
+        ntt_trans(nP);
+        for (int i = 1; i < h * k * 4; i <<= 1) reverse(begin(nQ) + i, begin(nQ) + i * 2);
+        for (int i = 0; i < h * k * 4; i++) nP[i] *= nQ[i];
+        ntt_trans_inv(nP);
+        P.assign(h * k, 0);
+        for (int i = 0; i < k; i++) {
+            copy(begin(nP) + i * h * 2, begin(nP) + i * h * 2 + n + 1, begin(P) + i * h);
+        }
+        return P;
+    };
+    if (deg == -1) deg = max((int)f.size(), (int)g.size());
+    f.resize(deg), g.resize(deg);
+    int n = (int)f.size() - 1, h = 1, k = 1;
+    while (h < n + 1) h *= 2;
+    FPS<mint> Q(h * k);
+    for (int i = 0; i <= n; i++) Q[i] = -f[i];
+    FPS<mint> P = rec(rec, Q, n, h, k);
+    return P.pre(n + 1).rev();
 }
 
 // find g s.t. f(g(x)) ≡ x (mod x^{deg}), O(N (log N)^2)

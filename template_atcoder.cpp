@@ -1971,6 +1971,89 @@ template<typename mint> mint BMBM(const vector<mint> &A, long long K) {
     return BostanMori(P, Q, K);   
 }
 
+// Power Projection, O(N (log N)^2)
+// for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
+template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
+FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
+    int n = (int)f.size() - 1, k = 1, h = 1;
+    g.resize(n + 1);
+    if (m < 0) m = n;
+    while (h < n + 1) h <<= 1;
+    FPS<mint> P((n + 1) * k), Q((n + 1) * k), nP, nQ, buf, buf2;
+    for (int i = 0; i <= n; i++) P[i * k] = g[i];
+    for (int i = 0; i <= n; i++) Q[i * k] = -f[i];
+    Q[0]++;
+    mint iv2 = mint(2).inv();
+    while (n) {
+        mint w = mint(pr).pow((MOD - 1) / (2 * k)), iw = w.inv();
+        buf2.resize(k);
+        auto ntt_doubling = [&]() {
+            copy(begin(buf), end(buf), begin(buf2));
+            ntt_trans_inv(buf2);
+            mint c = 1;
+            for (int i = 0; i < k; i++) buf2[i] *= c, c *= w;
+            ntt_trans(buf2);
+            copy(begin(buf2), end(buf2), back_inserter(buf));
+        };
+        nP.clear(), nQ.clear();
+        for (int i = 0; i <= n; i++) {
+            buf.resize(k);
+            copy(begin(P) + i * k, begin(P) + (i + 1) * k, begin(buf));
+            ntt_doubling();
+            copy(begin(buf), end(buf), back_inserter(nP));
+            buf.resize(k);
+            copy(begin(Q) + i * k, begin(Q) + (i + 1) * k, begin(buf));
+            if (i == 0) {
+                for (int j = 0; j < k; j++) buf[j]--;
+                ntt_doubling();
+                for (int j = 0; j < k; j++) buf[j]++;
+                for (int j = 0; j < k; j++) buf[k + j]--;
+            } else {
+                ntt_doubling();
+            }
+            copy(begin(buf), end(buf), back_inserter(nQ));
+        }
+        nP.resize(h * 2 * k * 2), nQ.resize(h * 2 * k * 2);
+        FPS<mint> p(h * 2), q(h * 2);
+        w = mint(pr).pow((MOD - 1) / (h * 2)), iw = w.inv();
+        vector<int> btr;
+        if (n % 2) {
+            btr.resize(h);
+            for (int i = 0, lg = __builtin_ctz(h); i < h; i++) {
+                btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (lg - 1));
+            }
+        }
+        for (int j = 0; j < k * 2; j++) {
+            p.assign(h * 2, 0), q.assign(h * 2, 0);
+            for (int i = 0; i < h; i++) p[i] = nP[i * k * 2 + j], q[i] = nQ[i * k * 2 + j];
+            ntt_trans(p), ntt_trans(q);
+            for (int i = 0; i < h * 2; i += 2) swap(q[i], q[i + 1]);
+            for (int i = 0; i < h * 2; i++) p[i] *= q[i];
+            for (int i = 0; i < h; i++) q[i] = q[i * 2] * q[i * 2 + 1];
+            if (n & 1) {
+                mint c = iv2;
+                buf.resize(h);
+                for (int i : btr) buf[i] = (p[i * 2] - p[i * 2 + 1]) * c, c *= iw;
+                swap(p, buf);
+            } else {
+                for (int i = 0; i < h; i++) p[i] = (p[i * 2] + p[i * 2 + 1]) * iv2;
+            }
+            p.resize(h), q.resize(h);
+            ntt_trans_inv(p), ntt_trans_inv(q);
+            for (int i = 0; i < h; i++) nP[i * k * 2 + j] = p[i];
+            for (int i = 0; i < h; i++) nQ[i * k * 2 + j] = q[i];
+        }
+        nP.resize((n / 2 + 1) * k * 2), nQ.resize((n / 2 + 1) * k * 2);
+        swap(P, nP), swap(Q, nQ);
+        n /= 2, h /= 2, k *= 2;
+    }
+    FPS<mint> S{begin(P), begin(P) + k}, T{begin(Q), begin(Q) + k};
+    ntt_trans_inv(S), ntt_trans_inv(T);
+    T[0]--;
+    if (T[0] == 0) return S.rev().pre(m + 1);
+    else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
+}
+
 // composition of FPS, calc g(f(x)), O(N (log N)^2)
 template<class mint>
 FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
@@ -2020,89 +2103,6 @@ FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
     for (int i = 0; i <= n; i++) Q[i] = -f[i];
     FPS<mint> P = rec(rec, Q, n, h, k);
     return P.pre(n + 1).rev();
-}
-
-// Power Projection, O(N (log N)^2)
-// for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
-template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
-FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
-    int n = (int)f.size() - 1, k = 1, h = 1;
-    g.resize(n + 1);
-    if (m < 0) m = n;
-    while (h < n + 1) h <<= 1;
-    FPS<mint> P((n + 1) * k), Q((n + 1) * k), nP, nQ, buf, buf2;
-    for (int i = 0; i <= n; i++) P[i * k] = g[i];
-    for (int i = 0; i <= n; i++) Q[i * k] = -f[i];
-    Q[0]++;
-    mint iv2 = mint(2).inv();
-    while (n) {
-        mint w = mint(pr).pow((MOD - 1) / (2 * k)), iw = w.inv();
-        buf2.resize(k);
-        auto ntt_doubling = [&]() {
-            copy(begin(buf), end(buf), begin(buf2));
-            ntt_trans_inv(buf2);
-            mint c = 1;
-            for (int i = 0; i < k; i++) buf2[i] *= c, c *= w;
-            ntt_trans(buf2);
-            copy(begin(buf2), end(buf2), back_inserter(buf));
-        };
-        nP.clear(), nQ.clear();
-        for (int i = 0; i <= n; i++) {
-            buf.resize(k);
-            copy(begin(P) + i * k, begin(P) + (i + 1) * k, begin(buf));
-            ntt_doubling();
-            copy(begin(buf), end(buf), back_inserter(nP));
-            buf.resize(k);
-            copy(begin(Q) + i * k, begin(Q) + (i + 1) * k, begin(buf));
-            if (i == 0) {
-                for (int j = 0; j < k; j++) buf[j]--;
-                ntt_doubling();
-                for (int j = 0; j < k; j++) buf[j]++;
-                for (int j = 0; j < k; j++) buf[k + j]--;
-            } else {
-                ntt_doubling();
-            }
-            copy(begin(buf), end(buf), back_inserter(nQ));
-        }
-        nP.resize(h * 2 * k * 2), nQ.resize(h * 2 * k * 2);
-        FPS<mint> p(h * 2), q(h * 2);
-        w = mint(pr).pow((MOD - 1) / (h * 2)), iw = w.inv();
-        vector<int> btr;
-        if (n % 2) {
-            btr.resize(h);
-            for (int i = 0, lg = bsf(h); i < h; i++) {
-                btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (lg - 1));
-            }
-        }
-        for (int j = 0; j < k * 2; j++) {
-            p.assign(h * 2, 0), q.assign(h * 2, 0);
-            for (int i = 0; i < h; i++) p[i] = nP[i * k * 2 + j], q[i] = nQ[i * k * 2 + j];
-            ntt_trans(p), ntt_trans(q);
-            for (int i = 0; i < h * 2; i += 2) swap(q[i], q[i + 1]);
-            for (int i = 0; i < h * 2; i++) p[i] *= q[i];
-            for (int i = 0; i < h; i++) q[i] = q[i * 2] * q[i * 2 + 1];
-            if (n & 1) {
-                mint c = iv2;
-                buf.resize(h);
-                for (int i : btr) buf[i] = (p[i * 2] - p[i * 2 + 1]) * c, c *= iw;
-                swap(p, buf);
-            } else {
-                for (int i = 0; i < h; i++) p[i] = (p[i * 2] + p[i * 2 + 1]) * iv2;
-            }
-            p.resize(h), q.resize(h);
-            ntt_trans_inv(p), ntt_trans_inv(q);
-            for (int i = 0; i < h; i++) nP[i * k * 2 + j] = p[i];
-            for (int i = 0; i < h; i++) nQ[i * k * 2 + j] = q[i];
-        }
-        nP.resize((n / 2 + 1) * k * 2), nQ.resize((n / 2 + 1) * k * 2);
-        swap(P, nP), swap(Q, nQ);
-        n /= 2, h /= 2, k *= 2;
-    }
-    FPS<mint> S{begin(P), begin(P) + k}, T{begin(Q), begin(Q) + k};
-    ntt_trans_inv(S), ntt_trans_inv(T);
-    T[0]--;
-    if (T[0] == 0) return S.rev().pre(m + 1);
-    else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
 }
 
 // find g s.t. f(g(x)) ≡ x (mod x^{deg}), O(N (log N)^2)
