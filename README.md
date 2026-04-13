@@ -445,7 +445,7 @@
 ## 多項式の基底変換
 
 - (★★★☆) [Polynomial Taylor Shift (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_taylor_shift.cpp)
-- (★★★☆) [Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/lagrange_interpolation_point.cpp)
+- (★★★☆) Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))
 - (★★★★) [多項式補間 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation.cpp)
 - (★★★★) [多項式補間 (等比数列のとき) (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/polynomial_interpolation_in_geometric_sequence.cpp)
 - (★★★★) [Multipoint Evaluation (in O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/multipoint_evaluation.cpp)
