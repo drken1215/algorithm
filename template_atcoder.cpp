@@ -4667,11 +4667,12 @@ template<class Monoid> SegmentTree<Monoid> RangeSum(const vector<Monoid> &v) {
 }
 
 // various lazy segment trees
+const int CHANGE_UNITY = 123456789;
 template<class Monoid> auto seg_op_sum_with_sum = [](pair<Monoid, long long> p, pair<Monoid, long long> q) { 
     return make_pair(p.first + q.first, p.second + q.second);
 };
 template<class Monoid, class Action> auto seg_act_change = [](Action f, Monoid x) {
-    return (f != Action(-1) ? f : x);
+    return (f != Action(CHANGE_UNITY) ? f : x);
 };
 template<class Monoid, class Action> auto seg_act_chmin = [](Action f, Monoid x) {
     return min(Monoid(f), x);
@@ -4683,10 +4684,10 @@ template<class Monoid, class Action> auto seg_act_add = [](Action f, Monoid x) {
     return f + x;
 };
 template<class Monoid, class Action> auto seg_act_change_with_sum = [](Action f, pair<Monoid, long long> x) {
-    return (f != Action(-1) ? make_pair(f * x.second, x.second) : x);
+    return (f != Action(CHANGE_UNITY) ? make_pair(f * x.second, x.second) : x);
 };
 template<class Action> auto seg_comp_change = [](Action g, Action f) {
-    return (g != Action(-1) ? g : f);
+    return (g != Action(CHANGE_UNITY) ? g : f);
 };
 template<class Action> auto seg_comp_chmin = [](Action g, Action f) {
     return min(g, f);
@@ -4700,32 +4701,34 @@ template<class Action> auto seg_comp_add = [](Action g, Action f) {
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMin(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
         N, seg_op_min<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
-        numeric_limits<Monoid>::max()/2, Action(-1));
+        numeric_limits<Monoid>::max()/2, Action(CHANGE_UNITY));
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMin(const vector<Monoid> &v) {
     return LazySegmentTree<Monoid, Action>(
         v, seg_op_min<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
-        numeric_limits<Monoid>::max()/2, Action(-1));
+        numeric_limits<Monoid>::max()/2, Action(CHANGE_UNITY));
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMax(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
         N, seg_op_max<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
-        -numeric_limits<Monoid>::max()/2, Action(-1));
+        -numeric_limits<Monoid>::max()/2, Action(CHANGE_UNITY));
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChangeRangeMax(const vector<Monoid> &v) {
     return LazySegmentTree<Monoid, Action>(
         v, seg_op_max<Monoid>, seg_act_change<Monoid, Action>, seg_comp_change<Action>,
-        -numeric_limits<Monoid>::max()/2, Action(-1));
+        -numeric_limits<Monoid>::max()/2, Action(CHANGE_UNITY));
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid, long long>, Action> RangeChangeRangeSum(int N = 0) {
     return LazySegmentTree<pair<Monoid, long long>, Action>(
         N, seg_op_sum_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
-        make_pair(Monoid(0), 1), Action(-1));
+        make_pair(Monoid(0), 0), Action(CHANGE_UNITY));
 };
 template<class Monoid, class Action> LazySegmentTree<pair<Monoid, long long>, Action> RangeChangeRangeSum(const vector<Monoid> &v) {
+    vector<pair<Monoid, long long>> ini(v.size());
+    for (int i = 0; i < (int)v.size(); i++) ini[i] = make_pair(v[i], 1);
     return LazySegmentTree<pair<Monoid, long long>, Action>(
-        v, seg_op_sum_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
-        make_pair(Monoid(0), 1), Action(-1));
+        ini, seg_op_sum_with_sum<Monoid>, seg_act_change_with_sum<Monoid, Action>, seg_comp_change<Action>,
+        make_pair(Monoid(0), 0), Action(CHANGE_UNITY));
 };
 template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeChminRangeMin(int N = 0) {
     return LazySegmentTree<Monoid, Action>(
