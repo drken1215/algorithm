@@ -393,6 +393,9 @@ ostream& operator << (ostream &os, const i128 &x) {
     }
     return os;
 }
+i128 abs(i128 a) {
+    return a >= 0 ? a : -a;
+}
 i128 gcd(i128 a, i128 b) {
     if (a < 0) a = -a;
     if (b < 0) b = -b;
