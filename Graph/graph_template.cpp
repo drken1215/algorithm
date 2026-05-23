@@ -19,18 +19,18 @@ template<class T = long long> struct Edge {
 
 // graph class
 template<class T = long long> struct Graph {
-    int V, E;
+    int V;
     bool record_reversed_edges = false, record_edge_index = false;
     vector<vector<Edge<T>>> list;
     vector<vector<Edge<T>>> reversed_list;
     vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
 
     // constructors
-    Graph(int n = 0, int m = 0, bool rre = false, bool rei = false) { 
-        init(n, m, rre, rei);
+    Graph(int n = 0, bool rre = false, bool rei = false) {
+        init(n, rre, rei);
     }
-    void init(int n = 0, int m = 0, bool rre = false, bool rei = false) {
-        V = n, E = m, record_reversed_edges = rre, record_edge_index = rei;
+    void init(int n = 0, bool rre = false, bool rei = false) {
+        V = n, record_reversed_edges = rre, record_edge_index = rei;
         list.assign(n, vector<Edge<T>>());
         if (record_reversed_edges) reversed_list.assign(n, vector<Edge<T>>());
         if (record_edge_index) id.assign(n, unordered_map<int, int>());
@@ -80,15 +80,17 @@ template<class T = long long> struct Graph {
         }
     }
 
-    // input / output
+    // input (only tree-case)
     friend istream& operator >> (istream &is, Graph &G) {
-        for (int i = 0; i < G.E; i++) {
+        for (int i = 0; i < G.V - 1; i++) {
             int u, v;
             is >> u >> v, u--, v--;
             G.add_bidirected_edge(u, v);
         }
         return is;
     }
+
+    // output
     friend ostream &operator << (ostream &os, const Graph &G) {
         os << endl;
         for (int i = 0; i < (int)G.size(); ++i) {
