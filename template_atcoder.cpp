@@ -3281,13 +3281,13 @@ template<class FLOW, class COST> struct MinCostBFlow {
     // inner values
     int V;
     vector<Edge> edges;
-    vector<FLOW> dss;  // demand (< 0) and supply (> 0)
+    vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
     vector<COST> dual;
     FlowCostGraph<FLOW, COST> G;
 
     // constructor
     MinCostBFlow() {}
-    MinCostBFlow(int V) : V(V), dss(V) {}
+    MinCostBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
 
     // setter
     void add_edge(int from, int to, FLOW cap, COST cost) {
@@ -3298,30 +3298,54 @@ template<class FLOW, class COST> struct MinCostBFlow {
         assert(lower_cap <= upper_cap);
         edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
     }
-    void add_ds(int v, FLOW ds) {
+    void set_ds(int v, FLOW ds) {
         assert(0 <= v && v < V);
-        dss[v] += ds;
+        lower_dss[v] = ds, upper_dss[v] = ds;
+    }
+    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
+        assert(0 <= v && v < V);
+        assert(lower_ds <= upper_ds);
+        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
     }
 
     // solver
     pair<bool, COST> solve(bool calc_potential = true) {
-        // feasibility check
-        FlowGraph<FLOW> sg(V + 2);
-        int s = V, t = s + 1;
+        // lower_ds, upper_ds -> strict ds
+        int super = V;
+        vector<FLOW> dss(V + 1, 0);
+        for (int i = 0; i < V; i++) {
+            if (lower_dss[i] == upper_dss[i]) dss[i] = lower_dss[i];
+            else if (lower_dss[i] >= 0) {
+                add_edge(super, i, lower_dss[i], upper_dss[i], 0);
+            } else if (upper_dss[i] < 0) {
+                add_edge(i, super, -upper_dss[i], -lower_dss[i], 0);
+            } else {
+                add_edge(super, i, upper_dss[i], 0);
+                add_edge(i, super, -lower_dss[i], 0);
+            }
+        }
+
+        // pre-flow lower_cap
+        FlowGraph<FLOW> sg(V + 3);
+        int s = V + 1, t = V + 2;
         for (const auto &e : edges) {
             dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
             sg.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
         }
+
+        // ds -> s, t
         FLOW ssum = 0, tsum = 0;
         for (int i = 0; i < V; i++) {
             if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
             else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
         }
+
+        // feasibility check
         if (ssum != tsum) return {false, COST(0)};
         if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
 
         // come down to min-cost circulation
-        G.init(V);
+        G.init(V + 1);
         for (int i = 0; i < (int)edges.size(); i++) {
             auto &e = edges[i];
             const auto &ge = sg.get_edge(i);
@@ -3342,48 +3366,9 @@ template<class FLOW, class COST> struct MinCostBFlow {
         if (calc_potential) {
             G.calc_potential();
             dual = G.pot;
+            dual.pop_back();  // eliminate super-node
         }
         return {true, res};
-    }
-};
-
-// upper and lower demand-supply
-template<class FLOW, class COST> struct GeneraliezedMinCostBFlow {
-    // Edge
-    struct Edge {
-        int from, to;
-        FLOW lower_cap, upper_cap, flow;
-        COST cost;
-    };
-
-    // inner values
-    int V;
-    vector<Edge> edges;
-    vector<FLOW> lower_dss, upper_dss;
-    MinCostBFlow<FLOW, COST> mcbf;
-
-    // constructor
-    GeneraliezedMinCostBFlow() {}
-    GeneraliezedMinCostBFlow(int V) : V(V), lower_dss(V), upper_dss(V), mcbf(V) {}
-
-    // setter
-        // setter
-    void add_edge(int from, int to, FLOW cap, COST cost) {
-        assert(cap >= 0);
-        edges.push_back({from, to, 0, cap, 0, cost});
-    }
-    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
-        assert(lower_cap <= upper_cap);
-        edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
-    }
-    void add_ds(int v, FLOW lower_ds, FLOW upper_ds) {
-        assert(0 <= v && v < V);
-        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
-    }
-
-    // solver
-    pair<bool, COST> solve() {
-        
     }
 };
 
