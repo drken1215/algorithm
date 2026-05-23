@@ -6,6 +6,9 @@
 //   Yosupo Library Checker - Minimum Cost b-flow
 //     https://judge.yosupo.jp/problem/min_cost_b_flow
 //
+//   ABC 421 G - Increase to make it Increasing
+//     https://atcoder.jp/contests/abc421/tasks/abc421_g
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -466,6 +469,12 @@ template<class FLOW, class COST> struct MinCostBFlow {
         int from, to;
         FLOW lower_cap, upper_cap, flow;
         COST cost;
+
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to 
+            << '(' << e.lower_cap << '~' << e.upper_cap << ';' << e.cost << ')';
+        }
     };
 
     // inner values
@@ -525,7 +534,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
 
         // ds -> s, t
         FLOW ssum = 0, tsum = 0;
-        for (int i = 0; i < V; i++) {
+        for (int i = 0; i < V + 1; i++) {
             if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
             else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
         }
@@ -611,7 +620,7 @@ void Yosupo_Minimum_Cost_b_flow() {
     cin >> N >> M;
     MinCostBFlow<long long, i128> mcf(N);
     vector<i128> B(N);
-    for (int i = 0; i < N; i++) cin >> B[i], mcf.add_ds(i, B[i]);
+    for (int i = 0; i < N; i++) cin >> B[i], mcf.set_ds(i, B[i]);
     vector<int> s(M), t(M);
     vector<i128> l(M), u(M), c(M);
     for (int i = 0; i < M; i++) {
@@ -628,7 +637,31 @@ void Yosupo_Minimum_Cost_b_flow() {
     }
 }
 
+// ABC 421 G - Increase to make it Increasing
+void ABC_421_G() {
+    long long N, M, INF = 1LL<<45; cin >> N >> M;
+    vector<long long> A(N), D(N+1, INF);
+    D[0] = 0;
+    for (int i = 0; i < N; i++) {
+        cin >> A[i];
+        if (i) D[i] = A[i] - A[i-1];
+    }
+
+    MinCostBFlow<long long, long long> G(N+1);
+    for (int v = 0; v <= N; v++) {
+        if (D[v] >= 0) G.set_ds(v, 0, D[v]);
+        else G.set_ds(v, -INF, D[v]);
+    }
+    for (int i = 0; i < M; i++) {
+        long long u, v; cin >> u >> v; u--;
+        G.add_edge(v, u, INF, 1);
+    }
+    auto [flag, cost] = G.solve();
+    cout << (flag ? cost : -1) << endl;
+}
+
 
 int main() {
     Yosupo_Minimum_Cost_b_flow();
+    //ABC_421_G();
 }

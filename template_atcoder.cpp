@@ -3276,6 +3276,12 @@ template<class FLOW, class COST> struct MinCostBFlow {
         int from, to;
         FLOW lower_cap, upper_cap, flow;
         COST cost;
+
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to 
+            << '(' << e.lower_cap << '~' << e.upper_cap << ';' << e.cost << ')';
+        }
     };
 
     // inner values
@@ -3335,7 +3341,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
 
         // ds -> s, t
         FLOW ssum = 0, tsum = 0;
-        for (int i = 0; i < V; i++) {
+        for (int i = 0; i < V + 1; i++) {
             if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
             else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
         }
