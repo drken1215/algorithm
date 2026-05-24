@@ -354,7 +354,7 @@
 
 ## 最小費用流の応用
 
-- (★★★★) 需要供給量にも上限と下限を設けた最小費用 b-flow の拡張
+- (★★★★) [需要供給量にも上限と下限を設けた最小費用 b-flow の拡張](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_general.cpp)
 - (★★★★) 最小費用テンション (最小費用流問題の双対問題)
 - (★★★★) 最小凸費用流
 - (★★★★) 最小凸費用テンション (最小凸費用流問題の双対問題)
