@@ -6,9 +6,6 @@
 //   Yosupo Library Checker - Minimum Cost b-flow
 //     https://judge.yosupo.jp/problem/min_cost_b_flow
 //
-//   ABC 421 G - Increase to make it Increasing
-//     https://atcoder.jp/contests/abc421/tasks/abc421_g
-//
 
 
 #pragma GCC optimize("Ofast")
@@ -637,31 +634,7 @@ void Yosupo_Minimum_Cost_b_flow() {
     }
 }
 
-// ABC 421 G - Increase to make it Increasing
-void ABC_421_G() {
-    long long N, M, INF = 1LL<<45; cin >> N >> M;
-    vector<long long> A(N), D(N+1, INF);
-    D[0] = 0;
-    for (int i = 0; i < N; i++) {
-        cin >> A[i];
-        if (i) D[i] = A[i] - A[i-1];
-    }
-
-    MinCostBFlow<long long, long long> G(N+1);
-    for (int v = 0; v <= N; v++) {
-        if (D[v] >= 0) G.set_ds(v, 0, D[v]);
-        else G.set_ds(v, -INF, D[v]);
-    }
-    for (int i = 0; i < M; i++) {
-        long long u, v; cin >> u >> v; u--;
-        G.add_edge(v, u, INF, 1);
-    }
-    auto [flag, cost] = G.solve();
-    cout << (flag ? cost : -1) << endl;
-}
-
 
 int main() {
     Yosupo_Minimum_Cost_b_flow();
-    //ABC_421_G();
 }

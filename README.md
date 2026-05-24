@@ -346,15 +346,15 @@
 - (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
 - (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
 
-## 最小費用 b-flow
+## b-flow
 
 - (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
 - (★★★★) [最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
 - (★★★★) [最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
+- (★★★★) [需要供給量にも上限と下限を設けた最小費用 b-flow の拡張](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_general.cpp)
 
 ## 最小費用流の応用
 
-- (★★★★) [需要供給量にも上限と下限を設けた最小費用 b-flow の拡張](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_general.cpp)
 - (★★★★) 最小費用テンション (最小費用流問題の双対問題)
 - (★★★★) 最小凸費用流
 - (★★★★) 最小凸費用テンション (最小凸費用流問題の双対問題)
