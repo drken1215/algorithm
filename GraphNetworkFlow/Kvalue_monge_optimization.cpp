@@ -1,57 +1,10 @@
 //
-// 3 変数劣モジュラ関数のグラフ表現
+// 2 変数 K 値の Monge 関数の和の最小化
 //
-// verified (3 変数は未 verify):
-//   競プロ典型 90 問 040 - Get More Money（★7）
-//     https://atcoder.jp/contests/typical90/tasks/typical90_an
+// verified:
+//   AtCoder ABC 347 G - Grid Coloring 2
+//     https://atcoder.jp/contests/abc347/tasks/abc347_g
 //
-//   AtCoder ARC 085 E - MUL (for basid psp)
-//     https://atcoder.jp/contests/arc085/tasks/arc085_c
-//
-//   AtCoder ABC 259 G - Grid Card Game (for basid psp)
-//     https://atcoder.jp/contests/abc259/tasks/abc259_g
-//
-//   AtCoder ABC 326 G - Unlock Achievement (for all-true profit)
-//     https://atcoder.jp/contests/abc326/tasks/abc326_g
-//
-//   AtCoder ABC 225 G - X (for xi = xj = 1 profit)
-//     https://atcoder.jp/contests/abc225/tasks/abc225_g
-//
-//   AOJ 2903 Board (for general 2-variable submodular function)
-//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2903
-//
-
-
-/*
- N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
- 
- ・1 変数 xi に関するコスト (1 変数劣モジュラ関数)
-    xi = F のときのコスト, xi = T のときのコスト
- 
- ・2 変数 xi, xj 間の関係性についてのコスト (2 変数劣モジュラ関数)
- 　　(xi, xj) = (F, F): コスト A
- 　　(xi, xj) = (F, T): コスト B
- 　　(xi, xj) = (T, F): コスト C
- 　　(xi, xj) = (T, T): コスト D
- 　(ただし、B + C >= A + D でなければならない)
- 
- ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
-    ・この場合は、特に Project Selection Problem と呼ばれ、俗に「燃やす埋める」などとも呼ばれる
-    ・xi = T, xj = F のときにコスト C がかかる
- 
- ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
-    ・xi = T, xj = T のときに (-D) の利得が得られる
- 
- ・3 変数 xi, xj, xk 間の関係性についてのコスト (3 変数劣モジュラ関数)
- 　　(xi, xj, xk) = (F, F, F): コスト A
- 　　(xi, xj, xk) = (F, F, T): コスト B
- 　　(xi, xj, xk) = (F, T, F): コスト C
- 　　(xi, xj, xk) = (F, T, T): コスト D
- 　　(xi, xj, xk) = (T, F, F): コスト E
- 　　(xi, xj, xk) = (T, F, T): コスト F
- 　　(xi, xj, xk) = (T, T, F): コスト G
- 　　(xi, xj, xk) = (T, T, T): コスト H
- */
 
 
 #include <bits/stdc++.h>
@@ -372,197 +325,146 @@ private:
 };
 
 
+// K-value Two Variable Submodular Function Optimization 
+/*
+    X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
+
+    X[i] < d -> x[i][d] = 1
+    X[i] = d -> x[i][1] = 0, ..., x[i][d] = 0, x[i][d+1] = 1, ..., x[i][K] = 1
+
+    X[i] = 0   -> (1, 1, 1, ..., 1, 1)
+    X[i] = 1   -> (0, 1, 1, ..., 1, 1)
+    X[i] = 2   -> (0, 0, 1, ..., 1, 1)
+    ...
+    X[i] = K-2 -> (0, 0, 0, ..., 0, 1)
+    X[i] = K-1 -> (0, 0, 0, ..., 0, 0)
+ */
+template<class COST> struct KValueSubmodularOpt {
+    // inner data
+    int N, N01;
+    COST INF;
+    vector<int> ks;  // size of x[i]
+    vector<vector<int>> x;  // index of x[i][k] in normal submodular optimization
+    ThreeVariableSubmodularOpt<COST> tvs;
+
+    // constructors
+    KValueSubmodularOpt() {}
+    KValueSubmodularOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
+        init(ks);
+    }
+    void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {
+        N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
+        x.resize(N);
+        for (int i = 0; i < N; i++) {
+            assert(ks[i] >= 2);
+            x[i].assign(ks[i], 0);
+            for (int k = 1; k < ks[i]; k++) x[i][k] = N01++;
+        }
+        tvs.init(N01, INF);
+        for (int i = 0; i < N; i++) {
+            for (int k = 1; k < ks[i] - 1; k++) {
+                tvs.add_psp_constraint(x[i][k], x[i][k + 1]);
+            }
+        }
+    }
+
+    // add constant cost
+    void add_cost(COST cost) {
+        tvs.add_cost(cost);
+    }
+
+    // add 1-variable function
+    void add_single_cost(int xi, const vector<COST> &cost) {
+        assert(0 <= xi && xi < N);
+        assert((int)cost.size() == ks[xi]);
+        tvs.add_cost(cost[ks[xi] - 1]);
+        for (int k = 1; k < ks[xi]; k++) {
+            tvs.add_single_cost(x[xi][k], 0, cost[k-1] - cost[k]);
+        }
+    }
+
+    // add 2-variable Monge function
+    // cost[i][j]+cost[i+1][j+1] <= cost[i+1][j]+cost[i][j+1]
+    void add_monge_function(int xi, int xj, vector<vector<COST>> cost) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(cost.size() == ks[xi]);
+        assert(cost[0].size() == ks[xj]);
+        vector<COST> icost(ks[xi]), jcost(ks[xj]);
+        for (int ki = 0; ki < ks[xi]; ki++) {
+            icost[ki] = cost[ki][0];
+            for (int kj = 0; kj < ks[xj]; kj++) cost[ki][kj] -= icost[ki];
+        }
+        for (int kj = 0; kj < ks[xj]; kj++) {
+            jcost[kj] = cost[0][kj];
+            for (int ki = 0; ki < ks[xi]; ki++) cost[ki][kj] -= jcost[kj];
+        }
+        add_single_cost(xi, icost), add_single_cost(xj, jcost);
+        for (int ki = 1; ki < ks[xi]; ki++) {
+            for (int kj = 1; kj < ks[xj]; kj++) {
+                COST c = cost[ki][kj] - cost[ki][kj-1] - cost[ki-1][kj] + cost[ki-1][kj-1];
+                assert(c <= 0);
+                tvs.add_both_false_profit(x[xi][ki], x[xj][kj], -c);
+            }
+        }
+    }
+
+    // solve
+    COST solve() {
+        return tvs.solve();
+    }
+    
+    // reconstrcut the optimal assignment
+    vector<int> reconstruct() {
+        vector<int> res(N, 0);
+        vector<bool> tres = tvs.reconstruct();
+        for (int i = 0; i < N; i++) for (int ki = 1; ki < ks[i]; ki++) {
+            res[i] += not tres[x[i][ki]];
+        }
+        return res;
+    }
+};
+
+
 //------------------------------//
 // Examples
 //------------------------------//
 
-// 競プロ典型 90 問 040 - Get More Money（★7）
-void Kyopro_Typical_90_040() {
-    // 入力
-    int N, W;
-    cin >> N >> W;
-    vector<int> A(N);
-    vector<vector<int>> c(N);
-    for (int i = 0; i < N; ++i) cin >> A[i];
-    for (int i = 0; i < N; ++i) {
-        int k;
-        cin >> k;
-        c[i].resize(k);
-        for (int j = 0; j < k; ++j) cin >> c[i][j], --c[i][j];
-    }
-    
-    // 家 i に入らない: F, 家 i に入る: T
-    const long long INF = 1LL<<50;
-    ThreeVariableSubmodularOpt<long long> tvs(N, INF);
-    for (int i = 0; i < N; ++i) {
-        tvs.add_single_cost(i, 0, W - A[i]);
-    }
-    
-    // 家 v in c[i] に入るためには家 i に入る必要がある
-    // つまり、v: T, i: F は禁止
-    for (int i = 0; i < N; ++i) {
-        for (auto v : c[i]) {
-            tvs.add_psp_constraint(v, i);
+// AtCoder ABC 347 G - Grid Coloring 2
+void ABC_347_G() {
+    long long N, INF = 1LL<<45; cin >> N;
+    vector<vector<long long>> A(N, vector<long long>(N));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j], A[i][j]--;
+    vector<int> ks(N*N, 5);
+    KValueSubmodularOpt<long long> opt(ks);
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+        if (A[i][j] >= 0) {
+            vector<long long> cost(5, INF);
+            cost[A[i][j]] = 0;
+            opt.add_single_cost(i*N+j, cost);
+        }
+        vector<vector<long long>> cost(5, vector<long long>(5, 0));
+        for (int x = 0; x < 5; x++) for (int y = 0; y < 5; y++) {
+            cost[x][y] = (x - y) * (x - y);
+        }
+        if (i+1 < N) {
+            opt.add_monge_function(i*N+j, (i+1)*N+j, cost);
+        }
+        if (j+1 < N) {
+            opt.add_monge_function(i*N+j, i*N+j+1, cost);
         }
     }
-    cout << -tvs.solve() << endl;
-}
-
-
-// ARC 085 E - MUL
-void ARC_085_E() {
-    int N;
-    cin >> N;
-    vector<long long> a(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-    
-    // i 個目の宝石を割らない: F, i 個目の宝石を割る: T とする
-    const long long INF = 1LL<<55;
-    ThreeVariableSubmodularOpt<long long> tvs(N, INF);
-    for (int i = 0; i < N; ++i) {
-        tvs.add_single_cost(i, -a[i], 0);
+    long long res = opt.solve();
+    auto x = opt.reconstruct();
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) A[i][j] = x[i*N+j]+1;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) cout << A[i][j] << " ";
+        cout << endl;
     }
-    
-    for (int i = 0; i < N; ++i) {
-        for (int j = i+1; j < N; ++j) {
-            if ((j+1) % (i+1) == 0) {
-                // i: T, j: F は禁止
-                tvs.add_psp_constraint(i, j);
-            }
-        }
-    }
-    cout << -tvs.solve() << endl;
-}
-
-
-// ABC 259 G - Grid Card Game
-void ABC_259_G() {
-    int H, W;
-    cin >> H >> W;
-    vector<vector<long long>> A(H, vector<long long>(W));
-    for (int i = 0; i < H; ++i) for (int j = 0; j < W; ++j) {
-        cin >> A[i][j];
-        A[i][j] *= -1;
-    }
-    
-    // セットアップ
-    const long long INF = 1LL<<50;
-    ThreeVariableSubmodularOpt<long long> tvs(H + W, INF);
-    for (int i = 0; i < H; ++i) {
-        long long sum = 0;
-        for (int j = 0; j < W; ++j) sum += A[i][j];
-        tvs.add_single_cost(i, 0, sum);
-    }
-    for (int j = 0; j < W; ++j) {
-        long long sum = 0;
-        for (int i = 0; i < H; ++i) sum += A[i][j];
-        tvs.add_single_cost(j+H, sum, 0);
-    }
-    for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W; ++j) {
-            if (A[i][j] > 0) tvs.add_psp_constraint(i, j+H);
-            else tvs.add_psp_penalty(i, j+H, -A[i][j]);
-        }
-    }
-    cout << -tvs.solve() << endl;
-}
-
-
-// ABC 326 G - Unlock Achievement
-void ABC_326_G() {
-    int N, M;
-    cin >> N >> M;
-    vector<long long> C(N), A(M);
-    vector<vector<long long>> L(M, vector<long long>(N));
-    for (int i = 0; i < N; ++i) cin >> C[i];
-    for (int i = 0; i < M; ++i) cin >> A[i];
-    for (int i = 0; i < M; ++i) for (int j = 0; j < N; ++j) cin >> L[i][j];
-    
-    // セットアップ
-    const long long INF = 1LL<<55;
-    ThreeVariableSubmodularOpt<long long> tvs(N*4, INF);
-    for (int i = 0; i < N*4; ++i) {
-        tvs.add_single_cost(i, 0, C[i/4]);
-        if (i % 4 != 3) tvs.add_psp_constraint(i+1, i);
-    }
-    for (int i = 0; i < M; ++i) {
-        vector<int> ids;
-        for (int j = 0; j < N; ++j) {
-            if (L[i][j] > 1) ids.push_back(j*4 + (L[i][j] - 2));
-        }
-        tvs.add_all_true_profit(ids, A[i]);
-    }
-    long long res = -tvs.solve();
-    cout << res << endl;
-}
-
-
-// ABC 225 G - X
-void ABC_225_G() {
-    long long H, W, C;
-    cin >> H >> W >> C;
-    vector<vector<long long>> A(H, vector<long long>(W));
-    for (int i = 0; i < H; ++i) for (int j = 0; j < W; ++j) cin >> A[i][j];
-    
-    auto get_id = [&](int i, int j) -> int { return i * W + j; };
-    
-    // セットアップ (F: × を書かない, T: x を書く)
-    const long long INF = 1LL<<45;
-    ThreeVariableSubmodularOpt<long long> tvs(H * W, INF);
-    for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W; ++j) {
-            tvs.add_single_cost(get_id(i, j), 0, C * 2 - A[i][j]);
-            
-            // 斜めに隣接すると、C の利得
-            if (i+1 < H && j-1 >= 0) {
-                tvs.add_both_true_profit(get_id(i, j), get_id(i+1, j-1), C);
-            }
-            if (i+1 < H && j+1 < W) {
-                tvs.add_both_true_profit(get_id(i, j), get_id(i+1, j+1), C);
-            }
-        }
-    }
-    
-    // 求める
-    long long res = -tvs.solve();
-    cout << res << endl;
-}
-
-
-// AOJ 2093 Board
-void AOJ_2903() {
-    int n, m;
-    cin >> n >> m;
-    vector<string> fi(n);
-    for (int i = 0; i < n; ++i) cin >> fi[i];
-    
-    auto get_id = [&](int i, int j) -> int { return i * m + j; };
-    
-    // 0: 横, 1: 縦
-    ThreeVariableSubmodularOpt<int> tvs(n * m);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            if (fi[i][j] == '.') continue;
-            tvs.add_single_cost(get_id(i, j), 1, 1);
-            if (i+1 < n && fi[i+1][j] == '#') {
-                // (1, 1) だけ 1 の利得 (-1 のコスト)
-                tvs.add_both_true_profit(get_id(i, j), get_id(i+1, j), 1);
-            }
-            if (j+1 < m && fi[i][j+1] == '#') {
-                // (0, 0) だけ 1 の利得 (-1 のコスト)
-                tvs.add_both_false_profit(get_id(i, j), get_id(i, j+1), 1);
-            }
-        }
-    }
-    cout << tvs.solve() << endl;
 }
 
 
 int main() {
-    Kyopro_Typical_90_040();
-    //ARC_085_E();
-    //ABC_259_G();
-    //ABC_326_G();
-    //ABC_225_G();
-    //AOJ_2903();
+    ABC_347_G();
 }

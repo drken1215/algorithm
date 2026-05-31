@@ -3736,6 +3736,7 @@ struct DagPathCover {
  　　(xi, xj, xk) = (T, T, F): コスト G
  　　(xi, xj, xk) = (T, T, T): コスト H
  */
+// 1, 2, 3-variable submodular optimization
 template<class COST> struct ThreeVariableSubmodularOpt {
     // constructors
     ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
@@ -3746,11 +3747,17 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void init(int n, COST inf = numeric_limits<COST>::max() / 2) {
         N = n, S = n, T = n + 1;
         OFFSET = 0, INF = inf;
-        list.assign(N + 2, Edge());
+        list.clear();
+        list.resize(N + 2);
         pos.clear();
     }
 
-    // add 1-Variable submodular functioin
+    // add constant cost
+    void add_cost(COST cost) {
+        OFFSET += cost;
+    }
+
+    // add 1-variable submodular function
     void add_single_cost(int xi, COST false_cost, COST true_cost) {
         assert(0 <= xi && xi < N);
         if (false_cost >= true_cost) {
@@ -3761,6 +3768,9 @@ template<class COST> struct ThreeVariableSubmodularOpt {
             add_edge(xi, T, true_cost - false_cost);
         }
     }
+    void add_single_cost_01(int xi, COST false_cost, COST true_cost) {
+        add_single_cost(xi, false_cost, true_cost);
+    }
     
     // add "project selection" constraint
     // xi = T, xj = F: strictly prohibited
@@ -3768,6 +3778,12 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         add_edge(xi, xj, INF);
+    }
+    void add_psp_constraint_01(int xi, int xj) {
+        add_psp_constraint(xj, xi);
+    }
+    void add_psp_constraint_10(int xi, int xj) {
+        add_psp_constraint(xi, xj);
     }
     
     // add "project selection" penalty
@@ -3777,6 +3793,12 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(0 <= xj && xj < N);
         assert(C >= 0);
         add_edge(xi, xj, C);
+    }
+    void add_psp_penalty_01(int xi, int xj, COST C) {
+        add_psp_constraint(xj, xi, C);
+    }
+    void add_psp_penalty_10(int xi, int xj, COST C) {
+        add_psp_constraint(xi, xj, C);
     }
     
     // add both True profit
@@ -4024,6 +4046,107 @@ private:
     };
     COST dinic() {
         return dinic(numeric_limits<COST>::max() / 2);
+    }
+};
+
+// K-value Two Variable Submodular Function Optimization 
+/*
+    X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
+
+    X[i] < d -> x[i][d] = 1
+    X[i] = d -> x[i][1] = 0, ..., x[i][d] = 0, x[i][d+1] = 1, ..., x[i][K] = 1
+
+    X[i] = 0   -> (1, 1, 1, ..., 1, 1)
+    X[i] = 1   -> (0, 1, 1, ..., 1, 1)
+    X[i] = 2   -> (0, 0, 1, ..., 1, 1)
+    ...
+    X[i] = K-2 -> (0, 0, 0, ..., 0, 1)
+    X[i] = K-1 -> (0, 0, 0, ..., 0, 0)
+ */
+template<class COST> struct KValueSubmodularOpt {
+    // inner data
+    int N, N01;
+    COST INF;
+    vector<int> ks;  // size of x[i]
+    vector<vector<int>> x;  // index of x[i][k] in normal submodular optimization
+    ThreeVariableSubmodularOpt<COST> tvs;
+
+    // constructors
+    KValueSubmodularOpt() {}
+    KValueSubmodularOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
+        init(ks);
+    }
+    void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {
+        N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
+        x.resize(N);
+        for (int i = 0; i < N; i++) {
+            assert(ks[i] >= 2);
+            x[i].assign(ks[i], 0);
+            for (int k = 1; k < ks[i]; k++) x[i][k] = N01++;
+        }
+        tvs.init(N01, INF);
+        for (int i = 0; i < N; i++) {
+            for (int k = 1; k < ks[i] - 1; k++) {
+                tvs.add_psp_constraint(x[i][k], x[i][k + 1]);
+            }
+        }
+    }
+
+    // add constant cost
+    void add_cost(COST cost) {
+        tvs.add_cost(cost);
+    }
+
+    // add 1-variable function
+    void add_single_cost(int xi, const vector<COST> &cost) {
+        assert(0 <= xi && xi < N);
+        assert((int)cost.size() == ks[xi]);
+        tvs.add_cost(cost[ks[xi] - 1]);
+        for (int k = 1; k < ks[xi]; k++) {
+            tvs.add_single_cost(x[xi][k], 0, cost[k-1] - cost[k]);
+        }
+    }
+
+    // add 2-variable Monge function
+    // cost[i][j]+cost[i+1][j+1] <= cost[i+1][j]+cost[i][j+1]
+    void add_monge_function(int xi, int xj, vector<vector<COST>> cost) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(cost.size() == ks[xi]);
+        assert(cost[0].size() == ks[xj]);
+        vector<COST> icost(ks[xi]), jcost(ks[xj]);
+        for (int ki = 0; ki < ks[xi]; ki++) {
+            icost[ki] = cost[ki][0];
+            for (int kj = 0; kj < ks[xj]; kj++) cost[ki][kj] -= icost[ki];
+        }
+        for (int kj = 0; kj < ks[xj]; kj++) {
+            jcost[kj] = cost[0][kj];
+            for (int ki = 0; ki < ks[xi]; ki++) cost[ki][kj] -= jcost[kj];
+        }
+        add_single_cost(xi, icost), add_single_cost(xj, jcost);
+        for (int ki = 1; ki < ks[xi]; ki++) {
+            for (int kj = 1; kj < ks[xj]; kj++) {
+                COST c = cost[ki][kj] - cost[ki][kj-1] - cost[ki-1][kj] + cost[ki-1][kj-1];
+                assert(c <= 0);
+                tvs.add_both_false_profit(x[xi][ki], x[xj][kj], -c);
+            }
+        }
+    }
+
+    // solve
+    COST solve() {
+        return tvs.solve();
+    }
+    
+    // reconstrcut the optimal assignment
+    vector<int> reconstruct() {
+        vector<int> res(N, 0);
+        vector<bool> tres = tvs.reconstruct();
+        for (int i = 0; i < N; i++) for (int ki = 1; ki < ks[i]; ki++) {
+            res[i] += not tres[x[i][ki]];
+        }
+        return res;
     }
 };
 
