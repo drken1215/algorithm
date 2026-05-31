@@ -4049,7 +4049,7 @@ private:
     }
 };
 
-// K-value Two Variable Submodular Function Optimization 
+// K-value Two Variable Monge Function Optimization 
 /*
     X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
 
@@ -4063,7 +4063,7 @@ private:
     X[i] = K-2 -> (0, 0, 0, ..., 0, 1)
     X[i] = K-1 -> (0, 0, 0, ..., 0, 0)
  */
-template<class COST> struct KValueSubmodularOpt {
+template<class COST> struct TwoVariableMongeOpt {
     // inner data
     int N, N01;
     COST INF;
@@ -4072,8 +4072,8 @@ template<class COST> struct KValueSubmodularOpt {
     ThreeVariableSubmodularOpt<COST> tvs;
 
     // constructors
-    KValueSubmodularOpt() {}
-    KValueSubmodularOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
+    TwoVariableMongeOpt() {}
+    TwoVariableMongeOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
         init(ks);
     }
     void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {

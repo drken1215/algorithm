@@ -324,6 +324,7 @@ private:
     }
 };
 
+
 // K-value Two Variable Monge Function Optimization 
 /*
     X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
