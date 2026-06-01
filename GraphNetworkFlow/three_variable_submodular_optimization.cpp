@@ -117,10 +117,10 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         add_edge(xi, xj, C);
     }
     void add_psp_penalty_01(int xi, int xj, COST C) {
-        add_psp_constraint(xj, xi, C);
+        add_psp_penalty(xj, xi, C);
     }
     void add_psp_penalty_10(int xi, int xj, COST C) {
-        add_psp_constraint(xi, xj, C);
+        add_psp_penalty(xi, xj, C);
     }
     
     // add both True profit

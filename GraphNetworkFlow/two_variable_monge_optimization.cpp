@@ -1,5 +1,5 @@
 //
-// 2 変数 K 値の Monge 関数の和の最小化
+// 2 変数 Monge 関数の和の最小化
 //
 // verified:
 //   AtCoder ABC 347 G - Grid Coloring 2
@@ -11,7 +11,7 @@
 using namespace std;
 
 
-// 1, 2, 3-variable submodular optimization
+// 1, 2, 3-variable submodular optimization 
 template<class COST> struct ThreeVariableSubmodularOpt {
     // constructors
     ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
@@ -70,10 +70,10 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         add_edge(xi, xj, C);
     }
     void add_psp_penalty_01(int xi, int xj, COST C) {
-        add_psp_constraint(xj, xi, C);
+        add_psp_penalty(xj, xi, C);
     }
     void add_psp_penalty_10(int xi, int xj, COST C) {
-        add_psp_constraint(xi, xj, C);
+        add_psp_penalty(xi, xj, C);
     }
     
     // add both True profit
@@ -324,7 +324,6 @@ private:
     }
 };
 
-
 // K-value Two Variable Monge Function Optimization 
 /*
     X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
@@ -349,8 +348,12 @@ template<class COST> struct TwoVariableMongeOpt {
 
     // constructors
     TwoVariableMongeOpt() {}
+    TwoVariableMongeOpt(int N, int K, COST inf = numeric_limits<COST>::max() / 2) {
+        vector<int> ks(N, K);
+        init(ks, inf);
+    }
     TwoVariableMongeOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
-        init(ks);
+        init(ks, inf);
     }
     void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {
         N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
