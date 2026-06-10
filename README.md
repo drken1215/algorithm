@@ -320,12 +320,17 @@
 - (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法)
 - (★★★★) Gomory-Hu 木
 
-## 劣モジュラ関数のグラフ表現
+## 最小費用流
 
-- (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
-- (★★★☆) [2 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
-- (★★★★) [3 変数劣モジュラ関数の和を表す最小カット (燃やす埋めるの一般化)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
-- (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_monge_optimization.cpp)
+- (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
+- (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
+- (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
+
+## b-flow
+
+- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_b_flow.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
 
 ## マッチング
 
@@ -342,17 +347,12 @@
 - (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_edge_cover_of_bipartite_graph.cpp)
 - (★★★☆) [DAG の最小パス被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/dag_path_cover.cpp)
 
-## 最小費用流
+## 劣モジュラ関数のグラフ表現
 
-- (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
-- (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
-- (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
-
-## b-flow
-
-- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_b_flow.cpp)
-- (★★★★) [最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
-- (★★★★) [最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
+- (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
+- (★★★☆) [2 変数劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
+- (★★★★) [3 変数劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
+- (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_monge_optimization.cpp)
 
 ## 最小費用流の応用
 
