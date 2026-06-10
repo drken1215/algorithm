@@ -3271,6 +3271,96 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
     return res;
 }
 
+// Maximum b-flow
+template<class FLOW> struct MaxBFlow {
+    // Edge
+    struct Edge {
+        int from, to;
+        FLOW lower_cap, upper_cap, flow;
+
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to 
+            << '(' << e.lower_cap << '~' << e.upper_cap << ')';
+        }
+    };
+
+    // inner values
+    int V;
+    vector<Edge> edges;
+    vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
+    FlowGraph<FLOW> G;
+
+    // constructor
+    MaxBFlow() {}
+    MaxBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW cap) {
+        assert(cap >= 0);
+        edges.push_back({from, to, 0, cap, 0});
+    }
+    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap) {
+        assert(lower_cap <= upper_cap);
+        edges.push_back({from, to, lower_cap, upper_cap, 0});
+    }
+    void set_ds(int v, FLOW ds) {
+        assert(0 <= v && v < V);
+        lower_dss[v] = ds, upper_dss[v] = ds;
+    }
+    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
+        assert(0 <= v && v < V);
+        assert(lower_ds <= upper_ds);
+        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // solver
+    pair<bool, FLOW> solve(int s, int t) {
+        assert(0 <= s && s < V);
+        assert(0 <= t && t < V);
+        assert(s != t);
+
+        // lower_ds, upper_ds -> strict ds
+        int super = V;
+        vector<FLOW> dss(V + 1, 0);
+        for (int i = 0; i < V; i++) {
+            if (lower_dss[i] == upper_dss[i]) dss[i] = lower_dss[i];
+            else if (lower_dss[i] >= 0) {
+                add_edge(super, i, lower_dss[i], upper_dss[i]);
+            } else if (upper_dss[i] < 0) {
+                add_edge(i, super, -upper_dss[i], -lower_dss[i]);
+            } else {
+                add_edge(super, i, upper_dss[i]);
+                add_edge(i, super, -lower_dss[i]);
+            }
+        }
+
+        // pre-flow lower_cap
+        G.init(V + 3);
+        for (const auto &e : edges) {
+            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
+            G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
+        }
+
+        // ds -> s2, t2
+        int s2 = V + 1, t2 = V + 2;
+        FLOW ssum = 0, tsum = 0;
+        for (int i = 0; i < V + 1; i++) {
+            if (dss[i] > 0) ssum += dss[i], G.add_edge(s2, i, dss[i]);
+            else if (dss[i] < 0) tsum -= dss[i], G.add_edge(i, t2, -dss[i]);
+        }
+        if (ssum != tsum) return {false, FLOW(-1)};
+
+        // main solver
+        FLOW a = Dinic(G, s2, t2);
+        FLOW b = Dinic(G, s2, t);
+        FLOW c = Dinic(G, s, t2); 
+        FLOW d = Dinic(G, s, t);
+        if (a + b != ssum || a + c != tsum) return {false, FLOW(-1)};
+        else return {true, c + d};
+    }
+};
+
 // Minimum Cost b-flow (come down to min-cost circulation)
 template<class FLOW, class COST> struct MinCostBFlow {
     // Edge
