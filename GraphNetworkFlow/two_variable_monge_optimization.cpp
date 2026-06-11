@@ -2,8 +2,17 @@
 // 2 変数 Monge 関数の和の最小化
 //
 // verified:
-//   AtCoder ABC 347 G - Grid Coloring 2
+//   AtCoder ABC 347 G - Grid Coloring 2 (5 値)
 //     https://atcoder.jp/contests/abc347/tasks/abc347_g
+//
+//   AtCoder ARC 129 E - Yet Another Minimization (M 値)
+//     https://atcoder.jp/contests/arc129/tasks/arc129_e
+//
+//   AtCoder ARC 107 F - Sum of Abs (3 値)
+//     https://atcoder.jp/contests/arc107/tasks/arc107_f
+//
+//   KUPC 2017 H - Make a Potion (バラバラ)
+//     https://atcoder.jp/contests/arc107/tasks/arc107_f
 //
 
 
@@ -439,8 +448,7 @@ void ABC_347_G() {
     long long N, INF = 1LL<<45; cin >> N;
     vector<vector<long long>> A(N, vector<long long>(N));
     for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j], A[i][j]--;
-    vector<int> ks(N*N, 5);
-    TwoVariableMongeOpt<long long> opt(ks);
+    TwoVariableMongeOpt<long long> opt(N * N, 5);
     for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
         if (A[i][j] >= 0) {
             vector<long long> cost(5, INF);
@@ -467,7 +475,103 @@ void ABC_347_G() {
     }
 }
 
+// AtCoder ARC 129 E - Yet Another Minimization
+#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
+#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
+void ARC_129_E() {
+    long long N, M, INF = 1LL<<45;
+    cin >> N >> M;
+    vector A(N, vector(M, 0LL)), C(N, vector(M, 0LL)), W(N, vector(N, 0LL));
+    REP(i, N) REP(j, M) cin >> A[i][j] >> C[i][j];
+    REP(i, N) REP2(j, i+1, N) cin >> W[i][j], W[j][i] = W[i][j];
+
+    TwoVariableMongeOpt<long long> opt(N, M);
+    REP(i, N) opt.add_single_cost(i, C[i]);
+    REP(i, N) REP2(j, i+1, N) {
+        vector cost(M, vector(M, 0LL));
+        REP(x, M) REP(y, M) cost[x][y] = W[i][j] * abs(A[i][x] - A[j][y]);
+        opt.add_monge_function(i, j, cost);
+        
+    }
+    auto res = opt.solve();
+    cout << res << endl;
+}
+
+// AtCoder ARC 107 F - Sum of Abs
+void ARC_107_F() {
+    long long N, M, INF = 1LL<<45;
+    cin >> N >> M;
+    vector<long long> A(N), B(N), U(M), V(M);
+    REP(i, N) cin >> A[i];
+    REP(i, N) cin >> B[i];
+    REP(i, M) cin >> U[i] >> V[i], U[i]--, V[i]--;
+
+    TwoVariableMongeOpt<long long> opt(N, 3);
+    REP(i, N) {
+        vector<long long> cost{B[i], A[i], -B[i]};
+        opt.add_single_cost(i, cost);
+    }
+    REP(i, M) {
+        vector<vector<long long>> cost = {{0, 0, INF}, {0, 0, 0}, {INF, 0, 0}};
+        opt.add_monge_function(U[i], V[i], cost);
+    }
+    auto res = -opt.solve();
+    cout << res << endl;
+}
+
+// KUPC 2017 H - Make a Potion
+#define ALL(x) x.begin(), x.end()
+void KUPC_2017_H() {
+    using i128 = __int128_t; 
+    long long N, M, INF = 1LL<<60;
+    cin >> N >> M;
+    vector<long long> V(N), H(N), A(M), X(M), B(M), Y(M);
+    REP(i, N) cin >> V[i];
+    REP(i, N) cin >> H[i];
+    vector<vector<long long>> alts(N);
+    REP(i, M) {
+        cin >> A[i] >> X[i] >> B[i] >> Y[i], A[i]--, B[i]--;
+        alts[A[i]].emplace_back(X[i]);
+        if (X[i] > 0) alts[A[i]].emplace_back(X[i]-1);
+        alts[B[i]].emplace_back(Y[i]);
+        if (Y[i] > 0) alts[B[i]].emplace_back(Y[i]-1);
+    }
+    vector<int> ks(N);
+    REP(i, N) {
+        alts[i].emplace_back(0), alts[i].emplace_back(V[i]);
+        sort(ALL(alts[i])), alts[i].erase(unique(ALL(alts[i])), alts[i].end());
+        ks[i] = alts[i].size();
+    }
+
+    TwoVariableMongeOpt<i128> opt(ks);
+    REP(i, N) {
+        vector<i128> cost(alts[i].size());
+        REP(j, alts[i].size()) cost[j] = -H[i] * alts[i][j];
+        opt.add_single_cost(i, cost);
+    }
+    REP(i, M) {
+        int a = lower_bound(ALL(alts[A[i]]), X[i]) - alts[A[i]].begin();
+        int b = lower_bound(ALL(alts[B[i]]), Y[i]) - alts[B[i]].begin();
+        if (A[i] == B[i]) {
+            // X[A[i]] >= a かつ X[B[i]] < b を禁止
+            vector<i128> cost(alts[A[i]].size(), 0);
+            REP2(x, a, b) cost[x] = INF;
+            opt.add_single_cost(A[i], cost);
+        } else {
+            // x[A[i]] >= a かつ X[B[i]] < b を禁止
+            vector cost(alts[A[i]].size(), vector<i128>(alts[B[i]].size(), 0));
+            REP2(x, a, alts[A[i]].size()) REP(y, b) cost[x][y] = INF;
+            opt.add_monge_function(A[i], B[i], cost);
+        }
+    }
+    auto cost = opt.solve();
+    cout << -(long long)cost << endl;
+}
+
 
 int main() {
-    ABC_347_G();
+    //ABC_347_G();
+    //ARC_129_E();
+    //ARC_107_F();
+    KUPC_2017_H();
 }
