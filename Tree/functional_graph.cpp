@@ -14,113 +14,12 @@
 using namespace std;
 
 
-//------------------------------//
-// Utility
-//------------------------------//
-
-using ll = long long;
-using u32 = unsigned int;
-using u64 = unsigned long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-using tint = array<int, 3>;
-using tll = array<long long, 3>;
-using fint = array<int, 4>;
-using fll = array<long long, 4>;
-using qint = array<int, 5>;
-using qll = array<long long, 5>;
-using sint = array<int, 6>;
-using sll = array<long long, 6>;
-using vint = vector<int>;
-using vll = vector<long long>;
-using dint = deque<int>;
-using dll = deque<long long>;
-using vvint = vector<vector<int>>;
-using vvll = vector<vector<long long>>;
-using vpint = vector<pair<int, int>>;
-using vpll = vector<pair<long long, long long>>;
-template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
-
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
-template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
-template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
-template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
-template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto argmin(const T &a) { return *min_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
-template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PB push_back
-#define MP make_pair
-#define MT make_tuple
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-// input
-template<class T> istream& operator >> (istream &is, vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
-template<class T> istream& operator >> (istream &is, deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) cin >> P[i]; return is; }
-
-// output
-template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
-{ return s << '<' << P[0] << "," << P[1] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 5> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << "," << P[4] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 6> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << "," << P[4] << "," << P[5] << '>'; }
-template<class T> ostream& operator << (ostream &s, const vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const vector<vector<T>> &P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, const set<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, const multiset<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, const unordered_set<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-// min non-negative i such that n <= 2^i
-template<class T> T ceil_pow2(T n) {
-    T i = 0;
-    while ((T(1) << i) < T(n)) i++;
-    return i;
-}
-
-
-//------------------------------//
-// Functional Graph
-//------------------------------//
-
 // Edge Class
 template<class T = long long> struct Edge {
     int from, to;
     T val;
     Edge() : from(-1), to(-1) { }
-    Edge(int f, int t, T v = -1) : from(f), to(t), val(v) {}
+    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
     friend ostream& operator << (ostream& s, const Edge& e) {
         return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
@@ -128,44 +27,89 @@ template<class T = long long> struct Edge {
 
 // graph class
 template<class T = long long> struct Graph {
+    int V;
+    bool record_reversed_edges = false, record_edge_index = false;
     vector<vector<Edge<T>>> list;
     vector<vector<Edge<T>>> reversed_list;
-    
-    Graph(int n = 0) : list(n), reversed_list(n) { }
-    void init(int n = 0) {
+    vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
+
+    // constructors
+    Graph(int n = 0, bool rre = false, bool rei = false) {
+        init(n, rre, rei);
+    }
+    void init(int n = 0, bool rre = false, bool rei = false) {
+        V = n, record_reversed_edges = rre, record_edge_index = rei;
         list.assign(n, vector<Edge<T>>());
-        reversed_list.assign(n, vector<Edge<T>>());
+        if (record_reversed_edges) reversed_list.assign(n, vector<Edge<T>>());
+        if (record_edge_index) id.assign(n, unordered_map<int, int>());
     }
-    Graph &operator = (const Graph &g) {
-        list = g.list, reversed_list = g.reversed_list;
-        return *this;
-    }
+    Graph(const Graph&) = default;
+    Graph& operator = (const Graph&) = default;
+
+    // getters
+    vector<Edge<T>> &operator [] (int i) { return list[i]; }
     const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
-    const vector<Edge<T>> &get_rev_edges(int i) const { return reversed_list[i]; }
-    const size_t size() const { return list.size(); }
-    const void clear() { list.clear(); }
-    const void resize(int n) { list.resize(n); }
-        
-    void add_edge(int from, int to, T val = 1) {
-        list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
+    constexpr size_t size() const { return list.size(); }
+    constexpr void clear() { V = 0; list.clear(); }
+    constexpr void resize(int n) { V = n; list.resize(n); }
+    const vector<Edge<T>> &get_rev_edges(int i) const { 
+        assert(record_reversed_edges);
+        return reversed_list[i];
     }
-    
-    void add_bidirected_edge(int from, int to, T val = 1) {
-        list[from].push_back(Edge(from, to, val));
-        list[to].push_back(Edge(to, from, val));
-        reversed_list[from].push_back(Edge(from, to, val));
-        reversed_list[to].push_back(Edge(to, from, val));
+    Edge<T> &get_edge(int u, int v) {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
+        return list[u][id[u][v]];
+    }
+    const Edge<T> &get_edge(int u, int v) const {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < list[u].size());
+        return list[u][id[u].at(v)];
     }
 
-    friend ostream &operator << (ostream &s, const Graph &G) {
-        s << endl;
-        for (int i = 0; i < G.size(); ++i) {
-            s << i << " -> ";
-            for (const auto &e : G[i]) s << e.to << " ";
-            s << endl;
+    // add edge
+    void add_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+    }
+    void add_bidirected_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
+        if (from != to) {
+            if (record_edge_index) id[to][from] = (int)list[to].size(); 
+            list[to].push_back(Edge(to, from, val));
+            if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
         }
-        return s;
+    }
+
+    // input (only tree-case)
+    friend istream& operator >> (istream &is, Graph &G) {
+        for (int i = 0; i < G.V - 1; i++) {
+            int u, v;
+            is >> u >> v, u--, v--;
+            G.add_bidirected_edge(u, v);
+        }
+        return is;
+    }
+
+    // output
+    friend ostream &operator << (ostream &os, const Graph &G) {
+        os << endl;
+        for (int i = 0; i < (int)G.size(); ++i) {
+            os << i << " -> ";
+            for (int j = 0; j < (int)G[i].size(); j++) {
+                if (j) os << ", ";
+                os << G[i][j].to << "(" << G[i][j].val << ")";
+            }
+            os << endl;
+        }
+        return os;
     }
 };
 
@@ -334,7 +278,9 @@ template<class T = long long> struct RunFunctionalGraph {
         detect_all_cycles(G);
 
         // step 2: construct trees
-        int D = ceil_pow2(N);
+        // min non-negative i such that n <= 2^i
+        int D = 0;
+        while ((1LL << D) < N) D++;
         parent.assign(D + 1, vector<int>(N, -1)), childs.resize(N);
         for (int v = 0; v < N; v++) {
             if (cmp[v] != NOT_IN_CYCLE) {
@@ -388,11 +334,9 @@ void ABC_256_E() {
     long long res = 0;
     Graph<long long> G(N);
     vector<long long> X(N), C(N);
-    cin >> X >> C;
-    for (int i = 0; i < N; i++) {
-        X[i]--;
-        G.add_edge(i, X[i], C[i]);
-    }
+    for (int i = 0; i < N; i++) cin >> X[i], X[i]--;
+    for (int i = 0; i < N; i++) cin >> C[i];
+    for (int i = 0; i < N; i++) G.add_edge(i, X[i], C[i]);
     RunFunctionalGraph<long long> fg(G);
     for (const auto &cycle : fg.cycles) {
         long long sub = 1LL << 60;
@@ -540,18 +484,18 @@ void ABC_387_F() {
     using mint = Fp<>;
     int N, M;
     cin >> N >> M;
-    vll A(N);
-    Graph<ll> G(N);
-    REP(i, N) {
+    vector<long long> A(N);
+    Graph<long long> G(N);
+    for (int i = 0; i < N; i++) {
         cin >> A[i], A[i]--;
         G.add_edge(i, A[i]);
     }
-    RunFunctionalGraph<ll> fg(G);
+    RunFunctionalGraph<long long> fg(G);
 
     vector dp(N, vector(M, mint(0))), sdp(N, vector(M+1, mint(0)));
     auto rec = [&](auto &&rec, int v) -> void {    
         for (auto e : fg.childs[v]) rec(rec, e.to);
-        REP(val, M) {
+        for (long long val = 0; val < M; val++) {
             dp[v][val] = 1;
             for (auto e : fg.childs[v]) dp[v][val] *= sdp[e.to][val+1];
             sdp[v][val+1] = sdp[v][val] + dp[v][val];
@@ -561,7 +505,7 @@ void ABC_387_F() {
     for (auto rts : fg.roots) {
         mint sub = 0;
         for (auto r : rts) rec(rec, r);
-        REP(val, M) {
+        for (long long val = 0; val < M; val++) {
             mint tmp = 1;
             for (auto r : rts) tmp *= dp[r][val];
             sub += tmp;
@@ -573,6 +517,6 @@ void ABC_387_F() {
 
 
 int main() {
-    ABC_256_E();
-    //ABC_387_F();
+    //ABC_256_E();
+    ABC_387_F();
 }
