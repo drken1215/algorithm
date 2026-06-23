@@ -9,6 +9,9 @@
 //   JAG 夏合宿 2010 Day4 I - How to Create a Good Game (AOJ 2230)
 //     https://onlinejudge.u-aizu.ac.jp/problems/2230
 //
+//   AtCoder ABC 347 G - Grid Coloring 2
+//     https://atcoder.jp/contests/abc347/tasks/abc347_g
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -590,14 +593,21 @@ template<class FLOW, class COST> struct MinCostBFlow {
 template<class VAL> struct MinCostTension {
     // inner values
     int N;
+    VAL OFFSET = 0;
     MinCostBFlow<VAL, VAL> opt;
 
     // constructor
-    MinCostTension() {}
-    MinCostTension(int n) : N(n), opt(N) {}
+    MinCostTension() : OFFSET(0) {}
+    MinCostTension(int n) : N(n), OFFSET(0), opt(N) {}
     void init(int n) {
         N = n;
+        OFFSET = 0;
         opt.init(n);
+    }
+
+    // add constant cost
+    void add_cost(VAL cost) {
+        OFFSET += cost;
     }
 
     // add the part of obj func Σ_{v}b(v)p(v)
@@ -624,10 +634,23 @@ template<class VAL> struct MinCostTension {
         opt.add_edge(u, v, inf, d);
     }
 
+    // テンション p[v] - p[u] に関する区分線形凸関数 f を足す
+    // f を (min_{f}, 傾きが 0 以下・0 以上の部分の傾きの変化点の多重集合）で表す
+    // 変化点の多重集合を (変化点, 変化量) の vector で表す
+    void add_tension_convex_function(int u, int v, 
+    VAL mif, const vector<pair<VAL,VAL>> &left, const vector<pair<VAL,VAL>> &right) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        add_cost(mif);
+        for (auto [x, d] : left) add_tension_cost(v, u, d, -x);
+        for (auto [x, d] : right) add_tension_cost(u, v, d, x);
+    }
+
     // solver
     pair<bool, VAL> solve(bool calc_potential = true) {
         auto [flag, cost] = opt.solve(calc_potential);
-        return make_pair(flag, -cost);
+        return make_pair(flag, OFFSET - cost);
     }
     vector<VAL> reconstruct() {
         return opt.dual;
@@ -675,7 +698,51 @@ void AOJ_2230() {
     cout << res << endl;
 }
 
+// AtCoder ABC 347 G - Grid Coloring 2
+/*
+    目的関数はテンションについての以下の区分線形凸関数
+    ・最小値：0
+    ・左側の変化点：{(0, 1), (-1, 2), (-2, 2), (-3, 2), (-4, 2)}
+    ・右側の変化点：{(0, 1), (1, 2), (2, 2), (3, 2), (4, 2)}
+    （傾きが 1, 3, 5, 7, 9 と変化していくので、その差分をとっている）
+
+    制約条件
+    ・p[v] - s <= 5
+    ・s - p[v] <= -1
+    ・値の決まっている p については p[v] - s <= (値), s - p[v] <= -(値)
+*/
+void ABC_347_G() {
+    int N;
+    cin >> N;
+    const long long INF = 1LL << 30;
+    vector<vector<int>> A(N, vector<int>(N));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j];
+
+    MinCostTension<long long> opt(N * N + 1);
+    int s = N * N;
+    vector<pair<long long, long long>> left{{0, 1}, {-1, 2}, {-2, 2}, {-3, 2}, {-4, 2}};
+    vector<pair<long long, long long>> right{{0, 1}, {1, 2}, {2, 2}, {3, 2}, {4, 2}};
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+        if (i+1 < N) opt.add_tension_convex_function(i*N+j, (i+1)*N+j, 0, left, right);
+        if (j+1 < N) opt.add_tension_convex_function(i*N+j, i*N+j+1, 0, left, right);
+        if (A[i][j] == 0) {
+            opt.add_tension_constraint(s, i*N+j, INF, 5);
+            opt.add_tension_constraint(i*N+j, s, INF, -1);
+        } else {
+            opt.add_tension_constraint(s, i*N+j, INF, A[i][j]);
+            opt.add_tension_constraint(i*N+j, s, INF, -A[i][j]);
+        }
+    }
+    auto [flag, cost] = opt.solve();
+    auto ans = opt.reconstruct();
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) cout << ans[i*N+j] - ans[s] << " ";
+        cout << endl;
+    }
+}
+
 
 int main() {
-    AOJ_2230();
+    //AOJ_2230();
+    ABC_347_G();
 }
