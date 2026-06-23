@@ -4244,6 +4244,89 @@ template<class COST> struct TwoVariableMongeOpt {
     }
 };
 
+// min-cost tension
+/*
+    min_{p}: 
+        Σ_{v} b(v)p(v) + Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
+    s.t.
+        p(v) - p(u) <= d(e)
+    ->
+        b-flow (with demand-suply: b)
+        edge 
+            obj func: e = (u, v) with capacity c(e), cost l(e)
+            constraint: e = (u, v) with capacity INF, cost d(e)
+        optimal value *= -1
+
+    in general:
+        Σ_{v} b(v)p(v) + Σ_{e} f(p(v) - p(u)), where f is concave
+*/
+template<class VAL> struct MinCostTension {
+    // inner values
+    int N;
+    VAL OFFSET = 0;
+    MinCostBFlow<VAL, VAL> opt;
+
+    // constructor
+    MinCostTension() : OFFSET(0) {}
+    MinCostTension(int n) : N(n), OFFSET(0), opt(N) {}
+    void init(int n) {
+        N = n;
+        OFFSET = 0;
+        opt.init(n);
+    }
+
+    // add constant cost
+    void add_cost(VAL cost) {
+        OFFSET += cost;
+    }
+
+    // add the part of obj func Σ_{v}b(v)p(v)
+    void add_single_coef(int v, VAL b) {
+        assert(0 <= v && v < N);
+        assert(opt.lower_dss[v] == opt.upper_dss[v]);
+        opt.set_ds(v, opt.lower_dss[v] + b);
+    }
+
+    // add tha part of obj func Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
+    void add_tension_cost(int u, int v, VAL c, VAL l) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        assert(c >= 0);
+        opt.add_edge(u, v, c, l);
+    }
+
+    // add constraint p(v) - p(u) <= d
+    void add_tension_constraint(int u, int v, VAL inf, VAL d) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        opt.add_edge(u, v, inf, d);
+    }
+
+    // テンション p[v] - p[u] に関する区分線形凸関数 f を足す
+    // f を (min_{f}, 傾きが 0 以下・0 以上の部分の傾きの変化点の多重集合）で表す
+    // 変化点の多重集合を (変化点, 変化量) の vector で表す
+    void add_tension_convex_function(int u, int v, 
+    VAL mif, const vector<pair<VAL,VAL>> &left, const vector<pair<VAL,VAL>> &right) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        add_cost(mif);
+        for (auto [x, d] : left) add_tension_cost(v, u, d, -x);
+        for (auto [x, d] : right) add_tension_cost(u, v, d, x);
+    }
+
+    // solver
+    pair<bool, VAL> solve(bool calc_potential = true) {
+        auto [flag, cost] = opt.solve(calc_potential);
+        return make_pair(flag, OFFSET - cost);
+    }
+    vector<VAL> reconstruct() {
+        return opt.dual;
+    }
+};
+
 
 //------------------------------//
 // Union-Find
