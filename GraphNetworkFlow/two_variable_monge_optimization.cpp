@@ -14,6 +14,9 @@
 //   KUPC 2017 H - Make a Potion (バラバラ)
 //     https://atcoder.jp/contests/arc107/tasks/arc107_f
 //
+//   AtCoder ABC 397 G - G - Maximize Distance (段階的な INF 設定)
+//     https://atcoder.jp/contests/abc397/tasks/abc397_g
+//
 
 
 #include <bits/stdc++.h>
@@ -568,10 +571,43 @@ void KUPC_2017_H() {
     cout << -(long long)cost << endl;
 }
 
+// AtCoder ABC 397 G - G - Maximize Distance
+void ABC_397_G() {
+    long long N, M, K, INF = 1LL << 30;
+    cin >> N >> M >> K;
+    vector<int> U(M), V(M);
+    for (int i = 0; i < M; i++) cin >> U[i] >> V[i], U[i]--, V[i]--;
+
+    long long low = -1, high = 40;
+    while (high - low > 1) {
+        long long d = (high + low) / 2, siz = max(d+1, 2LL);
+        TwoVariableMongeOpt<long long> opt(N, siz);
+
+        // 頂点 0 は 0、頂点 N-1 は d
+        vector<long long> startcost(siz, INF); startcost[0] = 0;
+        vector<long long> goalcost(siz, INF); goalcost[d] = 0;
+        opt.add_single_cost(0, startcost);
+        opt.add_single_cost(N-1, goalcost);
+
+        // 辺 (U[i], V[i]) について、V[i] - U[i] = 1 でコスト 1、V[i] - U[i] >= 2 は認めない
+        vector cost(siz, vector(siz, 0LL));
+        for (int i = 0; i <= d; i++) for (int j = i+1; j <= d; j++) cost[i][j] = INF * (j-i-1);
+        for (int i = 0; i < d; i++) cost[i][i+1] = 1;
+        for (int i = 0; i < M; i++) opt.add_monge_function(U[i], V[i], cost);
+
+        // 解く
+        long long optval = opt.solve();
+        if (optval <= K) low = d;
+        else high = d;
+    }
+    cout << low << endl;
+}
+
 
 int main() {
     //ABC_347_G();
     //ARC_129_E();
     //ARC_107_F();
-    KUPC_2017_H();
+    //KUPC_2017_H();
+    ABC_397_G();
 }
