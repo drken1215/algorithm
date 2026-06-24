@@ -619,7 +619,6 @@
 
 - (★★★☆) [有理数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/rational_number.cpp)
 - (★★★☆) [Stern-Brocot 木](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/stern_brocot.cpp)
-- (★★★★) [Stern-Brocot 木上の二分探索](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/binary_search_on_stern_brocot.cpp)
 - (★★★★) Enumerate Convex
 - (★★★★) Enumerate Quotients
 

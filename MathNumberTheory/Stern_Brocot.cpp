@@ -1,52 +1,67 @@
 //
-// Stern-Brocot 木
+// Stern-Brocot 木上の二分探索
 //
 // verified
-//   AOJ 1208 Rational Irrationals
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1208
+//   Library Checker - Rational Approximation
+//     https://judge.yosupo.jp/problem/rational_approximation
 //
 
+
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 
 #include <bits/stdc++.h>
 using namespace std;
 
 
-long long P;
-long long x, y, u, v;
-bool exist_bigger = false;
-
-// consider s/b
-void SternBrocot(long long N, long long sl = 0, long long bl = 1, long long sr = 1, long long br = 0) {
-    long long s = sl + sr, b = bl + br;
-    if (s > N || b > N) return;
-
-    // left (only when bigger case)
-    if (s*s > b*b*P) SternBrocot(N, sl, bl, s, b);
-
-    // consider s/b (monotone increasing)
-    {
-        if (s*s < b*b*P) u = s, v = b;
-        else {
-            if (!exist_bigger) x = s, y = b, exist_bigger = true;
-            return;
+// Stern-Brocot Tree
+template<class T> struct SternBrocotTree {
+    // binary search on Stern-Brocot Tree
+    // return {l (= a/b), r (= c/d(} s.t. l: OK, r: NG
+    // and a, b, c, d are maximized where a, b, c, d <= lim
+    template<class Func> static tuple<T, T, T, T> binary_search(Func check, T lim) {
+        assert(check(0, 1));
+        assert(!check(1, 0));
+        auto rec = [&](auto &&rec, bool which, T &a, T &b, T c, T d) -> void {
+            if (a + c > lim || b + d > lim) return;
+            if (check(a + c, b + d) == which) {
+                a += c, b += d;
+                rec(rec, which, a, b, c + c, d + d);
+            }
+            if (a + c <= lim && b + d <= lim && check(a + c, b + d) == which) a += c, b += d;
+        };
+        T a = 0, b = 1, c = 1, d = 0;
+        while (a + c <= lim && b + d <= lim) {
+            rec(rec, true, a, b, c, d);
+            rec(rec, false, c, d, a, b);
         }
+        return {a, b, c, d};
     }
-
-    // right
-    SternBrocot(N, s, b, sr, br);
-}
-
+};
 
 
 //------------------------------//
 // Examples
 //------------------------------//
 
-int main() {
-    long long N;
-    while (cin >> P >> N, P) {
-        exist_bigger = false;
-        SternBrocot(N);
-        cout << x << "/" << y << " " << u << "/" << v << endl;
+// Library Checker - Rational Approximation
+void LibraryCheckerRatilnalApproximation() {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    using sbt = SternBrocotTree<long long>;
+    int T;
+    cin >> T;
+    while (T--) {
+        long long N, x, y;
+        cin >> N >> x >> y;
+        auto check = [&](long long a, long long b) -> bool { return a * y <= b * x; };
+        auto [a, b, c, d] = sbt::binary_search(check, N);
+        if (a * y == b * x) cout << a << ' ' << b << ' ' << a << ' ' << b << '\n';
+        else cout << a << ' ' << b << ' ' << c << ' ' << d << '\n';
     }
+}
+
+
+int main() {
+    LibraryCheckerRatilnalApproximation();
 }
