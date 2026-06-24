@@ -173,7 +173,7 @@ void ICPC_Asia_2024_J() {
 
 // 数学アルゴ本 071 - Linear Programming
 using i128 = __int128;
-constexpr i128 to_integer(const string &s) {
+i128 to_integer(const string &s) {
     i128 res = 0;
     for (auto c : s) {
          if (isdigit(c)) res = res * 10 + (c - '0');
@@ -219,6 +219,6 @@ void MathAlgorithm071() {
 
 
 int main() {
-    //ICPC_Asia_2024_J();
-    MathAlgorithm071();
+    ICPC_Asia_2024_J();
+    //MathAlgorithm071();
 }
