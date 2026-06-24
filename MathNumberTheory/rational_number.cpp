@@ -14,8 +14,18 @@
 using namespace std;
 
 
-// 有理数
-template<class T> struct frac {
+// rational number
+template<class T = long long> struct frac {
+    // gcd
+    static T gcd(T a, T b) {
+        a = max(a, -a), b = max(b, -b);
+        while (b) {
+            a %= b;
+            swap(a, b);
+        }
+        return a;
+    }
+
     // inner values
     T first, second;
 
@@ -30,12 +40,13 @@ template<class T> struct frac {
             return *this;
         }
         if (second < 0) first = -first, second = -second;
-        T abs_first = (first >= 0 ? first : -first);
-        T d = gcd(abs_first, second);
+        T d = gcd(max(first, -first), second);
         if (d == 0) first = 0, second = 1;
         else first /= d, second /= d;
         return *this;
     }
+    frac(const frac&) = default;
+    frac& operator = (const frac&) = default;
     constexpr frac(T f = 0, T s = 1) : first(f), second(s) { 
         normalize(); 
     }
