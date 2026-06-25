@@ -2908,7 +2908,7 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flo
         FLOW res_flow = 0;
         for (int &i = iter[v]; i < (int)G[v].size(); ++i) {
             FlowEdge<FLOW> &e = G[v][i], &re = G.get_rev_edge(e);
-            if (level[v] >= level[e.to] || e.cap == 0) continue;
+            if (level[v] >= level[e.to] || e.cap <= 0) continue;
             FLOW flow = self(self, e.to, min(up_flow - res_flow, e.cap));
             if (flow <= 0) continue;
             res_flow += flow;
@@ -2926,7 +2926,7 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flo
         iter.assign((int)iter.size(), 0);
         while (current_flow < limit_flow) {
             FLOW flow = dfs(dfs, s, limit_flow - current_flow);
-            if (!flow) break;
+            if (flow <= 0) break;
             current_flow += flow;
         }
     }
@@ -3044,7 +3044,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
             if (st.size() == i) return false;  // not DAG
             int cur = st[i];
             for (const auto &e : list[cur]) {
-                if (!e.cap) continue;
+                if (e.cap <= 0) continue;
                 deg[e.to]--;
                 if (deg[e.to] == 0) st.emplace_back(e.to);
                 if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
@@ -3065,7 +3065,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
             if (cnt[cur] > size()) return false;  // include negative-cycle
             cnt[cur]++;
             for (const auto &e : list[cur]) {
-                if (!e.cap) continue;
+                if (e.cap <= 0) continue;
                 if (pot[e.to] > pot[cur] + e.cost) {
                     pot[e.to] = pot[cur] + e.cost;
                     if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
@@ -3117,7 +3117,7 @@ MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
             for (int i = 0; i < (int)G[v].size(); i++) {
                 const auto &e = G[v][i];
                 COST add = e.cost + G.pot[v] - G.pot[e.to];
-                if (e.cap && dist[e.to] > dist[v] + add) {
+                if (e.cap > 0 && dist[e.to] > dist[v] + add) {
                     dist[e.to] = dist[v] + add;
                     prevv[e.to] = v;
                     preve[e.to] = i;
@@ -3209,7 +3209,7 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
     };
 
     auto augment_blocking_flow = [&]() -> bool {
-        vector<COST> iter(G.size(), 0);
+        vector<int> iter(G.size(), 0);
         auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
             if (balance[v] < 0) {
                 FLOW dif = min(flow, -balance[v]);
@@ -4014,7 +4014,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
             int v = que.front();
             que.pop();
             for (const auto &e : list[v]) {
-                if (e.cap && !seen[e.to]) {
+                if (e.cap > 0 && !seen[e.to]) {
                     if (e.to < N) res[e.to] = true;
                     seen[e.to] = true;
                     que.push(e.to);
@@ -4110,7 +4110,7 @@ private:
             COST res_flow = 0;
             for (int &i = iter[v]; i < (int)list[v].size(); ++i) {
                 Edge &e = list[v][i], &re = get_rev_edge(e);
-                if (level[v] >= level[e.to] || e.cap == 0) continue;
+                if (level[v] >= level[e.to] || e.cap <= 0) continue;
                 COST flow = self(self, e.to, min(up_flow - res_flow, e.cap));
                 if (flow <= 0) continue;
                 res_flow += flow;

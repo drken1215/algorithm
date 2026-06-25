@@ -14,61 +14,65 @@
 using namespace std;
 
 
-// edge class (for network-flow)
-template<class FLOWTYPE, class COSTTYPE> struct FlowCostEdge {
+// edge class (for min-cost flow)
+template<class FLOW, class COST> struct FlowCostEdge {
     // core members
     int rev, from, to;
-    FLOWTYPE cap, icap, flow;
-    COSTTYPE cost;
+    FLOW cap, icap, flow;
+    COST cost;
     
     // constructor
-    FlowCostEdge(int rev, int from, int to, FLOWTYPE cap, COSTTYPE cost)
+    FlowCostEdge() {}
+    FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
     : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {}
     void reset() { cap = icap, flow = 0; }
     
     // debug
     friend ostream& operator << (ostream& s, const FlowCostEdge& e) {
-        return s << e.from << " -> " << e.to
-        << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
+        return s << e.from << " -> " << e.to << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
     }
 };
 
-// graph class (for network-flow)
-template<class FLOWTYPE, class COSTTYPE> struct FlowCostGraph {
+// graph class (for min-cost flow)
+template<class FLOW, class COST> struct FlowCostGraph {
     // core members
-    vector<vector<FlowCostEdge<FLOWTYPE, COSTTYPE>>> list;
+    vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
+    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool include_negative_edge = false;
     
     // constructor
-    FlowCostGraph(int n = 0) : list(n) { }
+    FlowCostGraph(int n = 0) : list(n), pot(n), include_negative_edge(false) { }
     void init(int n = 0) {
-        list.assign(n, FlowCostEdge<FLOWTYPE, COSTTYPE>());
+        list.clear(), list.resize(n);
         pos.clear();
+        pot.assign(n, 0);
+        include_negative_edge = false;
     }
     
     // getter
-    vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> &operator [] (int i) {
+    vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
-    const vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> &operator [] (int i) const {
+    const vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) const {
+        assert(0 <= i && i < list.size());
         return list[i];
     }
     size_t size() const {
         return list.size();
     }
-    FlowCostEdge<FLOWTYPE, COSTTYPE> &get_rev_edge
-    (const FlowCostEdge<FLOWTYPE, COSTTYPE> &e) {
-        if (e.from != e.to) return list[e.to][e.rev];
-        else return list[e.to][e.rev + 1];
+    FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
+        return list[e.to][e.rev];
     }
-    FlowCostEdge<FLOWTYPE, COSTTYPE> &get_edge(int i) {
+    FlowCostEdge<FLOW, COST> &get_edge(int i) {
         return list[pos[i].first][pos[i].second];
     }
-    const FlowCostEdge<FLOWTYPE, COSTTYPE> &get_edge(int i) const {
+    const FlowCostEdge<FLOW, COST> &get_edge(int i) const {
         return list[pos[i].first][pos[i].second];
     }
-    vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> get_edges() const {
-        vector<FlowCostEdge<FLOWTYPE, COSTTYPE>> edges;
+    vector<FlowCostEdge<FLOW, COST>> get_edges() const {
+        vector<FlowCostEdge<FLOW, COST>> edges;
         for (int i = 0; i < (int)pos.size(); ++i) {
             edges.push_back(get_edge(i));
         }
@@ -78,17 +82,80 @@ template<class FLOWTYPE, class COSTTYPE> struct FlowCostGraph {
     // change edges
     void reset() {
         for (int i = 0; i < (int)list.size(); ++i) {
-            for (FlowCostEdge<FLOWTYPE, COSTTYPE> &e : list[i]) e.reset();
+            for (FlowCostEdge<FLOW, COST> &e : list[i]) e.reset();
         }
     }
     
     // add_edge
-    void add_edge(int from, int to, FLOWTYPE cap, COSTTYPE cost) {
-        pos.emplace_back(from, (int)list[from].size());
-        list[from].push_back(FlowCostEdge<FLOWTYPE, COSTTYPE>
-                             ((int)list[to].size(), from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOWTYPE, COSTTYPE>
-                           ((int)list[from].size() - 1, to, from, 0, -cost));
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+        if (cost < 0) include_negative_edge = true;
+    }
+    void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
+        if (cost < 0) include_negative_edge = true;
+    }
+
+    // find initial potential (to resolve initial negative-edge)
+    // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool calc_potential_dag() {
+        pot.assign(size(), 0);
+        vector<int> deg(size(), 0), st;
+        for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
+        st.reserve(size());
+        for (int v = 0; v < size(); v++) if (!deg[v]) st.emplace_back(v);
+        for (int i = 0; i < size(); i++) {
+            if (st.size() == i) return false;  // not DAG
+            int cur = st[i];
+            for (const auto &e : list[cur]) {
+                if (e.cap <= 0) continue;
+                deg[e.to]--;
+                if (deg[e.to] == 0) st.emplace_back(e.to);
+                if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
+            }
+        }
+        return true;
+    }
+    bool calc_potential_spfa() {
+        pot.assign(size(), 0);
+        queue<int> que;
+        vector<bool> inque(size(), false);
+        vector<int> cnt(size(), 0);
+        for (int v = 0; v < size(); v++) que.push(v), inque[v] = true;
+        while (!que.empty()) {
+            int cur = que.front();
+            que.pop();
+            inque[cur] = false;
+            if (cnt[cur] > size()) return false;  // include negative-cycle
+            cnt[cur]++;
+            for (const auto &e : list[cur]) {
+                if (e.cap <= 0) continue;
+                if (pot[e.to] > pot[cur] + e.cost) {
+                    pot[e.to] = pot[cur] + e.cost;
+                    if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
+                }
+            }
+        }
+        return true;
+    }
+    bool calc_potential() {
+        return calc_potential_dag() || calc_potential_spfa();
+    }
+    bool init_potential() {
+        if (!include_negative_edge) return true;
+        return calc_potential();
     }
 
     // debug

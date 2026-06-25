@@ -54,6 +54,13 @@ template<class T = long long> struct frac {
         *this = frac(a, 1); 
         return *this;
     }
+    constexpr long double to_double() const {
+        assert(second != 0);
+        return (long double)(first) / (long double)(second);
+    }
+    friend constexpr long double to_double(const frac &r) {
+        return r.to_double();
+    }
 
     // comparison operators
     constexpr bool operator == (const frac &r) const {

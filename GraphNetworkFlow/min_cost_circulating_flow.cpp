@@ -117,7 +117,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
             if (st.size() == i) return false;  // not DAG
             int cur = st[i];
             for (const auto &e : list[cur]) {
-                if (!e.cap) continue;
+                if (e.cap <= 0) continue;
                 deg[e.to]--;
                 if (deg[e.to] == 0) st.emplace_back(e.to);
                 if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
@@ -138,7 +138,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
             if (cnt[cur] > size()) return false;  // include negative-cycle
             cnt[cur]++;
             for (const auto &e : list[cur]) {
-                if (!e.cap) continue;
+                if (e.cap <= 0) continue;
                 if (pot[e.to] > pot[cur] + e.cost) {
                     pot[e.to] = pot[cur] + e.cost;
                     if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
@@ -187,7 +187,7 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
     };
 
     auto augment_blocking_flow = [&]() -> bool {
-        vector<COST> iter(G.size(), 0);
+        vector<int> iter(G.size(), 0);
         auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
             if (balance[v] < 0) {
                 FLOW dif = min(flow, -balance[v]);

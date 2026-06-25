@@ -123,7 +123,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
             if (st.size() == i) return false;  // not DAG
             int cur = st[i];
             for (const auto &e : list[cur]) {
-                if (!e.cap) continue;
+                if (e.cap <= 0) continue;
                 deg[e.to]--;
                 if (deg[e.to] == 0) st.emplace_back(e.to);
                 if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
@@ -144,7 +144,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
             if (cnt[cur] > size()) return false;  // include negative-cycle
             cnt[cur]++;
             for (const auto &e : list[cur]) {
-                if (!e.cap) continue;
+                if (e.cap <= 0) continue;
                 if (pot[e.to] > pot[cur] + e.cost) {
                     pot[e.to] = pot[cur] + e.cost;
                     if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
@@ -196,7 +196,7 @@ MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
             for (int i = 0; i < (int)G[v].size(); i++) {
                 const auto &e = G[v][i];
                 COST add = e.cost + G.pot[v] - G.pot[e.to];
-                if (e.cap && dist[e.to] > dist[v] + add) {
+                if (e.cap > 0 && dist[e.to] > dist[v] + add) {
                     dist[e.to] = dist[v] + add;
                     prevv[e.to] = v;
                     preve[e.to] = i;
@@ -262,7 +262,6 @@ MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
 {
     return MinCostFlow(G, S, T, numeric_limits<FLOW>::max());
 }
-
 
 
 //------------------------------//

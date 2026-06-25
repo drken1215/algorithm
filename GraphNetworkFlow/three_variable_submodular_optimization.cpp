@@ -246,7 +246,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
             int v = que.front();
             que.pop();
             for (const auto &e : list[v]) {
-                if (e.cap && !seen[e.to]) {
+                if (e.cap > 0 && !seen[e.to]) {
                     if (e.to < N) res[e.to] = true;
                     seen[e.to] = true;
                     que.push(e.to);
@@ -342,7 +342,7 @@ private:
             COST res_flow = 0;
             for (int &i = iter[v]; i < (int)list[v].size(); ++i) {
                 Edge &e = list[v][i], &re = get_rev_edge(e);
-                if (level[v] >= level[e.to] || e.cap == 0) continue;
+                if (level[v] >= level[e.to] || e.cap <= 0) continue;
                 COST flow = self(self, e.to, min(up_flow - res_flow, e.cap));
                 if (flow <= 0) continue;
                 res_flow += flow;

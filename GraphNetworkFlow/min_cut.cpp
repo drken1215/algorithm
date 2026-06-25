@@ -179,7 +179,7 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flo
         FLOW res_flow = 0;
         for (int &i = iter[v]; i < (int)G[v].size(); ++i) {
             FlowEdge<FLOW> &e = G[v][i], &re = G.get_rev_edge(e);
-            if (level[v] >= level[e.to] || e.cap == 0) continue;
+            if (level[v] >= level[e.to] || e.cap <= 0) continue;
             FLOW flow = self(self, e.to, min(up_flow - res_flow, e.cap));
             if (flow <= 0) continue;
             res_flow += flow;
@@ -197,7 +197,7 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flo
         iter.assign((int)iter.size(), 0);
         while (current_flow < limit_flow) {
             FLOW flow = dfs(dfs, s, limit_flow - current_flow);
-            if (!flow) break;
+            if (flow <= 0) break;
             current_flow += flow;
         }
     }
@@ -207,7 +207,6 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flo
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
     return Dinic(G, s, t, numeric_limits<FLOW>::max());
 }
-
 
 
 //------------------------------//
