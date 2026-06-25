@@ -18,6 +18,9 @@
 //   HUPC 2020 H - Traditional Company (AOJ 3171)
 //     https://onlinejudge.u-aizu.ac.jp/problems/3171
 //
+//   AtCoder ABC 393 G - Unevenness (for using frac<i128>)
+//     https://atcoder.jp/contests/abc393/tasks/abc393_g
+//
 
 /*
     min_{p}: 
@@ -844,10 +847,237 @@ void AOJ_3171() {
     cout << (high < LIM ? high : -1) << endl;
 }
 
+// AtCoder ABC 393 G - Unevenness
+/*
+    min: Σ_{u < v}(max(0, x[v] - x[u]) + max(0, x[u] - x[v]))
+    s.t. Σ_{v}(max(0, x[v] - A[v]) + max(0, A[v] - x[v])) <= P/Q
+
+    ラグランジュ緩和して
+    max_{λ >= 0}:
+        min: Σ_{u < v}(max(0, x[v] - x[u]) + max(0, x[u] - x[v]))
+            + λ(Σ_{v}(max(0, x[v] - A[v]) + max(0, A[v] - x[v])) - P/Q)
+*/
+template<class T> struct SternBrocotTree {
+    // binary search on Stern-Brocot Tree
+    // return {l (= a/b), r (= c/d(} s.t. l: OK, r: NG
+    // and a, b, c, d are maximized where a, b, c, d <= lim
+    template<class Func> static tuple<T, T, T, T> binary_search(Func check, T lim) {
+        assert(check(0, 1));
+        assert(!check(1, 0));
+        auto rec = [&](auto &&rec, bool which, T &a, T &b, T c, T d) -> void {
+            if (a + c > lim || b + d > lim) return;
+            if (check(a + c, b + d) == which) {
+                a += c, b += d;
+                rec(rec, which, a, b, c + c, d + d);
+            }
+            if (a + c <= lim && b + d <= lim && check(a + c, b + d) == which) a += c, b += d;
+        };
+        T a = 0, b = 1, c = 1, d = 0;
+        while (a + c <= lim && b + d <= lim) {
+            rec(rec, true, a, b, c, d);
+            rec(rec, false, c, d, a, b);
+        }
+        return {a, b, c, d};
+    }
+};
+template<class T = long long> struct frac {
+    // gcd
+    static T gcd(T a, T b) {
+        a = max(a, -a), b = max(b, -b);
+        while (b) {
+            a %= b;
+            swap(a, b);
+        }
+        return a;
+    }
+
+    // inner values
+    T first, second;
+
+    // constructor
+    frac& normalize() {
+        if (first == 0 && second != 0) {
+            second = 1;
+            return *this;
+        }
+        if (second == 0 && first != 0) {
+            first = 1;
+            return *this;
+        }
+        if (second < 0) first = -first, second = -second;
+        T d = gcd(max(first, -first), second);
+        if (d == 0) first = 0, second = 1;
+        else first /= d, second /= d;
+        return *this;
+    }
+    frac(const frac&) = default;
+    frac& operator = (const frac&) = default;
+    constexpr frac(T f = 0, T s = 1) : first(f), second(s) { 
+        normalize(); 
+    }
+    constexpr frac& operator = (T a) { 
+        *this = frac(a, 1); 
+        return *this;
+    }
+    constexpr long double to_double() const {
+        assert(second != 0);
+        return (long double)(first) / (long double)(second);
+    }
+    friend constexpr long double to_double(const frac &r) {
+        return r.to_double();
+    }
+
+    // comparison operators
+    constexpr bool operator == (const frac &r) const {
+        return this->first == r.first && this->second == r.second;
+    }
+    constexpr bool operator != (const frac &r) const {
+        return this->first != r.first || this->second != r.second;
+    }
+    constexpr bool operator < (const frac &r) const {
+        return this->first * r.second < this->second * r.first;
+    }
+    constexpr bool operator > (const frac &r) const {
+        return this->first * r.second > this->second * r.first;
+    }
+    constexpr bool operator <= (const frac &r) const {
+        return this->first * r.second <= this->second * r.first;
+    }
+    constexpr bool operator >= (const frac &r) const {
+        return this->first * r.second >= this->second * r.first;
+    }
+    
+    // arithmetic operators
+    constexpr frac& operator += (const frac &r) {
+        this->first = this->first * r.second + this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator -= (const frac &r) {
+        this->first = this->first * r.second - this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator *= (const frac &r) {
+        this->first *= r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator /= (const frac &r) {
+        this->first *= r.second;
+        this->second *= r.first;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac operator + () const { return frac(*this); }
+    constexpr frac operator - () const { return frac(0) - frac(*this); }
+    constexpr frac operator + (const frac &r) const { return frac(*this) += r; }
+    constexpr frac operator - (const frac &r) const { return frac(*this) -= r; }
+    constexpr frac operator * (const frac &r) const { return frac(*this) *= r; }
+    constexpr frac operator / (const frac &r) const { return frac(*this) /= r; }
+    friend constexpr ostream& operator << (ostream &os, const frac<T> &x) {
+        os << x.first; 
+        if (x.second != 1) os << "/" << x.second;
+        return os;
+    }
+};
+void ABC_393_G() {
+    using i128 = __int128_t;
+    using FR = frac<i128>;
+    using SBT = SternBrocotTree<long long>;
+    long long N, P, Q;
+    cin >> N >> P >> Q;
+    FR K(P, Q);
+    vector A(N, vector(N, 0LL));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j];
+
+    // 目的関数の値
+    auto calc_obj = [&](const vector<FR> &x) -> FR {
+        FR res = 0;
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            if (i+1 < N) res += max(x[i*N+j] - x[(i+1)*N+j], x[(i+1)*N+j] - x[i*N+j]);
+            if (j+1 < N) res += max(x[i*N+j] - x[i*N+j+1], x[i*N+j+1] - x[i*N+j]);
+        }
+        return res;
+    };
+
+    // 小さい λ では負の値になり、ある程度大きい λ では 0 になる。0 になる瞬間が最適解。
+    auto calc_penalty = [&](const vector<FR> &x) -> FR {
+        FR res = 0;
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            res += max(x[i*N+j] - FR(A[i][j]), FR(A[i][j]) - x[i*N+j]);
+        }
+        return res - K;
+    };
+
+    // Stern-Brocot 木上の二分探索を実施する
+    /*
+    min: Σ_{u < v}(max(0, x[v] - x[u]) + max(0, x[u] - x[v]))
+            + λ(Σ_{v}(max(0, x[v] - A[v]) + max(0, A[v] - x[v])) - P/Q)
+    */
+    auto optimize = [&](FR r, vector<FR> &x) -> FR {
+        MinCostTension<FR> opt(N * N + 1);
+        int s = N * N;
+        opt.add_cost(-r * K);
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            if (i+1 < N) {
+                int u = i*N+j, v = (i+1)*N+j;
+                opt.add_tension_cost(u, v, FR(1), FR(0));
+                opt.add_tension_cost(v, u, FR(1), FR(0));
+            }
+            if (j+1 < N) {
+                int u = i*N+j, v = i*N+j+1;
+                opt.add_tension_cost(u, v, FR(1), FR(0));
+                opt.add_tension_cost(v, u, FR(1), FR(0));
+            }
+            int v = i*N+j;
+            opt.add_tension_cost(s, v, r, FR(A[i][j]));
+            opt.add_tension_cost(v, s, r, -FR(A[i][j]));
+        }
+        auto [flag, cost] = opt.solve();
+        auto ans = opt.reconstruct();
+        for (int i = 0; i < N * N; i++) x[i] = ans[i] - ans[s];
+        return cost;
+    };
+    auto check = [&](i128 a, i128 b) -> bool {
+        FR r(a, b);
+        vector<FR> x(N*N);
+        if (a == 1 && b == 0) return false;
+        auto cost = optimize(r, x);
+        return calc_penalty(x) > 0;
+    };
+    
+    vector<FR> pre_x(N*N), nex_x(N*N), x(N*N);
+    if (!check(0, 1)) {
+        vector<FR> x(N*N);
+        optimize(FR(0, 1), x);
+    } else {
+        auto [a, b, c, d] = SBT::binary_search(check, 10000000000000LL);
+        FR pre_r(a, b), nex_r(c, d);
+        auto pre_all_cost = optimize(pre_r, pre_x);
+        auto nex_all_cost = optimize(nex_r, nex_x);
+        auto pre_obj = calc_obj(pre_x), nex_obj = calc_obj(nex_x);
+        auto pre_penalty = calc_penalty(pre_x), nex_penalty = calc_penalty(nex_x);
+        for (int i = 0; i < N*N; i++) {
+            x[i] = (pre_x[i]*(-nex_penalty) + nex_x[i]*pre_penalty) / (pre_penalty - nex_penalty);
+        }
+    }
+    auto res = calc_obj(x);
+    cout << fixed << setprecision(20) << to_double(res) << endl;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) cout << to_double(x[i*N+j]) << " ";
+        cout << endl;
+    }
+}
+
 
 int main() {
     //AOJ_2230();
     //ABC_347_G();
     //ABC_397_G();
-    AOJ_3171();
+    //AOJ_3171();
+    ABC_393_G();
 }
