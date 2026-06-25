@@ -5,6 +5,9 @@
 //   Library Checker - Rational Approximation
 //     https://judge.yosupo.jp/problem/rational_approximation
 //
+//   ICPC アジア地区 京都大会 1999 A - Rational Irrationals (AOJ 1208)
+//     https://onlinejudge.u-aizu.ac.jp/problems/1208
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -61,7 +64,21 @@ void LibraryCheckerRatilnalApproximation() {
     }
 }
 
+// ICPC アジア地区 京都大会 1999 A - Rational Irrationals (AOJ 1208)
+void AOJ_1208() {
+    using sbt = SternBrocotTree<long long>;
+    long long P, N;
+    while (cin >> P >> N, P) {
+        auto check = [&](long long a, long long b) -> bool {
+            return a*a < b*b*P;
+        };
+        auto [a, b, c, d] = sbt::binary_search(check, N);
+        cout << c << "/" << d << " " << a << "/" << b << endl;
+    }
+}
+
 
 int main() {
-    LibraryCheckerRatilnalApproximation();
+    //LibraryCheckerRatilnalApproximation();
+    AOJ_1208();
 }
