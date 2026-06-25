@@ -615,11 +615,11 @@ template<class FLOW, class COST> struct MinCostBFlow {
     in general:
         Σ_{v} b(v)p(v) + Σ_{e} f(p(v) - p(u)), where f is concave
 */
-template<class VAL> struct MinCostTension {
+template<class FLOW, class COST> struct MinCostTension {
     // inner values
     int N;
-    VAL OFFSET = 0;
-    MinCostBFlow<VAL, VAL> opt;
+    COST OFFSET = 0;
+    MinCostBFlow<FLOW, COST> opt;
 
     // constructor
     MinCostTension() : OFFSET(0) {}
@@ -631,19 +631,19 @@ template<class VAL> struct MinCostTension {
     }
 
     // add constant cost
-    void add_cost(VAL cost) {
+    void add_cost(COST cost) {
         OFFSET += cost;
     }
 
     // add the part of obj func Σ_{v}b(v)p(v)
-    void add_single_coef(int v, VAL b) {
+    void add_single_coef(int v, FLOW b) {
         assert(0 <= v && v < N);
         assert(opt.lower_dss[v] == opt.upper_dss[v]);
         opt.set_ds(v, opt.lower_dss[v] + b);
     }
 
     // add tha part of obj func Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
-    void add_tension_cost(int u, int v, VAL c, VAL l) {
+    void add_tension_cost(int u, int v, FLOW c, COST l) {
         assert(0 <= u && u < N);
         assert(0 <= v && v < N);
         assert(u != v);
@@ -652,7 +652,7 @@ template<class VAL> struct MinCostTension {
     }
 
     // add constraint p(v) - p(u) <= d
-    void add_tension_constraint(int u, int v, VAL inf, VAL d) {
+    void add_tension_constraint(int u, int v, FLOW inf, COST d) {
         assert(0 <= u && u < N);
         assert(0 <= v && v < N);
         assert(u != v);
@@ -663,7 +663,7 @@ template<class VAL> struct MinCostTension {
     // f を (min_{f}, 傾きが 0 以下・0 以上の部分の傾きの変化点の多重集合）で表す
     // 変化点の多重集合を (変化点, 変化量) の vector で表す
     void add_tension_convex_function(int u, int v, 
-    VAL mif, const vector<pair<VAL,VAL>> &left, const vector<pair<VAL,VAL>> &right) {
+    COST mif, const vector<pair<COST,FLOW>> &left, const vector<pair<COST,FLOW>> &right) {
         assert(0 <= u && u < N);
         assert(0 <= v && v < N);
         assert(u != v);
@@ -673,11 +673,11 @@ template<class VAL> struct MinCostTension {
     }
 
     // solver
-    pair<bool, VAL> solve(bool calc_potential = true) {
+    pair<bool, COST> solve(bool calc_potential = true) {
         auto [flag, cost] = opt.solve(calc_potential);
         return make_pair(flag, OFFSET - cost);
     }
-    vector<VAL> reconstruct() {
+    vector<FLOW> reconstruct() {
         return opt.dual;
     }
 };
@@ -712,7 +712,7 @@ void AOJ_2230() {
     }
     int D = dp[N-1];
 
-    MinCostTension<long long> opt(N);
+    MinCostTension<long long, long long> opt(N);
     const long long INF = 1LL << 40;
     for (int v = 0; v < N; v++) opt.add_single_coef(v, outdeg[v] - indeg[v]);
     opt.add_tension_constraint(0, N-1, INF, D);
@@ -743,7 +743,7 @@ void ABC_347_G() {
     vector<vector<int>> A(N, vector<int>(N));
     for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j];
 
-    MinCostTension<long long> opt(N * N + 1);
+    MinCostTension<long long, long long> opt(N * N + 1);
     int s = N * N;
     vector<pair<long long, long long>> left{{0, 1}, {-1, 2}, {-2, 2}, {-3, 2}, {-4, 2}};
     vector<pair<long long, long long>> right{{0, 1}, {1, 2}, {2, 2}, {3, 2}, {4, 2}};
@@ -788,7 +788,7 @@ void ABC_397_G() {
     long long low = -1, high = 1000;
     while (high - low > 1) {
         long long d = (high + low) / 2;
-        MinCostTension<long long> opt(N);
+        MinCostTension<long long, long long> opt(N);
         opt.add_tension_constraint(N-1, 0, INF, -d);
         for (int i = 0; i < M; i++) {
             opt.add_tension_cost(U[i], V[i], 1, 0);
@@ -826,7 +826,7 @@ void AOJ_3171() {
     long long low = -1, high = LIM;
     while (high - low > 1) {
         long long T = (low + high) / 2;
-        MinCostTension<long long> opt(N * 2);
+        MinCostTension<long long, long long> opt(N * 2);
         for (int i = 0; i < N; i++) {
             opt.add_cost((B[i] - A[i]) * C[i]);
             opt.add_single_coef(i, B[i]);
@@ -1019,7 +1019,7 @@ void ABC_393_G() {
             + λ(Σ_{v}(max(0, x[v] - A[v]) + max(0, A[v] - x[v])) - P/Q)
     */
     auto optimize = [&](FR r, vector<FR> &x) -> FR {
-        MinCostTension<FR> opt(N * N + 1);
+        MinCostTension<FR, FR> opt(N * N + 1);
         int s = N * N;
         opt.add_cost(-r * K);
         for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
