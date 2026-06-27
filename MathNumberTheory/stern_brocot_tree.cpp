@@ -42,6 +42,112 @@ template<class T> struct SternBrocotTree {
     }
 };
 
+// not necessary, but often use: rational number
+template<class T = long long> struct frac {
+    // gcd
+    static T gcd(T a, T b) {
+        a = max(a, -a), b = max(b, -b);
+        while (b) {
+            a %= b;
+            swap(a, b);
+        }
+        return a;
+    }
+
+    // inner values
+    T first, second;
+
+    // constructor
+    frac& normalize() {
+        if (first == 0 && second != 0) {
+            second = 1;
+            return *this;
+        }
+        if (second == 0 && first != 0) {
+            first = 1;
+            return *this;
+        }
+        if (second < 0) first = -first, second = -second;
+        T d = gcd(max(first, -first), second);
+        if (d == 0) first = 0, second = 1;
+        else first /= d, second /= d;
+        return *this;
+    }
+    frac(const frac&) = default;
+    frac& operator = (const frac&) = default;
+    constexpr frac(T f = 0, T s = 1) : first(f), second(s) { 
+        normalize(); 
+    }
+    constexpr frac& operator = (T a) { 
+        *this = frac(a, 1); 
+        return *this;
+    }
+    constexpr long double to_double() const {
+        assert(second != 0);
+        return (long double)(first) / (long double)(second);
+    }
+    friend constexpr long double to_double(const frac &r) {
+        return r.to_double();
+    }
+
+    // comparison operators
+    constexpr bool operator == (const frac &r) const {
+        return this->first == r.first && this->second == r.second;
+    }
+    constexpr bool operator != (const frac &r) const {
+        return this->first != r.first || this->second != r.second;
+    }
+    constexpr bool operator < (const frac &r) const {
+        return this->first * r.second < this->second * r.first;
+    }
+    constexpr bool operator > (const frac &r) const {
+        return this->first * r.second > this->second * r.first;
+    }
+    constexpr bool operator <= (const frac &r) const {
+        return this->first * r.second <= this->second * r.first;
+    }
+    constexpr bool operator >= (const frac &r) const {
+        return this->first * r.second >= this->second * r.first;
+    }
+    
+    // arithmetic operators
+    constexpr frac& operator += (const frac &r) {
+        this->first = this->first * r.second + this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator -= (const frac &r) {
+        this->first = this->first * r.second - this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator *= (const frac &r) {
+        this->first *= r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator /= (const frac &r) {
+        this->first *= r.second;
+        this->second *= r.first;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac operator + () const { return frac(*this); }
+    constexpr frac operator - () const { return frac(0) - frac(*this); }
+    constexpr frac operator + (const frac &r) const { return frac(*this) += r; }
+    constexpr frac operator - (const frac &r) const { return frac(*this) -= r; }
+    constexpr frac operator * (const frac &r) const { return frac(*this) *= r; }
+    constexpr frac operator / (const frac &r) const { return frac(*this) /= r; }
+    friend constexpr ostream& operator << (ostream &os, const frac<T> &x) {
+        os << x.first; 
+        if (x.second != 1) os << "/" << x.second;
+        return os;
+    }
+};
+
 
 //------------------------------//
 // Examples
