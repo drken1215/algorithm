@@ -1,21 +1,24 @@
 //
-// Stern-Brocot 木上の二分探索
+// Stern-Brocot 木
 //
 // verified
-//   Library Checker - Rational Approximation
+//   Library Checker - Rational Approximation (for 二分探索)
 //     https://judge.yosupo.jp/problem/rational_approximation
 //
-//   Library Checker - Stern–Brocot Tree
+//   Library Checker - Stern–Brocot Tree (for さまざまな木探索)
 //     https://judge.yosupo.jp/problem/stern_brocot_tree
 //
 //   ICPC アジア地区 京都大会 1999 A - Rational Irrationals (AOJ 1208)
 //     https://onlinejudge.u-aizu.ac.jp/problems/1208
 //
-//   AtCoder ABC 294 F - Sugar Water 2
+//   AtCoder ABC 294 F - Sugar Water 2 (for 二分探索)
 //     https://atcoder.jp/contests/abc294/tasks/abc294_f
 //
-//   AtCoder ABC 408 G - A/B < p/q < C/D
+//   AtCoder ABC 408 G - A/B < p/q < C/D (for 一般的な go_left(), go_right())
 //     https://atcoder.jp/contests/abc408/tasks/abc408_g
+//
+//   JOI 2008 春合宿 Day3-2 - 分数 (Fraction)
+//     https://atcoder.jp/contests/joisc2008/tasks/joisc2008_fraction
 //
 
 
@@ -504,11 +507,39 @@ void ABC_408_G() {
     }
 }
 
+// JOI 2008 春合宿 Day3-2 - 分数 (Fraction)
+void JOI_2008_Day3_2() {
+    using Node = SBNode<long long>;
+    long long M, K;
+    cin >> M >> K;
+
+    // 分母が M 以下の規約分数を小さい順に走査していく
+    Node res, v;
+    auto rec = [&](auto &&rec, Node &v) -> void {
+        if (K <= 0) return;
+        v.go_left();
+        if (v.y <= M) rec(rec, v);
+        v.go_parent();
+        K--;
+        if (K == 0) {
+            res = v;
+            return;
+        }
+        v.go_right();
+        if (v.y <= M) rec(rec, v);
+        v.go_parent();
+    };
+    rec(rec, v);
+    if (res.x < res.y) cout << res.x << " " << res.y << endl;
+    else cout << -1 << endl;
+}
+
 
 int main() {
     //LibraryCheckerRatilnalApproximation();
-    LibraryCheckerSternBrocotTree();
+    //LibraryCheckerSternBrocotTree();
     //AOJ_1208();
     //ABC_294_F();
     //ABC_408_G();
+    JOI_2008_Day3_2();
 }
