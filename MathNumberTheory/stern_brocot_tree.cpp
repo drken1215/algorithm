@@ -8,6 +8,12 @@
 //   ICPC アジア地区 京都大会 1999 A - Rational Irrationals (AOJ 1208)
 //     https://onlinejudge.u-aizu.ac.jp/problems/1208
 //
+//   AtCoder ABC 294 F - Sugar Water 2
+//     https://atcoder.jp/contests/abc294/tasks/abc294_f
+//
+//   AtCoder ABC 408 G - A/B < p/q < C/D
+//     https://atcoder.jp/contests/abc408/tasks/abc408_g
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -17,28 +23,181 @@
 using namespace std;
 
 
-// Stern-Brocot Tree
-template<class T> struct SternBrocotTree {
-    // binary search on Stern-Brocot Tree
-    // return {l (= a/b), r (= c/d(} s.t. l: OK, r: NG
-    // and a, b, c, d are maximized where a, b, c, d <= lim
-    template<class Func> static tuple<T, T, T, T> binary_search(Func check, T lim) {
+// Stern-Brocot Tree Node
+template<class T> struct SBNode {
+    // inner values
+    T lx, ly, x, y, rx, ry;
+    vector<T> path;  // path from root to the node
+
+    // constructors (X, Y must be coprime)
+    SBNode() : lx(0), ly(1), x(1), y(1), rx(1), ry(0) {}
+    SBNode(T X, T Y) : SBNode() {
+        assert(X >= 1 && Y >= 1);
+        while (min(X, Y) > 0) {
+            if (X > Y) {
+                T d = X / Y;
+                X -= d * Y;
+                go_right(d - (X == 0 ? 1 : 0));
+            } else {
+                T d = Y / X;
+                Y -= d * X;
+                go_left(d - (Y == 0 ? 1 : 0));
+            }
+        }
+    }
+    SBNode(const vector<T> &Path) : SBNode() {
+        for (const T &d : Path) {
+            assert(d != 0);
+            if (d < 0) go_left(d);
+            if (d > 0) go_right(d);
+        }
+        assert(path == Path);
+    }
+    SBNode(const SBNode&) = default;
+    SBNode& operator = (const SBNode&) = default;
+
+    // getters
+    friend constexpr ostream& operator << (ostream &os, const SBNode &node) {
+        return os << "(" << node.x << ", " << node.y << ")"
+                  << ", L: (" << node.lx << ", " << node.ly << ")"
+                  << ", R: (" << node.rx << ", " << node.ry << ")" << '\n';
+    }
+    constexpr void dump() const {
+        cout << "(" << x << ", " << y << ")"
+             << ", L: (" << lx << ", " << ly << ")"
+             << ", R: (" << rx << ", " << ry << ")" << '\n';
+        cout << "path: {";
+        for (int i = 0; i < (int)path.size(); i++) {
+            if (i) cout << ", ";
+            cout << path[i];
+        }
+        cout << "}" << '\n';
+    }
+    friend constexpr void dump(const SBNode &node) {
+        node.dump();
+    }
+
+    // go left (d steps)
+    constexpr void go_left(T d = 1) {
+        if (d <= 0) return;
+        if (path.empty() || path.back() > 0) path.emplace_back(0);
+        path.back() -= d;
+        rx += lx * d, ry += ly * d;
+        x = lx + rx, y = ly + ry;
+    }
+    constexpr void go_right(T d = 1) {
+        if (d <= 0) return;
+        if (path.empty() || path.back() < 0) path.emplace_back(0);
+        path.back() += d;
+        lx += rx * d, ly += ry * d;
+        x = lx + rx, y = ly + ry;
+    }
+    constexpr bool go_parent(T d = 1) {
+        if (d <= 0) return true;
+        while (d != 0) {
+            if (path.empty()) return false;
+            T d2 = min(d, max(path.back(), -path.back()));
+            if (path.back() > 0) {
+                x -= rx * d2, y -= ry * d2;
+                lx = x - rx, ly = y - ry;
+                path.back() -= d2;
+            } else {
+                x -= lx * d2, y -= ly * d2;
+                rx = x - lx, ry = y - ly;
+                path.back() += d2;
+            }
+            d -= d2;
+            if (path.back() == 0) path.pop_back();
+            if (d2 == T(0)) break;
+        }
+        return true;
+    }
+    friend constexpr void go_left(SBNode &node, T d = 1) { node.go_left(d); }
+    friend constexpr void go_right(SBNode &node, T d = 1) { node.go_right(d); }
+    friend constexpr bool go_parent(SBNode &node, T d = 1) { return node.go_parent(d); }
+
+    // go left while check(x, y) is false, go right while check(x, y) is true
+    template<class Func> constexpr void go_left
+    (const Func &check, T lim = numeric_limits<T>::max()/3) {
         assert(check(0, 1));
         assert(!check(1, 0));
-        auto rec = [&](auto &&rec, bool which, T &a, T &b, T c, T d) -> void {
-            if (a + c > lim || b + d > lim) return;
-            if (check(a + c, b + d) == which) {
-                a += c, b += d;
-                rec(rec, which, a, b, c + c, d + d);
+        assert(check(lx, ly));
+        auto rec = [&](auto &&rec, T dx, T dy, T d = 1) -> void {
+            if (rx + dx > lim || ry + dy > lim) return;
+            if (!check(rx + dx, ry + dy)) {
+                go_left(d);
+                rec(rec, dx + dx, dy + dy, d << 1);
             }
-            if (a + c <= lim && b + d <= lim && check(a + c, b + d) == which) a += c, b += d;
+            if (rx + dx <= lim && ry + dy <= lim && !check(rx + dx, ry + dy)) {
+                go_left(d);
+            }
         };
-        T a = 0, b = 1, c = 1, d = 0;
-        while (a + c <= lim && b + d <= lim) {
-            rec(rec, true, a, b, c, d);
-            rec(rec, false, c, d, a, b);
+        rec(rec, lx, ly);
+    }
+    template<class Func> constexpr void go_right
+    (const Func &check, T lim = numeric_limits<T>::max()/3) {
+        assert(check(0, 1));
+        assert(!check(1, 0));
+        assert(!check(rx, ry));
+        auto rec = [&](auto &&rec, T dx, T dy, T d = 1) -> void {
+            if (lx + dx > lim || ly + dy > lim) return;
+            if (check(lx + dx, ly + dy)) {
+                go_right(d);
+                rec(rec, dx + dx, dy + dy, d << 1);
+            }
+            if (lx + dx <= lim && ly + dy <= lim && check(lx + dx, ly + dy)) {
+                go_right(d);
+            }
+        };
+        rec(rec, rx, ry);
+    }
+    template<class Func> friend constexpr void go_left
+    (SBNode &node, const Func &check, T lim = numeric_limits<T>::max()/3) {
+        node.go_left(check, lim);
+    }
+    template<class Func> friend constexpr void go_right
+    (SBNode &node, const Func &check, T lim = numeric_limits<T>::max()/3) {
+        node.go_right(check, lim);
+    }
+
+    // comparison operators
+    friend bool operator == (const SBNode &lhs, const SBNode &rhs) {
+        return lhs.x == rhs.x && lhs.y == rhs.y;
+    }
+    friend bool operator != (const SBNode &lhs, const SBNode &rhs) {
+        return lhs.x != rhs.x || lhs.y != rhs.y;
+    }
+    friend bool operator < (const SBNode &lhs, const SBNode &rhs) {
+        return lhs.x * rhs.y < rhs.x * lhs.y;
+    }
+    friend bool operator > (const SBNode &lhs, const SBNode &rhs) {
+        return lhs.x * rhs.y > rhs.x * lhs.y;
+    }
+    friend bool operator <= (const SBNode &lhs, const SBNode &rhs) {
+        return lhs.x * rhs.y <= rhs.x * lhs.y;
+    }
+    friend bool operator >= (const SBNode &lhs, const SBNode &rhs) {
+        return lhs.x * rhs.y >= rhs.x * lhs.y;
+    }
+};
+
+// Stern-Brocot Tree
+template<class T> struct SBTree {
+    using Node = SBNode<T>;
+
+    // binary search on Stern-Brocot Tree
+    // return {l (= lx/ly), r (= rx/ry)} s.t. l: OK, r: NG
+    // and lx, ly, rx, ry are maximized where lx, ly, rx, ry <= lim
+    template<class Func> static Node binary_search(const Func &check, T lim) {
+        assert(check(0, 1));
+        assert(!check(1, 0));
+        Node v;
+        while (v.x <= lim && v.y <= lim) {
+            // always check(lx, ly): True, check(rx, ry): False
+            v.go_left(check, lim);
+            v.go_right(check, lim);
         }
-        return {a, b, c, d};
+        return v;
     }
 };
 
@@ -155,36 +314,122 @@ template<class T = long long> struct frac {
 
 // Library Checker - Rational Approximation
 void LibraryCheckerRatilnalApproximation() {
-    cin.tie(nullptr);
-    ios_base::sync_with_stdio(false);
-    using sbt = SternBrocotTree<long long>;
+    // cin.tie(nullptr);
+    // ios_base::sync_with_stdio(false);
+    using Node = SBNode<long long>;
+    using SBT = SBTree<long long>;
     int T;
     cin >> T;
     while (T--) {
         long long N, x, y;
         cin >> N >> x >> y;
         auto check = [&](long long a, long long b) -> bool { return a * y <= b * x; };
-        auto [a, b, c, d] = sbt::binary_search(check, N);
-        if (a * y == b * x) cout << a << ' ' << b << ' ' << a << ' ' << b << '\n';
-        else cout << a << ' ' << b << ' ' << c << ' ' << d << '\n';
+        auto v = SBT::binary_search(check, N);
+        if (v.lx * y == v.ly * x) cout << v.lx << ' ' << v.ly << ' ' << v.lx << ' ' << v.ly << '\n';
+        else cout << v.lx << ' ' << v.ly << ' ' << v.rx << ' ' << v.ry << '\n';
     }
 }
 
 // ICPC アジア地区 京都大会 1999 A - Rational Irrationals (AOJ 1208)
 void AOJ_1208() {
-    using sbt = SternBrocotTree<long long>;
+    using SBT = SBTree<long long>;
     long long P, N;
     while (cin >> P >> N, P) {
         auto check = [&](long long a, long long b) -> bool {
             return a*a < b*b*P;
         };
-        auto [a, b, c, d] = sbt::binary_search(check, N);
-        cout << c << "/" << d << " " << a << "/" << b << endl;
+        auto v = SBT::binary_search(check, N);
+        cout << v.rx << "/" << v.ry << " " << v.lx << "/" << v.ly << endl;
+    }
+}
+
+// AtCoder ABC 294 F - Sugar Water 2
+void ABC_294_F() {
+    using FR = frac<long long>;
+    using SBT = SBTree<long long>;
+    long long N, M, K;
+    cin >> N >> M >> K;
+    vector<long long> A(N), B(N), C(M), D(M);
+    for (int i = 0; i < N; i++) cin >> A[i] >> B[i];
+    for (int i = 0; i < M; i++) cin >> C[i] >> D[i];
+
+    // x/y 以上の濃度になるものが K 個以上あるか？
+    auto check = [&](long long x, long long y) -> bool {
+        if (x == 1 && y == 0) return false;
+        FR r(x, y);
+        vector<FR> P(N), Q(M);
+        for (int i = 0; i < N; i++) P[i] = FR(A[i]*100) - r * (A[i]+B[i]);
+        for (int i = 0; i < M; i++) Q[i] = FR(C[i]*100) - r * (C[i]+D[i]);
+        sort(Q.begin(), Q.end());
+        long long num = 0;
+        for (int i = 0; i < N; i++) {
+            long long tmp = M - (lower_bound(Q.begin(), Q.end(), -P[i]) - Q.begin());
+            num += tmp;
+        }
+        return num >= K;
+    };
+    auto v = SBT::binary_search(check, 5100000);
+    cout << fixed << setprecision(10) << to_double(FR(v.lx, v.ly)) << endl;
+}
+
+// AtCoder ABC 408 G - A/B < p/q < C/D
+using i128 = __int128_t;
+i128 to_integer(const string &s) {
+    i128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    if (s[0] == '-') res *= -1;
+    return res;
+}
+istream& operator >> (istream &is, i128 &x) {
+    string s;
+    is >> s;
+    x = to_integer(s);
+    return is;
+}
+ostream& operator << (ostream &os, const i128 &x) {
+    i128 ax = (x >= 0 ? x : -x);
+    char buffer[128];
+    char *d = end(buffer);
+    do {
+         --d;
+        *d = "0123456789"[ax % 10];
+        ax /= 10;
+    } while (ax != 0);
+    if (x < 0) {
+        --d;
+        *d = '-';
+    }
+    int len = end(buffer) - d;
+    if (os.rdbuf()->sputn(d, len) != len) {
+        os.setstate(ios_base::badbit);
+    }
+    return os;
+}
+void ABC_408_G() {
+    using Node = SBNode<i128>;
+    using SBT = SBTree<i128>;
+    int T;
+    cin >> T;
+    while (T--) {
+        i128 A, B, C, D;
+        cin >> A >> B >> C >> D;
+        auto check_left = [&](i128 x, i128 y) { return A * y >= B * x; };
+        auto check_right = [&](i128 x, i128 y) { return x * D < y * C; };
+        Node v;
+        while (check_left(v.x, v.y) || !check_right(v.x, v.y)) {
+            if (check_left(v.x, v.y)) v.go_right(check_left);
+            if (!check_right(v.x, v.y)) v.go_left(check_right);
+        }
+        cout << v.y << endl;
     }
 }
 
 
 int main() {
     //LibraryCheckerRatilnalApproximation();
-    AOJ_1208();
+    //AOJ_1208();
+    //ABC_294_F();
+    ABC_408_G();
 }
