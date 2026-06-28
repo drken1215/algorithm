@@ -17,6 +17,9 @@
 //   AtCoder ABC 408 G - A/B < p/q < C/D (for 一般的な go_left(), go_right())
 //     https://atcoder.jp/contests/abc408/tasks/abc408_g
 //
+//   AtCode ABC 333 G - Nearest Fraction (for 二分探索)
+//     https://atcoder.jp/contests/abc333/tasks/abc333_g
+//
 //   JOI 2008 春合宿 Day3-2 - 分数 (Fraction)
 //     https://atcoder.jp/contests/joisc2008/tasks/joisc2008_fraction
 //
@@ -507,6 +510,28 @@ void ABC_408_G() {
     }
 }
 
+// AtCode ABC 333 G - Nearest Fraction
+void ABC_333_G() {
+    using FR = frac<i128>;
+    using SBT = SBTree<i128>;
+    string S;
+    i128 N, ue = 0, shita = 1;
+    cin >> S >> N;
+    S = S.substr(2);
+    for (auto c : S) {
+        ue = ue * 10 + (c - '0');
+        shita *= 10;
+    }
+    FR r(ue, shita);
+
+    auto check = [&](i128 p, i128 q) -> bool { return FR(p, q) <= r; };
+    auto v = SBT::binary_search(check, N);
+    FR le(v.lx, v.ly), ri(v.rx, v.ry);
+    FR dl = max(le - r, r - le), dr = max(ri - r, r - ri);
+    if (dl <= dr) cout << v.lx << " " << v.ly << endl;
+    else cout << v.rx << " " << v.ry << endl;
+}
+
 // JOI 2008 春合宿 Day3-2 - 分数 (Fraction)
 void JOI_2008_Day3_2() {
     using Node = SBNode<long long>;
@@ -541,5 +566,6 @@ int main() {
     //AOJ_1208();
     //ABC_294_F();
     //ABC_408_G();
-    JOI_2008_Day3_2();
+    ABC_333_G();
+    //JOI_2008_Day3_2();
 }
