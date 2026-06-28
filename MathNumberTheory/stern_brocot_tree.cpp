@@ -5,6 +5,9 @@
 //   Library Checker - Rational Approximation
 //     https://judge.yosupo.jp/problem/rational_approximation
 //
+//   Library Checker - Stern–Brocot Tree
+//     https://judge.yosupo.jp/problem/stern_brocot_tree
+//
 //   ICPC アジア地区 京都大会 1999 A - Rational Irrationals (AOJ 1208)
 //     https://onlinejudge.u-aizu.ac.jp/problems/1208
 //
@@ -48,7 +51,7 @@ template<class T> struct SBNode {
     SBNode(const vector<T> &Path) : SBNode() {
         for (const T &d : Path) {
             assert(d != 0);
-            if (d < 0) go_left(d);
+            if (d < 0) go_left(-d);
             if (d > 0) go_right(d);
         }
         assert(path == Path);
@@ -59,13 +62,13 @@ template<class T> struct SBNode {
     // getters
     friend constexpr ostream& operator << (ostream &os, const SBNode &node) {
         return os << "(" << node.x << ", " << node.y << ")"
-                  << ", L: (" << node.lx << ", " << node.ly << ")"
-                  << ", R: (" << node.rx << ", " << node.ry << ")" << '\n';
+                  << ", LB: (" << node.lx << ", " << node.ly << ")"
+                  << ", UB: (" << node.rx << ", " << node.ry << ")" << '\n';
     }
     constexpr void dump() const {
         cout << "(" << x << ", " << y << ")"
-             << ", L: (" << lx << ", " << ly << ")"
-             << ", R: (" << rx << ", " << ry << ")" << '\n';
+             << ", LB: (" << lx << ", " << ly << ")"
+             << ", UB: (" << rx << ", " << ry << ")" << '\n';
         cout << "path: {";
         for (int i = 0; i < (int)path.size(); i++) {
             if (i) cout << ", ";
@@ -76,8 +79,13 @@ template<class T> struct SBNode {
     friend constexpr void dump(const SBNode &node) {
         node.dump();
     }
+    constexpr T get_depth() const {
+        T res = 0;
+        for (auto d : path) res += max(d, -d);
+        return res;
+    }
 
-    // go left (d steps)
+    // go left (d steps), go right (d steps), go parent (d steps)
     constexpr void go_left(T d = 1) {
         if (d <= 0) return;
         if (path.empty() || path.back() > 0) path.emplace_back(0);
@@ -116,7 +124,7 @@ template<class T> struct SBNode {
     friend constexpr void go_right(SBNode &node, T d = 1) { node.go_right(d); }
     friend constexpr bool go_parent(SBNode &node, T d = 1) { return node.go_parent(d); }
 
-    // go left while check(x, y) is false, go right while check(x, y) is true
+    // go left while check(x, y) is False, go right while check(x, y) is True
     template<class Func> constexpr void go_left
     (const Func &check, T lim = numeric_limits<T>::max()/3) {
         assert(check(0, 1));
@@ -185,15 +193,29 @@ template<class T> struct SBNode {
 template<class T> struct SBTree {
     using Node = SBNode<T>;
 
+    // get LCA on Stern-Brocot Tree
+    static Node get_lca(const Node &lhs, const Node &rhs) {
+        Node v;
+        int siz = min<int>(lhs.path.size(), rhs.path.size());
+        for (int i = 0; i < siz; i++) {
+            T d1 = lhs.path[i], d2 = rhs.path[i];
+            if ((d1 < 0) != (d2 < 0)) break;
+            if (d1 < 0) v.go_left(min(-d1, -d2));
+            if (d1 > 0) v.go_right(min(d1, d2));
+            if (d1 != d2) break;
+        }
+        return v;
+    }
+
     // binary search on Stern-Brocot Tree
-    // return {l (= lx/ly), r (= rx/ry)} s.t. l: OK, r: NG
+    // return {l (= lx/ly), r (= rx/ry)} s.t. l: True, r: False
     // and lx, ly, rx, ry are maximized where lx, ly, rx, ry <= lim
     template<class Func> static Node binary_search(const Func &check, T lim) {
         assert(check(0, 1));
         assert(!check(1, 0));
         Node v;
         while (v.x <= lim && v.y <= lim) {
-            // always check(lx, ly): True, check(rx, ry): False
+            // always, check(lx, ly): True, check(rx, ry): False
             v.go_left(check, lim);
             v.go_right(check, lim);
         }
@@ -314,8 +336,8 @@ template<class T = long long> struct frac {
 
 // Library Checker - Rational Approximation
 void LibraryCheckerRatilnalApproximation() {
-    // cin.tie(nullptr);
-    // ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
     using Node = SBNode<long long>;
     using SBT = SBTree<long long>;
     int T;
@@ -327,6 +349,62 @@ void LibraryCheckerRatilnalApproximation() {
         auto v = SBT::binary_search(check, N);
         if (v.lx * y == v.ly * x) cout << v.lx << ' ' << v.ly << ' ' << v.lx << ' ' << v.ly << '\n';
         else cout << v.lx << ' ' << v.ly << ' ' << v.rx << ' ' << v.ry << '\n';
+    }
+}
+
+// Library Checker - Stern–Brocot Tree
+void LibraryCheckerSternBrocotTree() {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    using Node = SBNode<long long>;
+    using SBT = SBTree<long long>;
+    int T;
+    cin >> T;
+    while (T--) {
+        string qtype;
+        cin >> qtype;
+        if (qtype == "ENCODE_PATH") {
+            long long a, b;
+            cin >> a >> b;
+            auto res = Node(a, b).path;
+            cout << res.size();
+            for (auto p : res) {
+                if (p > 0) cout << " R " << p;
+                else cout << " L " << -p;
+            }
+            cout << endl;
+        } else if (qtype == "DECODE_PATH") {
+            long long K;
+            cin >> K;
+            vector<long long> path(K);
+            for (int i = 0; i < K; i++) {
+                char c;
+                long long n;
+                cin >> c >> n;
+                if (c == 'L') path[i] = -n;
+                else path[i] = n;
+            }
+            auto res = Node(path);
+            cout << res.x << " " << res.y << endl;
+        } else if (qtype == "LCA") {
+            long long a, b, c, d;
+            cin >> a >> b >> c >> d;
+            Node l(a, b), r(c, d);
+            auto res = SBT::get_lca(l, r);
+            cout << res.x << " " << res.y << endl;
+        } else if (qtype == "ANCESTOR") {
+            long long k, a, b;
+            cin >> k >> a >> b;
+            Node v(a, b);
+            long long d = v.get_depth() - k;
+            if (d < 0 || !v.go_parent(d)) cout << -1 << endl;
+            else cout << v.x << " " << v.y << endl;
+        } else if (qtype == "RANGE") {
+            long long a, b;
+            cin >> a >> b;
+            Node v(a, b);
+            cout << v.lx << " " << v.ly << " " << v.rx << " " << v.ry << endl;
+        }
     }
 }
 
@@ -429,7 +507,8 @@ void ABC_408_G() {
 
 int main() {
     //LibraryCheckerRatilnalApproximation();
+    LibraryCheckerSternBrocotTree();
     //AOJ_1208();
     //ABC_294_F();
-    ABC_408_G();
+    //ABC_408_G();
 }
