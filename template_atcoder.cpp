@@ -95,6 +95,8 @@ template<class T = long long> struct Edge {
     T val;
     Edge() : from(-1), to(-1) { }
     Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
+    Edge(const Edge&) = default;
+    Edge& operator = (const Edge&) = default;
     friend ostream& operator << (ostream& s, const Edge& e) {
         return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
@@ -153,13 +155,13 @@ template<class T = long long> struct Graph {
     }
     void add_bidirected_edge(int from, int to, T val = 1) {
         assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
-        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        if (record_edge_index) id[from][to] = (int)list[from].size();
         list[from].push_back(Edge(from, to, val));
-        if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
         if (from != to) {
             if (record_edge_index) id[to][from] = (int)list[to].size(); 
             list[to].push_back(Edge(to, from, val));
-            if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+            if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
         }
     }
 
