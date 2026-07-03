@@ -311,12 +311,12 @@
 ## 最大流
 
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
-- (★★★☆) [最大流 (Dinic 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
+- (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
 
 ## 最小カット
 
 - (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cut.cpp)
-- (★★★★) 全域最小カット (Stoer-Wanger 法)
+- (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/stoer_wagner.cpp)
 - (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法)
 - (★★★★) Gomory-Hu 木
 
@@ -334,7 +334,7 @@
 
 ## マッチング
 
-- (★★★☆) [二部マッチング (Hopcroft-Karp 法, O(E√V))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
+- (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
 - (★★★☆) 重みつき二部マッチング (Hungarian 法)
 - (★★★★) 一般グラフの最大マッチング (Edmonds 法)
 - (★★★★) 一般グラフの最大マッチング (行列補間)
