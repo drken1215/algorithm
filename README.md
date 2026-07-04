@@ -317,7 +317,7 @@
 
 - (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cut.cpp)
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/stoer_wagner.cpp)
-- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法)
+- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法, in O(VE + V^2 log V))
 - (★★★★) Gomory-Hu 木
 
 ## 最小費用流
