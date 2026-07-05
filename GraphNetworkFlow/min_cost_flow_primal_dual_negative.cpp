@@ -11,6 +11,12 @@
 //   AtCoder Library Practice Contest E - MinCostFlow
 //     https://atcoder.jp/contests/practice2/tasks/practice2_e
 //
+//   AtCoder ABC 214 H - Collecting (for DAG potential)
+//     https://atcoder.jp/contests/abc214/tasks/abc214_h
+//
+//   AtCoder ABC 247 G - Dream Team (for SPFA potential and slope)
+//     https://atcoder.jp/contests/abc247/tasks/abc247_g
+//
 
 
 #include <bits/stdc++.h>
@@ -27,12 +33,19 @@ template<class FLOW, class COST> struct FlowCostEdge {
     // constructor
     FlowCostEdge() {}
     FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
-    : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {}
-    void reset() { cap = icap, flow = 0; }
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {
+    }
+    FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(cost) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
     
     // debug
     friend ostream& operator << (ostream& s, const FlowCostEdge& e) {
-        return s << e.from << " -> " << e.to << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ", " << e.cost << ")";
     }
 };
 
@@ -96,8 +109,8 @@ template<class FLOW, class COST> struct FlowCostGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, 0, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, cap, -cost));
         if (cost < 0) include_negative_edge = true;
     }
     void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
@@ -106,9 +119,14 @@ template<class FLOW, class COST> struct FlowCostGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, rcap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, cap, -cost));
         if (cost < 0) include_negative_edge = true;
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap, cost);
     }
 
     // find initial potential (to resolve initial negative-edge)
@@ -333,9 +351,240 @@ void ACL_practice_E() {
     for (int i = 0; i < N; ++i) cout << grid[i] << endl;
 }
 
+// AtCoder ABC 214 H - Collecting
+// scc
+template<class T = long long> struct Edge {
+    int from, to;
+    T val;
+    Edge() : from(-1), to(-1) { }
+    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
+    friend ostream& operator << (ostream& s, const Edge& e) {
+        return s << e.from << "->" << e.to << "(" << e.val << ")";
+    }
+};
+template<class T = long long> struct Graph {
+    int V;
+    bool record_reversed_edges = false, record_edge_index = false;
+    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<T>>> reversed_list;
+    vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
 
-int main() {
-    AOJ_Course_GRL_6_B();
-    //ACL_practice_E();
+    // constructors
+    Graph(int n = 0, bool rre = false, bool rei = false) {
+        init(n, rre, rei);
+    }
+    void init(int n = 0, bool rre = false, bool rei = false) {
+        V = n, record_reversed_edges = rre, record_edge_index = rei;
+        list.assign(n, vector<Edge<T>>());
+        if (record_reversed_edges) reversed_list.assign(n, vector<Edge<T>>());
+        if (record_edge_index) id.assign(n, unordered_map<int, int>());
+    }
+    Graph(const Graph&) = default;
+    Graph& operator = (const Graph&) = default;
+
+    // getters
+    vector<Edge<T>> &operator [] (int i) { return list[i]; }
+    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    constexpr size_t size() const { return list.size(); }
+    constexpr void clear() { V = 0; list.clear(); }
+    constexpr void resize(int n) { V = n; list.resize(n); }
+    const vector<Edge<T>> &get_rev_edges(int i) const { 
+        assert(record_reversed_edges);
+        return reversed_list[i];
+    }
+    Edge<T> &get_edge(int u, int v) {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
+        return list[u][id[u][v]];
+    }
+    const Edge<T> &get_edge(int u, int v) const {
+        assert(record_edge_index);
+        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
+        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < list[u].size());
+        return list[u][id[u].at(v)];
+    }
+
+    // add edge
+    void add_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+    }
+    void add_bidirected_edge(int from, int to, T val = 1) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        if (record_edge_index) id[from][to] = (int)list[from].size(); 
+        list[from].push_back(Edge(from, to, val));
+        if (record_reversed_edges) reversed_list[from].push_back(Edge(from, to, val));
+        if (from != to) {
+            if (record_edge_index) id[to][from] = (int)list[to].size(); 
+            list[to].push_back(Edge(to, from, val));
+            if (record_reversed_edges) reversed_list[to].push_back(Edge(to, from, val));
+        }
+    }
+
+    // input (only tree-case)
+    friend istream& operator >> (istream &is, Graph &G) {
+        for (int i = 0; i < G.V - 1; i++) {
+            int u, v;
+            is >> u >> v, u--, v--;
+            G.add_bidirected_edge(u, v);
+        }
+        return is;
+    }
+
+    // output
+    friend ostream &operator << (ostream &os, const Graph &G) {
+        os << endl;
+        for (int i = 0; i < (int)G.size(); ++i) {
+            os << i << " -> ";
+            for (int j = 0; j < (int)G[i].size(); j++) {
+                if (j) os << ", ";
+                os << G[i][j].to << "(" << G[i][j].val << ")";
+            }
+            os << endl;
+        }
+        return os;
+    }
+};
+template<class T> struct SCC {
+    // results
+    vector<int> cmp;
+    vector<vector<int>> groups;
+    Graph<T> dag;
+    
+    // intermediate results
+    vector<bool> seen;
+    vector<int> vs, rvs;
+    
+    // constructor
+    SCC() { }
+    SCC(const Graph<T> &G) { 
+        solve(G);
+    }
+    void init(const Graph<T> &G) { 
+        solve(G);
+    }
+
+    // getter, compressed dag（v: node-id of compressed dag)
+    int get_size(int v) const {
+        return groups[v].size();
+    }
+    vector<int> get_group(int v) const {
+        return groups[v];
+    }
+
+    // solver
+    void dfs(const Graph<T> &G, int v) {
+        seen[v] = true;
+        for (const auto &e : G[v]) if (!seen[e.to]) dfs(G, e.to);
+        vs.push_back(v);
+    }
+    void rdfs(const Graph<T> &G, int v, int k) {
+        seen[v] = true;
+        cmp[v] = k;
+        for (const auto &e : G.get_rev_edges(v)) if (!seen[e.to]) rdfs(G, e.to, k);
+        rvs.push_back(v);
+    }
+    void reconstruct(const Graph<T> &G) {
+        dag.init((int)groups.size());
+        set<pair<int,int>> new_edges;
+        for (int i = 0; i < (int)G.size(); ++i) {
+            int u = cmp[i];
+            for (const auto &e : G[i]) {
+                int v = cmp[e.to];
+                if (u == v) continue;
+                if (!new_edges.count({u, v})) {
+                    dag.add_edge(u, v);
+                    new_edges.insert({u, v});
+                }
+            }
+        }
+    }
+    void solve(const Graph<T> &G) {
+        // first dfs
+        seen.assign((int)G.size(), false);
+        vs.clear();
+        for (int v = 0; v < (int)G.size(); ++v) if (!seen[v]) dfs(G, v);
+
+        // back dfs
+        int k = 0;
+        groups.clear();
+        seen.assign((int)G.size(), false);
+        cmp.assign((int)G.size(), -1);
+        for (int i = (int)G.size()-1; i >= 0; --i) {
+            if (!seen[vs[i]]) {
+                rvs.clear();
+                rdfs(G, vs[i], k++);
+                groups.push_back(rvs);
+            }
+        }
+        reconstruct(G);
+    }
+};
+void ABC_214_H() {
+    long long N, M, K;
+    cin >> N >> M >> K;
+    Graph G(N, true);
+    for (int i = 0; i < M; i++) {
+        int A, B;
+        cin >> A >> B, A--, B--;
+        G.add_edge(A, B);
+    }
+    vector<long long> X(N);
+    for (int v = 0; v < N; v++) cin >> X[v];
+    SCC scc(G);
+    auto cmp = scc.cmp;
+    auto dag = scc.dag;
+    long long V = dag.size();
+    vector<long long> W(V, 0);
+    for (int v = 0; v < N; v++) W[cmp[v]] += X[v];
+
+    const long long INF = 1LL<<50;
+    FlowCostGraph<long long, long long> FG(V*2+1);
+    long long t = V*2;
+    for (int v = 0; v < V; v++) {
+        FG.add_edge(v, v+V, 1, -W[v]);
+        FG.add_edge(v, v+V, K-1, 0);
+        for (auto e : dag[v]) FG.add_edge(e.from+V, e.to, K, 0);
+        FG.add_edge(v+V, t, K, 0);
+    }
+    auto [flow, cost] = MinCostFlow(FG, cmp[0], t, K);
+    cout << -cost << endl;
 }
 
+// AtCoder ABC 247 G - Dream Team (for SPFA potential)
+void ABC_247_G() {
+    long long N, M = 200, INF = 1LL<<29;
+
+    cin >> N;
+    vector<long long> A(N), B(N), C(N);
+    for (int i = 0; i < N; i++) cin >> A[i] >> B[i] >> C[i], A[i]--, B[i]--;
+
+    FlowCostGraph<long long, long long> FG(M * 2 + 2);
+    long long s = M * 2, t = s + 1;
+    for (int i = 0; i < M; i++) FG.add_edge(s, i, 1, 0), FG.add_edge(i+M, t, 1, 0);
+    for (int i = 0; i < N; i++) FG.add_edge(A[i], B[i]+M, 1, -C[i]);
+
+    auto slope = MinCostFlowSlope(FG, s, t);
+    long long K = slope.back().first;
+    vector<long long> res(K+1, 0);
+    for (int i = 0; i < (int)slope.size()-1; i++) {
+        auto [x1, y1] = slope[i];
+        auto [x2, y2] = slope[i+1];
+        for (long long x = x1; x <= x2; x++) {
+            res[x] = (y2 - y1) / (x2 - x1) * (x - x1) + y1;
+        }
+    }
+    cout << K << endl;
+    for (int k = 1; k <= K; k++) cout << -res[k] << endl;
+}
+
+
+int main() {
+    //AOJ_Course_GRL_6_B();
+    //ACL_practice_E();
+    //ABC_214_H();
+    ABC_247_G();
+}

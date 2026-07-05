@@ -21,12 +21,19 @@ template<class FLOW, class COST> struct FlowCostEdge {
     // constructor
     FlowCostEdge() {}
     FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
-    : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {}
-    void reset() { cap = icap, flow = 0; }
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {
+    }
+    FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(cost) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
     
     // debug
     friend ostream& operator << (ostream& s, const FlowCostEdge& e) {
-        return s << e.from << " -> " << e.to << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ", " << e.cost << ")";
     }
 };
 
@@ -90,8 +97,8 @@ template<class FLOW, class COST> struct FlowCostGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, 0, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, cap, -cost));
         if (cost < 0) include_negative_edge = true;
     }
     void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
@@ -100,9 +107,14 @@ template<class FLOW, class COST> struct FlowCostGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, rcap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, cap, -cost));
         if (cost < 0) include_negative_edge = true;
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap, cost);
     }
 
     // find initial potential (to resolve initial negative-edge)

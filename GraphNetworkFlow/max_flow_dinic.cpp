@@ -11,7 +11,13 @@
 //   ABC 259 G - Grid Card Game
 //     https://atcoder.jp/contests/abc259/tasks/abc259_g
 //
+//   JAG 夏合宿 2011 Day4 D - Box Witch (AOJ 2313) (for change_edge)
+//     https://onlinejudge.u-aizu.ac.jp/problems/2313
+//
 
+
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -25,12 +31,17 @@ template<class FLOW> struct FlowEdge {
     
     // constructor
     FlowEdge() {}
-    FlowEdge(int r, int f, int t, FLOW c) : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
-    void reset() { cap = icap, flow = 0; }
+    FlowEdge(int rev, int from, int to, FLOW cap, FLOW rcap = 0) 
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
     
     // debug
-    friend ostream& operator << (ostream& s, const FlowEdge& E) {
-        return s << E.from << "->" << E.to << '(' << E.flow << '/' << E.icap << ')';
+    friend ostream& operator << (ostream& s, const FlowEdge& e) {
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ")";
     }
 };
 
@@ -85,11 +96,11 @@ template<class FLOW> struct FlowGraph {
             for (FlowEdge<FLOW> &e : list[i]) e.reset();
         }
     }
-    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_flow) {
-        assert(0 <= new_flow && new_flow <= new_cap);
+    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_rcap) {
+        assert(new_cap >= 0 && new_rcap >= 0);
         FlowEdge<FLOW> &re = get_rev_edge(e);
-        e.cap = new_cap - new_flow, e.icap = new_cap, e.flow = new_flow;
-        re.cap = new_flow;
+        e.cap = new_cap, e.icap = new_cap + new_rcap, e.flow = new_rcap;
+        re.cap = new_rcap, re.icap = new_cap + new_rcap, re.flow = new_cap;
     }
     
     // add_edge
@@ -99,8 +110,13 @@ template<class FLOW> struct FlowGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
-        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
+        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap, rcap));
+        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap, cap));
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap);
     }
 
     // augment
@@ -144,6 +160,35 @@ template<class FLOW> struct FlowGraph {
         };
         dfs_s(dfs_s, s), dfs_t(dfs_t, t);
         return res;
+    }
+
+    // check if the s-t flow is feasible
+    bool is_feasible(int s, int t) {
+        vector<FLOW> b(list.size(), FLOW(0));
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (const auto &e : list[v]) {
+                b[v] += (e.flow - get_rev_edge(e).flow) / 2;
+            }
+        }
+        if (b[s] + b[t] != 0) return false;
+        for (int v = 0; v < (int)list.size(); v++) {
+            if (v != s && v != t && b[v] != FLOW(0)) return false;
+        }
+        return true;
+    }
+    bool is_feasible(int s, int t, FLOW flow) {
+        vector<FLOW> b(list.size(), FLOW(0));
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (const auto &e : list[v]) {
+                b[v] += (e.flow - get_rev_edge(e).flow) / 2;
+            }
+        }
+        if (b[s] != flow) return false;
+        if (b[t] != -flow) return false;
+        for (int v = 0; v < (int)list.size(); v++) {
+            if (v != s && v != t && b[v] != FLOW(0)) return false;
+        }
+        return true;
     }
 
     // debug
@@ -354,10 +399,77 @@ void ABC_259_G() {
     cout << res << endl;
 }
 
+// JAG 夏合宿 2011 Day4 D - Box Witch (AOJ 2313)
+void AOJ_2313() {
+    int N, M, Q, iter = 0;
+    cin >> N >> M >> Q;
+    vector<int> U(M), V(M), typ(Q), A(Q), B(Q);
+    FlowGraph<int> G(N);
+    map<pair<int,int>,int> ids;
+    for (int i = 0; i < M; i++) {
+        cin >> U[i] >> V[i], U[i]--, V[i]--;
+        if (U[i] > V[i]) swap(U[i], V[i]);
+        G.add_bidirected_edge(U[i], V[i], 1);
+        ids[{U[i], V[i]}] = iter++;
+    }
+    for (int q = 0; q < Q; q++) {
+        cin >> typ[q] >> A[q] >> B[q], A[q]--, B[q]--;
+        if (A[q] > B[q]) swap(A[q], B[q]);
+        if (!ids.count({A[q], B[q]})) {
+            G.add_bidirected_edge(A[q], B[q], 0);
+            ids[{A[q], B[q]}] = iter++;
+        }
+    }
+    int s = 0, t = N-1;
+    int flow = Dinic(G, s, t);
+    for (int q = 0; q < Q; q++) {
+        int eid = ids[{A[q], B[q]}];
+        auto &e = G.get_edge(eid);
+        assert(e.from == A[q] && e.to == B[q]); 
+        if (typ[q] == 1) {
+            assert(e.cap == 0 && G.get_rev_edge(e).cap == 0);
+            G.change_edge(e, 1, 1);
+        } else {
+            assert(e.cap <= 2 && G.get_rev_edge(e).cap == 2 - e.cap);
+            if (e.cap == 1) G.change_edge(e, 0, 0);
+            else {
+                // e が使われている場合を考える (閉路に含まれる場合と、s-t パスに含まれる場合がある)
+                int from, to;
+                if (e.cap == 0) from = e.from, to = e.to;
+                else if (e.cap == 2) from = e.to, to = e.from;
+                if (G.augment(from, to, 1) == 1) {
+                    // e を含む閉路がある場合: その閉路を消せる
+                    // ここで、e を含む s-t パスがある場合は、
+                    // G.augment(from, to, 1) によって s-t パスが e を使わないものに張り変わる
+                    G.change_edge(e, 0, 0);  // 最後に、e を消す
+                } else {
+                    // フローはパスと閉路に分解できることから、
+                    // e を含む閉路がないならば、e が s-t パスに含まれることが保証される
+                    // よって、残余グラフ上で t-s パスが存在することが保証される
+                    // t から s へ逆向きに押し戻しておく (押し戻し時に e を戻すとは限らない)
+                    assert(G.augment(t, s, 1) == 1);
+                    flow--;
+                    if (e.cap == 1) G.change_edge(e, 0, 0);
+                    else {
+                        // 今度は e を含む閉路の存在が保証されるので、上と同じことをする
+                        if (e.cap == 0) from = e.from, to = e.to;
+                        else if (e.cap == 2) from = e.to, to = e.from;
+                        assert(G.augment(from, to, 1) == 1);
+                        G.change_edge(e, 0, 0);
+                    }
+                }
+            }
+        }
+        flow += G.augment(s, t);
+        cout << flow << endl;
+        assert(G.is_feasible(s, t, flow));
+    }
+}
+
 
 int main() {
     //AOJ_Course_GRL_6_A();
-    ACL_practice_D();
+    //ACL_practice_D();
     //ABC_259_G();
+    AOJ_2313(); 
 }
-

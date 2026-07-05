@@ -246,6 +246,14 @@ template<class T> vector<T> compress(const vector<T> &v) {
     }
     return res;
 }
+template<typename T, typename... Ts>
+vector<T> merge_and_unique(const vector<T> &a, const Ts &...z) {
+    vector<T> res = a;
+    (res.insert(res.end(), z.begin(), z.end()), ...);
+    sort(res.begin(), res.end());
+    res.erase(unique(res.begin(), res.end()), res.end());
+    return res;
+}
 
 // Associative Array
 template<class Key, class Val, uint32_t N = 20> struct FastMap {
@@ -2750,12 +2758,17 @@ template<class FLOW> struct FlowEdge {
     
     // constructor
     FlowEdge() {}
-    FlowEdge(int r, int f, int t, FLOW c) : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
-    void reset() { cap = icap, flow = 0; }
+    FlowEdge(int rev, int from, int to, FLOW cap, FLOW rcap = 0) 
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
     
     // debug
-    friend ostream& operator << (ostream& s, const FlowEdge& E) {
-        return s << E.from << "->" << E.to << '(' << E.flow << '/' << E.icap << ')';
+    friend ostream& operator << (ostream& s, const FlowEdge& e) {
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ")";
     }
 };
 
@@ -2810,11 +2823,11 @@ template<class FLOW> struct FlowGraph {
             for (FlowEdge<FLOW> &e : list[i]) e.reset();
         }
     }
-    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_flow) {
-        assert(0 <= new_flow && new_flow <= new_cap);
+    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_rcap) {
+        assert(new_cap >= 0 && new_rcap >= 0);
         FlowEdge<FLOW> &re = get_rev_edge(e);
-        e.cap = new_cap - new_flow, e.icap = new_cap, e.flow = new_flow;
-        re.cap = new_flow;
+        e.cap = new_cap, e.icap = new_cap + new_rcap, e.flow = new_rcap;
+        re.cap = new_rcap, re.icap = new_cap + new_rcap, re.flow = new_cap;
     }
     
     // add_edge
@@ -2824,8 +2837,13 @@ template<class FLOW> struct FlowGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap));
-        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap));
+        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap, rcap));
+        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap, cap));
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap);
     }
 
     // augment
@@ -2869,6 +2887,35 @@ template<class FLOW> struct FlowGraph {
         };
         dfs_s(dfs_s, s), dfs_t(dfs_t, t);
         return res;
+    }
+
+    // check if the s-t flow is feasible
+    bool is_feasible(int s, int t) {
+        vector<FLOW> b(list.size(), FLOW(0));
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (const auto &e : list[v]) {
+                b[v] += (e.flow - get_rev_edge(e).flow) / 2;
+            }
+        }
+        if (b[s] + b[t] != 0) return false;
+        for (int v = 0; v < (int)list.size(); v++) {
+            if (v != s && v != t && b[v] != FLOW(0)) return false;
+        }
+        return true;
+    }
+    bool is_feasible(int s, int t, FLOW flow) {
+        vector<FLOW> b(list.size(), FLOW(0));
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (const auto &e : list[v]) {
+                b[v] += (e.flow - get_rev_edge(e).flow) / 2;
+            }
+        }
+        if (b[s] != flow) return false;
+        if (b[t] != -flow) return false;
+        for (int v = 0; v < (int)list.size(); v++) {
+            if (v != s && v != t && b[v] != FLOW(0)) return false;
+        }
+        return true;
     }
 
     // debug
@@ -2950,12 +2997,19 @@ template<class FLOW, class COST> struct FlowCostEdge {
     // constructor
     FlowCostEdge() {}
     FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
-    : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {}
-    void reset() { cap = icap, flow = 0; }
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {
+    }
+    FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(cost) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
     
     // debug
     friend ostream& operator << (ostream& s, const FlowCostEdge& e) {
-        return s << e.from << " -> " << e.to << " (" << e.flow << "/" << e.icap << ", " << e.cost << ")";
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ", " << e.cost << ")";
     }
 };
 
@@ -2964,7 +3018,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // core members
     vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
-    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    vector<COST> pot;  // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
     bool include_negative_edge = false;
     
     // constructor
@@ -3019,8 +3073,8 @@ template<class FLOW, class COST> struct FlowCostGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, -cost));
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, 0, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, cap, -cost));
         if (cost < 0) include_negative_edge = true;
     }
     void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
@@ -3029,9 +3083,14 @@ template<class FLOW, class COST> struct FlowCostGraph {
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
-        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, cost));
-        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, -cost));
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, rcap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, cap, -cost));
         if (cost < 0) include_negative_edge = true;
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap, cost);
     }
 
     // find initial potential (to resolve initial negative-edge)
