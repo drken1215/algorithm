@@ -349,9 +349,9 @@
 
 ## 劣モジュラ関数のグラフ表現
 
-- (★★★☆) [Project Selection Problem (俗称: 燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
-- (★★★☆) [2 変数劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
-- (★★★★) [3 変数劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
+- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
+- (★★★☆) [2 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
+- (★★★★) [3 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
 - (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_monge_optimization.cpp)
 
 ## 最小費用流の応用
@@ -518,7 +518,6 @@
 
 ## 集合族に関する問題
 
-- (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/two_sat.cpp)
 - (★★★☆) マトロイド上の Greedy 法
 - (★★★★) マトロイド交差
 
@@ -654,7 +653,19 @@
 - (★★★★) 最適二分探索木 (O(N^2), Monge 性を活かした区間 DP)
 - (★★★★) 最適二分探索木 (O(N log N), Hu-Tucker 法)
 
-## Convex Hull Trick
+## Monge 性を活用する DP 高速化技法
+
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) TM 行最小値問題 (SMAWK, in O(H + W))
+- (★★★☆) TM 単一始点最短路問題 (D&D SMAWK, in O(N log N))
+- (★★★★) Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH, in O(N log N))
+- (★★★★) Monge 単一始点最短路問題 (by LARSCH, in O(N))
+- (★★★★) Monge グラフ上の d-辺最短路
+- (★★★★) Monge グラフ上の d-辺最短路の d = 1, 2, ..., N における列挙
+- (★★★★) Aliens DP
+
+## 区分線形凸関数の活用 1 ： Convex Hull Trick
 
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
@@ -662,19 +673,7 @@
 - (★★★☆) Line Container
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
-## Monge 性を活用する DP 高速化技法
-
-- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) TM 行最小値問題 (SMAWK, in O(H + W))
-- (★★★☆) TM 単一始点最短路問題 (D&D SMAWK, in O(N log N))
-- (★★★★) Monge 単一始点最短路問題（by noshi's 簡易 LARSCH, in O(N log N))
-- (★★★★) Monge 単一始点最短路問題（by LARSCH, in O(N))
-- (★★★★) Monge グラフ上の d-辺最短路
-- (★★★★) Monge グラフ上の d-辺最短路の d = 1, 2, ..., N における列挙
-- (★★★★) Aliens DP
-
-## その他の DP 高速化技法
+## 区分線形凸関数の活用 2 ： Slope Trick
 
 - (★★★★) Slope Trick
 - (★★★★) Min Plus Convolution (凸と任意)
@@ -691,6 +690,8 @@
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
 - (★★★★) SAT Solver
+- (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/Optimization/two_sat.cpp)
+
 
 ## さまざまな探索法
 
