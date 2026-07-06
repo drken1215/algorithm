@@ -543,24 +543,29 @@
 # 整数 (MATH : NUMBER THEORY)
 整数論的アルゴリズムです。
 
-- (★☆☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_pow_inv.cpp)
-
 ## 約数, 倍数
 
 - (★☆☆☆) [約数列挙](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/divisor.cpp)
 - (★☆☆☆) [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/GCD.cpp)
 - (★☆☆☆) [最小公倍数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/LCM.cpp)
+
+## modpow, modinv
+
 - (★☆☆☆) [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/extended_GCD.cpp)
+- (★☆☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_pow_inv.cpp)
 
 ## 素数
 
 - (★☆☆☆) [素数判定](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime.cpp)
 - (★☆☆☆) [素因数分解](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/prime_factorization.cpp)
-- (★★☆☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
 - (★★★☆) [確率的な高速素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/is_prime_Miller_Rabin.cpp)
 - (★★★☆) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/pollard_rho.cpp)
+
+## 原始根, 位数, 離散対数
+
 - (★★★☆) [原始根](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/primitive_root.cpp)
-- (★★★★) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
+- (★★★☆) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/order.cpp)
+- (★★★☆) [離散対数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_log.cpp)
 
 ## エラトステネスの篩
 
@@ -586,7 +591,6 @@
 
 - (★★★☆) [中国剰余定理](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/chinese_reminder_theorem.cpp)
 - (★★★☆) [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
-- (★★★☆) [離散対数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_log.cpp)
 - (★★★★) [ペル方程式](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Pell_equation.cpp)
 - (★★★★) [平方剰余 (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_sqrt.cpp)
 - (★★★★) [Kth Root (MOD) (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_kth_root.cpp)
@@ -611,6 +615,7 @@
 - (★☆☆☆) [負数にも対応した floor, ceil](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/floor_ceil.cpp)
 - (★☆☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/kth_root.cpp)
+- (★★☆☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
 - (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
 
 
@@ -723,46 +728,48 @@
 
 <a name="st"></a>
 # 文字列 (String)
-文字列アルゴリズムです
+文字列アルゴリズムです。
 
-### 構文解析
+## 構文解析
 
 - (★★☆☆) [LL(1) 再帰下降パーサ](https://github.com/drken1215/algorithm/blob/master/String/parser.cpp)
 
-### 文字列検索
+## 文字列検索
 
 - (★★☆☆) [ローリングハッシュ](https://github.com/drken1215/algorithm/blob/master/String/rolling_hash.cpp)
 - (★★★☆) [単一パターン検索 (KMP 法)](https://github.com/drken1215/algorithm/blob/master/String/knuth_morris_pratt.cpp)
-- (★★★☆) 単一パターン検索 (Boyer-Moore 法)
 - (★★★★) 複数パターン検索 (Aho-Corasick 法)
 - (★★★★) 二次元ローリングハッシュ
 - (★★★★) セグメント木上のローリングハッシュ
 
-### Suffix Array
+## Suffix Array
 
 - (★★★☆) [Suffix Array](https://github.com/drken1215/algorithm/blob/master/String/suffix_array.cpp)
 - (★★★☆) [Suffix Tree](https://github.com/drken1215/algorithm/blob/master/String/suffix_tree.cpp)
 - (★★★☆) [Suffix Automation](https://github.com/drken1215/algorithm/blob/master/String/suffix_automation.cpp)
 
-### さまざまな文字列アルゴリズム
+## さまざまな文字列アルゴリズム
 
 - (★★☆☆) [Z 法](https://github.com/drken1215/algorithm/blob/master/String/z_algorithm.cpp)
 - (★★★☆) [Manacher 法](https://github.com/drken1215/algorithm/blob/master/String/manacher.cpp)
 - (★★★☆) Run Enumerate
 
-### さまざまな文字列データ構造
+## さまざまな文字列データ構造
 
 - (★★★☆) Trie 木
 - (★★★★) Palindromic 木 (AOJ 2292)
 
-### その他
+## 有名問題
 
-- (★☆☆☆) [ランレングス圧縮](https://github.com/drken1215/algorithm/blob/master/String/run_length_compression.cpp)
-- (★★★☆) [文字列の相異なる subsequence の個数 (by 配る DP, in O(σN))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences.cpp)
 - (★★★☆) [文字列の相異なる subsequence の個数 (by 集める DP, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_subsequences_faster.cpp)
 - (★★★☆) [文字列の相異なる substring の個数 (by Suffix Array, in O(N))](https://github.com/drken1215/algorithm/blob/master/String/num_of_substrings.cpp)
 - (★★★☆) [N 個の文字列の concat のうち、辞書順最小のもの](https://github.com/drken1215/algorithm/blob/master/String/smallest_concat.cpp)
+
+## その他
+
+- (★☆☆☆) [ランレングス圧縮](https://github.com/drken1215/algorithm/blob/master/String/run_length_compression.cpp)
 - (★★★★) ワイルドカードパターンマッチング
+
 
 
 　
