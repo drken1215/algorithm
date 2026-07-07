@@ -654,7 +654,9 @@
 
 ## 区分線形凸関数の活用 2 ： Slope Trick
 
-- (★★★★) Slope Trick
+- (★★★★) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
+- (★★★★) Slope Trick (by Splay 木)
+- (★★★★) Dual Slope Trick (Slope trick が保持する関数の凸共役)
 
 ## 区分線形凸関数の活用 3 ： Min Plus Convolution
 
@@ -664,7 +666,7 @@
 
 ## Monge 性, L 凸性
 
-- (★★★★) Monge 性を満たす区間 DP の Knuth-Yao speedup
+- (★★★★) Monge 性を満たす区間 DP の Knuth-Yao Speedup
 - (★★★★) Monge グラフ上の d-辺最短路 (Aliens DP)
 - (★★★★) Monge グラフ上の d-辺最短路の d = 1, 2, ..., N における列挙 (Aliens DP)
 
