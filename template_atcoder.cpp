@@ -255,6 +255,89 @@ vector<T> merge_and_unique(const vector<T> &a, const Ts &...z) {
     return res;
 }
 
+// Double Ended Priority Queue
+template<class T> struct DoubleEndedPriorityQueue {
+    // removable heap
+    template<class QUETYPE> struct RemovablePriorityQueue {
+        using VALTYPE = typename QUETYPE::value_type;
+        QUETYPE que, delay;
+        
+        // constructor
+        RemovablePriorityQueue() {}
+        
+        // getter
+        int size() { return (int)que.size() - (int)delay.size(); }
+        bool empty() { return size() == 0; }
+
+        // push(x), remove(x)
+        void push(VALTYPE x) { que.push(x); }
+        void remove(VALTYPE x) { delay.push(x); }
+        
+        // pop min/max value
+        VALTYPE pop() {
+            T res = get();
+            que.pop();
+            return res;
+        }
+        
+        // get min/max value (not pop)
+        VALTYPE get() {
+            assert(!que.empty());
+            while (!delay.empty() && que.top() == delay.top()) {
+                que.pop();
+                delay.pop();
+            }
+            assert(!que.empty());
+            return que.top();
+        }
+    };
+    
+    // inner data
+    RemovablePriorityQueue<priority_queue<T, vector<T>, greater<T>>> min_que;
+    RemovablePriorityQueue<priority_queue<T>> max_que;
+    
+    // constructor
+    DoubleEndedPriorityQueue() {}
+    
+    // getter
+    int size() {
+        return (int)min_que.size();
+    }
+    bool empty() {
+        return size() == 0;
+    }
+    
+    // push(x), remove(x)
+    void push(T x) {
+        min_que.push(x);
+        max_que.push(x);
+    }
+    void remove(T x) {
+        min_que.remove(x);
+        max_que.remove(x);
+    }
+    
+    // get min, pop min
+    T get_min() {
+        return min_que.get();
+    }
+    T pop_min() {
+        T x = min_que.pop();
+        max_que.remove(x);
+        return x;
+    }
+    
+    // get max, pop max
+    T get_max() {
+        return max_que.get();
+    }
+    T pop_max() {
+        T x = max_que.pop();
+        min_que.remove(x);
+        return x;
+    }
+};
+
 // Associative Array
 template<class Key, class Val, uint32_t N = 20> struct FastMap {
     static constexpr uint32_t SIZE  = 1u << N;
