@@ -5,6 +5,9 @@
 //   第2回 ドワンゴからの挑戦状 予選 E - 花火
 //     https://atcoder.jp/contests/dwango2016-prelims/tasks/dwango2016qual_e
 //
+//   AtCoder AWC 0100 N - 株価の補正
+//     https://atcoder.jp/contests/awc0100/tasks/awc0100_n
+//
 //   AtCoder ABC 217 H - Snuketoon
 //     https://atcoder.jp/contests/abc217/tasks/abc217_h
 //
@@ -15,6 +18,90 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+
+
+
+using ll = long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
+using pint = pair<int, int>;
+using pll = pair<long long, long long>;
+using tll = array<long long, 3>;
+using fll = array<long long, 4>;
+using vint = vector<int>;
+using vll = vector<long long>;
+using dint = deque<int>;
+using dll = deque<long long>;
+using vvint = vector<vector<int>>;
+using vvll = vector<vector<long long>>;
+using vpll = vector<pair<long long, long long>>;
+template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+
+template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
+template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
+template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
+template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
+template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
+template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
+template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
+template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
+
+#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
+#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
+#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
+#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
+#define EB emplace_back
+#define PF push_front
+#define PB push_back
+#define MP make_pair
+#define FI first
+#define SE second
+#define ALL(x) x.begin(), x.end()
+#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+
+// input
+template<class T> istream& operator >> (istream &is, vector<T> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, deque<T> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+
+// output
+template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
+{ return s << '<' << P[0] << "," << P[1] << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
+{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
+{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
+template<class T> ostream& operator << (ostream &s, const vector<T> &P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, const deque<T> &P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, const vector<vector<T>> &P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, const set<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, const multiset<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, const unordered_set<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
+void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
+void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
+const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
+
+
+
 
 
 // Slope Trick
@@ -58,6 +145,8 @@ template<class COORD> struct SlopeTrick {
         if (!R.empty()) R.pop();
         return res;
     }
+    constexpr COORD get_min() const { return min_f; }
+    constexpr pair<COORD, COORD> get_argmin() const { return {topL(), topR()}; }
     constexpr pair<LINE, LINE> get_lines() {
         LINE resL, resR;
         vector<COORD> L2, R2;
@@ -143,28 +232,33 @@ template<class COORD> struct SlopeTrick {
     // f(x) <- g(x) = min_{a <= y <= b} f(x - y) = min_{x-b <= y <= x-a} f(y), O(1)
     SlopeTrick &slide(const COORD &a, const COORD &b) {
         assert(a <= b);
-        offsetL += a, offsetR += b;
+        if (a <= -INF) clear_left();
+        else offsetL += a;
+        if (b >= INF) clear_right();
+        else offsetR += b;
         return *this;
     }
 
     // f(x) <- g(x) = min_{0 <= y <= a} f(x - y) = min_{x-a <= y <= x} f(y), O(1)
     SlopeTrick &slide_right_curve_to_right(const COORD &a) {
         assert(a >= 0);
-        offsetR += a;
+        if (a >= INF) clear_right();
+        else offsetR += a;
         return *this;
     }
 
     // f(x) <- g(x) = min_{0 <= y <= a} f(x + y) = min_{x <= y <= x+a} f(y),  O(1)
     SlopeTrick &slide_left_curve_to_left(const COORD &a) {
         assert(a >= 0);
-        offsetL -= a;
+        if (a >= INF) clear_left();
+        else offsetL -= a;
         return *this;
     }
 };
 
 
 //------------------------------//
-// Solver
+// Examples
 //------------------------------//
 
 // 第2回 ドワンゴからの挑戦状 予選 E - 花火
@@ -191,6 +285,29 @@ void DWANGO_2nd_prelims_E() {
     long long res = dp.min_f;
     cout << res << endl;
 }
+
+
+// AtCoder AWC 0100 N - 株価の補正
+/*
+    nex[x] = min_{y <= x-1} dp[y] + |x - H[i]|
+
+    min_{y <= x-1} dp[y] を分解すると
+    ・slide(1, ∞) もしくは「clear_right」+「slide_left_curve_to_right
+*/
+void AWC_0100_N() {
+    long long N;
+    cin >> N;
+    vector<long long> H(N);
+    for (int i = 0; i < N; i++) cin >> H[i];
+
+    SlopeTrick<long long> st;
+    for (int i = 0; i < N; i++) {
+        st.slide(1, st.INF);
+        st.add_abs(H[i]);
+    }
+    cout << st.get_min() << endl;
+}
+
 
 // AtCoder ABC 217 H - Snuketoon
 /*
@@ -223,5 +340,6 @@ void ABC_217_H() {
 
 int main() {
     //DWANGO_2nd_prelims_E();
-    ABC_217_H();
+    AWC_0100_N();
+    //ABC_217_H();
 }
