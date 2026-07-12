@@ -2,14 +2,17 @@
 // Slope Trick
 //
 // verified
-//   第2回 ドワンゴからの挑戦状 予選 E - 花火
+//   第2回 ドワンゴからの挑戦状 予選 E - 花火 (for 累積min, +|x-a|)
 //     https://atcoder.jp/contests/dwango2016-prelims/tasks/dwango2016qual_e
 //
-//   AtCoder AWC 0100 N - 株価の補正
+//   AtCoder AWC 0100 N - 株価の補正 (for slide(1, INF) など)
 //     https://atcoder.jp/contests/awc0100/tasks/awc0100_n
 //
-//   AtCoder ABC 217 H - Snuketoon
+//   AtCoder ABC 217 H - Snuketoon (for slide(-dt, dt), +max(0, a-x) など)
 //     https://atcoder.jp/contests/abc217/tasks/abc217_h
+//
+//   KUPC 2016 H - 壁壁壁壁壁壁壁 (for slide(-INF, A[i]-B[i]), eval(x) など)
+//     https://atcoder.jp/contests/kupc2016/tasks/kupc2016_h
 //
 
 
@@ -170,6 +173,23 @@ template<class COORD> struct SlopeTrick {
         for (auto v : R2) R.push(v);
         return {resL, resR};
     }
+    constexpr COORD eval(const COORD &x) {
+        COORD res = 0;
+        vector<COORD> L2, R2;
+        while (!L.empty()) {
+            auto t = popL();
+            res += max(COORD(0), t - x);
+            L2.emplace_back(t);
+        }
+        while (!R.empty()) {
+            auto t = popR();
+            res += max(COORD(0), x - t);
+            R2.emplace_back(t);
+        }
+        for (auto v : L2) L.push(v);
+        for (auto v : R2) R.push(v);
+        return res + min_f;
+    }
     constexpr friend ostream &operator << (ostream &os, SlopeTrick st) {
         auto [lineL, lineR] = st.get_lines();
         os << endl << "left: ";
@@ -242,16 +262,14 @@ template<class COORD> struct SlopeTrick {
     // f(x) <- g(x) = min_{0 <= y <= a} f(x - y) = min_{x-a <= y <= x} f(y), O(1)
     SlopeTrick &slide_right_curve_to_right(const COORD &a) {
         assert(a >= 0);
-        if (a >= INF) clear_right();
-        else offsetR += a;
+        slide(0, a);
         return *this;
     }
 
-    // f(x) <- g(x) = min_{0 <= y <= a} f(x + y) = min_{x <= y <= x+a} f(y),  O(1)
+    // f(x) <- g(x) = min_{-a <= y <= 0} f(x - y) = min_{x <= y <= x+a} f(y),  O(1)
     SlopeTrick &slide_left_curve_to_left(const COORD &a) {
         assert(a >= 0);
-        if (a >= INF) clear_left();
-        else offsetL -= a;
+        slide(-a, 0);
         return *this;
     }
 };
@@ -338,8 +356,32 @@ void ABC_217_H() {
 }
 
 
+// KUPC 2016 H - 壁壁壁壁壁壁壁
+/*
+    dp[x] := その時点で、はみ出し枚数が x のときのコストの最小値 (最後のはみ出しを含む)
+
+    nex[x] = min_{x - (A[i] - B[i]) <= y} (dp[y]) + |x|
+*/
+void KUPC_2016_H() {
+    long long N;
+    cin >> N;
+    vector<long long> A(N), B(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    for (int i = 0; i < N; i++) cin >> B[i];
+    SlopeTrick<long long> dp;
+    for (int i = 0; i < N * 2; i++) dp.add_abs(0);
+    for (int i = 0; i < N; i++) {
+        dp.slide(-dp.INF, A[i]-B[i]);
+        dp.add_abs(0);
+    }
+    long long res = dp.eval(0);
+    cout << res << endl;
+}
+
+
 int main() {
     //DWANGO_2nd_prelims_E();
-    AWC_0100_N();
+    //AWC_0100_N();
     //ABC_217_H();
+    KUPC_2016_H();
 }
