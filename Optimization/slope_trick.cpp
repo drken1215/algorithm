@@ -150,44 +150,42 @@ template<class COORD> struct SlopeTrick {
     }
     constexpr COORD get_min() const { return min_f; }
     constexpr pair<COORD, COORD> get_argmin() const { return {topL(), topR()}; }
-    constexpr pair<LINE, LINE> get_lines() {
+    constexpr pair<LINE, LINE> get_lines() const {
         LINE resL, resR;
-        vector<COORD> L2, R2;
+        auto L2 = L;
+        auto R2 = R;
         COORD sumL = 0, sumR = 0;
         int ln = 0, rn = 0;
-        while (!L.empty()) {
-            auto x = popL();
+        while (!L2.empty()) {
+            auto x = L2.top() + offsetL;
+            L2.pop();
             sumL += x;
             auto y = min_f + sumL - x * (++ln);
             if (resL.empty() || x != resL.back().first) resL.emplace_back(x, y);
-            L2.emplace_back(x);
         }
-        while (!R.empty()) {
-            auto x = popR();
+        while (!R2.empty()) {
+            auto x = R2.top() + offsetR;
+            R2.pop();
             sumR += x;
             auto y = min_f + x * (++rn) - sumR;
             if (resR.empty() || x != resR.back().first) resR.emplace_back(x, y);
-            R2.emplace_back(x);
         }
-        for (auto v : L2) L.push(v);
-        for (auto v : R2) R.push(v);
         return {resL, resR};
     }
-    constexpr COORD eval(const COORD &x) {
+    constexpr COORD eval(const COORD &x) const {
         COORD res = 0;
-        vector<COORD> L2, R2;
-        while (!L.empty()) {
-            auto t = popL();
+        auto L2 = L;
+        auto R2 = R;
+        while (!L2.empty()) {
+            auto t = L2.top() + offsetL;
+            L2.pop();
             res += max(COORD(0), t - x);
-            L2.emplace_back(t);
         }
-        while (!R.empty()) {
-            auto t = popR();
+        while (!R2.empty()) {
+            auto t = R2.top() + offsetR;
+            R2.pop();
             res += max(COORD(0), x - t);
-            R2.emplace_back(t);
         }
-        for (auto v : L2) L.push(v);
-        for (auto v : R2) R.push(v);
         return res + min_f;
     }
     constexpr friend ostream &operator << (ostream &os, SlopeTrick st) {
