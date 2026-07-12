@@ -11,6 +11,9 @@
 //   AtCoder ABC 217 H - Snuketoon (for slide(-dt, dt), +max(0, a-x) など)
 //     https://atcoder.jp/contests/abc217/tasks/abc217_h
 //
+//   AtCoder ARC 123 D - Inc, Dec - Decomposition
+//     https://atcoder.jp/contests/arc123/tasks/arc123_d
+//
 //   KUPC 2016 H - 壁壁壁壁壁壁壁 (for slide(-INF, A[i]-B[i]), eval(x) など)
 //     https://atcoder.jp/contests/kupc2016/tasks/kupc2016_h
 //
@@ -21,90 +24,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-
-
-
-using ll = long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-using tll = array<long long, 3>;
-using fll = array<long long, 4>;
-using vint = vector<int>;
-using vll = vector<long long>;
-using dint = deque<int>;
-using dll = deque<long long>;
-using vvint = vector<vector<int>>;
-using vvll = vector<vector<long long>>;
-using vpll = vector<pair<long long, long long>>;
-template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
-
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
-template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
-template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
-template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
-template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
-template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PF push_front
-#define PB push_back
-#define MP make_pair
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-
-// input
-template<class T> istream& operator >> (istream &is, vector<T> &P)
-{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
-template<class T> istream& operator >> (istream &is, deque<T> &P)
-{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
-template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
-{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
-
-// output
-template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
-{ return s << '<' << P[0] << "," << P[1] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, const vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const vector<vector<T>> &P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, const set<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, const multiset<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, const unordered_set<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
-void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
-void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
-const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
-
-
-
 
 
 // Slope Trick
@@ -306,9 +225,6 @@ void DWANGO_2nd_prelims_E() {
 // AtCoder AWC 0100 N - 株価の補正
 /*
     nex[x] = min_{y <= x-1} dp[y] + |x - H[i]|
-
-    min_{y <= x-1} dp[y] を分解すると
-    ・slide(1, ∞) もしくは「clear_right」+「slide_left_curve_to_right
 */
 void AWC_0100_N() {
     long long N;
@@ -354,10 +270,33 @@ void ABC_217_H() {
 }
 
 
+// AtCoder ARC 123 D - Inc, Dec - Decomposition
+/*
+    dp[x] := 最初の i 項目までについて、正数列 B の末項が x である場合の操作回数の最小値
+        y = B[i-1], x = B[i] を満たす条件は
+        ・y <= x
+        ・A[i-1] - y >= A[i] - x 　⇔  y <= x - (A[i] - A[i-1])
+    nex[x] = min_{y <= x - max(0, A[i]-A[i-1])} dp[y] + |x| + |x - A[i]|
+*/
+void ARC_123_D() {
+    long long N;
+    cin >> N;
+    vector<long long> A(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    SlopeTrick<long long> dp;
+    dp.add_abs(0), dp.add_abs(A[0]);
+    for (int i = 1; i < N; i++) {
+        dp.slide(max(0LL, A[i]-A[i-1]), dp.INF);
+        dp.add_abs(0), dp.add_abs(A[i]);
+    }
+    auto res = dp.get_min();
+    cout << res << endl;
+}
+
+
 // KUPC 2016 H - 壁壁壁壁壁壁壁
 /*
     dp[x] := その時点で、はみ出し枚数が x のときのコストの最小値 (最後のはみ出しを含む)
-
     nex[x] = min_{x - (A[i] - B[i]) <= y} (dp[y]) + |x|
 */
 void KUPC_2016_H() {
@@ -381,5 +320,6 @@ int main() {
     //DWANGO_2nd_prelims_E();
     //AWC_0100_N();
     //ABC_217_H();
-    KUPC_2016_H();
+    ARC_123_D();
+    //KUPC_2016_H();
 }
