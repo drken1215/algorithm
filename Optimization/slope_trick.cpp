@@ -17,6 +17,9 @@
 //   KUPC 2016 H - 壁壁壁壁壁壁壁 (for slide(-INF, A[i]-B[i]), eval(x) など)
 //     https://atcoder.jp/contests/kupc2016/tasks/kupc2016_h
 //
+//   UTPC 2012 L - じょうしょうツリー
+//     https://atcoder.jp/contests/utpc2012/tasks/utpc2012_12
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -53,6 +56,7 @@ template<class COORD> struct SlopeTrick {
     // getter and debugger
     constexpr int sizeL() const { return (int)L.size(); }
     constexpr int sizeR() const { return (int)R.size(); }
+    constexpr int size() const { return sizeL() + sizeR(); }
     constexpr void pushL(const COORD &v) { L.push(v - offsetL); }
     constexpr void pushR(const COORD &v) { R.push(v - offsetR); }
     constexpr COORD topL() const { return L.empty() ? -INF : L.top() + offsetL; }
@@ -160,6 +164,12 @@ template<class COORD> struct SlopeTrick {
         return *this;
     }
 
+    // f(x) <- 0
+    SlopeTrick &clear() {
+        *this = SlopeTrick();
+        return *this;
+    }
+
     // f(x) <- g(x) = f(x - a), O(1)
     SlopeTrick &slide(const COORD &a) {
         offsetL += a, offsetR += a;
@@ -187,6 +197,20 @@ template<class COORD> struct SlopeTrick {
     SlopeTrick &slide_left_curve_to_left(const COORD &a) {
         assert(a >= 0);
         slide(-a, 0);
+        return *this;
+    }
+
+    // f(x) += g(x), O((log N)^2)
+    // attention: this function is destructive
+    SlopeTrick &add(SlopeTrick &g) {
+        if (size() < g.size()) {
+            swap(min_f, g.min_f);
+            swap(offsetL, g.offsetL), swap(offsetR, g.offsetR);
+            swap(L, g.L), swap(R, g.R);
+        }
+        min_f += g.min_f;
+        while (g.L.size()) add_irelu(g.popL());
+        while (g.R.size()) add_relu(g.popR());
         return *this;
     }
 };
@@ -316,10 +340,42 @@ void KUPC_2016_H() {
 }
 
 
+// UTPC 2012 L - じょうしょうツリー
+/*
+    深さを足しておくことで、条件を x[p] >= x[c] と表せる状態にしておく
+
+    dp_v[x] = Σ_{c}(min_{y <= x}(dp_c[y])) + |x - A[v]|
+*/
+void UTPC_2012_L() {
+    int N;
+    cin >> N;
+    vector<vector<int>> tree(N);
+    vector<long long> P(N, -1), A(N);
+    cin >> A[0];
+    for (int i = 1; i < N; i++) {
+        cin >> P[i] >> A[i], P[i]--;
+        tree[P[i]].emplace_back(i);
+    }
+    vector<SlopeTrick<long long>> dp(N);
+    auto rec = [&](auto &&rec, int v, int depth = 0) -> void {
+        A[v] += depth;
+        for (auto c : tree[v]) {
+            rec(rec, c, depth + 1);
+            dp[c].clear_right();
+            dp[v].add(dp[c]);
+        }
+        dp[v].add_abs(A[v]);
+    };
+    rec(rec, 0);
+    cout << dp[0].get_min() << endl;
+}
+
+
 int main() {
     //DWANGO_2nd_prelims_E();
     //AWC_0100_N();
     //ABC_217_H();
-    ARC_123_D();
+    //ARC_123_D();
     //KUPC_2016_H();
+    UTPC_2012_L();
 }
