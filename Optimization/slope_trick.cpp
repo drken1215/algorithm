@@ -1,6 +1,10 @@
 //
 // Slope Trick
 //
+// reference:
+//   maspy: slope trick (1) 解説編
+//     https://maspypy.com/slope-trick-1-%E8%A7%A3%E8%AA%AC%E7%B7%A8
+//
 // verified
 //   第2回 ドワンゴからの挑戦状 予選 E - 花火 (for 累積min, +|x-a|)
 //     https://atcoder.jp/contests/dwango2016-prelims/tasks/dwango2016qual_e
@@ -17,7 +21,7 @@
 //   KUPC 2016 H - 壁壁壁壁壁壁壁 (for slide(-INF, A[i]-B[i]), eval(x) など)
 //     https://atcoder.jp/contests/kupc2016/tasks/kupc2016_h
 //
-//   UTPC 2012 L - じょうしょうツリー
+//   UTPC 2012 L - じょうしょうツリー (for add(g))
 //     https://atcoder.jp/contests/utpc2012/tasks/utpc2012_12
 //
 
