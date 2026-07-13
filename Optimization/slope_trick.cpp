@@ -57,7 +57,7 @@ template<class COORD> struct SlopeTrick {
     SlopeTrick(const SlopeTrick&) = default;
     SlopeTrick& operator = (const SlopeTrick&) = default;
 
-    // getter and debugger
+    // basic operations
     constexpr int sizeL() const { return (int)L.size(); }
     constexpr int sizeR() const { return (int)R.size(); }
     constexpr int size() const { return sizeL() + sizeR(); }
@@ -75,6 +75,8 @@ template<class COORD> struct SlopeTrick {
         if (!R.empty()) R.pop();
         return res;
     }
+
+    // getter and debugger
     constexpr COORD get_min() const { return min_f; }
     constexpr pair<COORD, COORD> get_argmin() const { return {topL(), topR()}; }
     constexpr pair<LINE, LINE> get_lines() const {
