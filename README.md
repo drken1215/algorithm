@@ -315,6 +315,7 @@
 
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
+- (★★★☆) 最大流 (Push-Relabel 法)
 
 ## 最小カット
 
@@ -335,10 +336,15 @@
 - (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
 
-## マッチング
+## 二部マッチング
 
 - (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
 - (★★★☆) 重みつき二部マッチング (Hungarian 法)
+- (★★★★) 二部マッチングの bitset 高速化
+- (★★★★) アンバランス重みつき二部マッチング (in O((K^2 log N + K^3)N))
+
+## 一般グラフのマッチング
+
 - (★★★★) 一般グラフの最大マッチング (Edmonds 法)
 - (★★★★) 一般グラフの最大マッチング (行列補間)
 - (★★★★) 重み付き一般グラフの最大マッチング
