@@ -654,7 +654,8 @@
 
 ## 区分線形凸関数の活用 2 ： Slope Trick
 
-- (★★★★) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
+- (★★★☆) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
+- (★★★★) [Slope Trick (by double ended priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick_double_ended_priority_queue.cpp)
 - (★★★★) Slope Trick (by Splay 木)
 - (★★★★) Dual Slope Trick (Slope trick が保持する関数の凸共役)
 
