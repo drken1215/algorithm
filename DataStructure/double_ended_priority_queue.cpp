@@ -30,24 +30,26 @@ template<class T> struct DoubleEndedPriorityQueue {
         
         // constructor
         RemovablePriorityQueue() {}
+        RemovablePriorityQueue(const RemovablePriorityQueue&) = default;
+        RemovablePriorityQueue& operator = (const RemovablePriorityQueue&) = default;
         
         // getter
-        int size() { return (int)que.size() - (int)delay.size(); }
-        bool empty() { return size() == 0; }
+        constexpr int size() const { return (int)que.size() - (int)delay.size(); }
+        constexpr bool empty() const { return size() == 0; }
 
         // push(x), remove(x)
-        void push(VALTYPE x) { que.push(x); }
-        void remove(VALTYPE x) { delay.push(x); }
+        constexpr void push(VALTYPE x) { que.push(x); }
+        constexpr void remove(VALTYPE x) { delay.push(x); }
         
         // pop min/max value
-        VALTYPE pop() {
+        constexpr VALTYPE pop() {
             T res = get();
             que.pop();
             return res;
         }
         
         // get min/max value (not pop)
-        VALTYPE get() {
+        constexpr VALTYPE get() {
             assert(!que.empty());
             while (!delay.empty() && que.top() == delay.top()) {
                 que.pop();
@@ -64,46 +66,47 @@ template<class T> struct DoubleEndedPriorityQueue {
     
     // constructor
     DoubleEndedPriorityQueue() {}
+    DoubleEndedPriorityQueue(const DoubleEndedPriorityQueue&) = default;
+    DoubleEndedPriorityQueue& operator = (const DoubleEndedPriorityQueue&) = default;
     
     // getter
-    int size() {
+    constexpr int size() const {
         return (int)min_que.size();
     }
-    bool empty() {
+    constexpr bool empty() const {
         return size() == 0;
     }
     
     // push(x), remove(x)
-    void push(T x) {
+    constexpr void push(T x) {
         min_que.push(x);
         max_que.push(x);
     }
-    void remove(T x) {
+    constexpr void remove(T x) {
         min_que.remove(x);
         max_que.remove(x);
     }
     
     // get min, pop min
-    T get_min() {
+    constexpr T get_min() {
         return min_que.get();
     }
-    T pop_min() {
+    constexpr T pop_min() {
         T x = min_que.pop();
         max_que.remove(x);
         return x;
     }
     
     // get max, pop max
-    T get_max() {
+    constexpr T get_max() {
         return max_que.get();
     }
-    T pop_max() {
+    constexpr T pop_max() {
         T x = max_que.pop();
         min_que.remove(x);
         return x;
     }
 };
-
 
 
 //------------------------------//
