@@ -23,7 +23,37 @@
 using namespace std;
 
 
-// 1, 2, 3-variable submodular optimization 
+// subroutine: submodular optimization
+/*
+ N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
+ 
+ ・1 変数 xi に関するコスト (1 変数劣モジュラ関数)
+    xi = F のときのコスト, xi = T のときのコスト
+ 
+ ・2 変数 xi, xj 間の関係性についてのコスト (2 変数劣モジュラ関数)
+ 　　(xi, xj) = (F, F): コスト A
+ 　　(xi, xj) = (F, T): コスト B
+ 　　(xi, xj) = (T, F): コスト C
+ 　　(xi, xj) = (T, T): コスト D
+ 　(ただし、B + C >= A + D でなければならない)
+ 
+ ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
+    ・この場合は、特に Project Selection Problem と呼ばれ、俗に「燃やす埋める」などとも呼ばれる
+    ・xi = T, xj = F のときにコスト C がかかる
+ 
+ ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
+    ・xi = T, xj = T のときに (-D) の利得が得られる
+ 
+ ・3 変数 xi, xj, xk 間の関係性についてのコスト (3 変数劣モジュラ関数)
+ 　　(xi, xj, xk) = (F, F, F): コスト A
+ 　　(xi, xj, xk) = (F, F, T): コスト B
+ 　　(xi, xj, xk) = (F, T, F): コスト C
+ 　　(xi, xj, xk) = (F, T, T): コスト D
+ 　　(xi, xj, xk) = (T, F, F): コスト E
+ 　　(xi, xj, xk) = (T, F, T): コスト F
+ 　　(xi, xj, xk) = (T, T, F): コスト G
+ 　　(xi, xj, xk) = (T, T, T): コスト H
+ */
 template<class COST> struct ThreeVariableSubmodularOpt {
     // constructors
     ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
@@ -49,7 +79,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(0 <= xi && xi < N);
         if (false_cost >= true_cost) {
             OFFSET += true_cost;
-            add_edge(S, xi, false_cost - true_cost);
+            if (false_cost - true_cost > 0) add_edge(S, xi, false_cost - true_cost);
         } else {
             OFFSET += false_cost;
             add_edge(xi, T, true_cost - false_cost);
@@ -64,6 +94,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void add_psp_constraint(int xi, int xj) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
+        assert(xi != xj);
         add_edge(xi, xj, INF);
     }
     void add_psp_constraint_01(int xi, int xj) {
@@ -78,8 +109,9 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void add_psp_penalty(int xi, int xj, COST C) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
+        assert(xi != xj);
         assert(C >= 0);
-        add_edge(xi, xj, C);
+        if (C > 0) add_edge(xi, xj, C);
     }
     void add_psp_penalty_01(int xi, int xj, COST C) {
         add_psp_penalty(xj, xi, C);
@@ -93,10 +125,11 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void add_both_true_profit(int xi, int xj, COST P) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
+        assert(xi != xj);
         assert(P >= 0);
         OFFSET -= P;
-        add_edge(S, xi, P);
-        add_edge(xi, xj, P);
+        if (P > 0) add_edge(S, xi, P);
+        if (P > 0) add_edge(xi, xj, P);
     }
     
     // add both False profit
@@ -104,10 +137,11 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void add_both_false_profit(int xi, int xj, COST P) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
+        assert(xi != xj);
         assert(P >= 0);
         OFFSET -= P;
-        add_edge(xj, T, P);
-        add_edge(xi, xj, P);
+        if (P > 0) add_edge(xj, T, P);
+        if (P > 0) add_edge(xi, xj, P);
     }
     
     // add general 2-variable submodular function
@@ -116,11 +150,12 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void add_submodular_function(int xi, int xj, COST A, COST B, COST C, COST D) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
+        assert(xi != xj);
         assert(B + C >= A + D);  // assure submodular function
         OFFSET += A;
         add_single_cost(xi, 0, D - B);
         add_single_cost(xj, 0, B - A);
-        add_psp_penalty(xi, xj, B + C - A - D);
+        if (B + C - A - D > 0) add_psp_penalty(xi, xj, B + C - A - D);
     }
     
     // add all True profit
@@ -233,16 +268,14 @@ private:
     struct Edge {
         // core members
         int rev, from, to;
-        COST cap, icap, flow;
+        COST cap;
         
         // constructor
-        Edge(int r, int f, int t, COST c)
-        : rev(r), from(f), to(t), cap(c), icap(c), flow(0) {}
-        void reset() { cap = icap, flow = 0; }
+        Edge(int r, int f, int t, COST c) : rev(r), from(f), to(t), cap(c) {}
         
         // debug
-        friend ostream& operator << (ostream& s, const Edge& E) {
-            return s << E.from << "->" << E.to << '(' << E.flow << '/' << E.icap << ')';
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to << '(' << e.cap << ')';
         }
     };
     
@@ -254,8 +287,7 @@ private:
     
     // add edge
     Edge &get_rev_edge(const Edge &e) {
-        if (e.from != e.to) return list[e.to][e.rev];
-        else return list[e.to][e.rev + 1];
+        return list[e.to][e.rev];
     }
     Edge &get_edge(int i) {
         return list[pos[i].first][pos[i].second];
@@ -271,7 +303,7 @@ private:
         return edges;
     }
     void add_edge(int from, int to, COST cap) {
-        if (!cap) return;
+        if (cap <= 0) return;
         pos.emplace_back(from, (int)list[from].size());
         list[from].push_back(Edge((int)list[to].size(), from, to, cap));
         list[to].push_back(Edge((int)list[from].size() - 1, to, from, 0));
@@ -281,12 +313,13 @@ private:
     COST dinic(COST limit_flow) {
         COST current_flow = 0;
         vector<int> level((int)list.size(), -1), iter((int)list.size(), 0);
+        queue<int> que;
         
         // Dinic BFS
         auto bfs = [&]() -> void {
-            level.assign((int)list.size(), -1);
+            fill(level.begin(), level.end(), -1);
             level[S] = 0;
-            queue<int> que;
+            while (!que.empty()) que.pop();
             que.push(S);
             while (!que.empty()) {
                 int v = que.front();
@@ -303,18 +336,18 @@ private:
         
         // Dinic DFS
         auto dfs = [&](auto self, int v, COST up_flow) {
-            if (v == T) return up_flow;
+            if (v == S) return up_flow;
             COST res_flow = 0;
-            for (int &i = iter[v]; i < (int)list[v].size(); ++i) {
+            for (int &i = iter[v]; i < (int)list[v].size(); i++) {
                 Edge &e = list[v][i], &re = get_rev_edge(e);
-                if (level[v] >= level[e.to] || e.cap <= 0) continue;
-                COST flow = self(self, e.to, min(up_flow - res_flow, e.cap));
+                if (level[v] <= level[e.to] || re.cap <= 0) continue;
+                COST flow = self(self, e.to, min(up_flow - res_flow, re.cap));
                 if (flow <= 0) continue;
                 res_flow += flow;
-                e.cap -= flow, e.flow += flow;
-                re.cap += flow, re.flow -= flow;
-                if (res_flow == up_flow) break;
+                e.cap += flow, re.cap -= flow;
+                if (res_flow == up_flow) return res_flow;
             }
+            level[v] = (int)list.size();
             return res_flow;
         };
         
@@ -322,10 +355,10 @@ private:
         while (current_flow < limit_flow) {
             bfs();
             if (level[T] < 0) break;
-            iter.assign((int)iter.size(), 0);
+            fill(iter.begin(), iter.end(), 0);
             while (current_flow < limit_flow) {
-                COST flow = dfs(dfs, S, limit_flow - current_flow);
-                if (!flow) break;
+                COST flow = dfs(dfs, T, limit_flow - current_flow);
+                if (flow <= 0) break;
                 current_flow += flow;
             }
         }
