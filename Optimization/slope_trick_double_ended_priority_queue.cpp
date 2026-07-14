@@ -225,12 +225,6 @@ template<class COORD> struct SlopeTrickByEDPQ {
         return *this;
     }
 
-    // f(x) += ax + b, O(|a| log N), amotized O(
-    SlopeTrickByEDPQ &add_linear(const COORD &a, const COORD &b) {
-        min_f += b;
-        for (int i = 0; i < 
-    }
-
     // f(x) += |x - a|, O(log N)
     SlopeTrickByEDPQ &add_abs(const COORD &a) {
         add_relu(a), add_irelu(a);
