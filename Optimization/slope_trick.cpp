@@ -15,6 +15,9 @@
 //   AtCoder ABC 217 H - Snuketoon (for slide(-dt, dt), +max(0, a-x) など)
 //     https://atcoder.jp/contests/abc217/tasks/abc217_h
 //
+//   AtCoder ARC 070 E - NarrowRectangle (for slide(a, b))
+//     https://atcoder.jp/contests/arc070/tasks/arc070_c
+//
 //   AtCoder ARC 123 D - Inc, Dec - Decomposition
 //     https://atcoder.jp/contests/arc123/tasks/arc123_d
 //
@@ -300,6 +303,25 @@ void ABC_217_H() {
 }
 
 
+// AtCoder ARC 070 E - NarrowRectangle
+/*
+    nex[x] = min_{x-(R[i-1]-L[i-1]) <= y <= x+(R[i]-L[i])} (dp[y]) + |x - L[i]|
+*/
+void ARC_070_E() {
+    long long N;
+    cin >> N;
+    vector<long long> L(N), R(N);
+    for (int i = 0; i < N; i++) cin >> L[i] >> R[i];
+    SlopeTrick<long long> dp;
+    dp.add_abs(L[0]);
+    for (int i = 1; i < N; i++) {
+        dp.slide(-(R[i]-L[i]), R[i-1]-L[i-1]);
+        dp.add_abs(L[i]);
+    }
+    cout << dp.get_min() << endl;
+}
+
+
 // AtCoder ARC 123 D - Inc, Dec - Decomposition
 /*
     dp[x] := 最初の i 項目までについて、正数列 B の末項が x である場合の操作回数の最小値
@@ -381,7 +403,8 @@ int main() {
     //DWANGO_2nd_prelims_E();
     //AWC_0100_N();
     //ABC_217_H();
+    ARC_070_E();
     //ARC_123_D();
     //KUPC_2016_H();
-    UTPC_2012_L();
+    //UTPC_2012_L();
 }
