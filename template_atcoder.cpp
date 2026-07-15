@@ -342,68 +342,6 @@ template<class T> struct DoubleEndedPriorityQueue {
     }
 };
 
-// Associative Array
-template<class Key, class Val, uint32_t N = 20> struct FastMap {
-    static constexpr uint32_t SIZE  = 1u << N;
-    static constexpr uint32_t MASK  = SIZE - 1;
-    static constexpr uint32_t SHIFT = 64 - N;
-    static constexpr uint64_t MAGIC = 11995408973635179863ULL;
-    static constexpr uint32_t get_hash(const Key& k) { return k * MAGIC >> SHIFT; }
-
-    // inner values
-    array<Key, SIZE> key;
-    array<Val, SIZE> val;
-    bitset<SIZE> used;
-
-    // constructors
-    FastMap() { clear(); }
-    void clear() { used.reset(); }
-    FastMap(const FastMap&) = default;
-    FastMap& operator = (const FastMap&) = default;
-
-    // getters
-    Val &operator [] (const Key &k) {
-        auto hash = get_hash(k);
-        while (true) {
-            if (!used[hash]) {
-                used[hash] = 1;
-                key[hash] = k;
-                return val[hash] = Val();
-            }
-            if (key[hash] == k) return val[hash];
-            ++hash &= MASK;
-        }
-    }
-    const Val &operator [] (const Key &k) const {
-        auto hash = get_hash(k);
-        while (true) {
-            if (!used[hash]) {
-                used[hash] = 1;
-                key[hash] = k;
-                return val[hash] = Val();
-            }
-            if (key[hash] == k) return val[hash];
-            ++hash &= MASK;
-        }
-    }
-    Val get(const Key &k) const {
-        auto hash = get_hash(k);
-        while (true) {
-            if (!used[hash]) return Val();
-            if (key[hash] == k) return val[hash];
-            ++hash &= MASK;
-        }
-    }
-    bool count(const Key &k) const {
-        auto hash = get_hash(k);
-        while (true) {
-            if (!used[hash]) return false;
-            if (key[hash] == k) return true;
-            ++hash &= MASK;
-        }
-    }
-};
-
 // kth root
 // N < 2^64, K <= 64
 uint64_t kth_root(uint64_t N, uint64_t K = 2) {
@@ -1137,35 +1075,6 @@ constexpr T_VAL calc_order(T_VAL a, T_MOD m) {
         while (res % p == 0 && mod_pow(a, res / p, m) == 1) res /= p;
     }
     return res;
-}
-
-// Discrete Logarithm (in O(√m))
-// find non-negative x s.t. a^x = b (mod m)
-// return (c, d) where solution is x = c (mod d)
-template<class T_VAL, class T_MOD>
-constexpr pair<T_VAL, T_MOD> mod_log(T_VAL a, T_VAL b, T_MOD m) {
-    if (m == 1) return {0, 1};
-    if (a == 0 && b == 0) return {1, 1};
-    T_VAL m1 = m, pw = 1, div = gcd(a, m1), res = 0, x, y;
-    for (; (div = gcd(a, m1)) > 1; res++, m1 /= div, pw = pw * a % m) {
-        if (pw == b) return {res, 0};  // aperiodic solution
-    }
-    auto g = ext_gcd(pw, m, x, y);
-    if (b % g > 0) return {-1, 0};  // no solution
-    b = x * (b / g) % m;
-    if (b < 0) b += m;
-    T_VAL order = calc_order(a, m1), sq = kth_root(order, 2) + 1, an = mod_pow(a, sq, m1);
-    FastMap<T_VAL, T_VAL> half;
-    pw = an;
-    for (T_VAL p = 1; p <= sq; p++, pw = pw * an % m1) half[pw] = p;
-    pw = b % m1;
-    for (T_VAL q = 0; q <= sq; q++, pw = pw * a % m1) {
-        if (half.count(pw)) {
-            res += (sq * half[pw] - q) % order;
-            return {res, order};  // periodic solution
-        }
-    }
-    return {-1, 0};  // no solution
 }
 
 
@@ -2070,155 +1979,6 @@ template<typename mint> mint BMBM(const vector<mint> &A, long long K) {
     return BostanMori(P, Q, K);   
 }
 
-// Power Projection, O(N (log N)^2)
-// for i = 0, 1, ..., m, calc [x^(f の最高次数)] f(x)^i g(x) 
-template<class mint, int MOD = mint::get_mod(), int pr = calc_primitive_root(MOD)>
-FPS<mint> power_projection(FPS<mint> f, FPS<mint> g = {1}, int m = -1) {
-    int n = (int)f.size() - 1, k = 1, h = 1;
-    g.resize(n + 1);
-    if (m < 0) m = n;
-    while (h < n + 1) h <<= 1;
-    FPS<mint> P((n + 1) * k), Q((n + 1) * k), nP, nQ, buf, buf2;
-    for (int i = 0; i <= n; i++) P[i * k] = g[i];
-    for (int i = 0; i <= n; i++) Q[i * k] = -f[i];
-    Q[0]++;
-    mint iv2 = mint(2).inv();
-    while (n) {
-        mint w = mint(pr).pow((MOD - 1) / (2 * k)), iw = w.inv();
-        buf2.resize(k);
-        auto ntt_doubling = [&]() {
-            copy(begin(buf), end(buf), begin(buf2));
-            ntt_trans_inv(buf2);
-            mint c = 1;
-            for (int i = 0; i < k; i++) buf2[i] *= c, c *= w;
-            ntt_trans(buf2);
-            copy(begin(buf2), end(buf2), back_inserter(buf));
-        };
-        nP.clear(), nQ.clear();
-        for (int i = 0; i <= n; i++) {
-            buf.resize(k);
-            copy(begin(P) + i * k, begin(P) + (i + 1) * k, begin(buf));
-            ntt_doubling();
-            copy(begin(buf), end(buf), back_inserter(nP));
-            buf.resize(k);
-            copy(begin(Q) + i * k, begin(Q) + (i + 1) * k, begin(buf));
-            if (i == 0) {
-                for (int j = 0; j < k; j++) buf[j]--;
-                ntt_doubling();
-                for (int j = 0; j < k; j++) buf[j]++;
-                for (int j = 0; j < k; j++) buf[k + j]--;
-            } else {
-                ntt_doubling();
-            }
-            copy(begin(buf), end(buf), back_inserter(nQ));
-        }
-        nP.resize(h * 2 * k * 2), nQ.resize(h * 2 * k * 2);
-        FPS<mint> p(h * 2), q(h * 2);
-        w = mint(pr).pow((MOD - 1) / (h * 2)), iw = w.inv();
-        vector<int> btr;
-        if (n % 2) {
-            btr.resize(h);
-            for (int i = 0, lg = __builtin_ctz(h); i < h; i++) {
-                btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (lg - 1));
-            }
-        }
-        for (int j = 0; j < k * 2; j++) {
-            p.assign(h * 2, 0), q.assign(h * 2, 0);
-            for (int i = 0; i < h; i++) p[i] = nP[i * k * 2 + j], q[i] = nQ[i * k * 2 + j];
-            ntt_trans(p), ntt_trans(q);
-            for (int i = 0; i < h * 2; i += 2) swap(q[i], q[i + 1]);
-            for (int i = 0; i < h * 2; i++) p[i] *= q[i];
-            for (int i = 0; i < h; i++) q[i] = q[i * 2] * q[i * 2 + 1];
-            if (n & 1) {
-                mint c = iv2;
-                buf.resize(h);
-                for (int i : btr) buf[i] = (p[i * 2] - p[i * 2 + 1]) * c, c *= iw;
-                swap(p, buf);
-            } else {
-                for (int i = 0; i < h; i++) p[i] = (p[i * 2] + p[i * 2 + 1]) * iv2;
-            }
-            p.resize(h), q.resize(h);
-            ntt_trans_inv(p), ntt_trans_inv(q);
-            for (int i = 0; i < h; i++) nP[i * k * 2 + j] = p[i];
-            for (int i = 0; i < h; i++) nQ[i * k * 2 + j] = q[i];
-        }
-        nP.resize((n / 2 + 1) * k * 2), nQ.resize((n / 2 + 1) * k * 2);
-        swap(P, nP), swap(Q, nQ);
-        n /= 2, h /= 2, k *= 2;
-    }
-    FPS<mint> S{begin(P), begin(P) + k}, T{begin(Q), begin(Q) + k};
-    ntt_trans_inv(S), ntt_trans_inv(T);
-    T[0]--;
-    if (T[0] == 0) return S.rev().pre(m + 1);
-    else return (S.rev() * (T + (FPS<mint>{1} << k)).rev().inv(m + 1)).pre(m + 1);
-}
-
-// composition of FPS, calc g(f(x)), O(N (log N)^2)
-template<class mint>
-FPS<mint> composition(FPS<mint> g, FPS<mint> f, int deg = -1) {
-    auto rec = [&](auto &&rec, FPS<mint> Q, int n, int h, int k) -> FPS<mint> {
-        if (n == 0) {
-            FPS<mint> T{begin(Q), begin(Q) + k};
-            T.emplace_back(mint(1));
-            FPS<mint> u = g * T.rev().inv().rev();
-            FPS<mint> P(h * k);
-            for (int i = 0; i < (int)g.size(); i++) P[k - i - 1] = u[i + k];
-            return P;
-        }
-        FPS<mint> nQ(h * k * 4), nR(h * k * 2);
-        for (int i = 0; i < k; i++) {
-            copy(begin(Q) + i * h, begin(Q) + i * h + n + 1, begin(nQ) + i * h * 2);
-        }
-        nQ[h * k * 2] += 1;
-        ntt_trans(nQ);
-        for (int i = 0; i < h * k * 4; i += 2) swap(nQ[i], nQ[i + 1]);
-        for (int i = 0; i < h * k * 2; i++) nR[i] = nQ[i * 2] * nQ[i * 2 + 1];
-        ntt_trans_inv(nR);
-        nR[0] -= 1;
-        Q.assign(h * k, 0);
-        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
-            Q[i * h / 2 + j] = nR[i * h + j];
-        }
-        auto P = rec(rec, Q, n / 2, h / 2, k * 2);
-        FPS<mint> nP(h * k * 4);
-        for (int i = 0; i < k * 2; i++) for (int j = 0; j <= n / 2; j++) {
-            nP[i * h * 2 + j * 2 + n % 2] = P[i * h / 2 + j];
-        }
-        ntt_trans(nP);
-        for (int i = 1; i < h * k * 4; i <<= 1) reverse(begin(nQ) + i, begin(nQ) + i * 2);
-        for (int i = 0; i < h * k * 4; i++) nP[i] *= nQ[i];
-        ntt_trans_inv(nP);
-        P.assign(h * k, 0);
-        for (int i = 0; i < k; i++) {
-            copy(begin(nP) + i * h * 2, begin(nP) + i * h * 2 + n + 1, begin(P) + i * h);
-        }
-        return P;
-    };
-    if (deg == -1) deg = max((int)f.size(), (int)g.size());
-    f.resize(deg), g.resize(deg);
-    int n = (int)f.size() - 1, h = 1, k = 1;
-    while (h < n + 1) h *= 2;
-    FPS<mint> Q(h * k);
-    for (int i = 0; i <= n; i++) Q[i] = -f[i];
-    FPS<mint> P = rec(rec, Q, n, h, k);
-    return P.pre(n + 1).rev();
-}
-
-// find g s.t. f(g(x)) ≡ x (mod x^{deg}), O(N (log N)^2)
-template<class mint>
-FPS<mint> compositional_inverse(FPS<mint> f, int deg = -1) {
-    assert((int)f.size() >= 2 && f[1] != 0);
-    if (deg == -1) deg = (int)f.size();
-    if (deg < 2) return FPS<mint>{0, f[1].inv()}.pre(deg);
-    int n = deg - 1;
-    FPS<mint> h = power_projection(f) * n;
-    for (int k = 1; k <= n; k++) h[k] /= k;
-    h = h.rev(), h *= h[0].inv();
-    FPS<mint> g = (h.log() * mint(-n).inv()).exp();
-    g *= f[1].inv();
-    return (g << 1).pre(deg);
-}
-
 
 //------------------------------//
 // Polynomial Algorithms
@@ -2307,530 +2067,6 @@ template<class mint> FPS<mint> taylor_shift(const FPS<mint> &f, long long c) {
     for (int i = 0; i <= N; i++) res[i] = pq[i + N] * bc.finv(i);
     return res;
 }
-
-// multipoint evaluation, polynomial interpolation
-template<class mint> struct SubproductTree {
-    // inner data
-    int num_points, siz;
-    vector<FPS<mint>> tree;
-
-    // constructor
-    SubproductTree() {}
-    SubproductTree(const vector<mint> &x) {
-        num_points = (int)x.size();
-        siz = 1;
-        while (siz < num_points) siz <<= 1;
-        tree.resize(siz * 2);
-        for (int i = 0; i < siz; i++) tree[siz + i] = {1, (i < num_points ? -x[i] : 0)};
-        for (int i = siz - 1; i >= 1; i--) tree[i] = tree[i * 2] * tree[i * 2 + 1];
-    }
-
-    // multipoint evaluation
-    vector<mint> eval(FPS<mint> f) {
-        int N = (int)f.size();
-        if (N == 0) return vector<mint>(num_points, mint(0));
-        f.resize(N * 2 - 1);
-        vector<FPS<mint>> g(siz * 2);
-        g[1] = tree[1];
-        g[1].resize(N);
-        g[1] = inv(g[1]);
-        g[1] = middle_product(f, g[1]);
-        g[1].resize(siz);
-        for (int i = 1; i < siz; i++) {
-            g[i * 2] = middle_product(g[i], tree[i * 2 + 1]);
-            g[i * 2 + 1] = middle_product(g[i], tree[i * 2]);
-        }
-        vector<mint> res(num_points);
-        for (int i = 0; i < num_points; i++) res[i] = g[siz + i][0];
-        return res;
-    }
-
-    // polynomial interpolation
-    FPS<mint> interpolate(const vector<mint> &y) {
-        assert((int)y.size() == num_points);
-        vector<mint> p(num_points);
-        for (int i = 0; i < num_points; i++) p[i] = tree[1][num_points - i - 1] * (i + 1);
-        p = eval(p);
-        vector<FPS<mint>> t(siz * 2);
-        for (int i = 0; i < siz; i++) t[siz + i] = {(i < num_points ? y[i] / p[i] : 0)};
-        for (int i = siz - 1; i >= 1; i--) {
-            t[i] = t[i * 2] * tree[i * 2 + 1];
-            auto rt = t[i * 2 + 1] * tree[i * 2];
-            for (int k = 0; k < (int)t[i].size(); k++) t[i][k] += rt[k];
-        }
-        t[1].resize(num_points);
-        reverse(t[1].begin(), t[1].end());
-        return t[1];
-    }
-};
-
-// multipoint evaluation, polynomial interpolation
-template<class mint>
-vector<mint> multipoint_eval(const FPS<mint> &f, const vector<mint> &x) {
-    if (x.empty()) return {};
-    SubproductTree<mint> st(x);
-    return st.eval(f);
-}
-template<class mint>
-FPS<mint> interpolate(const vector<mint> &x, const vector<mint> &y) {
-    assert(x.size() == y.size());
-    if (x.empty()) return {};
-    SubproductTree<mint> st(x);
-    return st.interpolate(y);
-}
-
-// multipoint evaluation (case: geometric sequence)
-// for k = 0, 1, ..., M-1, calc f(ar^k)
-template<class mint>
-vector<mint> multipoint_eval(const FPS<mint> &f, const mint &a, const mint &r, int M) {
-    // calc 1, 1, r, r^3, r^6, r^10, ...
-    auto calc = [&](const mint &r, int m) -> FPS<mint> {
-        FPS<mint> res(m, mint(1));
-        mint po = 1;
-        for (int i = 0; i < m - 1; i++) res[i + 1] = res[i] * po, po *= r;
-        return res;
-    };
-    int N = (int)f.size();
-    if (M == 0) return vector<mint>();
-    if (r == mint(0)) {
-        vector<mint> res(M);
-        for (int i = 1; i < M; i++) res[i] = f[0];
-        res[0] = f.eval(a);
-        return res;
-    }
-    if (min(N, M) < 60) {
-        vector<mint> res(M);
-        mint b = a;
-        for (int i = 0; i < M; i++) res[i] = f.eval(b), b *= r;
-        return res;
-    }
-    FPS<mint> res = f;
-    mint po = 1;
-    for (int i = 0; i < N; i++) res[i] *= po, po *= a;
-    FPS<mint> A = calc(r, N + M - 1), B = calc(r.inv(), max(N, M));
-    for (int i = 0; i < N; i++) res[i] *= B[i];
-    res = middle_product(A, res);
-    for (int i = 0; i < M; i++) res[i] *= B[i];
-    return res;
-}
-
-// polynomial interpolation (case: geometric sequence)
-// y[i] = f(ar^i) -> find f
-template<class mint>
-vector<mint> interpolate(const mint &a, const mint &r, const FPS<mint> &y) {
-    int N = (int)y.size();
-    if (N == 0) return FPS<mint>();
-    if (N == 1) return {y[0]};
-    auto Y = y;
-    mint ir = r.inv(), ia = a.inv();
-    FPS<mint> po(N + N - 1, 1), po2(N + N - 1, 1), ipo(N + N - 1, 1), ipo2(N + N - 1, 1);
-    for (int i = 0; i < N + N - 2; i++) po[i + 1] = po[i] * r, po2[i + 1] = po2[i] * po[i];
-    for (int i = 0; i < N; i++) ipo[i + 1] = ipo[i] * ir, ipo2[i + 1] = ipo2[i] * ipo[i];
-    vector<mint> S(N, mint(1));
-    for (int i = 1; i < N; i++) S[i] = S[i - 1] * (mint(1) - po[i]);
-    vector<mint> iS = all_inverse(S);
-    mint sn = S[N - 1] * (mint(1) - po[N]);
-    for (int i = 0; i < N; i++) {
-        Y[i] = Y[i] * po2[N - i - 1] * ipo2[N - 1] * iS[i] * iS[N - i - 1];
-        if (i & 1) Y[i] = -Y[i];
-    }
-    for (int i = 0; i < N; i++) Y[i] *= ipo2[i];
-    FPS<mint> f = middle_product(po2, Y);
-    for (int i = 0; i < N; i++) f[i] *= ipo2[i];
-    FPS<mint> g(N, mint(1));
-    for (int i = 1; i < N; i++) {
-        g[i] = po2[i] * sn * iS[i] * iS[N - i];
-        if (i & 1) g[i] = -g[i];
-    }
-    f = f * g;
-    f.resize(N);
-    reverse(f.begin(), f.end());
-    mint p = 1;
-    for (int i = 0; i < N; i++) f[i] *= p, p *= ia;
-    return f;
-}
-
-// shift of sampling points
-// input y[i] = f(i) (i = 0, 1, ..., N-1)
-// output f[c], f[c+1], ..., f[c+M-1]
-template<class mint> vector<mint> shift_of_sampling_points(const vector<mint> &y, const mint &c, int M = -1) {
-    int N = (int)y.size();
-    if (M == -1) M = N;
-    int T = c.val;
-    if (T < N) {
-        FPS<mint> res(M);
-        int ptr = 0;
-        for (int i = T; i < N && ptr < M; i++) res[ptr++] = y[i];
-        if (N < T + M) {
-            auto suffix = shift_of_sampling_points(y, mint(N), M - ptr);
-            for (int i = N; i < T + M; i++) res[ptr++] = suffix[i - N];
-        }
-        return res;
-    }
-    if (T + M > mint::get_mod()) {
-        auto prefix = shift_of_sampling_points(y, mint(T), mint::get_mod() - T);
-        auto suffix = shift_of_sampling_points(y, mint(0), M - (int)prefix.size());
-        copy(begin(suffix), end(suffix), back_inserter(prefix));
-        return prefix;
-    }
-    BiCoef<mint> bc(N);
-    FPS<mint> res(M), d(N), h(M + N - 1);
-    for (int i = 0; i < N; i++) {
-        d[i] = bc.finv(i) * bc.finv(N - i - 1) * y[i];
-        if ((N - i - 1) & 1) d[i] = -d[i];
-    }
-    for (int i = 0; i < M + N - 1; i++) h[i] = mint(T - N + i + 1);
-    h = all_inverse(h);
-    auto dh = d * h;
-    mint cur = T;
-    for (int i = 1; i < N; i++) cur *= T - i;
-    for (int i = 0; i < M; i++) {
-        res[i] = cur * dh[N + i - 1];
-        cur *= T + i + 1;
-        cur *= h[i];
-    }
-    return res;
-}
-
-
-//------------------------------//
-// Matrix
-//------------------------------//
-
-// modint matrix
-template<class mint> struct MintMatrix {
-    // inner value
-    int H, W;
-    vector<vector<mint>> val;
-    
-    // constructors
-    MintMatrix() {}
-    MintMatrix(const MintMatrix&) = default;
-    MintMatrix& operator = (const MintMatrix&) = default;
-    MintMatrix(int h, int w) : H(h), W(w), val(h, vector<mint>(w)) {}
-    MintMatrix(int h, int w, mint x) : H(h), W(w), val(h, vector<mint>(w, x)) {}
-    void init(int h, int w, mint x) {
-        H = h, W = w;
-        val.assign(h, vector<mint>(w, x));
-    }
-    void resize(int h, int w) {
-        H = h, W = w;
-        val.resize(h);
-        for (int i = 0; i < h; ++i) val[i].resize(w);
-    }
-    
-    // getter and debugger
-    constexpr int height() const { return H; }
-    constexpr int width() const { return W; }
-    constexpr bool empty() const { return height() == 0; }
-    vector<mint>& operator [] (int i) { return val[i]; }
-    const vector<mint>& operator [] (int i) const { return val[i]; }
-    friend constexpr ostream& operator << (ostream &os, const MintMatrix &mat) {
-        for (int i = 0; i < mat.height(); ++i) {
-            for (int j = 0; j < mat.width(); ++j) {
-                if (j) os << ' ';
-                os << mat.val[i][j];
-            }
-            os << '\n';
-        }
-        return os;
-    }
-    
-    // comparison operators
-    constexpr bool operator == (const MintMatrix &r) const {
-        return this->val == r.val;
-    }
-    constexpr bool operator != (const MintMatrix &r) const {
-        return this->val != r.val;
-    }
-    
-    // arithmetic operators
-    constexpr MintMatrix& operator += (const MintMatrix &r) {
-        assert(height() == r.height());
-        assert(width() == r.width());
-        for (int i = 0; i < height(); ++i)
-            for (int j = 0; j < width(); ++j)
-                val[i][j] = val[i][j] + r.val[i][j];
-        return *this;
-    }
-    constexpr MintMatrix& operator -= (const MintMatrix &r) {
-        assert(height() == r.height());
-        assert(width() == r.width());
-        for (int i = 0; i < height(); ++i)
-            for (int j = 0; j < width(); ++j)
-                val[i][j] = val[i][j] - r.val[i][j];
-        return *this;
-    }
-    constexpr MintMatrix& operator *= (const mint &v) {
-        for (int i = 0; i < height(); ++i)
-            for (int j = 0; j < width(); ++j)
-                val[i][j] = val[i][j] * v;
-        return *this;
-    }
-    constexpr MintMatrix& operator *= (const MintMatrix &r) {
-        assert(width() == r.height());
-        MintMatrix<mint> res(height(), r.width());
-        for (int i = 0; i < height(); ++i)
-            for (int j = 0; j < r.width(); ++j)
-                for (int k = 0; k < width(); ++k)
-                    res[i][j] = res[i][j] + val[i][k] * r.val[k][j];
-        return (*this) = res;
-    }
-    constexpr MintMatrix operator + () const { 
-        return MintMatrix(*this);
-    }
-    constexpr MintMatrix operator - () const {
-        MintMatrix res(*this);
-        for (int i = 0; i < height(); ++i)
-            for (int j = 0; j < width(); ++j)
-                res.val[i][j] = -res.val[i][j];
-        return res;
-    }
-    constexpr MintMatrix operator + (const MintMatrix &r) const { 
-        return MintMatrix(*this) += r;
-    }
-    constexpr MintMatrix operator - (const MintMatrix &r) const {
-        return MintMatrix(*this) -= r;
-    }
-    constexpr MintMatrix operator * (const mint &v) const {
-        return MintMatrix(*this) *= v;
-    }
-    constexpr MintMatrix operator * (const MintMatrix &r) const {
-        return MintMatrix(*this) *= r;
-    }
-    constexpr vector<mint> operator * (const vector<mint> &v) const {
-        assert(width() == v.size());
-        vector<mint> res(height(), mint(0));
-        for (int i = 0; i < height(); i++)
-            for (int j = 0; j < width(); j++)
-                res[i] += val[i][j] * v[j];
-        return res;
-    }
-
-    // transpose
-    constexpr MintMatrix trans() const {
-        MintMatrix<mint> res(width(), height());
-        for (int row = 0; row < width(); row++)
-            for (int col = 0; col < height(); col++)
-                res[row][col] = val[col][row];
-        return res;
-    }
-    friend constexpr MintMatrix trans(const MintMatrix &mat) {
-        return mat.trans();
-    }
-    
-    // pow
-    constexpr MintMatrix pow(long long n) const {
-        assert(height() == width());
-        MintMatrix<mint> res(height(), width());
-        MintMatrix<mint> mul(*this);
-        for (int row = 0; row < height(); ++row) res[row][row] = mint(1);
-        while (n > 0) {
-            if (n & 1) res = res * mul;
-            mul = mul * mul;
-            n >>= 1;
-        }
-        return res;
-    }
-    friend constexpr MintMatrix pow(const MintMatrix &mat, long long n) {
-        return mat.pow(n);
-    }
-    
-    // gauss-jordan
-    constexpr int find_pivot(int cur_rank, int col) const {
-        int pivot = -1;
-        for (int row = cur_rank; row < height(); ++row) {
-            if (val[row][col] != mint(0)) {
-                pivot = row;
-                break;
-            }
-        }
-        return pivot;
-    }
-    constexpr void sweep(int cur_rank, int col, int pivot, bool sweep_upper = true) {
-        swap(val[pivot], val[cur_rank]);
-        auto ifac = val[cur_rank][col].inv();
-        for (int col2 = cur_rank; col2 < width(); ++col2) {
-            val[cur_rank][col2] *= ifac;
-        }
-        int row_start = (sweep_upper ? 0 : cur_rank + 1);
-        for (int row = row_start; row < height(); ++row) {
-            if (row != cur_rank && val[row][col] != mint(0)) {
-                auto fac = val[row][col];
-                for (int col2 = cur_rank; col2 < width(); ++col2) {
-                    val[row][col2] -= val[cur_rank][col2] * fac;
-                }
-            }
-        }
-    }
-    constexpr int gauss_jordan(int not_sweep_width = 0, bool sweep_upper = true) {
-        int rank = 0;
-        for (int col = 0; col < width(); ++col) {
-            if (col == width() - not_sweep_width) break;
-            int pivot = find_pivot(rank, col);
-            if (pivot == -1) continue;
-            sweep(rank++, col, pivot, sweep_upper);
-        }
-        return rank;
-    }
-    constexpr int gauss_jordan(vector<int> &core, int not_sweep_width, bool sweep_upper = true) {
-        core.clear();
-        int rank = 0;
-        for (int col = 0; col < width(); ++col) {
-            if (col == width() - not_sweep_width) break;
-            int pivot = find_pivot(rank, col);
-            if (pivot == -1) continue;
-            core.push_back(col);
-            sweep(rank++, col, pivot, sweep_upper);
-        }
-        return rank;
-    }
-    friend constexpr int gauss_jordan(MintMatrix &mat, int not_sweep_width = 0, bool sweep_upper = true) {
-        return mat.gauss_jordan(not_sweep_width, sweep_upper);
-    }
-
-    // rank
-    constexpr int get_rank() const {
-        if (height() == 0 || width() == 0) return 0;
-        MintMatrix A(*this);
-        if (height() < width()) A = A.trans();
-        return A.gauss_jordan(0, false);
-    }
-    friend constexpr int get_rank(const MintMatrix &mat) {
-        return mat.get_rank();
-    }
-
-    // find one solution
-    friend constexpr int linear_equation
-    (const MintMatrix &mat, const vector<mint> &b, vector<mint> &res) {
-        // extend
-        MintMatrix<mint> A(mat.height(), mat.width() + 1);
-        for (int i = 0; i < mat.height(); ++i) {
-            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
-            A[i].back() = b[i];
-        }
-        int rank = A.gauss_jordan(1);
-        
-        // check if it has no solution
-        for (int row = rank; row < mat.height(); ++row) if (A[row].back() != 0) return -1;
-
-        // answer
-        res.assign(mat.width(), 0);
-        for (int i = 0; i < rank; ++i) res[i] = A[i].back();
-        return rank;
-    }
-    friend constexpr int linear_equation(const MintMatrix &mat, const vector<mint> &b) {
-        vector<mint> res;
-        return linear_equation(mat, b, res);
-    }
-
-    // find all solutions
-    friend int linear_equation
-    (const MintMatrix &mat, const vector<mint> &b, vector<mint> &res, vector<vector<mint>> &zeros) {
-        // extend
-        MintMatrix<mint> A(mat.height(), mat.width() + 1);
-        for (int i = 0; i < mat.height(); ++i) {
-            for (int j = 0; j < mat.width(); ++j) A[i][j] = mat.val[i][j];
-            A[i].back() = b[i];
-        }
-        vector<int> core;
-        int rank = A.gauss_jordan(core, 1);
-        
-        // check if it has no solution
-        for (int row = rank; row < mat.height(); ++row) {
-            if (A[row].back() != 0) return -1;
-        }
-
-        // construct the core solution
-        res.assign(mat.width(), mint(0));
-        for (int i = 0; i < (int)core.size(); i++) res[core[i]] = A[i].back();
-    
-        // construct the all solutions
-        zeros.clear();
-        vector<bool> use(mat.width(), 0);
-        for (auto c : core) use[c] = true;
-        for (int j = 0; j < mat.width(); j++) {
-            if (use[j]) continue;
-            vector<mint> zero(mat.width(), mint(0));
-            zero[j] = mint(1);
-            for (int i = 0; i < (int)core.size(); i++) zero[core[i]] = -A[i][j];
-            zeros.push_back(zero);
-        }
-        return rank;
-    }
-    
-    // determinant
-    constexpr mint det() const {
-        assert(height() == width());
-        if (height() == 0) return mint(1);
-        MintMatrix<mint> A(*this);
-        int rank = 0;
-        mint res = mint(1);
-        for (int col = 0; col < width(); ++col) {
-            int pivot = A.find_pivot(rank, col);
-            if (pivot == -1) return mint(0);
-            if (pivot != rank) res = -res;
-            res *= A[pivot][rank];
-            A.sweep(rank++, col, pivot, false);
-        }
-        return res;
-    }
-    friend constexpr mint det(const MintMatrix &mat) {
-        return mat.det();
-    }
-    constexpr mint det_nonprime_mod() const {
-        assert(height() == width());
-        if (height() == 0) return mint(1);
-        MintMatrix<mint> A(*this);
-        int rank = 0;
-        mint res = mint(1);
-        for (int col = 0; col < width(); ++col) {
-            int pivot = A.find_pivot(rank, col);
-            if (pivot == -1) return mint(0);
-            if (pivot != rank) swap(A[pivot], A[rank]), res = -res;
-            for (int row = rank + 1; row < height(); ++row) {
-                while (A[row][col] != 0) {
-                    swap(A[rank], A[row]), res = -res;
-                    long long quo = A[row][col].get() / A[rank][col].get();
-                    for (int col2 = rank; col2 < width(); ++col2) {
-                        A[row][col2] -= A[rank][col2] * quo;
-                    }
-                }
-            }
-            rank++;
-        }
-        for (int col = 0; col < height(); ++col) res *= A[col][col];
-        return res;
-    }
-    friend constexpr mint det_nonprime_mod(const MintMatrix &mat) {
-        return mat.det_nonprime_mod();
-    }
-
-    // inv
-    constexpr MintMatrix inv() const {
-        assert(height() == width());
-
-        // extend
-        MintMatrix<mint> A(height(), width() + height());
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) A[i][j] = val[i][j];
-            A[i][i+width()] = mint(1);
-        }
-        vector<int> core;
-        int rank = A.gauss_jordan(height(), true);
-
-        // gauss jordan
-        if (rank < height()) return MintMatrix();
-        MintMatrix<mint> res(height(), width());
-        for (int i = 0; i < height(); ++i)
-            for (int j = 0; j < width(); ++j)
-                res[i][j] = A[i][j+width()];
-        return res;
-    }
-    friend constexpr MintMatrix inv(const MintMatrix &mat) {
-        return mat.inv();
-    }
-};
 
 
 //------------------------------//
@@ -4555,281 +3791,6 @@ struct UnionFind {
 
 
 //------------------------------//
-// Sparse Table, Binary Indexed Tree
-//------------------------------//
-
-// BIT
-template <class Abel> struct BIT {
-    Abel UNITY_SUM = 0;
-    vector<Abel> dat;
-    
-    // [0, n)
-    BIT(int n, Abel unity = 0) : UNITY_SUM(unity), dat(n, unity) { }
-    void init(int n) {
-        dat.assign(n, UNITY_SUM);
-    }
-    int size() const {
-        return (int)dat.size();
-    }
-    
-    // a is 0-indexed
-    inline void add(int a, Abel x) {
-        for (int i = a; i < (int)dat.size(); i |= i + 1)
-            dat[i] = dat[i] + x;
-    }
-    
-    // [0, a), a is 0-indexed, [a, b), a and b are 0-indexed
-    inline Abel sum(int a) const {
-        Abel res = UNITY_SUM;
-        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
-            res = res + dat[i];
-        return res;
-    }
-    inline Abel sum(int a, int b) const {
-        return sum(b) - sum(a);
-    }
-    inline Abel operator [] (int i) const {
-        return sum(i, i + 1);
-    }
-    
-    // debug
-    friend ostream& operator << (ostream &s, const BIT &bit) {
-        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
-        return s;
-    }
-};
-
-// RangeAddRangeSum by BIT
-template<class Abel> struct RangeAddRangeSum {
-    Abel UNITY_SUM = 0;
-    vector<Abel> dat[2];
-
-    // [0, n)
-    RangeAddRangeSum(int n, Abel unity = 0) : UNITY_SUM(unity) {
-        init(n);
-    }
-    void init(int n) {
-        for (int iter = 0; iter < 2; ++iter)
-            dat[iter].assign(n + 1, UNITY_SUM);
-    }
-    int size() const {
-        return (int)dat[0].size();
-    }
-    
-    // [a, b), a and b are 0-indexed
-    inline void sub_add(int p, int a, Abel x) {
-        for (int i = a; i < (int)dat[p].size(); i |= i + 1)
-            dat[p][i] = dat[p][i] + x;
-    }
-    inline void add(int a, int b, Abel x) {
-        sub_add(0, a, x * (-a));
-        sub_add(1, a, x);
-        sub_add(0, b, x * b);
-        sub_add(1, b, x * (-1));
-    }
-    
-    // [a, b), a and b are 0-indexed
-    inline Abel sub_sum(int p, int a) {
-        Abel res = UNITY_SUM;
-        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
-            res = res + dat[p][i];
-        return res;
-    }
-    inline Abel sum(int a, int b) {
-        return sub_sum(0, b)
-            + sub_sum(1, b) * b
-            - sub_sum(0, a)
-            - sub_sum(1, a) * a;
-    }
-    inline Abel operator [] (int i) const {
-        return sum(i, i + 1);
-    }
-    
-    // debug
-    friend ostream& operator << (ostream &s, const RangeAddRangeSum &bit) {
-        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
-        return s;
-    }
-};
-
-// Fast MultiSet By BIT
-template<class Abel = int> struct FastMultiSetByBIT {
-    int topbit(int x) const { return (x == 0 ? -1 : 31 - __builtin_clz(x)); }
-    int lowbit(int x) const { return (x == 0 ? -1 : __builtin_ctz(x)); }
-    int lim;
-    Abel IDENTITY;
-    vector<Abel> dat;
-    
-    // [0, n)
-    FastMultiSetByBIT(int n, Abel identity = 0)
-    : lim(n), IDENTITY(identity), dat(n, identity) { }
-    void init(int n, Abel identity = 0) {
-        lim = n;
-        IDENTITY = identity;
-        dat.assign(n, IDENTITY);
-    }
-    
-    // p is 0-indexed
-    void add(int p, Abel x) {
-        if (p < 0) p = 0;
-        for (int i = p; i < (int)dat.size(); i |= i + 1)
-            dat[i] = dat[i] + x;
-    }
-    
-    // [0, p), p is 0-indexed
-    Abel sum(int p) const {
-        if (p > lim) p = lim;
-        Abel res = IDENTITY;
-        for (int i = p - 1; i >= 0; i = (i & (i + 1)) - 1)
-            res = res + dat[i];
-        return res;
-    }
-    
-    // [l, r), l and r are 0-indexed
-    Abel sum(int l, int r) const {
-        return sum(r) - sum(l);
-    }
-    
-    // insert, erase, count, min, max
-    void insert(int x, Abel num = 1) { add(x, num); }
-    void erase(int x, Abel num = 1) { add(x, -min(num, count(x))); }
-    void clear() { dat.assign(lim, IDENTITY); }
-    Abel count(int x) const { return sum(x, x + 1); }
-    Abel count(int l, int r) const { return sum(l, r); }
-    Abel size() const { return sum(lim); }
-    int get_min() const { return next(); }
-    int get_max() const { return prev(); }
-    
-    // get max r s.t. check(sum(l, r)) = True (0-indexed), O(log N)
-    // check(IDENTITY) must be True
-    int max_right(const function<bool(Abel)> check, int l = 0) const {
-        if (l >= lim) return lim;
-        assert(check(IDENTITY));
-        Abel s = IDENTITY;
-        int k = 0;
-        while (true) {
-            if (l % 2 == 1) s = s - dat[l - 1], --l;
-            if (l <= 0) {
-                k = topbit(lim) + 1;
-                break;
-            }
-            k = lowbit(l) - 1;
-            if (l + (1 << k) > lim) break;
-            if (!check(s + dat[l + (1 << k) - 1])) break;
-            s = s - dat[l - 1];
-            l -= l & -l;
-        }
-        while (k) {
-            --k;
-            if (l + (1 << k) - 1 < lim) {
-                Abel ns = s + dat[l + (1 << k) - 1];
-                if (check(ns)) {
-                    l += (1 << k);
-                    s = ns;
-                }
-            }
-        }
-        return l;
-    }
-    
-    // get min l s.t. check(sum(l, r))  = True (0-indexed), O(log N)
-    // check(IDENTITY) must be True
-    int min_left(const function<bool(Abel)> check, int r = -1) const {
-        if (r == -1) r = lim;
-        if (r <= 0) return 0;
-        assert(check(IDENTITY));
-        Abel s = IDENTITY;
-        int k = 0;
-        while (r > 0 && check(s)) {
-            s = s + dat[r - 1];
-            k = lowbit(r);
-            r -= r & -r;
-        }
-        if (check(s)) return 0;
-        while (k) {
-            --k;
-            Abel ns = s - dat[r + (1 << k) - 1];
-            if (!check(ns)) {
-                r += (1 << k);
-                s = ns;
-            }
-        }
-        return r + 1;
-    }
-              
-    // k-th number that is not less than l (k is 0-indexed)
-    int get(Abel k, int l = 0) const {
-        return max_right([&](Abel x) { return x <= k; }, l);
-    }
-    int operator [] (int k) const { return get(k); }
-    
-    // next (including x)
-    int next(int l = 0) const {
-        if (l < 0) l = 0;
-        if (l > lim) l = lim;
-        return max_right([&](Abel x) { return x <= 0; }, l);
-    }
-    
-    // prev (including x)
-    int prev(int r) const {
-        if (r > lim) r = lim;
-        return min_left([&](Abel x) { return x <= 0; }, r + 1) - 1;
-    }
-    int prev() const {
-        return prev(lim);
-    }
-    
-    // debug
-    friend ostream& operator << (ostream &s, const FastMultiSetByBIT &fs) {
-        for (int x = fs.get_min(); x < fs.lim; x = fs.next(x + 1)) {
-            for (int i = 0; i < fs.count(x); i++) s << x << " ";
-        }
-        return s;
-    }
-};
-
-// Sparse Table
-template<class MeetSemiLattice> struct SparseTable {
-    using Func = function<MeetSemiLattice(MeetSemiLattice, MeetSemiLattice)>;
-
-    // core member
-    Func OP = [](const MeetSemiLattice &l, const MeetSemiLattice &r) {
-        return min(l, r);
-    };
-    vector<vector<MeetSemiLattice>> dat;
-    vector<int> height;
-    
-    SparseTable() {}
-    SparseTable(const vector<MeetSemiLattice> &vec) {
-        init(vec);
-    }
-    SparseTable(const vector<MeetSemiLattice> &vec, const Func &op)  {
-        init(vec, op);
-    }
-    void init(const vector<MeetSemiLattice> &vec) {
-        int n = (int)vec.size(), h = 1;
-        while ((1<<h) <= n) ++h;
-        dat.assign(h, vector<MeetSemiLattice>(1<<h));
-        height.assign(n+1, 0);
-        for (int i = 2; i <= n; i++) height[i] = height[i>>1]+1;
-        for (int i = 0; i < n; ++i) dat[0][i] = vec[i];
-        for (int i = 1; i < h; ++i) {
-            for (int j = 0; j < n; ++j)
-                dat[i][j] = OP(dat[i-1][j], dat[i-1][min(j+(1<<(i-1)),n-1)]);
-        }
-    }
-    void init(const vector<MeetSemiLattice> &vec, const Func &op) {
-        OP = op;
-        init(vec);
-    }
-    
-    MeetSemiLattice get(int a, int b) {
-        return OP(dat[height[b-a]][a], dat[height[b-a]][b-(1<<height[b-a])]);
-    }
-};
-
-
-//------------------------------//
 // Segment Tree
 //------------------------------//
 
@@ -5350,6 +4311,281 @@ template<class Monoid, class Action> LazySegmentTree<Monoid, Action> RangeAddRan
 
 
 //------------------------------//
+// Sparse Table, Binary Indexed Tree
+//------------------------------//
+
+// BIT
+template <class Abel> struct BIT {
+    Abel UNITY_SUM = 0;
+    vector<Abel> dat;
+    
+    // [0, n)
+    BIT(int n, Abel unity = 0) : UNITY_SUM(unity), dat(n, unity) { }
+    void init(int n) {
+        dat.assign(n, UNITY_SUM);
+    }
+    int size() const {
+        return (int)dat.size();
+    }
+    
+    // a is 0-indexed
+    inline void add(int a, Abel x) {
+        for (int i = a; i < (int)dat.size(); i |= i + 1)
+            dat[i] = dat[i] + x;
+    }
+    
+    // [0, a), a is 0-indexed, [a, b), a and b are 0-indexed
+    inline Abel sum(int a) const {
+        Abel res = UNITY_SUM;
+        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
+            res = res + dat[i];
+        return res;
+    }
+    inline Abel sum(int a, int b) const {
+        return sum(b) - sum(a);
+    }
+    inline Abel operator [] (int i) const {
+        return sum(i, i + 1);
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, const BIT &bit) {
+        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
+        return s;
+    }
+};
+
+// RangeAddRangeSum by BIT
+template<class Abel> struct RangeAddRangeSum {
+    Abel UNITY_SUM = 0;
+    vector<Abel> dat[2];
+
+    // [0, n)
+    RangeAddRangeSum(int n, Abel unity = 0) : UNITY_SUM(unity) {
+        init(n);
+    }
+    void init(int n) {
+        for (int iter = 0; iter < 2; ++iter)
+            dat[iter].assign(n + 1, UNITY_SUM);
+    }
+    int size() const {
+        return (int)dat[0].size();
+    }
+    
+    // [a, b), a and b are 0-indexed
+    inline void sub_add(int p, int a, Abel x) {
+        for (int i = a; i < (int)dat[p].size(); i |= i + 1)
+            dat[p][i] = dat[p][i] + x;
+    }
+    inline void add(int a, int b, Abel x) {
+        sub_add(0, a, x * (-a));
+        sub_add(1, a, x);
+        sub_add(0, b, x * b);
+        sub_add(1, b, x * (-1));
+    }
+    
+    // [a, b), a and b are 0-indexed
+    inline Abel sub_sum(int p, int a) {
+        Abel res = UNITY_SUM;
+        for (int i = a - 1; i >= 0; i = (i & (i + 1)) - 1)
+            res = res + dat[p][i];
+        return res;
+    }
+    inline Abel sum(int a, int b) {
+        return sub_sum(0, b)
+            + sub_sum(1, b) * b
+            - sub_sum(0, a)
+            - sub_sum(1, a) * a;
+    }
+    inline Abel operator [] (int i) const {
+        return sum(i, i + 1);
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, const RangeAddRangeSum &bit) {
+        for (int i = 0; i < (int)bit.size(); ++i) s << bit[i] << " ";
+        return s;
+    }
+};
+
+// Fast MultiSet By BIT
+template<class Abel = int> struct FastMultiSetByBIT {
+    int topbit(int x) const { return (x == 0 ? -1 : 31 - __builtin_clz(x)); }
+    int lowbit(int x) const { return (x == 0 ? -1 : __builtin_ctz(x)); }
+    int lim;
+    Abel IDENTITY;
+    vector<Abel> dat;
+    
+    // [0, n)
+    FastMultiSetByBIT(int n, Abel identity = 0)
+    : lim(n), IDENTITY(identity), dat(n, identity) { }
+    void init(int n, Abel identity = 0) {
+        lim = n;
+        IDENTITY = identity;
+        dat.assign(n, IDENTITY);
+    }
+    
+    // p is 0-indexed
+    void add(int p, Abel x) {
+        if (p < 0) p = 0;
+        for (int i = p; i < (int)dat.size(); i |= i + 1)
+            dat[i] = dat[i] + x;
+    }
+    
+    // [0, p), p is 0-indexed
+    Abel sum(int p) const {
+        if (p > lim) p = lim;
+        Abel res = IDENTITY;
+        for (int i = p - 1; i >= 0; i = (i & (i + 1)) - 1)
+            res = res + dat[i];
+        return res;
+    }
+    
+    // [l, r), l and r are 0-indexed
+    Abel sum(int l, int r) const {
+        return sum(r) - sum(l);
+    }
+    
+    // insert, erase, count, min, max
+    void insert(int x, Abel num = 1) { add(x, num); }
+    void erase(int x, Abel num = 1) { add(x, -min(num, count(x))); }
+    void clear() { dat.assign(lim, IDENTITY); }
+    Abel count(int x) const { return sum(x, x + 1); }
+    Abel count(int l, int r) const { return sum(l, r); }
+    Abel size() const { return sum(lim); }
+    int get_min() const { return next(); }
+    int get_max() const { return prev(); }
+    
+    // get max r s.t. check(sum(l, r)) = True (0-indexed), O(log N)
+    // check(IDENTITY) must be True
+    int max_right(const function<bool(Abel)> check, int l = 0) const {
+        if (l >= lim) return lim;
+        assert(check(IDENTITY));
+        Abel s = IDENTITY;
+        int k = 0;
+        while (true) {
+            if (l % 2 == 1) s = s - dat[l - 1], --l;
+            if (l <= 0) {
+                k = topbit(lim) + 1;
+                break;
+            }
+            k = lowbit(l) - 1;
+            if (l + (1 << k) > lim) break;
+            if (!check(s + dat[l + (1 << k) - 1])) break;
+            s = s - dat[l - 1];
+            l -= l & -l;
+        }
+        while (k) {
+            --k;
+            if (l + (1 << k) - 1 < lim) {
+                Abel ns = s + dat[l + (1 << k) - 1];
+                if (check(ns)) {
+                    l += (1 << k);
+                    s = ns;
+                }
+            }
+        }
+        return l;
+    }
+    
+    // get min l s.t. check(sum(l, r))  = True (0-indexed), O(log N)
+    // check(IDENTITY) must be True
+    int min_left(const function<bool(Abel)> check, int r = -1) const {
+        if (r == -1) r = lim;
+        if (r <= 0) return 0;
+        assert(check(IDENTITY));
+        Abel s = IDENTITY;
+        int k = 0;
+        while (r > 0 && check(s)) {
+            s = s + dat[r - 1];
+            k = lowbit(r);
+            r -= r & -r;
+        }
+        if (check(s)) return 0;
+        while (k) {
+            --k;
+            Abel ns = s - dat[r + (1 << k) - 1];
+            if (!check(ns)) {
+                r += (1 << k);
+                s = ns;
+            }
+        }
+        return r + 1;
+    }
+              
+    // k-th number that is not less than l (k is 0-indexed)
+    int get(Abel k, int l = 0) const {
+        return max_right([&](Abel x) { return x <= k; }, l);
+    }
+    int operator [] (int k) const { return get(k); }
+    
+    // next (including x)
+    int next(int l = 0) const {
+        if (l < 0) l = 0;
+        if (l > lim) l = lim;
+        return max_right([&](Abel x) { return x <= 0; }, l);
+    }
+    
+    // prev (including x)
+    int prev(int r) const {
+        if (r > lim) r = lim;
+        return min_left([&](Abel x) { return x <= 0; }, r + 1) - 1;
+    }
+    int prev() const {
+        return prev(lim);
+    }
+    
+    // debug
+    friend ostream& operator << (ostream &s, const FastMultiSetByBIT &fs) {
+        for (int x = fs.get_min(); x < fs.lim; x = fs.next(x + 1)) {
+            for (int i = 0; i < fs.count(x); i++) s << x << " ";
+        }
+        return s;
+    }
+};
+
+// Sparse Table
+template<class MeetSemiLattice> struct SparseTable {
+    using Func = function<MeetSemiLattice(MeetSemiLattice, MeetSemiLattice)>;
+
+    // core member
+    Func OP = [](const MeetSemiLattice &l, const MeetSemiLattice &r) {
+        return min(l, r);
+    };
+    vector<vector<MeetSemiLattice>> dat;
+    vector<int> height;
+    
+    SparseTable() {}
+    SparseTable(const vector<MeetSemiLattice> &vec) {
+        init(vec);
+    }
+    SparseTable(const vector<MeetSemiLattice> &vec, const Func &op)  {
+        init(vec, op);
+    }
+    void init(const vector<MeetSemiLattice> &vec) {
+        int n = (int)vec.size(), h = 1;
+        while ((1<<h) <= n) ++h;
+        dat.assign(h, vector<MeetSemiLattice>(1<<h));
+        height.assign(n+1, 0);
+        for (int i = 2; i <= n; i++) height[i] = height[i>>1]+1;
+        for (int i = 0; i < n; ++i) dat[0][i] = vec[i];
+        for (int i = 1; i < h; ++i) {
+            for (int j = 0; j < n; ++j)
+                dat[i][j] = OP(dat[i-1][j], dat[i-1][min(j+(1<<(i-1)),n-1)]);
+        }
+    }
+    void init(const vector<MeetSemiLattice> &vec, const Func &op) {
+        OP = op;
+        init(vec);
+    }
+    
+    MeetSemiLattice get(int a, int b) {
+        return OP(dat[height[b-a]][a], dat[height[b-a]][b-(1<<height[b-a])]);
+    }
+};
+
+
+//------------------------------//
 // Other Advanced Data Structures
 //------------------------------//
 
@@ -5717,6 +4953,172 @@ template<class POS, class VAL> struct BITonWaveletMatrix {
     VAL sum(const POS lx, const POS rx, const POS ly, const POS ry) {
         int l = xid(lx), r = xid(rx);
         return inner_sum(l, r, yid(ry)) - inner_sum(l, r, yid(ly));
+    }
+};
+
+// Segment Tree on Wavelet Matrix
+/*
+ 　クエリ先読みを前提として、一点更新のみ可能にしたウェーブレット行列
+ 　　・更新クエリが発生する座標 (x, y) をあらかじめ wm.add_point(x, y) を用いて登録する
+ 　　・取得クエリが発生する区間 (lx, rx, ly, ry) の登録は不要 (内部で自動的に座標圧縮される)
+ 　　・登録後に wm.build() する (以後、add_point(x, y) は使用不可)
+ 
+ 　　・その後は、以下のクエリを O(log N) で実行
+ 　　　　・一点更新クエリ set(x, y, w)
+ 　　　　・区間取得クエリ prod(lx, rx, ly, ry)
+ 
+ 　　セグメント木に載せられるデータ構造は「アーベル群」、可換かつ逆元をもつこと
+ */
+template<class POS, class Abel> struct SegmentTreeOnWaveletMatrix {
+    using Func = function<Abel(Abel, Abel)>;
+    using InvFunc = function<Abel(Abel)>;
+    struct SegmentTree {
+        // core member
+        int N;
+        Func OP;
+        Abel IDENTITY;
+        
+        // inner data
+        int log, offset;
+        vector<Abel> dat;
+
+        // constructor
+        SegmentTree() {}
+        SegmentTree(int n, const Func &op, const Abel &identity) {
+            init(n, op, identity);
+        }
+        void init(int n, const Func &op, const Abel &identity) {
+            N = n;
+            OP = op;
+            IDENTITY = identity;
+            log = 0, offset = 1;
+            while (offset < N) ++log, offset <<= 1;
+            dat.assign(offset * 2, IDENTITY);
+        }
+        void pull(int k) {
+            dat[k] = OP(dat[k * 2], dat[k * 2 + 1]);
+        }
+        
+        // update A[i], i is 0-indexed, O(log N)
+        void set(int i, const Abel &v) {
+            assert(0 <= i && i < N);
+            int k = i + offset;
+            dat[k] = v;
+            while (k >>= 1) pull(k);
+        }
+        
+        // get [l, r), l and r are 0-indexed, O(log N)
+        Abel prod(int l, int r) {
+            assert(0 <= l && l <= r && r <= N);
+            Abel val_left = IDENTITY, val_right = IDENTITY;
+            l += offset, r += offset;
+            for (; l < r; l >>= 1, r >>= 1) {
+                if (l & 1) val_left = OP(val_left, dat[l++]);
+                if (r & 1) val_right = OP(dat[--r], val_right);
+            }
+            return OP(val_left, val_right);
+        }
+    };
+    
+    using Point = pair<POS, POS>;
+    Func OP;
+    InvFunc IOP;
+    Abel IDENTITY;
+    int n, height;
+    vector<BitVector> bv;
+    vector<Point> ps;
+    vector<POS> ys;
+    vector<SegmentTree> seg;
+
+    // constructor (sigma: the number of characters)
+    // add_point() cannot be used after build()
+    SegmentTreeOnWaveletMatrix() {}
+    SegmentTreeOnWaveletMatrix(const vector<Point> &vec) {
+        for (auto [x, y] : vec) add_point(x, y);
+    }
+    SegmentTreeOnWaveletMatrix(const vector<Point> &vec,
+                               const Func &op, const InvFunc &iop, const Abel &identity) {
+        for (auto [x, y] : vec) add_point(x, y);
+        build(op, iop, identity);
+    }
+    void add_point(POS x, POS y) {
+        ps.emplace_back(x, y);
+        ys.emplace_back(y);
+    }
+    int xid(POS x) const {
+        return lower_bound(ps.begin(), ps.end(), Point(x, 0)) - ps.begin();
+    }
+    int yid(POS y) const {
+        return lower_bound(ys.begin(), ys.end(), y) - ys.begin();
+    }
+    void build(const Func &op, const InvFunc &iop, const Abel &identity) {
+        OP = op, IOP = iop, IDENTITY = identity;
+        sort(ps.begin(), ps.end());
+        ps.erase(unique(ps.begin(), ps.end()), ps.end());
+        n = (int)ps.size();
+        sort(ys.begin(), ys.end());
+        ys.erase(unique(ys.begin(), ys.end()), ys.end());
+        vector<int> v(n), left(n), right(n), ord(n);
+        int mv = 1;
+        for (int i = 0; i < n; ++i) {
+            v[i] = yid(ps[i].second);
+            mv = max(mv, v[i]);
+        }
+        for (height = 1; mv != 0; mv >>= 1) ++height;
+        iota(ord.begin(), ord.end(), 0);
+        bv.assign(height, BitVector(n));
+        seg.assign(height + 1, SegmentTree(n, op, identity));
+        for (int h = height - 1; h >= 0; --h) {
+            int l = 0, r = 0;
+            for (int i = 0; i < n; ++i) {
+                if ((v[ord[i]] >> h) & 1) {
+                    bv[h].set(i);
+                    right[r++] = ord[i];
+                } else {
+                    left[l++] = ord[i];
+                }
+            }
+            bv[h].build();
+            ord.swap(left);
+            for (int i = 0; i < r; ++i) ord[i + l] = right[i];
+        }
+    }
+    
+    // set
+    void set(const POS x, const POS y, const Abel val) {
+        int i = lower_bound(ps.begin(), ps.end(), Point(x, y)) - ps.begin();
+        int j = yid(y);
+        for (int h = height - 1; h >= 0; --h) {
+            int i0 = bv[h].rank0(i);
+            if ((j >> h) & 1) {
+                i += bv[h].rank0() - i0;
+            } else {
+                i = i0;
+            }
+            seg[h].set(i, val);
+        }
+    }
+    
+    // prod
+    Abel inner_prod(int l, int r, int upper) {
+        assert(0 <= l && r <= n);
+        Abel res = IDENTITY;
+        for (int h = height - 1; h >= 0; --h) {
+            int l0 = bv[h].rank0(l), r0 = bv[h].rank0(r);
+            if ((upper >> h) & 1) {
+                l += bv[h].rank0() - l0;
+                r += bv[h].rank0() - r0;
+                res = OP(res, seg[h].prod(l0, r0));
+            } else {
+                l = l0;
+                r = r0;
+            }
+        }
+        return res;
+    }
+    Abel prod(const POS lx, const POS rx, const POS ly, const POS ry) {
+        int l = xid(lx), r = xid(rx);
+        return OP(inner_prod(l, r, yid(ry)), IOP(inner_prod(l, r, yid(ly))));
     }
 };
 

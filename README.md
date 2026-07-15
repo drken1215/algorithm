@@ -343,13 +343,7 @@
 - (★★★★) 二部マッチングの bitset 高速化
 - (★★★★) アンバランス重みつき二部マッチング (in O((K^2 log N + K^3)N))
 
-## 一般グラフのマッチング
-
-- (★★★★) 一般グラフの最大マッチング (Edmonds 法)
-- (★★★★) 一般グラフの最大マッチング (行列補間)
-- (★★★★) 重み付き一般グラフの最大マッチング
-
-## マッチングの応用
+## 二部マッチングの応用
 
 - (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_independent_set_of_bipartite_graph.cpp)
 - (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_vertex_cover_of_bipartite_graph.cpp)
@@ -681,6 +675,12 @@
 
 - (★★★☆) マトロイド上の Greedy 法
 - (★★★★) マトロイド交差
+
+## 一般グラフのマッチング
+
+- (★★★★) 一般グラフの最大マッチング (Edmonds 法)
+- (★★★★) 一般グラフの最大マッチング (行列補間)
+- (★★★★) 重み付き一般グラフの最大マッチング
 
 ## 連続最適化
 

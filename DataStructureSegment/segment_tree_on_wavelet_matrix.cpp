@@ -5,19 +5,9 @@
 //   Yosupu Judge - Point Add Rectangle Sum
 //     https://judge.yosupo.jp/problem/point_add_rectangle_sum
 //
-
-/*
- 　クエリ先読みを前提として、一点更新のみ可能にしたウェーブレット行列
- 　　・更新クエリが発生する座標 (x, y) をあらかじめ wm.add_point(x, y) を用いて登録する
- 　　・取得クエリが発生する区間 (lx, rx, ly, ry) の登録は不要 (内部で自動的に座標圧縮される)
- 　　・登録後に wm.build() する (以後、add_point(x, y) は使用不可)
- 
- 　　・その後は、以下のクエリを O(log N) で実行
- 　　　　・一点更新クエリ set(x, y, w)
- 　　　　・区間取得クエリ prod(lx, rx, ly, ry)
- 
- 　　セグメント木に載せられるデータ構造は「アーベル群」、可換かつ逆元をもつこと
- */
+//   Codeforces Round 1109 (Div. 3) G. Yura and Deadlines
+//     https://codeforces.com/contest/2244/problem/G
+//
 
 
 #include <bits/stdc++.h>
@@ -85,6 +75,18 @@ struct BitVector {
 };
 
 // Segment Tree on Wavelet Matrix
+/*
+ 　クエリ先読みを前提として、一点更新のみ可能にしたウェーブレット行列
+ 　　・更新クエリが発生する座標 (x, y) をあらかじめ wm.add_point(x, y) を用いて登録する
+ 　　・取得クエリが発生する区間 (lx, rx, ly, ry) の登録は不要 (内部で自動的に座標圧縮される)
+ 　　・登録後に wm.build() する (以後、add_point(x, y) は使用不可)
+ 
+ 　　・その後は、以下のクエリを O(log N) で実行
+ 　　　　・一点更新クエリ set(x, y, w)
+ 　　　　・区間取得クエリ prod(lx, rx, ly, ry)
+ 
+ 　　セグメント木に載せられるデータ構造は「アーベル群」、可換かつ逆元をもつこと
+ */
 template<class POS, class Abel> struct SegmentTreeOnWaveletMatrix {
     using Func = function<Abel(Abel, Abel)>;
     using InvFunc = function<Abel(Abel)>;
