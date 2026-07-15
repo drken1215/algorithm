@@ -8,8 +8,14 @@
 //   AtCoder ABC 217 H - Snuketoon (for slide(-dt, dt), +max(0, a-x) など)
 //     https://atcoder.jp/contests/abc217/tasks/abc217_h
 //
+//   AtCoder ARC 070 E - NarrowRectangle (for slide(a, b))
+//     https://atcoder.jp/contests/arc070/tasks/arc070_c
+//
 //   KUPC 2016 H - 壁壁壁壁壁壁壁 (for slide(-INF, A[i]-B[i]), eval(x) など)
 //     https://atcoder.jp/contests/kupc2016/tasks/kupc2016_h
+//
+//   AtCoder ABC 458 G - Children Yearn for the Evil Kindergarten
+//     https://atcoder.jp/contests/abc458/tasks/abc458_g
 //
 
 
@@ -355,6 +361,25 @@ void ABC_217_H() {
 }
 
 
+// AtCoder ARC 070 E - NarrowRectangle
+/*
+    nex[x] = min_{x-(R[i-1]-L[i-1]) <= y <= x+(R[i]-L[i])} (dp[y]) + |x - L[i]|
+*/
+void ARC_070_E() {
+    long long N;
+    cin >> N;
+    vector<long long> L(N), R(N);
+    for (int i = 0; i < N; i++) cin >> L[i] >> R[i];
+    SlopeTrickByEDPQ<long long> dp;
+    dp.add_abs(L[0]);
+    for (int i = 1; i < N; i++) {
+        dp.slide(-(R[i]-L[i]), R[i-1]-L[i-1]);
+        dp.add_abs(L[i]);
+    }
+    cout << dp.get_min() << endl;
+}
+
+
 // KUPC 2016 H - 壁壁壁壁壁壁壁
 /*
     dp[x] := その時点で、はみ出し枚数が x のときのコストの最小値 (最後のはみ出しを含む)
@@ -377,8 +402,43 @@ void KUPC_2016_H() {
 }
 
 
+// AtCoder ABC 458 G - Children Yearn for the Evil Kindergarten
+/*
+    二分探索で、m 人可能かどうかを判定する：
+        これを定めておくと、どこまで B[i] 枚以上配っていくべきかの枠が決まる
+    dp[x] := その日の終わりの時点で x 人が脱出している場合の、消費メダル数の最小値
+
+    前日終わりで y 人脱出 -> x 人脱出を考える (y <= x)。
+    S[i] + A[i] - dp[y] (= S[i+1] - dp[y]) 個を m - y 人で分け合う。
+
+    　　(条件) S[i+1] >= dp[y] + B[i] * (m - y) + C[i] * (x - y)
+
+    ・nex[x] = min_{y <= x} (dp[y] + B[i] * (m - y) + C[i] * (x - y))
+             = min_{y <= x} (dp[y] - (B[i] + C[i]) * y) + C[i] * x + B[i] * m
+    ・nex[x] が S[i+1] を超える部分は削り取る
+*/
+void ABC_458_G() {
+    auto solve = [&]() -> void {
+        long long N;
+        cin >> N;
+        vector<long long> A(N), B(N), C(N), S(N+1, 0);
+        for (int i = 0; i < N; i++) cin >> A[i] >> B[i] >> C[i], S[i+1] = S[i] + A[i];
+
+        SlopeTrickByEDPQ<long long> dp;
+        for (int i = 0; i < N*2; i++) dp.add_abs(0);
+        for (int i = 0; i < N; i++) {
+
+        }
+    };
+    int T;
+    cin >> T;
+    while (T--) solve();
+}
+
+
 int main() {
     //DWANGO_2nd_prelims_E();
     //ABC_217_H();
-    KUPC_2016_H();
+    //ARC_070_E();
+    //KUPC_2016_H();
 }
