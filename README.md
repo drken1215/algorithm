@@ -333,6 +333,7 @@
 ## b-flow
 
 - (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_b_flow.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_primal_dual.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
 

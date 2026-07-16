@@ -1,18 +1,18 @@
 //
-// 最小費用 b-flow：最小費用循環流に帰着して、Cost-Scaling で解く
-//   max-flow 計算を O(f(V, E)) として、O(f(V, E)log(VC))
+// 最小費用 b-flow：最小費用流に帰着して、primal-dual で解く（負閉路 NG）
 //
-// verified
-//   Yosupo Library Checker - Minimum Cost b-flow
+// attention
+//   Yosupo Library Checker - Minimum Cost b-flow は NG (because 負閉路あり！！！)
 //     https://judge.yosupo.jp/problem/min_cost_b_flow
-//
+// 
+// verified
 //   ABC 421 G - Increase to make it Increasing
 //     https://atcoder.jp/contests/abc421/tasks/abc421_g
 //
-//   KUPC 2014 I - Rain (cost-scaling が苦手説あり: TLE)
+//   KUPC 2014 I - Rain (cost-scaling が苦手でも、primal-dual なら解ける)
 //     https://atcoder.jp/contests/kupc2014/tasks/kupc2014_i
 //
-//   JAG 夏合宿 2013 Day4 I - Multi Path Story (AOJ 2627, cost-scaling が苦手説あり: TLE ギリギリ)
+//   JAG 夏合宿 2013 Day4 I - Multi Path Story (cost-scaling が苦手でも、primal-dual なら解ける)
 //     https://onlinejudge.u-aizu.ac.jp/challenges/sources/JAG/Summer/2627?year=2013
 //
 
@@ -433,94 +433,102 @@ template<class FLOW, class COST> struct FlowCostGraph {
     }
 };
 
-// Min Cost Circulation Flow by Cost-Scaling 
-template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
-    COST eps = 0;
-    vector<FLOW> balance(G.size(), 0);
-    vector<COST> price(G.size(), 0);
+// min-cost max-flow (<= limit_flow), slope ver.
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
+{
+    // result values
+    FLOW cur_flow = 0;
+    COST cur_cost = 0, pre_cost = numeric_limits<COST>::max() / 2;
+    vector<pair<FLOW, COST>> res;
+    res.emplace_back(cur_flow, cur_cost);
     
-    auto newcost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
-        return e.cost * (COST)G.size() - price[e.from] + price[e.to];
-    };
-
-    auto ConstructGaux = [&]() -> void {
-        vector<bool> visited(G.size(), false);
-        auto dfs = [&](auto &&dfs, int v) -> void {
-            visited[v] = true;
-            for (int i = 0; i < G[v].size(); ++i) {
-                FlowCostEdge<FLOW, COST> &e = G[v][i];
-                if (e.cap > 0 && !visited[e.to] && newcost(e) < 0) dfs(dfs, e.to);
-            }
-        };
-        for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) dfs(dfs, v);
-        for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
-    };
-
-    auto augment_blocking_flow = [&]() -> bool {
-        vector<int> iter(G.size(), 0);
-        auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
-            if (balance[v] < 0) {
-                FLOW dif = min(flow, -balance[v]);
-                balance[v] += dif;
-                return dif;
-            }
-            for (; iter[v] < G[v].size(); iter[v]++) {
-                auto &e = G[v][iter[v]], &re = G.get_rev_edge(e);
-                if (e.cap > 0 && newcost(e) < 0) {
-                    FLOW dif = augment(augment, e.to, min(flow, e.cap));
-                    if (dif > 0) {
-                        e.cap -= dif, e.flow += dif;
-                        re.cap += dif, re.flow -= dif;
-                        return dif;
-                    }
-                }
-            }
-            return 0;
-        };
-        bool finish = true;
-        for (int v = 0; v < G.size(); ++v) {
-            FLOW flow;
-            while (balance[v] > 0 && (flow = augment(augment, v, balance[v])) > 0)
-                balance[v] -= flow;
-            if (balance[v] > 0) finish = false;
-        }
-        if (finish) return true;
-        else return false;
-    };
-
-    for (int v = 0; v < G.size(); ++v) {
-        for (int i = 0; i < G[v].size(); ++i) {
-            FlowCostEdge<FLOW, COST> &e = G[v][i];
-            if (e.cap > 0) eps = max(eps, -e.cost * (COST)G.size());
-        }
-        price[v] = 0;
-    }
-    while (eps > 1) {
-        eps /= 2;
-        for (int v = 0; v < G.size(); ++v) {
-            for (int i = 0; i < G[v].size(); ++i) {
-                auto &e = G[v][i], &re = G.get_rev_edge(e);
-                if (e.cap > 0 && newcost(e) < 0) {
-                    FLOW flow = e.cap;
-                    balance[e.from] -= flow, balance[e.to] += flow;
-                    e.cap -= flow, e.flow += flow;
-                    re.cap += flow, re.flow -= flow;
+    // intermediate values
+    vector<COST> dist((int)G.size(), numeric_limits<COST>::max() / 2);
+    vector<int> prevv((int)G.size(), -1), preve((int)G.size(), -1);
+    
+    // dual
+    auto dual_step = [&]() -> bool {
+        dist.assign((int)G.size(), numeric_limits<COST>::max() / 2);
+        dist[S] = 0;
+        priority_queue<pair<COST,int>, vector<pair<COST,int>>, greater<pair<COST,int>>> que;
+        que.emplace(0, S);
+        while (!que.empty()) {
+            auto [cur, v] = que.top();
+            que.pop();
+            if (cur > dist[v]) continue;
+            for (int i = 0; i < (int)G[v].size(); i++) {
+                const auto &e = G[v][i];
+                COST add = e.cost + G.pot[v] - G.pot[e.to];
+                if (e.cap > 0 && dist[e.to] > dist[v] + add) {
+                    dist[e.to] = dist[v] + add;
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    que.emplace(dist[e.to], e.to);
                 }
             }
         }
-        while (true) {
-            ConstructGaux();
-            if (augment_blocking_flow()) break;
+        return dist[T] < numeric_limits<COST>::max() / 2;
+    };
+    
+    // primal
+    auto primal_step = [&]() -> void {
+        for (int v = 0; v < G.size(); v++) {
+            if (dist[v] < numeric_limits<COST>::max() / 2) G.pot[v] += dist[v];
+            else G.pot[v] = numeric_limits<COST>::max() / 2;
         }
+        FLOW flow = limit_flow - cur_flow;
+        COST cost = G.pot[T] - G.pot[S];
+        for (int v = T; v != S; v = prevv[v]) {
+            flow = min(flow, G[prevv[v]][preve[v]].cap);
+        }
+        for (int v = T; v != S; v = prevv[v]) {
+            FlowCostEdge<FLOW, COST> &e = G[prevv[v]][preve[v]];
+            FlowCostEdge<FLOW, COST> &re = G.get_rev_edge(e);
+            e.cap -= flow, e.flow += flow;
+            re.cap += flow, re.flow -= flow;
+        }
+        cur_flow += flow;
+        cur_cost += flow * cost;
+        if (pre_cost == cost) res.pop_back();
+        res.emplace_back(cur_flow, cur_cost);
+        pre_cost = cost;
+    };
+
+    // initialize potential
+    assert(G.init_potential());
+    
+    // primal-dual
+    while (cur_flow < limit_flow) {
+        if (!dual_step()) break;
+        primal_step();
     }
-    COST res = 0;
-    const auto &edges = G.get_edges();
-    for (const auto &e : edges) res += e.flow * e.cost;
     return res;
 }
 
-// Minimum Cost b-flow (come down to min-cost circulation)
-template<class FLOW, class COST> struct MinCostBFlow {
+// min-cost max-flow, slope ver.
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T)
+{
+    return MinCostFlowSlope(G, S, T, numeric_limits<FLOW>::max());
+}
+
+// min-cost max-flow (<= limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
+{
+    return MinCostFlowSlope(G, S, T, limit_flow).back();
+}
+
+// min-cost max-flow (<= limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
+{
+    return MinCostFlow(G, S, T, numeric_limits<FLOW>::max());
+}
+
+// Minimum Cost b-flow (come down to min-cost primal-dual, negative cycle is NG)
+template<class FLOW, class COST> struct MinCostBFlowPrimalDual {
     // Edge
     struct Edge {
         int from, to;
@@ -542,8 +550,8 @@ template<class FLOW, class COST> struct MinCostBFlow {
     FlowCostGraph<FLOW, COST> G;
 
     // constructor
-    MinCostBFlow() {}
-    MinCostBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
+    MinCostBFlowPrimalDual() {}
+    MinCostBFlowPrimalDual(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
 
     // setter
     void add_edge(int from, int to, FLOW cap, COST cost) {
@@ -582,34 +590,26 @@ template<class FLOW, class COST> struct MinCostBFlow {
         }
 
         // pre-flow lower_cap
-        FlowGraph<FLOW> sg(V + 3);
+        G.init(V + 3);
         int s = V + 1, t = V + 2;
         for (const auto &e : edges) {
             dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
-            sg.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
+            G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap, e.cost);
         }
 
         // ds -> s, t
         FLOW ssum = 0, tsum = 0;
         for (int i = 0; i < V + 1; i++) {
-            if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
-            else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
+            if (dss[i] > 0) ssum += dss[i], G.add_edge(s, i, dss[i], COST(0));
+            else if (dss[i] < 0) tsum -= dss[i], G.add_edge(i, t, -dss[i], COST(0));
         }
 
         // feasibility check
         if (ssum != tsum) return {false, COST(0)};
-        if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
-
-        // come down to min-cost circulation
-        G.init(V + 1);
-        for (int i = 0; i < (int)edges.size(); i++) {
-            auto &e = edges[i];
-            const auto &ge = sg.get_edge(i);
-            G.add_edge(ge.from, ge.to, ge.cap, ge.flow, e.cost);
-        }
-        MinCostCirculation(G);
-
-        // find min-cost
+        
+        // min-cost flow
+        auto [maxflow, mincost] = MinCostFlow(G, s, t, ssum);
+        if (maxflow < ssum) return {false, COST(0)};
         COST res = 0;
         for (int i = 0; i < (int)edges.size(); i++) {
             auto &e = edges[i];
@@ -675,7 +675,7 @@ void Yosupo_Minimum_Cost_b_flow() {
 
     int N, M;
     cin >> N >> M;
-    MinCostBFlow<long long, i128> mcf(N);
+    MinCostBFlowPrimalDual<long long, i128> mcf(N);
     vector<i128> B(N);
     for (int i = 0; i < N; i++) cin >> B[i], mcf.set_ds(i, B[i]);
     vector<int> s(M), t(M);
@@ -704,7 +704,7 @@ void ABC_421_G() {
         if (i) D[i] = A[i] - A[i-1];
     }
 
-    MinCostBFlow<long long, long long> G(N+1);
+    MinCostBFlowPrimalDual<long long, long long> G(N+1);
     for (int v = 0; v <= N; v++) {
         if (D[v] >= 0) G.set_ds(v, 0, D[v]);
         else G.set_ds(v, -INF, D[v]);
@@ -725,7 +725,7 @@ void KUPC_2014_I() {
     for (int i = 0; i < K; i++) cin >> C[i], C[i]--;
     for (int i = 0; i < M; i++) cin >> A[i] >> B[i] >> D[i], A[i]--, B[i]--;
     for (int i = 0; i < K; i++) b[A[C[i]]]++, b[B[C[i]]]--;
-    MinCostBFlow<int, long long> G(N);
+    MinCostBFlowPrimalDual<int, long long> G(N);
     for (int i = 0; i < N; i++) G.set_ds(i, b[i]);
     for (int i = 0; i < M; i++) G.add_edge(B[i], A[i], INF, D[i]);
     auto [flag, cost] = G.solve();
@@ -736,7 +736,7 @@ void KUPC_2014_I() {
 void AOJ_2627() {
     long long N, INF = 1LL << 45;
     cin >> N;
-    MinCostBFlow<long long, long long> G(N + 1);
+    MinCostBFlowPrimalDual<long long, long long> G(N + 1);
     long long t = N;
     for (int v = 0; v < N; v++) {
         int D;
@@ -756,7 +756,7 @@ void AOJ_2627() {
 
 int main() {
     //Yosupo_Minimum_Cost_b_flow();
-    //ABC_421_G();
+    ABC_421_G();
     //KUPC_2014_I();
-    AOJ_2627();
+    //AOJ_2627();
 }
