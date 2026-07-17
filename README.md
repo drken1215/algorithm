@@ -360,7 +360,7 @@
 
 ## 最小費用流の応用
 
-- (★★★★) [最小凸費用流 (b-flow by primal-dual)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_convex_flow.cpp)
+- (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_convex_flow.cpp)
 - (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_tension.cpp)
 
 
