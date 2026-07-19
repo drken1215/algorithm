@@ -680,9 +680,9 @@
 
 ## 一般グラフのマッチング
 
-- (★★★★) 一般グラフの最大マッチング (Edmonds 法)
-- (★★★★) 一般グラフの最大マッチング (行列補間)
-- (★★★★) 重み付き一般グラフの最大マッチング
+- (★★★★) [重みなし一般グラフの最大マッチング (行列補間, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Optimization/max_general_matching_by_matrix_completion.cpp)
+- (★★★★) 重みなし一般グラフの最大マッチング (Edmonds 法, in O(V^3))
+- (★★★★) 重み付き一般グラフの最大マッチング (Edmonds 法, in O(V^3))
 
 ## 連続最適化
 
