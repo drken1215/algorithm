@@ -9,6 +9,9 @@
 //   Yosupo Library Checker - Matching on General Graph
 //     https://judge.yosupo.jp/problem/general_matching
 //
+//   JOI春合宿2016 マッチングコンテスト
+//     https://atcoder.jp/contests/joisc2016matching
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -648,7 +651,30 @@ void yosupo_general_matching() {
     for (auto [u, v] : res) cout << u << " " << v << endl;
 }
 
+// JOI春合宿2016 マッチングコンテスト
+void JOI_2026_Matching() {
+    using mint = Fp<>;
+    int T;
+    cin >> T;
+    while (T--) {
+        int N, M, a, b;
+        cin >> N >> M;
+        vector G(N, vector(N, false));
+        for (int i = 0; i < M; i++) {
+            cin >> a >> b;
+            G[a][b] = G[b][a] = true;
+        }
+        GeneralMatching<mint> gm(G);
+        auto res = gm.solve();
+        vector<int> ans(N, -1);
+        for (auto [x, y] : res) ans[x] = y, ans[y] = x;
+        for (int i = 0; i < N; i++) cout << ans[i] << " ";
+        cout << endl;
+    }
+}
+
 
 int main() {
-    yosupo_general_matching();
+    //yosupo_general_matching();
+    JOI_2026_Matching();
 }
