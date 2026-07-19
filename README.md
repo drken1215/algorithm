@@ -299,6 +299,12 @@
 - (★★★★) 辺彩色
 - (★★★★) 最小シュタイナー木 (in O(V 3^t + V^2 2^t + V^3))
 
+## 一般グラフのマッチング
+
+- (★★★★) [重みなし一般グラフの最大マッチング (行列補間, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/max_general_matching_by_matrix_completion.cpp)
+- (★★★★) 重みなし一般グラフの最大マッチング (Edmonds 法, in O(V^3))
+- (★★★★) 重み付き一般グラフの最大マッチング (Edmonds 法, in O(V^3))
+
 ## その他
 
 - (★★★☆) [サイクル基底 (XOR 和をとるもの)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_basis.cpp)
@@ -677,12 +683,6 @@
 
 - (★★★☆) マトロイド上の Greedy 法
 - (★★★★) マトロイド交差
-
-## 一般グラフのマッチング
-
-- (★★★★) [重みなし一般グラフの最大マッチング (行列補間, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Optimization/max_general_matching_by_matrix_completion.cpp)
-- (★★★★) 重みなし一般グラフの最大マッチング (Edmonds 法, in O(V^3))
-- (★★★★) 重み付き一般グラフの最大マッチング (Edmonds 法, in O(V^3))
 
 ## 連続最適化
 
