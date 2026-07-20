@@ -1,103 +1,126 @@
 //
-// maximum stable set O(1.381^{n})
+// maximum stable set, in O(1.381^{n})
 //
 // cf.
 //   wata: 指数時間アルゴリズム入門
 //     https://www.slideshare.net/wata_orz/ss-12131479
 //
 // verified:
+//   Yosupo Library Checker - Maximum Independent Set
+//     https://judge.yosupo.jp/problem/maximum_independent_set
+//
 //   CODE THANKS FESTIVAL 2017 G - Mixture Drug
 //     https://code-thanks-festival-2017-open.contest.atcoder.jp/tasks/code_thanks_festival_2017_g
 //
 
 
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 
-// Graph is expressed as adjacent-list
-typedef vector<vector<int> > Graph;
-int ConnectedCase(Graph &G, vector<int> &can);
-int GeneralCase(Graph &G, vector<int> &can);
+// find maximum independent set
+// graph G must be expressed as adjacent-list
+vector<int> maximum_independent_set(const vector<vector<int>> &G) {
+    int V = (int)G.size();
+    if (V == 1) return {0};
+    function<vector<int>(vector<bool>&)> connected_case, general_case;
 
-void dfs(Graph &G, int v, vector<int> &seen, vector<int> &comp, vector<int> &can) {
-    seen[v] = true;
-    for (auto to : G[v]) {
-        if (!seen[to] && can[to]) dfs(G, to, seen, comp, can);
-    }
-    comp[v] = true;
-}
-
-int ConnectedCase(Graph &G, vector<int> &can) {
-    int pMax = -1, pMin = -1, Max = -1, Min = (int)G.size(), num = 0;
-    for (int i = 0; i < (int)G.size(); ++i) {
-        if (!can[i]) continue;
-        int tnum = 0; ++num;
-        for (int j = 0; j < (int)G[i].size(); ++j) if (can[G[i][j]]) ++tnum;
-        if (Max < tnum) Max = tnum, pMax = i;
-        if (Min > tnum) Min = tnum, pMin = i;
-    }
-    if (num == 1) return 1;
-    if (Max <= 2) {
-        if (Min == 1) return (num+1)/2;
-        else return num/2;
-    }
-    int res = 0;
-    if (Min < 2) {
-        vector<int> ncan((int)G.size(), 0);
-        for (int i = 0; i < (int)G.size(); ++i) ncan[i] = can[i];
-        ncan[pMin] = false;
-        for (int i = 0; i < (int)G[pMin].size(); ++i) ncan[G[pMin][i]] = false;
-        res = max(res, GeneralCase(G, ncan) + 1);
-    }
-    else {
-        vector<int> ncan((int)G.size(), 0);
-        for (int i = 0; i < (int)G.size(); ++i) ncan[i] = can[i];
-        ncan[pMax] = false;
-        for (int i = 0; i < (int)G[pMax].size(); ++i) ncan[G[pMax][i]] = false;
-        int temp1 = GeneralCase(G, ncan);
-        res = max(res, temp1 + 1);
-        
-        for (int i = 0; i < (int)G.size(); ++i) ncan[i] = can[i];
-        ncan[pMax] = false;
-        res = max(res, GeneralCase(G, ncan));
-    }
-    return res;
-}
-
-int GeneralCase(Graph &G, vector<int> &can) {
-    if ((int)G.size() == 1) return 1;
-    vector<int> seen((int)G.size(), 0);
-    int res = 0;
-    for (int i = 0; i < (int)G.size(); ++i) {
-        if (!seen[i] && can[i]) {
-            vector<int> gcan((int)G.size(), false);
-            dfs(G, i, seen, gcan, can);
-            res += ConnectedCase(G, gcan);
+    connected_case = [&](const vector<bool> &can) -> vector<int> {
+        int vma = -1, vmi = -1, ma = -1, mi = V, num = 0;
+        vector<int> res;
+        vector<vector<int>> G2(V);
+        for (int v = 0; v < V; v++) {
+            if (!can[v]) continue;
+            num++;
+            for (auto v2 : G[v]) if (can[v2]) G2[v].emplace_back(v2);
+            if (ma < (int)G2[v].size()) ma = (int)G2[v].size(), vma = v;
+            if (mi > (int)G2[v].size()) mi = (int)G2[v].size(), vmi = v;
         }
-    }
-    return res;
-}
+        if (num == 1) return {vmi};
+        if (ma <= 2) {
+            int v = vmi, p = -1;
+            vector<int> path{v};
+            vector<bool> ncan(V, false);
+            ncan[v] = true;
+            for (int i = 0; i < num - 1; i++) {
+                int v2 = G2[v][0];
+                if (ncan[v2]) v2 = G2[v][1];
+                v = v2;
+                path.emplace_back(v);
+                ncan[v] = true;
+            }
+            if (mi == 1) {
+                for (int i = 0; i < (int)path.size(); i += 2) res.emplace_back(path[i]);
+            } else {
+                for (int i = 0; i < (int)path.size() - 1; i += 2) res.emplace_back(path[i]);
+            }
+            return res;
+        }
+        if (mi < 2) {
+            vector<bool> ncan = can;
+            ncan[vmi] = false;
+            for (auto v : G[vmi]) ncan[v] = false;
+            res = general_case(ncan);
+            res.emplace_back(vmi);
+            return res;
+        } else {
+            vector<bool> ncan = can;
+            ncan[vma] = false;
+            res = general_case(ncan);
+            ncan = can;
+            ncan[vma] = false;
+            for (auto v : G[vma]) ncan[v] = false;
+            auto tmp = general_case(ncan);
+            tmp.emplace_back(vma);
+            if (res.size() < tmp.size()) swap(res, tmp);
+            return res;
+        }
+    };
 
-int StableSet(Graph &G) {
-    vector<int> can((int)G.size(), 1);
-    return GeneralCase(G, can);
-}
-
+    general_case = [&](vector<bool> &can) -> vector<int> {
+        vector<int> res;
+        vector<bool> seen(V, false);
+        auto dfs = [&](auto &&dfs, int v, vector<bool> &component) -> void {
+            seen[v] = true;
+            for (auto to : G[v]) if (!seen[to] && can[to]) dfs(dfs, to, component);
+            component[v] = true;
+        };
+        for (int v = 0; v < V; ++v) {
+            if (!seen[v] && can[v]) {
+                vector<bool> component(V, false);
+                dfs(dfs, v, component);
+                const auto &tmp = connected_case(component);
+                for (auto node : tmp) res.emplace_back(node);
+            }
+        }
+        return res;
+    };
+    vector<bool> can(V, true);
+    return general_case(can);
+};
 
 
 //------------------------------//
 // Examples
 //------------------------------//
 
-int main () {
+// Yosupo Library Checker - Maximum Independent Set
+void YosupoMaximumIndependentSet() {
     int N, M;
     cin >> N >> M;
-    Graph G(N);
+    vector<vector<int>> G(N);
     for (int i = 0; i < M; ++i) {
-        int a, b; cin >> a >> b; --a, --b;
-        G[a].push_back(b); G[b].push_back(a);
+        int a, b;
+        cin >> a >> b;
+        G[a].push_back(b), G[b].push_back(a);
     }
-    cout << StableSet(G) << endl;
+    auto res = maximum_independent_set(G);
+    cout << res.size() << endl;
+    for (auto v : res) cout << v << " ";
+    cout << endl;
+}
+
+
+int main () {
+    YosupoMaximumIndependentSet();
 }
