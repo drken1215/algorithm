@@ -27,6 +27,9 @@
 //   UTPC 2012 L - じょうしょうツリー (for add(g))
 //     https://atcoder.jp/contests/utpc2012/tasks/utpc2012_12
 //
+//   APIO 2016 Republic of Korea B - Fireworks (for min_plus_convolution(g))
+//     https://qoj.ac/contest/259/problem/3
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -210,7 +213,7 @@ template<class COORD> struct SlopeTrick {
     }
 
     // f(x) += g(x), O((log N)^2)
-    // attention: this function is destructive
+    // attention: this function is destructive to g
     SlopeTrick &add(SlopeTrick &g) {
         if (size() < g.size()) {
             swap(min_f, g.min_f);
@@ -220,6 +223,18 @@ template<class COORD> struct SlopeTrick {
         min_f += g.min_f;
         while (g.L.size()) add_irelu(g.popL());
         while (g.R.size()) add_relu(g.popR());
+        return *this;
+    }
+
+    // f(x) <- h(x) = min_{x = y + z, z >= 0} (f(y) + |z - a|), O(log N)
+    SlopeTrick &min_plus_convolution_abs(const COORD &a) {
+        assert(a >= 0);
+        if (sizeL() == 0 || sizeR() == 0) return *this;
+        auto l = topL(), r = topR();
+        popL();
+        pushL(l + a);
+        R = priority_queue<COORD, vector<COORD>, greater<COORD>>{};
+        pushR(r + a);
         return *this;
     }
 };
@@ -399,12 +414,39 @@ void UTPC_2012_L() {
 }
 
 
+// APIO 2016 Republic of Korea B - Fireworks
+/*
+    dp[v][x] := 頂点 v を根とする根付き木について、そこから上に飛び出ている分も含めて長さを x にする最小コスト
+
+    dp[p][x+y] = min_{x, y>=0}(sum_{c}(dp[c][x])) + |y-L|) <- min-plus convolution
+*/
+void APIO_2016_B() {
+    int N, M;
+    cin >> N >> M;
+    vector<pair<int, long long>> P(N + M, {-1, 0});
+    vector<vector<int>> tree(N + M);
+    for (int i = 1; i < N + M; i++) {
+        cin >> P[i].first >> P[i].second, P[i].first--;
+        tree[P[i].first].emplace_back(i);
+    }
+    vector<SlopeTrick<long long>> dp(N + M);
+    auto rec = [&](auto &&rec, int v) -> void {
+        for (auto c : tree[v]) rec(rec, c), dp[v].add(dp[c]);
+        if (tree[v].empty()) dp[v].add_abs(P[v].second);
+        else if (v > 0) dp[v].min_plus_convolution_abs(P[v].second);
+    };
+    rec(rec, 0);
+    cout << dp[0].get_min() << endl;
+}
+
+
 int main() {
     //DWANGO_2nd_prelims_E();
     //AWC_0100_N();
     //ABC_217_H();
-    ARC_070_E();
+    //ARC_070_E();
     //ARC_123_D();
     //KUPC_2016_H();
     //UTPC_2012_L();
+    APIO_2016_B();
 }
