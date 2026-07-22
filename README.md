@@ -144,22 +144,28 @@
 - (★★★★) [セグメント木 on ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_on_wavelet_matrix.cpp)
 - (★★★★) 動的ウェーブレット行列
 
-## 平衡二分探索木
-
-- (★★★★) [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/randomized_binary_search_tree.cpp)
-- (★★★★) Treap
-- (★★★★) Splay 木
-- (★★★★) AVL 木
-- (★★★★) 赤黒木
-- (★★★★) 永続赤黒木
-- (★★★★) 遅延伝播反転可能 RBST
-- (★★★★) 遅延伝播反転可能 Treap
-- (★★★★) 遅延伝播反転可能 Splay 木
-
 ## 区間の集合を set で管理するテク (Interval Set)
 
 - (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作である必要がある場合）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set.cpp)
 - (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作でなくてもよい場合](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set_with_noninvertible_del.cpp)
+
+## Splay 木
+
+- (★★★★) Splay 木
+- (★★★★) 遅延伝播反転可能 Splay 木
+
+## 赤黒木
+
+- (★★★★) 赤黒木
+- (★★★★) 永続赤黒木
+
+## その他平衡二分探索木
+
+- (★★★★) [RBST](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/randomized_binary_search_tree.cpp)
+- (★★★★) Treap
+- (★★★★) AVL 木
+- (★★★★) 遅延伝播反転可能 RBST
+- (★★★★) 遅延伝播反転可能 Treap
 
 ## その他
 
@@ -381,7 +387,6 @@
 
 - (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_double.cpp)
 - (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_modp.cpp)
-- (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - (★★★☆) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_field.cpp)
 
 ## 環上の行列
@@ -397,10 +402,14 @@
 - (★★★★) [Fp 体上の行列の特性多項式 (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/characteristic_polynomial.cpp)
 - (★★★★) [Fp 体上の行列の行列式 det(M0 + M1x) (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/determinant_matrix_linear_expression.cpp)
 
-## 行列のアルゴリズム
+## F2 体上の線形代数
 
+- (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/matrix_binary.cpp)
 - (★★★☆) [XOR 基底 (俗称：noshi 基底)](https://github.com/drken1215/algorithm/blob/master/MathAlgebra/xor_basis.cpp)
 - (★★★☆) F2 ベクトル空間の交差
+
+## 行列のアルゴリズム
+
 - (★★★★) Strassen 法
 - (★★★★) 余因子行列
 - (★★★★) 多項式行列の prefix product M(0)M(1)...M(K-1)
