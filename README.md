@@ -672,8 +672,7 @@
 ## 区分線形凸関数の活用 2 ： Slope Trick
 
 - (★★★☆) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
-- (★★★★) [Slope Trick (by double ended priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick_double_ended_priority_queue.cpp)
-- (★★★★) Dual Slope Trick (by priority queue)
+- (★★★★) [Dual Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
 - (★★★★) Slope Trick (by Splay 木)
 
 ## 区分線形凸関数の活用 3 ： Min Plus Convolution
