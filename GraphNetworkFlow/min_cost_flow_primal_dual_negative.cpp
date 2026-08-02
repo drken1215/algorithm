@@ -5,8 +5,8 @@
 //     2: DAG ではないが負閉路を含まないとき、SPFA でポテンシャルを求める
 //
 // verified
-//   AOJ Course GRL_6_B Network Flow - Minimum Cost Flow
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_B&lang=jp
+//   典型アルゴリズム問題集 上級〜エキスパート編 F - 最小費用流
+//     https://atcoder.jp/contests/pastbook2022/tasks/pastbook2022_f
 //
 //   AtCoder Library Practice Contest E - MinCostFlow
 //     https://atcoder.jp/contests/practice2/tasks/practice2_e
@@ -31,11 +31,11 @@ template<class FLOW, class COST> struct FlowCostEdge {
     COST cost;
     
     // constructor
-    FlowCostEdge() {}
-    FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
+    constexpr FlowCostEdge() noexcept = default;
+    constexpr FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {
     }
-    FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
+    constexpr FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(cost) {
     }
     void reset() { 
@@ -79,6 +79,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
         return list.size();
     }
     FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
+        return list[e.to][e.rev];
+    }
+    const FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) const {
         return list[e.to][e.rev];
     }
     FlowCostEdge<FLOW, COST> &get_edge(int i) {
@@ -177,6 +180,95 @@ template<class FLOW, class COST> struct FlowCostGraph {
     bool init_potential() {
         if (!include_negative_edge) return true;
         return calc_potential();
+    }
+
+    // decompose flow into s-t simple paths and cycles
+    using Path = vector<FlowCostEdge<FLOW, COST>>;
+    // 事前条件: 正当な s-t フローが流れた状態。s,t はそのフローの source/sink。
+    // 手順: (1) 正フロー台上の閉路を全て除去して DAG 化 → (2) DAG から s->t パスを取り出す。
+    // これにより s や t を通る閉路も path ではなく cycle として抽出される。
+    pair<vector<Path>, vector<Path>> decompose(int s, int t) const {
+        struct Arc {
+            int to;
+            FLOW rem;
+            int eidx;
+        };
+        vector<vector<Arc>> fg(list.size());
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (int j = 0; j < (int)list[v].size(); j++) {
+                FLOW f = list[v][j].icap - list[v][j].cap;
+                if (f > 0) fg[v].push_back({list[v][j].to, f, j});
+            }
+        }
+        vector<Path> paths, cycles;
+
+        auto build = [&](const vector<pair<int,int>> &route, bool is_cycle) {
+            FLOW mi = numeric_limits<FLOW>::max();
+            for (auto [v,i] : route) mi = min(mi, fg[v][i].rem);
+            vector<FlowCostEdge<FLOW,COST>> seq;
+            for (auto [v,i] : route) {
+                fg[v][i].rem -= mi;
+                FlowCostEdge<FLOW,COST> e = list[v][fg[v][i].eidx];
+                e.flow = mi;
+                seq.push_back(e);
+            }
+            (is_cycle ? cycles : paths).push_back(move(seq));
+        };
+
+        // --- Phase 1: extract all cycles and make graph DAG ---
+        vector<int> color(list.size(), 0);          // 0:未訪問 1:スタック上 2:完了
+        vector<int> pos_in_stack(list.size(), -1);
+        vector<pair<int, int>> stk;
+        auto dfs = [&](auto &&dfs, int v) -> bool {
+            color[v] = 1; pos_in_stack[v] = (int)stk.size();
+            for (int i = 0; i < (int)fg[v].size(); i++) {
+                if (fg[v][i].rem <= 0) continue;
+                int u = fg[v][i].to;
+                if (color[u] == 1) {
+                    vector<pair<int,int>> route;
+                    for (int k = pos_in_stack[u]; k < (int)stk.size(); k++) {
+                        route.push_back(stk[k]);
+                    }
+                    route.push_back({v, i});
+                    build(route, true);
+                    return true;
+                }
+                if (color[u] == 0) {
+                    stk.push_back({v, i});
+                    if (dfs(dfs, u)) return true;
+                    stk.pop_back();
+                }
+            }
+            color[v] = 2; pos_in_stack[v] = -1;
+            return false;
+        };
+        while (true) {
+            fill(color.begin(), color.end(), 0);
+            stk.clear();
+            bool found = false;
+            for (int v = 0; v < list.size() && !found; v++) {
+                if (color[v] == 0 && dfs(dfs, v)) found = true;
+            }
+            if (!found) break;
+        }
+
+        // --- Phase 2: find all s-t paths ---
+        vector<int> ptr(list.size(), 0);
+        auto next_arc = [&](int v) -> int {
+            while (ptr[v] < (int)fg[v].size() && fg[v][ptr[v]].rem <= 0) ptr[v]++;
+            return ptr[v] < (int)fg[v].size() ? ptr[v] : -1;
+        };
+        while (next_arc(s) != -1) {
+            vector<pair<int,int>> route;
+            int v = s;
+            while (v != t) {
+                int i = next_arc(v);
+                route.push_back({v, i});
+                v = fg[v][i].to;
+            }
+            build(route, false);
+        }
+        return {paths, cycles};
     }
 
     // debug
@@ -286,18 +378,31 @@ MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
 // Examples
 //------------------------------//
 
-// AOJ
-void AOJ_Course_GRL_6_B() {
-    int V, E, F;
+// 典型アルゴリズム問題集 上級〜エキスパート編 F - 最小費用流
+void PAST_Min_Cost_Flow() {
+    long long V, E, F;
     cin >> V >> E >> F;
-    FlowCostGraph<int, int> G(V);
+    FlowCostGraph<long long, long long> G(V);
     for (int i = 0; i < E; ++i) {
-        int u, v, cap, cost;
-        cin >> u >> v >> cap >> cost;
+        long long u, v, cap, cost;
+        cin >> u >> v >> cap >> cost, u--, v--;
         G.add_edge(u, v, cap, cost);
     }
-    int s = 0, t = V-1;
+    long long s = 0, t = V-1;
     auto [max_flow, min_cost] = MinCostFlow(G, s, t, F);
+    
+    /* debug: フローを復元した結果を示す */
+    // auto [paths, cycles] = G.decompose(s, t);
+    // for (int i = 0; i < (int)paths.size(); i++) {
+    //     cout << "path " << i << ": " << paths[i][0].from;
+    //     for (auto e : paths[i]) cout << " -> " << e.to;
+    //     cout << " (" << paths[i][0].flow << ")" << endl;
+    // }
+    // for (int i = 0; i < (int)cycles.size(); i++) {
+    //     cout << "cycle " << i << ": " << cycles[i][0].from;
+    //     for (auto e : cycles[i]) cout << " -> " << e.to;
+    //     cout << " (" << cycles[i][0].flow << ")" << endl;
+    // }
     cout << (max_flow == F ? min_cost : -1) << endl;
 }
 
@@ -583,8 +688,8 @@ void ABC_247_G() {
 
 
 int main() {
-    //AOJ_Course_GRL_6_B();
+    PAST_Min_Cost_Flow();
     //ACL_practice_E();
     //ABC_214_H();
-    ABC_247_G();
+    //ABC_247_G();
 }

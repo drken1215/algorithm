@@ -2,8 +2,8 @@
 // min-cost flow (primal-dual)
 //
 // verified
-//   AOJ Course GRL_6_B Network Flow - Minimum Cost Flow
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_B&lang=jp
+//   典型アルゴリズム問題集 上級〜エキスパート編 F - 最小費用流
+//     https://atcoder.jp/contests/pastbook2022/tasks/pastbook2022_f
 //
 //   AtCoder Library Practice Contest E - MinCostFlow
 //     https://atcoder.jp/contests/practice2/tasks/practice2_e
@@ -22,11 +22,11 @@ template<class FLOW, class COST> struct FlowCostEdge {
     COST cost;
     
     // constructor
-    FlowCostEdge() {}
-    FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
+    constexpr FlowCostEdge() noexcept = default;
+    constexpr FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {
     }
-    FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
+    constexpr FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(cost) {
     }
     void reset() { 
@@ -70,6 +70,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
         return list.size();
     }
     FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
+        return list[e.to][e.rev];
+    }
+    const FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) const {
         return list[e.to][e.rev];
     }
     FlowCostEdge<FLOW, COST> &get_edge(int i) {
@@ -226,17 +229,17 @@ MinCostFlow(FlowCostGraph<FLOWTYPE, COSTTYPE> &G, int S, int T)
 // Examples
 //------------------------------//
 
-// AOJ
-void AOJ_Course_GRL_6_B() {
-    int V, E, F;
+// 典型アルゴリズム問題集 上級〜エキスパート編 F - 最小費用流
+void PAST_Min_Cost_Flow() {
+    long long V, E, F;
     cin >> V >> E >> F;
-    FlowCostGraph<int, int> G(V);
+    FlowCostGraph<long long, long long> G(V);
     for (int i = 0; i < E; ++i) {
-        int u, v, cap, cost;
-        cin >> u >> v >> cap >> cost;
+        long long u, v, cap, cost;
+        cin >> u >> v >> cap >> cost, u--, v--;
         G.add_edge(u, v, cap, cost);
     }
-    int s = 0, t = V-1;
+    long long s = 0, t = V-1;
     auto [max_flow, min_cost] = MinCostFlow(G, s, t, F);
     cout << (max_flow == F ? min_cost : -1) << endl;
 }
@@ -296,6 +299,6 @@ void ACL_practice_E() {
 
 
 int main() {
-    //AOJ_Course_GRL_6_B();
-    ACL_practice_E();
+    PAST_Min_Cost_Flow();
+    //ACL_practice_E();
 }

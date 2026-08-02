@@ -216,7 +216,7 @@ template<class FLOW> struct FlowGraph {
         vector<int> ptr(list.size(), 0), onpath(list.size(), -1);
         vector<pair<int, int>> route;
         vector<int> used;
-        vector<vector<FlowEdge<FLOW>>> paths, cycles;
+        vector<Path> paths, cycles;
 
         auto next_arc = [&](int v) -> int {
             while (ptr[v] < (int)fg[v].size() && fg[v][ptr[v]].rem <= 0) ptr[v]++;
