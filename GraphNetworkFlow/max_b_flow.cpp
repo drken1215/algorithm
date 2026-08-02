@@ -24,8 +24,8 @@ template<class FLOW> struct FlowEdge {
     FLOW cap, icap, flow;
     
     // constructor
-    FlowEdge() {}
-    FlowEdge(int rev, int from, int to, FLOW cap, FLOW rcap = 0) 
+    constexpr FlowEdge() noexcept = default;
+    constexpr FlowEdge(int rev, int from, int to, FLOW cap, FLOW rcap = 0) 
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap) {
     }
     void reset() { 
@@ -64,10 +64,13 @@ template<class FLOW> struct FlowGraph {
         assert(0 <= i && i < list.size());
         return list[i];
     }
-    size_t size() const {
+    size_t size() const noexcept {
         return list.size();
     }
     FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
+        return list[e.to][e.rev];
+    }
+    const FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) const {
         return list[e.to][e.rev];
     }
     FlowEdge<FLOW> &get_edge(int i) {
@@ -85,7 +88,7 @@ template<class FLOW> struct FlowGraph {
     }
     
     // change edges
-    void reset() {
+    void reset() const {
         for (int i = 0; i < (int)list.size(); ++i) {
             for (FlowEdge<FLOW> &e : list[i]) e.reset();
         }
@@ -135,7 +138,7 @@ template<class FLOW> struct FlowGraph {
     };
 
     // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
-    vector<int> find_cut(int s, int t) {
+    vector<int> find_cut(int s, int t) const {
         vector<int> res(size(), 0);
         auto dfs_s = [&](auto &&dfs_s, int v) -> void {
             res[v] = 1;
@@ -157,7 +160,7 @@ template<class FLOW> struct FlowGraph {
     }
 
     // check if the s-t flow is feasible
-    bool is_feasible(int s, int t) {
+    bool is_feasible(int s, int t) const {
         vector<FLOW> b(list.size(), FLOW(0));
         for (int v = 0; v < (int)list.size(); v++) {
             for (const auto &e : list[v]) {
@@ -170,7 +173,7 @@ template<class FLOW> struct FlowGraph {
         }
         return true;
     }
-    bool is_feasible(int s, int t, FLOW flow) {
+    bool is_feasible(int s, int t, FLOW flow) const {
         vector<FLOW> b(list.size(), FLOW(0));
         for (int v = 0; v < (int)list.size(); v++) {
             for (const auto &e : list[v]) {
@@ -183,6 +186,80 @@ template<class FLOW> struct FlowGraph {
             if (v != s && v != t && b[v] != FLOW(0)) return false;
         }
         return true;
+    }
+
+    // decompose flow into s-t simple paths and cycles
+    using Path = vector<FlowEdge<FLOW>>;
+    pair<vector<Path>, vector<Path>> decompose(int s, int t) const {
+        struct Arc {
+            int to;
+            FLOW rem;
+            int eidx;
+        };
+        vector<vector<Arc>> fg(list.size());
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (int j = 0; j < (int)list[v].size(); j++) {
+                FLOW f = list[v][j].icap - list[v][j].cap;
+                if (f > 0) fg[v].push_back({list[v][j].to, f, j});
+            }
+        }
+        vector<int> ptr(list.size(), 0), onpath(list.size(), -1);
+        vector<pair<int, int>> route;
+        vector<int> used;
+        vector<Path> paths, cycles;
+
+        auto next_arc = [&](int v) -> int {
+            while (ptr[v] < (int)fg[v].size() && fg[v][ptr[v]].rem <= 0) ptr[v]++;
+            return (ptr[v] < (int)fg[v].size() ? ptr[v] : -1);
+        };
+        auto extract = [&](int begin, bool is_cycle) {
+            FLOW mi = numeric_limits<FLOW>::max();
+            for (int k = begin; k < (int)route.size(); k++) {
+                auto [v, i] = route[k];
+                mi = min(mi, fg[v][i].rem);
+            }
+            vector<FlowEdge<FLOW>> seq;
+            for (int k = begin; k < (int)route.size(); k++) {
+                auto [v, i] = route[k];
+                fg[v][i].rem -= mi;
+                FlowEdge<FLOW> e = list[v][fg[v][i].eidx];
+                e.flow = mi;
+                seq.push_back(e);
+            }
+            if (is_cycle) cycles.push_back(move(seq));
+            else paths.push_back(move(seq));
+        };
+        auto walk = [&](int start, bool stop_at_t) {
+            route.clear();
+            int v = start;
+            onpath[v] = 0;
+            used.push_back(v);
+            while (true) {
+                int i = next_arc(v), u = fg[v][i].to;
+                route.push_back({v, i});
+                if (stop_at_t && u == t) {
+                    extract(0, false);
+                    break;
+                }
+                if (onpath[u] != -1) {
+                    extract(onpath[u], true);
+                    break;
+                }
+                onpath[u] = (int)route.size();
+                used.push_back(u);
+                v = u;
+            }
+            for (int w : used) onpath[w] = -1;
+            used.clear();
+        };
+
+        // extract all s-t paths
+        while (next_arc(s) != -1) walk(s, true);
+
+        // decompose remained circulation into cycles
+        for (int v = 0; v < (int)list.size(); v++) while (next_arc(v) != -1) walk(v, false);
+
+        return {paths, cycles};
     }
 
     // debug

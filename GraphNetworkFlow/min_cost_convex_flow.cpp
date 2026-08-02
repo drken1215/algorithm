@@ -26,14 +26,14 @@ template<class FLOW, class COST> struct FlowConvexCostEdge {
     FUNC cost;
     
     // constructor
-    FlowConvexCostEdge() {}
-    FlowConvexCostEdge(int rev, int from, int to, FLOW cap, const FUNC &f)
+    constexpr FlowConvexCostEdge() noexcept = default;
+    constexpr FlowConvexCostEdge(int rev, int from, int to, FLOW cap, const FUNC &f)
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(f) {
     }
-    FlowConvexCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, const FUNC &f)
+    constexpr FlowConvexCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, const FUNC &f)
         : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(f) {
     }
-    constexpr void reset() { 
+    void reset() { 
         flow -= icap - cap;
         cap = icap;
     }
@@ -57,7 +57,7 @@ template<class FLOW, class COST> struct FlowConvexCostGraph {
     // core members
     vector<vector<FlowConvexCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
-    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    vector<COST> pot;  // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
     bool include_negative_edge = false;
     
     // constructor
@@ -82,6 +82,9 @@ template<class FLOW, class COST> struct FlowConvexCostGraph {
         return list.size();
     }
     FlowConvexCostEdge<FLOW, COST> &get_rev_edge(const FlowConvexCostEdge<FLOW, COST> &e) {
+        return list[e.to][e.rev];
+    }
+    const FlowConvexCostEdge<FLOW, COST> &get_rev_edge(const FlowConvexCostEdge<FLOW, COST> &e) const {
         return list[e.to][e.rev];
     }
     FlowConvexCostEdge<FLOW, COST> &get_edge(int i) {
