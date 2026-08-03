@@ -328,6 +328,7 @@
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
 - (★★★☆) 最大流 (Push-Relabel 法)
+- (★★★☆) [最大流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_decomposition.cpp)
 
 ## 最小カット
 

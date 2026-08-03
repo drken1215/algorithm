@@ -1,20 +1,7 @@
 //
-// max-flow (Dinic's algorithm)
+// s-t フローを、s-t パスとサイクルとに分解する
 //
 // verified
-//   典型アルゴリズム問題集 上級〜エキスパート編 E - 最大流
-//     https://atcoder.jp/contests/pastbook2022/tasks/pastbook2022_e
-//     https://atcoder.jp/contests/tessoku-book/tasks/tessoku_book_bp
-//
-//   AtCoder Library Practice Contest D - Maxflow
-//     https://atcoder.jp/contests/practice2/tasks/practice2_d
-//
-//   ABC 259 G - Grid Card Game
-//     https://atcoder.jp/contests/abc259/tasks/abc259_g
-//
-//   JAG 夏合宿 2011 Day4 D - Box Witch (AOJ 2313) (for change_edge)
-//     https://onlinejudge.u-aizu.ac.jp/problems/2313
-//
 //   code festival 2014 上海 D - Maze (for decomposition)
 //     https://atcoder.jp/contests/code-festival-2014-china-open/tasks/code_festival_china_d
 //
@@ -206,6 +193,7 @@ template<class FLOW> struct FlowGraph {
             FLOW rem;
             int eidx;
         };
+        assert(is_feasible(s, t));
         vector<vector<Arc>> fg(list.size());
         for (int v = 0; v < (int)list.size(); v++) {
             for (int j = 0; j < (int)list[v].size(); j++) {
@@ -236,8 +224,8 @@ template<class FLOW> struct FlowGraph {
                 e.flow = mi;
                 seq.push_back(e);
             }
-            if (is_cycle) cycles.push_back(move(seq));
-            else paths.push_back(move(seq));
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
         };
         auto walk = [&](int start, bool stop_at_t) {
             route.clear();
@@ -345,226 +333,87 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
 // Examples
 //------------------------------//
 
-// 典型アルゴリズム問題集 上級〜エキスパート編 E - 最大流
-void PAST_Max_Flow() {
-    int V, E;
-    cin >> V >> E;
-    int s = 0, t = V - 1;
-    FlowGraph<long long> G(V);
-    for (int i = 0; i < E; ++i) {
-        long long u, v, c;
-        cin >> u >> v >> c, u--, v--;
-        G.add_edge(u, v, c);
-    }
-    long long res = Dinic(G, s, t);
-
-    /* debug: フローを復元した結果を示す */
-    // auto [paths, cycles] = G.decompose(s, t);
-    // for (int i = 0; i < (int)paths.size(); i++) {
-    //     cout << "path " << i << ": " << paths[i][0].from;
-    //     for (auto e : paths[i]) cout << " -> " << e.to;
-    //     cout << " (" << paths[i][0].flow << ")" << endl;
-    // }
-    // for (int i = 0; i < (int)cycles.size(); i++) {
-    //     cout << "cycle " << i << ": " << cycles[i][0].from;
-    //     for (auto e : cycles[i]) cout << " -> " << e.to;
-    //     cout << " (" << cycles[i][0].flow << ")" << endl;
-    // }
-    cout << res << endl;
-}
-
-// ACL practice D
-void ACL_practice_D() {
-    // 上下左右を表すベクトル
-    const vector<int> DX = {1, 0, -1, 0};
-    const vector<int> DY = {0, 1, 0, -1};
-    
-    // 入力受け取り
-    int N, M;
-    cin >> N >> M;
-    vector<string> grid(N);
-    for (int i = 0; i < N; ++i) cin >> grid[i];
-    
-    // フローネットワークを作る
-    // 各マスの番号を 0, 1, ..., NM-1 とし、超頂点の番号を S = NM, T = NM+1 とする
-    FlowGraph<int> G(N * M + 2);
-    int S = N * M, T = N * M + 1;
-    
-    // マス (i, j) の頂点番号を返す関数
-    auto index = [&](int i, int j) -> int { return i * M + j; };
-    
-    // 黒色マスと白色マスを結ぶ (黒色：i + j が偶数、白色：i + j が奇数)
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < M; ++j) {
-            // 黒色マスならば、上下左右の 4 マスと辺を結んでいく
-            if ((i + j) % 2 == 0 && grid[i][j] == '.') {
-                for (int dir = 0; dir < 4; ++dir) {
-                    int i2 = i + DX[dir], j2 = j + DY[dir];
-                    if (i2 < 0 || i2 >= N || j2 < 0 || j2 >= M) continue;
-                    
-                    // どちらも空マスならば、ドミノを置けるので、辺を結ぶ
-                    if (grid[i2][j2] == '.') {
-                        G.add_edge(index(i, j), index(i2, j2), 1);
-                    }
-                }
-            }
-            
-            // 超頂点 S から黒色マスへの辺を結ぶ
-            if ((i + j) % 2 == 0 && grid[i][j] == '.') {
-                G.add_edge(S, index(i, j), 1);
-            }
-            
-            // 白色マスから超頂点 T への辺を結ぶ
-            if ((i + j) % 2 == 1 && grid[i][j] == '.') {
-                G.add_edge(index(i, j), T, 1);
-            }
-        }
-    }
-    
-    // 最大流を流す
-    int max_flow = Dinic(G, S, T);
-
-    // フロー値が 1 となった辺を特定して、ドミノタイリングを復元する
-    const auto &edges = G.get_edges();
-    for (const auto &e : edges) {
-        // 辺 e が超頂点に接続するものや、フロー値が 0 であるものはスキップ
-        if (e.from == S || e.to == T || e.flow == 0) continue;
-        
-        // 辺 e の両端点に対応するマス
-        int ifrom = e.from / M, jfrom = e.from % M;
-        int ito = e.to / M, jto = e.to % M;
-        
-        // ドミノを置く
-        if (ifrom == ito) {
-            // ドミノを横に配置する場合
-            if (jfrom > jto) swap(jfrom, jto);
-            grid[ifrom][jfrom] = '>';
-            grid[ito][jto] = '<';
-        } else if (jfrom == jto) {
-            // ドミノを縦に配置する場合
-            if (ifrom > ito) swap(ifrom, ito);
-            grid[ifrom][jfrom] = 'v';
-            grid[ito][jto] = '^';
-        }
-    }
-    
-    // 出力
-    cout << max_flow << endl;
-    for (int i = 0; i < N; ++i) cout << grid[i] << endl;
-}
-
-// ABC 259 G
-void ABC_259_G() {
-    const long long INF = 1LL<<50;
-    
-    // 入力
+// code festival 2014 上海 D - Maze (for decomposition)
+void CODE_FESTIVAL_maze() {
+    const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
+    const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
     int H, W;
     cin >> H >> W;
-    vector<vector<long long>> A(H, vector<long long>(W));
-    for (int i = 0; i < H; ++i) for (int j = 0; j < W; ++j) {
-        cin >> A[i][j];
-        A[i][j] = -A[i][j];
+    vector<string> S(H);
+    for (int i = 0; i < H; i++) cin >> S[i];
+    int sx, sy, ax, ay, bx, by;
+    for (int i = 0; i < H; i++) for (int j = 0; j < W; j++) {
+        if (S[i][j] == 'S') sx = i, sy = j;
+        else if (S[i][j] == 'A') ax = i, ay = j;
+        else if (S[i][j] == 'B') bx = i, by = j;
     }
-    long long B = 0;
-    vector<long long> S(H + W, 0);
-    for (int i = 0; i < H; ++i) for (int j = 0; j < W; ++j) S[i] += A[i][j];
-    for (int j = 0; j < W; ++j) for (int i = 0; i < H; ++i) S[j+H] += A[i][j];
-    for (int i = 0; i < H + W; ++i) B = min(B, S[i]);
-    B = -B;
-    
-    // グラフを構築
-    int source = H + W, sink = H + W + 1;
-    FlowGraph<long long> G(H + W + 2);
-    for (int i = 0; i < H; ++i) {
-        G.add_edge(source, i, B);
-        G.add_edge(i, sink, B + S[i]);
-    }
-    for (int j = 0; j < W; ++j) {
-        G.add_edge(source, j+H, B + S[j+H]);
-        G.add_edge(j+H, sink, B);
-    }
-    for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W; ++j) {
-            long long cost = (A[i][j] <= 0 ? -A[i][j] : INF);
-            G.add_edge(i, j+H, cost);
+    queue<pair<int,int>> que;
+    vector dp(H, vector(W, -1));
+    vector prev(H, vector(W, vector<pair<int,int>>()));
+    que.push({sx, sy});
+    dp[sx][sy] = 0;
+    while (!que.empty()) {
+        auto [x, y] = que.front();
+        que.pop();
+        for (int d = 0; d < 4; d++) {
+            int x2 = x + DX[d], y2 = y + DY[d];
+            if (x2 < 0 || x2 >= H || y2 < 0 || y2 >= W) continue;
+            if (S[x2][y2] == '#') continue;
+            if (dp[x2][y2] == -1) {
+                que.push({x2, y2});
+                dp[x2][y2] = dp[x][y] + 1;
+                prev[x2][y2].emplace_back(x, y);
+            } else if (dp[x2][y2] == dp[x][y] + 1) {
+                prev[x2][y2].emplace_back(x, y);
+            }
         }
     }
-    long long flow = Dinic(G, source, sink);
-    long long res = -(flow - B * (H + W));
-    cout << res << endl;
-}
 
-// JAG 夏合宿 2011 Day4 D - Box Witch (AOJ 2313)
-void AOJ_2313() {
-    int N, M, Q, iter = 0;
-    cin >> N >> M >> Q;
-    vector<int> U(M), V(M), typ(Q), A(Q), B(Q);
-    FlowGraph<int> G(N);
-    map<pair<int,int>,int> ids;
-    for (int i = 0; i < M; i++) {
-        cin >> U[i] >> V[i], U[i]--, V[i]--;
-        if (U[i] > V[i]) swap(U[i], V[i]);
-        G.add_bidirected_edge(U[i], V[i], 1);
-        ids[{U[i], V[i]}] = iter++;
-    }
-    for (int q = 0; q < Q; q++) {
-        cin >> typ[q] >> A[q] >> B[q], A[q]--, B[q]--;
-        if (A[q] > B[q]) swap(A[q], B[q]);
-        if (!ids.count({A[q], B[q]})) {
-            G.add_bidirected_edge(A[q], B[q], 0);
-            ids[{A[q], B[q]}] = iter++;
-        }
-    }
-    int s = 0, t = N-1;
-    int flow = Dinic(G, s, t);
-    for (int q = 0; q < Q; q++) {
-        int eid = ids[{A[q], B[q]}];
-        auto &e = G.get_edge(eid);
-        assert(e.from == A[q] && e.to == B[q]); 
-        if (typ[q] == 1) {
-            assert(e.cap == 0 && G.get_rev_edge(e).cap == 0);
-            G.change_edge(e, 1, 1);
-        } else {
-            assert(e.cap <= 2 && G.get_rev_edge(e).cap == 2 - e.cap);
-            if (e.cap == 1) G.change_edge(e, 0, 0);
-            else {
-                // e が使われている場合を考える (閉路に含まれる場合と、s-t パスに含まれる場合がある)
-                int from, to;
-                if (e.cap == 0) from = e.from, to = e.to;
-                else if (e.cap == 2) from = e.to, to = e.from;
-                if (G.augment(from, to, 1) == 1) {
-                    // e を含む閉路がある場合: その閉路を消せる
-                    // ここで、e を含む s-t パスがある場合は、
-                    // G.augment(from, to, 1) によって s-t パスが e を使わないものに張り変わる
-                    G.change_edge(e, 0, 0);  // 最後に、e を消す
-                } else {
-                    // フローはパスと閉路に分解できることから、
-                    // e を含む閉路がないならば、e が s-t パスに含まれることが保証される
-                    // よって、残余グラフ上で t-s パスが存在することが保証される
-                    // t から s へ逆向きに押し戻しておく (押し戻し時に e を戻すとは限らない)
-                    assert(G.augment(t, s, 1) == 1);
-                    flow--;
-                    if (e.cap == 1) G.change_edge(e, 0, 0);
-                    else {
-                        // 今度は e を含む閉路の存在が保証されるので、上と同じことをする
-                        if (e.cap == 0) from = e.from, to = e.to;
-                        else if (e.cap == 2) from = e.to, to = e.from;
-                        assert(G.augment(from, to, 1) == 1);
-                        G.change_edge(e, 0, 0);
-                    }
+    FlowGraph<int> G(H*W*2 + 1);
+    int s = sx*W+sy + H*W, t = H*W*2;
+    for (int v = 0; v < H*W; v++) G.add_edge(v, v+H*W, 1);
+    G.add_edge(ax*W+ay + H*W, t, 1), G.add_edge(bx*W+by + H*W, t, 1);
+    set<pair<int,int>> already;
+    auto make = [&](int sx, int sy) -> void {
+        queue<pair<int,int>> que;
+        vector seen(H, vector(W, false));
+        que.push({sx, sy});
+        seen[sx][sy] = true;
+        while (!que.empty()) {
+            auto [x, y] = que.front();
+            que.pop();
+            for (auto [x2, y2] : prev[x][y]) {
+                int v = x * W + y, u = x2 * W + y2;
+                if (!already.count({u, v})) G.add_edge(u+H*W, v, 1);
+                already.insert({u, v});
+                if (!seen[x2][y2]) {
+                    que.push({x2, y2});
+                    seen[x2][y2] = true;
                 }
             }
         }
-        flow += G.augment(s, t);
-        cout << flow << endl;
-        assert(G.is_feasible(s, t, flow));
+    };
+    make(ax, ay), make(bx, by);
+
+    auto maxflow = Dinic(G, s, t);
+    if (maxflow < 2) { cout << "NA" << endl; return; }
+
+    auto [paths, cycles] = G.decompose(s, t);
+    for (int iter = 0; iter < 2; iter++) {
+        char c;
+        auto path = paths[iter];
+        if (path.back().from == ax*W+ay+H*W) c = 'a';
+        else c = 'b';
+        for (auto e : path) {
+            if (e.to == t) break;
+            int v = e.to % (H*W), x = v / W, y = v % W;
+            if (S[x][y] == '.') S[x][y] = c;
+        }
     }
+    for (auto s : S) cout << s << endl;
 }
 
 
 int main() {
-    PAST_Max_Flow();
-    //ACL_practice_D();
-    //ABC_259_G();
-    //AOJ_2313(); 
+    CODE_FESTIVAL_maze();
 }

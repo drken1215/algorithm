@@ -184,9 +184,6 @@ template<class FLOW, class COST> struct FlowCostGraph {
 
     // decompose flow into s-t simple paths and cycles
     using Path = vector<FlowCostEdge<FLOW, COST>>;
-    // 事前条件: 正当な s-t フローが流れた状態。s,t はそのフローの source/sink。
-    // 手順: (1) 正フロー台上の閉路を全て除去して DAG 化 → (2) DAG から s->t パスを取り出す。
-    // これにより s や t を通る閉路も path ではなく cycle として抽出される。
     pair<vector<Path>, vector<Path>> decompose(int s, int t) const {
         struct Arc {
             int to;

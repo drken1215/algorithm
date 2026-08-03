@@ -2282,8 +2282,8 @@ template<class FLOW> struct FlowGraph {
                 e.flow = mi;
                 seq.push_back(e);
             }
-            if (is_cycle) cycles.push_back(move(seq));
-            else paths.push_back(move(seq));
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
         };
         auto walk = [&](int start, bool stop_at_t) {
             route.clear();
@@ -2573,7 +2573,8 @@ template<class FLOW, class COST> struct FlowCostGraph {
                 e.flow = mi;
                 seq.push_back(e);
             }
-            (is_cycle ? cycles : paths).push_back(move(seq));
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
         };
 
         // --- Phase 1: extract all cycles and make graph DAG ---
