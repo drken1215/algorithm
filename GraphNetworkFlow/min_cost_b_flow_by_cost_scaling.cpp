@@ -378,7 +378,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // core members
     vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
-    vector<COST> pot;  // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
     bool include_negative_edge = false;
     
     // constructor
@@ -392,14 +392,14 @@ template<class FLOW, class COST> struct FlowCostGraph {
     
     // getter
     vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     const vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) const {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
-    size_t size() const {
+    size_t size() const noexcept {
         return list.size();
     }
     FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
@@ -431,9 +431,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
     
     // add_edge
     void add_edge(int from, int to, FLOW cap, COST cost) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
-        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        int from_id = (int)list[from].size(), to_id = (int)list[to].size();
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, 0, cost));
@@ -441,9 +441,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
         if (cost < 0) include_negative_edge = true;
     }
     void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
-        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        int from_id = (int)list[from].size(), to_id = (int)list[to].size();
         if (from == to) to_id++;
         pos.emplace_back(from, from_id);
         list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, rcap, cost));
@@ -451,7 +451,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
         if (cost < 0) include_negative_edge = true;
     }
     void add_bidirected_edge(int from, int to, FLOW cap, COST cost) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         add_edge(from, to, cap, cap, cost);
     }
@@ -461,11 +461,11 @@ template<class FLOW, class COST> struct FlowCostGraph {
     bool calc_potential_dag() {
         pot.assign(size(), 0);
         vector<int> deg(size(), 0), st;
-        for (int v = 0; v < size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
+        for (int v = 0; v < (int)size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
         st.reserve(size());
-        for (int v = 0; v < size(); v++) if (!deg[v]) st.emplace_back(v);
-        for (int i = 0; i < size(); i++) {
-            if (st.size() == i) return false;  // not DAG
+        for (int v = 0; v < (int)size(); v++) if (!deg[v]) st.emplace_back(v);
+        for (int i = 0; i < (int)size(); i++) {
+            if ((int)st.size() == i) return false;  // not DAG
             int cur = st[i];
             for (const auto &e : list[cur]) {
                 if (e.cap <= 0) continue;
@@ -481,12 +481,12 @@ template<class FLOW, class COST> struct FlowCostGraph {
         queue<int> que;
         vector<bool> inque(size(), false);
         vector<int> cnt(size(), 0);
-        for (int v = 0; v < size(); v++) que.push(v), inque[v] = true;
+        for (int v = 0; v < (int)size(); v++) que.push(v), inque[v] = true;
         while (!que.empty()) {
             int cur = que.front();
             que.pop();
             inque[cur] = false;
-            if (cnt[cur] > size()) return false;  // include negative-cycle
+            if (cnt[cur] > (int)size()) return false;  // include negative-cycle
             cnt[cur]++;
             for (const auto &e : list[cur]) {
                 if (e.cap <= 0) continue;
@@ -533,19 +533,22 @@ template<class FLOW, class COST> struct FlowCostGraph {
                 e.flow = mi;
                 seq.push_back(e);
             }
-            (is_cycle ? cycles : paths).push_back(move(seq));
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
         };
 
-        // --- Phase 1: extract all cycles and make graph DAG ---
-        vector<int> color(list.size(), 0);          // 0:未訪問 1:スタック上 2:完了
+        // Phase 1: extract all cycles and make graph DAG
+        const int NOTSEEN = 0, INSTACK = 1, FINISH = 2;
+        vector<int> color(list.size(), NOTSEEN);
         vector<int> pos_in_stack(list.size(), -1);
         vector<pair<int, int>> stk;
         auto dfs = [&](auto &&dfs, int v) -> bool {
-            color[v] = 1; pos_in_stack[v] = (int)stk.size();
+            color[v] = INSTACK;
+            pos_in_stack[v] = (int)stk.size();
             for (int i = 0; i < (int)fg[v].size(); i++) {
                 if (fg[v][i].rem <= 0) continue;
                 int u = fg[v][i].to;
-                if (color[u] == 1) {
+                if (color[u] == INSTACK) {
                     vector<pair<int,int>> route;
                     for (int k = pos_in_stack[u]; k < (int)stk.size(); k++) {
                         route.push_back(stk[k]);
@@ -554,26 +557,27 @@ template<class FLOW, class COST> struct FlowCostGraph {
                     build(route, true);
                     return true;
                 }
-                if (color[u] == 0) {
+                if (color[u] == NOTSEEN) {
                     stk.push_back({v, i});
                     if (dfs(dfs, u)) return true;
                     stk.pop_back();
                 }
             }
-            color[v] = 2; pos_in_stack[v] = -1;
+            color[v] = FINISH;
+            pos_in_stack[v] = -1;
             return false;
         };
         while (true) {
-            fill(color.begin(), color.end(), 0);
+            fill(color.begin(), color.end(), NOTSEEN);
             stk.clear();
             bool found = false;
-            for (int v = 0; v < list.size() && !found; v++) {
-                if (color[v] == 0 && dfs(dfs, v)) found = true;
+            for (int v = 0; v < (int)list.size() && !found; v++) {
+                if (color[v] == NOTSEEN && dfs(dfs, v)) found = true;
             }
             if (!found) break;
         }
 
-        // --- Phase 2: find all s-t paths ---
+        // Phase 2: find all s-t paths
         vector<int> ptr(list.size(), 0);
         auto next_arc = [&](int v) -> int {
             while (ptr[v] < (int)fg[v].size() && fg[v][ptr[v]].rem <= 0) ptr[v]++;
