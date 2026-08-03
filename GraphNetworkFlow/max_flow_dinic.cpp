@@ -67,11 +67,11 @@ template<class FLOW> struct FlowGraph {
     
     // getter
     vector<FlowEdge<FLOW>> &operator [] (int i) {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     const vector<FlowEdge<FLOW>> &operator [] (int i) const {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     size_t size() const noexcept {
@@ -112,7 +112,7 @@ template<class FLOW> struct FlowGraph {
     
     // add_edge
     void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
@@ -121,7 +121,7 @@ template<class FLOW> struct FlowGraph {
         list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap, cap));
     }
     void add_bidirected_edge(int from, int to, FLOW cap) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         add_edge(from, to, cap, cap);
     }
@@ -206,6 +206,7 @@ template<class FLOW> struct FlowGraph {
             FLOW rem;
             int eidx;
         };
+        assert(is_feasible(s, t));
         vector<vector<Arc>> fg(list.size());
         for (int v = 0; v < (int)list.size(); v++) {
             for (int j = 0; j < (int)list[v].size(); j++) {
@@ -236,8 +237,8 @@ template<class FLOW> struct FlowGraph {
                 e.flow = mi;
                 seq.push_back(e);
             }
-            if (is_cycle) cycles.push_back(move(seq));
-            else paths.push_back(move(seq));
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
         };
         auto walk = [&](int start, bool stop_at_t) {
             route.clear();
@@ -282,7 +283,7 @@ template<class FLOW> struct FlowGraph {
 
 // Dinic
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
-    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    assert(0 <= s && s < (int)G.size() && 0 <= t && t < (int)G.size() && s != t);
     FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     
@@ -529,7 +530,7 @@ void AOJ_2313() {
             if (e.cap == 1) G.change_edge(e, 0, 0);
             else {
                 // e が使われている場合を考える (閉路に含まれる場合と、s-t パスに含まれる場合がある)
-                int from, to;
+                int from = -1, to = -1;
                 if (e.cap == 0) from = e.from, to = e.to;
                 else if (e.cap == 2) from = e.to, to = e.from;
                 if (G.augment(from, to, 1) == 1) {
@@ -561,10 +562,91 @@ void AOJ_2313() {
     }
 }
 
+// code festival 2014 上海 D - Maze (for decomposition)
+void CODE_FESTIVAL_maze() {
+    const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
+    const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
+    int H, W;
+    cin >> H >> W;
+    vector<string> S(H);
+    for (int i = 0; i < H; i++) cin >> S[i];
+    int sx = -1, sy = -1, ax = -1, ay = -1, bx = -1, by = -1;
+    for (int i = 0; i < H; i++) for (int j = 0; j < W; j++) {
+        if (S[i][j] == 'S') sx = i, sy = j;
+        else if (S[i][j] == 'A') ax = i, ay = j;
+        else if (S[i][j] == 'B') bx = i, by = j;
+    }
+    queue<pair<int,int>> que;
+    vector dp(H, vector(W, -1));
+    vector prev(H, vector(W, vector<pair<int,int>>()));
+    que.push({sx, sy});
+    dp[sx][sy] = 0;
+    while (!que.empty()) {
+        auto [x, y] = que.front();
+        que.pop();
+        for (int d = 0; d < 4; d++) {
+            int x2 = x + DX[d], y2 = y + DY[d];
+            if (x2 < 0 || x2 >= H || y2 < 0 || y2 >= W) continue;
+            if (S[x2][y2] == '#') continue;
+            if (dp[x2][y2] == -1) {
+                que.push({x2, y2});
+                dp[x2][y2] = dp[x][y] + 1;
+                prev[x2][y2].emplace_back(x, y);
+            } else if (dp[x2][y2] == dp[x][y] + 1) {
+                prev[x2][y2].emplace_back(x, y);
+            }
+        }
+    }
+
+    FlowGraph<int> G(H*W*2 + 1);
+    int s = sx*W+sy + H*W, t = H*W*2;
+    for (int v = 0; v < H*W; v++) G.add_edge(v, v+H*W, 1);
+    G.add_edge(ax*W+ay + H*W, t, 1), G.add_edge(bx*W+by + H*W, t, 1);
+    set<pair<int,int>> already;
+    auto make = [&](int sx, int sy) -> void {
+        queue<pair<int,int>> que;
+        vector seen(H, vector(W, false));
+        que.push({sx, sy});
+        seen[sx][sy] = true;
+        while (!que.empty()) {
+            auto [x, y] = que.front();
+            que.pop();
+            for (auto [x2, y2] : prev[x][y]) {
+                int v = x * W + y, u = x2 * W + y2;
+                if (!already.count({u, v})) G.add_edge(u+H*W, v, 1);
+                already.insert({u, v});
+                if (!seen[x2][y2]) {
+                    que.push({x2, y2});
+                    seen[x2][y2] = true;
+                }
+            }
+        }
+    };
+    make(ax, ay), make(bx, by);
+
+    auto maxflow = Dinic(G, s, t);
+    if (maxflow < 2) { cout << "NA" << endl; return; }
+
+    auto [paths, cycles] = G.decompose(s, t);
+    for (int iter = 0; iter < 2; iter++) {
+        char c;
+        auto path = paths[iter];
+        if (path.back().from == ax*W+ay+H*W) c = 'a';
+        else c = 'b';
+        for (auto e : path) {
+            if (e.to == t) break;
+            int v = e.to % (H*W), x = v / W, y = v % W;
+            if (S[x][y] == '.') S[x][y] = c;
+        }
+    }
+    for (auto s : S) cout << s << endl;
+}
+
 
 int main() {
-    PAST_Max_Flow();
+    //PAST_Max_Flow();
     //ACL_practice_D();
     //ABC_259_G();
     //AOJ_2313(); 
+    CODE_FESTIVAL_maze();
 }

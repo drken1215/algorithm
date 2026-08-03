@@ -68,11 +68,11 @@ template<class FLOW> struct FlowGraph {
     
     // getter
     vector<FlowEdge<FLOW>> &operator [] (int i) {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     const vector<FlowEdge<FLOW>> &operator [] (int i) const {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     size_t size() const noexcept {
@@ -113,7 +113,7 @@ template<class FLOW> struct FlowGraph {
     
     // add_edge
     void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
@@ -122,7 +122,7 @@ template<class FLOW> struct FlowGraph {
         list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap, cap));
     }
     void add_bidirected_edge(int from, int to, FLOW cap) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         add_edge(from, to, cap, cap);
     }
@@ -207,6 +207,7 @@ template<class FLOW> struct FlowGraph {
             FLOW rem;
             int eidx;
         };
+        assert(is_feasible(s, t));
         vector<vector<Arc>> fg(list.size());
         for (int v = 0; v < (int)list.size(); v++) {
             for (int j = 0; j < (int)list[v].size(); j++) {
@@ -237,8 +238,8 @@ template<class FLOW> struct FlowGraph {
                 e.flow = mi;
                 seq.push_back(e);
             }
-            if (is_cycle) cycles.push_back(move(seq));
-            else paths.push_back(move(seq));
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
         };
         auto walk = [&](int start, bool stop_at_t) {
             route.clear();
@@ -283,7 +284,7 @@ template<class FLOW> struct FlowGraph {
 
 // Dinic
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
-    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    assert(0 <= s && s < (int)G.size() && 0 <= t && t < (int)G.size() && s != t);
     FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     

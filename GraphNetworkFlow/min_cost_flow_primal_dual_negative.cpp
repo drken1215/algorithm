@@ -75,7 +75,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
         assert(0 <= i && i < list.size());
         return list[i];
     }
-    size_t size() const {
+    size_t size() const noexcept {
         return list.size();
     }
     FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
