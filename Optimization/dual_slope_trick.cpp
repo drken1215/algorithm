@@ -9,6 +9,9 @@
 //   yukicoder No.2114 01 Matching
 //     https://yukicoder.me/problems/no/2114
 //
+//   ABC 250 G - Stonks (for min-plus convolution, clear-left)
+//     https://atcoder.jp/contests/abc250/tasks/abc250_g
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -87,15 +90,15 @@ template<class COORD, class SLOPE> struct DualSlopeTrick {
         SLOPE res = f0;
         auto L2 = L;
         auto R2 = R;
-        if (x > L2.size() || x < -R2.size()) return INF;
-        if (x >= 0) {
-            for (int i = 0; i < x; i++) {
+        if (x < -L2.size() || x > R2.size()) return INF;
+        if (x < 0) {
+            for (int i = 0; i < -x; i++) {
                 auto dif = L2.top() + offsetL;
                 L2.pop();
                 res -= dif;
             }
         } else {
-            for (int i = 0; i < -x; i++) {
+            for (int i = 0; i < x; i++) {
                 auto dif = R2.top() + offsetR;
                 R2.pop();
                 res += dif;
@@ -164,6 +167,20 @@ template<class COORD, class SLOPE> struct DualSlopeTrick {
         return add_abs(1, a);
     }
 
+    // restrict f(x)-domain into x >= 0
+    DualSlopeTrick &clear_left() {
+        L = priority_queue<COORD>{};
+        offsetL = 0;
+        return *this;
+    }
+
+    // restrict f(x)-domain into x <= 0
+    DualSlopeTrick &clear_right() {
+        R = priority_queue<COORD, vector<COORD>, greater<COORD>>{};
+        offsetR = 0;
+        return *this;
+    }
+
     // f(x) <- g(x) = f(x - 1), O(log N)
     DualSlopeTrick &slide() {
         SLOPE X = popL();
@@ -192,6 +209,24 @@ template<class COORD, class SLOPE> struct DualSlopeTrick {
         for (COORD i = 0; i < b - a; i++) {
             add_const(min(SLOPE(0), -topL()));
             pushL(0), pushR(popL());
+        }
+        return *this;
+    }
+
+    // f(x) <- h(x) = min_{x = y + z, z >= 0} (f(y) + g(z)), O(log N)
+    DualSlopeTrick &min_plus_convolution(DualSlopeTrick &g) {
+        if (size() < g.size()) {
+            swap(f0, g.f0);
+            swap(offsetL, g.offsetL), swap(offsetR, g.offsetR);
+            swap(L, g.L), swap(R, g.R);
+        }
+        f0 += g.f0;
+        while (g.L.size()) pushL(g.popL());
+        while (g.R.size()) pushR(g.popR());
+        while (topL() > topR()) {
+            SLOPE l = popL(), r = popR();
+            f0 -= (l - r);
+            pushL(r), pushR(l);
         }
         return *this;
     }
@@ -252,7 +287,31 @@ void yukicoder_2114() {
     cout << (can ? res : -1) << endl;
 }
 
+// ABC 250 G - Stonks
+/*
+    dp[x] := x 個持っている状態でのお金の減少分の最小値（負になると嬉しい）
+
+    nex[x] = min(dp[x], dp[x-1] + P[i], dp[x+1] - P[i])
+    → nex[x] = min_{-1 ≦ y ≦ 1} (dp[x - y] + P[i]y)
+*/
+void ABC_250_G() {
+    long long N;
+    cin >> N;
+    vector<long long> P(N);
+    for (int i = 0; i < N; i++) cin >> P[i];
+    DualSlopeTrick<long long, long long> dp(1LL << 45);
+    for (int i = 0; i < N; i++) {
+        DualSlopeTrick<long long, long long> g(1LL << 45);
+        g.pushL(P[i]), g.pushR(P[i]);
+        dp.min_plus_convolution(g);
+        dp.clear_left();
+    }
+    long long res = -dp.get_f0();
+    cout << res << endl;
+}
+
 
 int main() {
-    yukicoder_2114();
+    //yukicoder_2114();
+    ABC_250_G();
 }
