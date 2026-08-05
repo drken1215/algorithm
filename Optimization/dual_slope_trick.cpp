@@ -167,14 +167,14 @@ template<class COORD, class SLOPE> struct DualSlopeTrick {
         return add_abs(1, a);
     }
 
-    // restrict f(x)-domain into x >= 0
+    // restrict f(x)-domain into x >= 0, O(1)
     DualSlopeTrick &clear_left() {
         L = priority_queue<COORD>{};
         offsetL = 0;
         return *this;
     }
 
-    // restrict f(x)-domain into x <= 0
+    // restrict f(x)-domain into x <= 0, O(1)
     DualSlopeTrick &clear_right() {
         R = priority_queue<COORD, vector<COORD>, greater<COORD>>{};
         offsetR = 0;
@@ -213,7 +213,7 @@ template<class COORD, class SLOPE> struct DualSlopeTrick {
         return *this;
     }
 
-    // f(x) <- h(x) = min_{x = y + z, z >= 0} (f(y) + g(z)), O(log N)
+    // f(x) <- h(x) = min_{x = y + z, z >= 0} (f(y) + g(z)), amotized O((log N)^2)
     DualSlopeTrick &min_plus_convolution(DualSlopeTrick &g) {
         if (size() < g.size()) {
             swap(f0, g.f0);
@@ -291,8 +291,8 @@ void yukicoder_2114() {
 /*
     dp[x] := x 個持っている状態でのお金の減少分の最小値（負になると嬉しい）
 
-    nex[x] = min(dp[x], dp[x-1] + P[i], dp[x+1] - P[i])
-    → nex[x] = min_{-1 ≦ y ≦ 1} (dp[x - y] + P[i]y)
+    nex[x] = min(dp[x], dp[x-1] + P[i], dp[x+1] - P[i]) (x >= 0)
+    → nex[x] = min_{-1 ≦ y ≦ 1} (dp[x - y] + P[i]y) (x >= 0)
 */
 void ABC_250_G() {
     long long N;

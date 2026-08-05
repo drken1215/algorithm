@@ -164,19 +164,19 @@ template<class COORD> struct SlopeTrick {
         return *this;
     }
 
-    // f(x) <- g(x) = min_{y <= x} f(y), (\_/ -> \__), O(1)
-    SlopeTrick &clear_right() {
-        R = priority_queue<COORD, vector<COORD>, greater<COORD>>{};
-        return *this;
-    }
-
     // f(x) <- g(x) = min_{y >= x} f(y), (\_/ -> __/), O(1)
     SlopeTrick &clear_left() {
         L = priority_queue<COORD>{};
         return *this;
     }
 
-    // f(x) <- 0
+    // f(x) <- g(x) = min_{y <= x} f(y), (\_/ -> \__), O(1)
+    SlopeTrick &clear_right() {
+        R = priority_queue<COORD, vector<COORD>, greater<COORD>>{};
+        return *this;
+    }
+
+    // f(x) <- 0, O(1)
     SlopeTrick &clear() {
         *this = SlopeTrick();
         return *this;
@@ -212,7 +212,7 @@ template<class COORD> struct SlopeTrick {
         return *this;
     }
 
-    // f(x) += g(x), O((log N)^2)
+    // f(x) += g(x), amotized O((log N)^2)
     // attention: this function is destructive to g
     SlopeTrick &add(SlopeTrick &g) {
         if (size() < g.size()) {
