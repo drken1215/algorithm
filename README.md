@@ -664,9 +664,9 @@
 
 ## 区分線形凸関数の活用 1 ： Convex Hull Trick
 
-- (★★★☆) [Convex Hull Trick (直線：傾き単調, O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
-- (★★★★) [一般化 Convex Hull Trick (Monge, O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
+- (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
+- (★★★★) [一般化 Convex Hull Trick (Monge, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 - (★★★☆) Line Container
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
@@ -674,7 +674,7 @@
 
 - (★★★☆) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
 - (★★★★) [Dual Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
-- (★★★★) Slope Trick (by Splay 木)
+- (★★★★) Super Slope Trick (by Splay 木)
 
 ## 区分線形凸関数の活用 3 ： Min Plus Convolution
 
@@ -877,15 +877,12 @@
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
 - (★☆☆☆) [ハニカムの 6 近傍](https://github.com/drken1215/algorithm/blob/master/Others/honeycomb_neighbors.cpp)
 
-## 高速なソート
+## ソート
 
 - (★☆☆☆) [クイックソート](https://github.com/drken1215/algorithm/blob/master/Others/quick_sort.cpp)
 - (★☆☆☆) [マージソート](https://github.com/drken1215/algorithm/blob/master/Others/merge_sort.cpp)
 - (★☆☆☆) [ヒープソート](https://github.com/drken1215/algorithm/blob/master/Others/heap_sort.cpp)
 - (★☆☆☆) [計数ソート](https://github.com/drken1215/algorithm/blob/master/Others/counting_sort.cpp)
-
-## さまざまなソート
-
 - (★☆☆☆) [挿入ソート](https://github.com/drken1215/algorithm/blob/master/Others/insertion_sort.cpp)
 - (★☆☆☆) [選択ソート](https://github.com/drken1215/algorithm/blob/master/Others/selection_sort.cpp)
 - (★☆☆☆) [バブルソート](https://github.com/drken1215/algorithm/blob/master/Others/bubble_sort.cpp)
