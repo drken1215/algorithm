@@ -674,7 +674,7 @@
 
 - (★★★☆) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
 - (★★★★) [Dual Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
-- (★★★★) Super Slope Trick (by Splay 木)
+- (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/Optimization/super_slope_trick.cpp)
 
 ## 区分線形凸関数の活用 3 ： Min Plus Convolution
 
