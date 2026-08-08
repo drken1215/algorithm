@@ -267,6 +267,42 @@ struct Slope_Trick_Super {
     T new_a0 = f.a0 + a_sum; T new_y0 = f.y0 + f.a0 * (L - x0) + a_sum * L - xa_sum;
     ST.free_subtree(l); f.root = r, f.x0 = L, f.x1 = R, f.a0 = new_a0, f.y0 = new_y0; return f;
   }
+
+  // 定義域を「左」に広げる: [L, x1] へ拡張し、x < x0 では傾き slope の直線で延長。
+  //   凸性のため slope <= f.a0 が必要（slope == f.a0 なら折れ点を作らず素直に延長）。
+  //   旧左端 x0 には傾きの跳び (a0 - slope) の折れ点が入る。
+  FUNC extend_left(FUNC &f, T L, T slope) {
+    if (f.x0 > f.x1) return f;             // 空領域は何もしない
+    if (L >= f.x0) return f;               // 拡張不要
+    assert(slope <= f.a0);                 // 凸性
+    T d = f.a0 - slope;                    // 旧左端 x0 での傾きの跳び
+    if (d != 0) f.root = ST.merge(ST.new_node({f.x0, d}), f.root);
+    f.y0 += slope * (L - f.x0);            // f(L) = f(x0) + slope*(L - x0)
+    f.a0 = slope;
+    f.x0 = L;
+    return f;
+  }
+  // 定義域を「右」に広げる: [x0, R] へ拡張し、x > x1 では傾き slope の直線で延長。
+  //   凸性のため slope >= (現在の右端の傾き) が必要。旧右端 x1 に折れ点が入る。
+  FUNC extend_right(FUNC &f, T R, T slope) {
+    if (f.x0 > f.x1) return f;
+    if (R <= f.x1) return f;
+    T cur_right = f.a0 + ST.prod(f.root).first;   // 現在の右端の傾き = a0 + Σ傾き変化
+    assert(slope >= cur_right);            // 凸性
+    T d = slope - cur_right;               // 旧右端 x1 での傾きの跳び
+    if (d != 0) f.root = ST.merge(f.root, ST.new_node({f.x1, d}));
+    f.x1 = R;
+    return f;
+  }
+  // 定義域を [L,R] へ拡張（両端の傾きのまま延長。折れ点を作らず凸性を保存）。
+  //   restrict_domain の逆向きに対応する版。
+  FUNC extend_domain(FUNC &f, T L, T R) {
+    if (f.x0 > f.x1) return f;
+    if (L < f.x0) extend_left(f, L, f.a0);
+    if (R > f.x1) extend_right(f, R, f.a0 + ST.prod(f.root).first);
+    return f;
+  }
+
   FUNC add(FUNC &f, FUNC &g) {
     T x0 = max(f.x0, g.x0); T x1 = min(f.x1, g.x1);
     restrict_domain(f, x0, x1), restrict_domain(g, x0, x1);
@@ -300,7 +336,7 @@ struct Slope_Trick_Super {
     auto [l, r] = ST.split_max_right_prod(f.root, [&](auto prod) -> bool { return f.a0 + prod.first < 0; });
     auto [asum, xasum] = ST.prod(l);
     if (!r) { T x = f.x1; T y = f.y0 + f.a0 * (x - f.x0) + x * asum - xasum; ST.free_subtree(l); f.root = nullptr; f.y0 = y, f.a0 = 0; return f; }
-    T x = ST.get(r, 0).first; T y = f.y0 + f.a0 * (x - f.x0) + x * asum - xasum; // ★FIX: 元は ST.get(f.root,0)（split後 f.root は stale で assertion 落ち）
+    T x = ST.get(f.root, 0).first; T y = f.y0 + f.a0 * (x - f.x0) + x * asum - xasum; // ★FIX: 元は ST.get(f.root,0)（split後 f.root は stale で assertion 落ち）
     T a = f.a0 + asum + ST.get(r, 0).second; ST.free_subtree(l); f.root = r; ST.set(r, 0, {x, a}); f.y0 = y; f.a0 = 0; return f;
   }
   // --- デバッグ: 折れ点座標を全部出す ---
@@ -384,15 +420,8 @@ void ABC_275_Ex() {
         dp[v] = ST.clear_left(dp[v]);
         dp[v] = ST.add_linear(dp[v], -B[v], 0);
 
-        // x < A[v] では傾き -B[v] の直線。定義域を [0, MAXX] へ左延長
-        auto& f = dp[v];
-        long long av = f.x0;
-        if (av > 0) {
-            long long change = f.a0 + B[v];                    // 右側の傾き a0 -（左側の傾き -B）
-            if (change != 0)
-                f.root = ST.ST.merge(ST.ST.new_node({av, change}), f.root);
-            f.y0 += B[v] * av; f.a0 = -B[v]; f.x0 = 0;
-        }
+        // 定義域を傾き -B[v] で [0, MAXX] に拡張
+        dp[v] = ST.extend_left(dp[v], 0, -B[v]);
 
         //COUT(v); ST.dump(dp[v]);
     }
