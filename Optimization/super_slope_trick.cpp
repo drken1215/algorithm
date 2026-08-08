@@ -336,7 +336,7 @@ struct Slope_Trick_Super {
     auto [l, r] = ST.split_max_right_prod(f.root, [&](auto prod) -> bool { return f.a0 + prod.first < 0; });
     auto [asum, xasum] = ST.prod(l);
     if (!r) { T x = f.x1; T y = f.y0 + f.a0 * (x - f.x0) + x * asum - xasum; ST.free_subtree(l); f.root = nullptr; f.y0 = y, f.a0 = 0; return f; }
-    T x = ST.get(f.root, 0).first; T y = f.y0 + f.a0 * (x - f.x0) + x * asum - xasum; // ★FIX: 元は ST.get(f.root,0)（split後 f.root は stale で assertion 落ち）
+    T x = ST.get(r, 0).first; T y = f.y0 + f.a0 * (x - f.x0) + x * asum - xasum; // ★FIX: 元は ST.get(f.root,0)（split後 f.root は stale で assertion 落ち）
     T a = f.a0 + asum + ST.get(r, 0).second; ST.free_subtree(l); f.root = r; ST.set(r, 0, {x, a}); f.y0 = y; f.a0 = 0; return f;
   }
   // --- デバッグ: 折れ点座標を全部出す ---
