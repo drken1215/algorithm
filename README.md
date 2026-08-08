@@ -653,7 +653,7 @@
 - (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
 - (★★★★) 最適二分探索木 (Hu-Tucker 法, in O(N log N))
 
-## 行最小値問題
+## 行最小値問題・単一始点最短路問題
 
 - (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
@@ -665,15 +665,15 @@
 ## 区分線形凸関数の活用 1 ： Convex Hull Trick
 
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
-- (★★★★) [一般化 Convex Hull Trick (Monge, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
-- (★★★☆) Line Container
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
+- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
+- (★★★★) [一般化 Convex Hull Trick (Monge, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
 ## 区分線形凸関数の活用 2 ： Slope Trick
 
-- (★★★☆) [Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
-- (★★★★) [Dual Slope Trick (by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
+- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
+- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
 - (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/Optimization/super_slope_trick.cpp)
 
 ## 区分線形凸関数の活用 3 ： Min Plus Convolution
@@ -681,12 +681,17 @@
 - (★★★★) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/Optimization/min_plus_convolution_convex_convex.cpp)
 - (★★★★) Min Plus Convolution (凸と任意)
 - (★★★★) Min Plus Convolution (凹と任意)
+- (★★★★) Axiotis-Tzamos Knapsack
 
 ## Monge 性, L 凸性
 
-- (★★★★) Monge 性を満たす区間 DP の Knuth-Yao Speedup
-- (★★★★) Monge グラフ上の d-辺最短路 (Aliens DP)
-- (★★★★) Monge グラフ上の d-辺最短路の d = 1, 2, ..., N における列挙 (Aliens DP)
+- (★★★★) Monge 行列の min-plus 合成 (in O(N^2))
+- (★★★★) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
+- (★★★★) Monge 単一始点 k 辺最短路問題 (in O(N^2))
+- (★★★★) Monge 全点間最短路問題 (in O(N^2))
+- (★★★★) Monge d-辺 s-t 最短路問題 (by Aliens DP, in O(N log N))
+- (★★★★) Monge d-辺 s-t 最短路の d = 1, 2, ..., N における列挙 (Aliens DP, in O(N log N))
+- (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
 ## マトロイド, M 凸性
 
