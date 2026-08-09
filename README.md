@@ -666,7 +666,7 @@
 
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
-- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
+- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log C))
 - (★★★★) [一般化 Convex Hull Trick (Monge, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
