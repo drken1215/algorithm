@@ -1,4 +1,4 @@
-//
+\//
 // Monotone 単一始点最短路問題 by D&D Monotone Minima
 //   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monotone であることを仮定 (argmin が単調非減少)
 //   O(N (log N)^2)
@@ -77,12 +77,16 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinimaDD(int N, c
 //------------------------------//
 
 // AtCoder EDPC Z - Frog 3
+/*
+    chmin(dp[i], dp[j] + (H[j] - H[i])^2 + C)
+    スタート: 0, ゴール: N-1
+*/
 void EDPC_Z() {
     long long N, C;
     cin >> N >> C;
     vector<long long> H(N);
     for (long long i = 0; i < N; i++) cin >> H[i];
-    auto func = [&H, &C](int i, int j) -> long long {
+    auto func = [&](int i, int j) -> long long {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
     auto res = MonotoneMinimaDD<long long>(N-1, func);
@@ -90,15 +94,22 @@ void EDPC_Z() {
 }
 
 // Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
+/*
+    A: 単調増加, B: 単調減少, ともに長さ N
+    i -> j のコストが、B[i] × A[j] で与えられる
+    スタート: 0, ゴール: N-1
+*/
 void Codeforces_189_C() {
-    int N;
+    long long N;
     cin >> N;
-    vector<long long> a(N), b(N);
-    for (int i = 0; i < N; ++i) cin >> a[i];
-    for (int i = 0; i < N; ++i) cin >> b[i];
-    auto func = [&](int i, int j) -> long long { return a[j] * b[i]; };
-    auto dp = MonotoneMinimaDD<long long>(N-1, func);
-    cout << dp[N-1].first << endl;
+    vector<long long> A(N), B(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    for (int i = 0; i < N; i++) cin >> B[i];
+    auto func = [&](int i, int j) -> long long {
+        return B[i] * A[j];
+    };
+    auto res = MonotoneMinimaDD<long long>(N-1, func);
+    cout << res[N-1].first << endl;
 }
 
 // yukicoder No.705 ゴミ拾い Hard
@@ -119,7 +130,7 @@ void yukicoder_705() {
 
 
 int main() {
-    EDPC_Z();
-    //Codeforces_189_C();
+    //EDPC_Z();
+    Codeforces_189_C();
     //yukicoder_705();
 }
