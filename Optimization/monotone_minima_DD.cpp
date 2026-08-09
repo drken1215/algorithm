@@ -1,4 +1,4 @@
-\//
+//
 // Monotone 単一始点最短路問題 by D&D Monotone Minima
 //   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monotone であることを仮定 (argmin が単調非減少)
 //   O(N (log N)^2)
@@ -78,7 +78,9 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinimaDD(int N, c
 
 // AtCoder EDPC Z - Frog 3
 /*
-    chmin(dp[i], dp[j] + (H[j] - H[i])^2 + C)
+    H は単調増加数列
+    chmin(dp[j], dp[i] + (H[j] - H[i])^2 + C)
+    i -> j のコスト：(H[j] - H[i])^2 ...... 差の凸関数は Monge
     スタート: 0, ゴール: N-1
 */
 void EDPC_Z() {
@@ -96,7 +98,7 @@ void EDPC_Z() {
 // Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
 /*
     A: 単調増加, B: 単調減少, ともに長さ N
-    i -> j のコストが、B[i] × A[j] で与えられる
+    i -> j のコストが、B[i] × A[j] で与えられる ..... 単調増加 × 単調減少は Monge
     スタート: 0, ゴール: N-1
 */
 void Codeforces_189_C() {
@@ -113,6 +115,13 @@ void Codeforces_189_C() {
 }
 
 // yukicoder No.705 ゴミ拾い Hard
+/*
+    A, X, Y: N 個
+    これらを区間に分割していく
+    　dp[j] = min_{0 ≦ i < j}(dp[i] + |A[j-1] - X[i]|^3 + |-Y[i]|^3)
+    i -> j のコスト：|A[j-1] - X[i]|^3 + |-Y[i]|^3 ...... 差の凸関数 (Monge) + 縞々 (Monge) -> Monge
+    スタート: 0, ゴール: N
+*/
 void yukicoder_705() {
     int N;
     cin >> N;
@@ -122,7 +131,7 @@ void yukicoder_705() {
     for (int i = 0; i < N; i++) cin >> Y[i];
     auto func = [&](int i, int j) -> long long {
         long long dx = abs(A[j-1] - X[i]), dy = abs(Y[i]);
-        return dx*dx*dx + dy*dy*dy;
+        return dx * dx * dx + dy * dy * dy;
     };
     auto res = MonotoneMinimaDD<long long>(N, func);
     cout << res[N].first << endl;
@@ -131,6 +140,6 @@ void yukicoder_705() {
 
 int main() {
     //EDPC_Z();
-    Codeforces_189_C();
-    //yukicoder_705();
+    //Codeforces_189_C();
+    yukicoder_705();
 }
