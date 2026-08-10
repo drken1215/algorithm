@@ -657,10 +657,10 @@
 
 - (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
-- (★★★★) TM 行最小値問題 (SMAWK 法, in O(H + W))
-- (★★★★) TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))
-- (★★★★) Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))
-- (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
+- (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
+- (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/LARSCH.cpp)
 
 ## 区分線形凸関数の活用 1 ： Convex Hull Trick
 
