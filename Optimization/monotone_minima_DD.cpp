@@ -25,49 +25,39 @@ using namespace std;
 
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
 // f(i, j) must be monotone (argmin is not decreasing)
+template<class VAL, class FUNC> void MonotoneMinimaRec
+(int HL, int HR, int WL, int WR, const FUNC &f, vector<pair<VAL, int>> &res) {
+    if (HR - HL <= 0) return;
+    int HM = (HL + HR) / 2;
+    res[HM].second = WL;
+    for (int i = WL; i < WR; i++) {
+        VAL val = f(HM, i);
+        if (res[HM].first > val) res[HM] = make_pair(val, i);
+    }
+    MonotoneMinimaRec(HL, HM, WL, res[HM].second + 1, f, res);
+    MonotoneMinimaRec(HM + 1, HR, res[HM].second, WR, f, res);
+}
 template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinima(int H, int W, const FUNC &f) {
     vector<pair<VAL, int>> res(H, make_pair(numeric_limits<VAL>::max() / 2, -1));
-    auto rec = [&](auto &&rec, int HL, int HR, int WL, int WR) -> void {
-        if (HR - HL <= 0) return;
-        int HM = (HL + HR) / 2;
-        res[HM].second = WL;
-        for (int i = WL; i < WR; i++) {
-            VAL val = f(HM, i);
-            if (res[HM].first > val) res[HM] = make_pair(val, i);
-        }
-        rec(rec, HL, HM, WL, res[HM].second + 1);
-        rec(rec, HM + 1, HR, res[HM].second, WR);
-    };
-    rec(rec, 0, H, 0, W);
+    MonotoneMinimaRec(0, H, 0, W, f, res);
     return res;
 }
 
 // find shortest path on DAG with monotone cost, by D&D Monotone Minima, O(N (log N)^2)
 // vertex: 0, 1, 2, ..., N
 // f(i, j) must be monotone (argmin is not decreasing)
-template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinimaDD(int N, const FUNC &f) {
+template<class VAL, class FUNC> vector<pair<VAL, int>> DDMonotoneMinima(int N, const FUNC &f) {
     vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     res[0].first = VAL(0);
     auto f2 = [&](int i, int j) -> VAL { return res[j].first + f(j, i); };
-    auto rec2 = [&](auto &&rec2, int HL, int HR, int WL, int WR) -> void {
-        if (HR - HL <= 0) return;
-        int HM = (HL + HR) / 2;
-        res[HM].second = WL;
-        for (int i = WL; i < WR; i++) {
-            VAL val = f2(HM, i);
-            if (res[HM].first > val) res[HM] = make_pair(val, i);
-        }
-        rec2(rec2, HL, HM, WL, res[HM].second + 1);
-        rec2(rec2, HM + 1, HR, res[HM].second, WR);
-    };
-    auto rec1 = [&](auto &&rec1, int left, int right) -> void {
+    auto rec = [&](auto &&rec, int left, int right) -> void {
         if (right - left <= 1) return;
         int mid = (left + right) / 2;
-        rec1(rec1, left, mid);
-        rec2(rec2, mid, right, left, mid);
-        rec1(rec1, mid, right);
+        rec(rec, left, mid);
+        MonotoneMinimaRec(mid, right, left, mid, f2, res);
+        rec(rec, mid, right);
     };
-    rec1(rec1, 0, N + 1);
+    rec(rec, 0, N + 1);
     return res;
 }
 
@@ -91,7 +81,7 @@ void EDPC_Z() {
     auto func = [&](int i, int j) -> long long {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
-    auto res = MonotoneMinimaDD<long long>(N-1, func);
+    auto res = DDMonotoneMinima<long long>(N-1, func);
     cout << res[N-1].first << endl;
 }
 
@@ -110,7 +100,7 @@ void Codeforces_189_C() {
     auto func = [&](int i, int j) -> long long {
         return B[i] * A[j];
     };
-    auto res = MonotoneMinimaDD<long long>(N-1, func);
+    auto res = DDMonotoneMinima<long long>(N-1, func);
     cout << res[N-1].first << endl;
 }
 
@@ -133,7 +123,7 @@ void yukicoder_705() {
         long long dx = abs(A[j-1] - X[i]), dy = abs(Y[i]);
         return dx * dx * dx + dy * dy * dy;
     };
-    auto res = MonotoneMinimaDD<long long>(N, func);
+    auto res = DDMonotoneMinima<long long>(N, func);
     cout << res[N].first << endl;
 }
 
