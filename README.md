@@ -659,8 +659,9 @@
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
 - (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
 - (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
-- (★★★★) Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))
+- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/noshi_LARSCH.cpp)
 - (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
+- (★★★★) Monge d-辺 s-t 最短路の d = 1, 2, ..., N における列挙 (by SMAWK 法, in O(ND))
 
 ## 区分線形凸関数の活用 1 ： Convex Hull Trick
 
@@ -686,12 +687,12 @@
 ## Monge 性, L 凸性
 
 - (★☆☆☆) Monge 性の判定 (in O(NM))
+- (★★★☆) Monge 行列の積 (in O(N^2))
+- (★★★☆) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
 - (★★★★) Monge 行列の min-plus 合成 (in O(N^2))
-- (★★★★) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
 - (★★★★) Monge 単一始点 k 辺最短路問題 (in O(N^2))
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
 - (★★★★) Monge d-辺 s-t 最短路問題 (by Aliens DP, in O(N log N))
-- (★★★★) Monge d-辺 s-t 最短路の d = 1, 2, ..., N における列挙 (Aliens DP, in O(N log N))
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
 ## マトロイド, M 凸性

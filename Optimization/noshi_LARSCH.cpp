@@ -1,7 +1,7 @@
 //
-// Monotone 単一始点最短路問題 by D&D Monotone Minima
-//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monotone であることを仮定 (argmin が単調非減少)
-//   O(N (log N)^2)
+// Monge 単一始点最短路
+//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monge であることを仮定
+//   O(N log N)
 //
 // verified
 //   AtCoder EDPC Z - Frog 3
@@ -14,62 +14,67 @@
 //     https://yukicoder.me/problems/no/705 
 //
 // Reference:
-//   tatyam: Monge の手引き書
-//     https://speakerdeck.com/tatyam_prime/monge-noshou-yin-shu
-//   
+//   noshi: 簡易版 LARSCH Algorithm
+//     https://noshi91.hatenablog.com/entry/2023/02/18/005856
+//  
 
 
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
-// f(i, j) must be monotone (argmin is not decreasing)
-template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinima(int H, int W, const FUNC &f) {
-    vector<pair<VAL, int>> res(H, make_pair(numeric_limits<VAL>::max() / 2, -1));
-    auto rec = [&](auto &&rec, int HL, int HR, int WL, int WR) -> void {
-        if (HR - HL <= 0) return;
-        int HM = (HL + HR) / 2;
-        res[HM].second = WL;
-        for (int i = WL; i < WR; i++) {
-            VAL val = f(HM, i);
-            if (res[HM].first > val) res[HM] = make_pair(val, i);
-        }
-        rec(rec, HL, HM, WL, res[HM].second + 1);
-        rec(rec, HM + 1, HR, res[HM].second, WR);
-    };
-    rec(rec, 0, H, 0, W);
-    return res;
-}
+// noshi's simplified LARSCH
+// find shortest path from vertex 0 on DAG with monotone cost in O(N log N)
+// vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+template<class VAL> struct MongeShortestPath {
+    VAL INF = numeric_limits<VAL>::max() / 2;
+    int CNT_INF = numeric_limits<int>::max() / 2;
 
-// find shortest path on DAG with monotone cost, by D&D Monotone Minima, O(N (log N)^2)
-// vertex: 0, 1, 2, ..., N
-// f(i, j) must be monotone (argmin is not decreasing)
-template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinimaDD(int N, const FUNC &f) {
-    vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
-    res[0].first = VAL(0);
-    auto f2 = [&](int i, int j) -> VAL { return res[j].first + f(j, i); };
-    auto rec2 = [&](auto &&rec2, int HL, int HR, int WL, int WR) -> void {
-        if (HR - HL <= 0) return;
-        int HM = (HL + HR) / 2;
-        res[HM].second = WL;
-        for (int i = WL; i < WR; i++) {
-            VAL val = f2(HM, i);
-            if (res[HM].first > val) res[HM] = make_pair(val, i);
-        }
-        rec2(rec2, HL, HM, WL, res[HM].second + 1);
-        rec2(rec2, HM + 1, HR, res[HM].second, WR);
-    };
-    auto rec1 = [&](auto &&rec1, int left, int right) -> void {
-        if (right - left <= 1) return;
-        int mid = (left + right) / 2;
-        rec1(rec1, left, mid);
-        rec2(rec2, mid, right, left, mid);
-        rec1(rec1, mid, right);
-    };
-    rec1(rec1, 0, N + 1);
-    return res;
-}
+    // results
+    vector<VAL> dp;
+    vector<int> cnt, prev;
+
+    // solver
+    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f, bool minimize_cnt = true) {
+        dp.assign(N + 1, INF);
+        cnt.assign(N + 1, CNT_INF);
+        prev.assign(N + 1, 0);
+        dp[0] = 0, cnt[0] = 0;
+
+        auto relax = [&](int l, int r) -> void {
+            VAL val = dp[l] + f(l, r);
+            int c = cnt[l] + 1;
+            if (dp[r] > val || (dp[r] == val && (minimize_cnt ? c < cnt[r] : c > cnt[r]))) {
+                dp[r] = val;
+                cnt[r] = c;
+                prev[r] = l;
+            }
+        };
+        auto rec = [&](auto &&rec, int l, int r) -> void {
+            if (r - l <= 1) return;
+            int m = (l + r) / 2;
+            for (int k = prev[l]; k <= prev[r]; k++) relax(k, m);
+            rec(rec, l, m);
+            for (int k = l + 1; k <= m; k++) relax(k, r);
+            rec(rec, m, r);
+        };
+
+        if (N > 0) relax(0, N), rec(rec, 0, N);
+        vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
+        res[0].first = VAL(0);
+        for (int i = 1; i <= N; i++) res[i] = {dp[i], prev[i]};
+        return res;
+    }
+
+    vector<int> reconstruct() {
+        int N = (int)dp.size() - 1;
+        vector<int> path;
+        for (int v = N; v > 0; v = prev[v]) path.emplace_back(v);
+        path.emplace_back(0);
+        reverse(path.begin(), path.end());
+        return path;
+    }
+};
 
 
 //------------------------------//
@@ -91,7 +96,8 @@ void EDPC_Z() {
     auto func = [&](int i, int j) -> long long {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
-    auto res = MonotoneMinimaDD<long long>(N-1, func);
+    MongeShortestPath<long long> msp;
+    auto res = msp.solve(N-1, func);
     cout << res[N-1].first << endl;
 }
 
@@ -110,7 +116,8 @@ void Codeforces_189_C() {
     auto func = [&](int i, int j) -> long long {
         return B[i] * A[j];
     };
-    auto res = MonotoneMinimaDD<long long>(N-1, func);
+    MongeShortestPath<long long> msp;
+    auto res = msp.solve(N-1, func);
     cout << res[N-1].first << endl;
 }
 
@@ -133,13 +140,14 @@ void yukicoder_705() {
         long long dx = abs(A[j-1] - X[i]), dy = abs(Y[i]);
         return dx * dx * dx + dy * dy * dy;
     };
-    auto res = MonotoneMinimaDD<long long>(N, func);
+    MongeShortestPath<long long> msp;
+    auto res = msp.solve(N, func);
     cout << res[N].first << endl;
 }
 
 
 int main() {
-    //EDPC_Z();
+    EDPC_Z();
     //Codeforces_189_C();
-    yukicoder_705();
+    //yukicoder_705();
 }
