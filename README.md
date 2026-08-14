@@ -678,7 +678,7 @@
 ## LP, IP, MIP
 
 - (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
-- (★★★★) Aliens DP (ラグランジュ緩和)
+- (★★★★) [ラグランジュ緩和 (俗称：Aliens Trick)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
 
