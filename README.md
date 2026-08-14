@@ -12,11 +12,11 @@
 |**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
 |**[GEOMETRY](#ge)**|計算幾何|円の交点など|
 |**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
-|**[GRAPH : NETWORK FLOW](#gnf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
 |**[MATH : LINEAR ALGEBRA](#mla)**|線形代数アルゴリズム|行列計算など|
 |**[MATH : POLYNOMIAL](#mpo)**|多項式・FPS アルゴリズム|多項式補間、FPS 合成など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
+|**[NETWORK FLOW](#nf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
 |**[OPTIMIZATION](#opt)**|最適化のアルゴリズム|動的計画法など|
 |**[SEARCH](#ser)**|探索のアルゴリズム|全探索, 二分探索など|
 |**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
@@ -318,66 +318,6 @@
 - (★★★★) 二部グラフの辺彩色 (Alon 法, in O(E log E))
 
 
-　
-　
-<a name="gnf"></a>
-# ネットワークフロー (GRAPH : NETWORK FLOW)
-ネットワークフロー関連のアルゴリズムです。
-
-## 最大流
-
-- (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_ford_fulkerson.cpp)
-- (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_dinic.cpp)
-- (★★★☆) 最大流 (Push-Relabel 法)
-- (★★★☆) [最大流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_flow_decomposition.cpp)
-
-## 最小カット
-
-- (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cut.cpp)
-- (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/stoer_wagner.cpp)
-- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法, in O(VE + V^2 log V))
-- (★★★★) Gomory-Hu 木
-
-## 最小費用流
-
-- (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual.cpp)
-- (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_flow_primal_dual_negative.cpp)
-- (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_circulating_flow.cpp)
-
-## b-flow
-
-- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_b_flow.cpp)
-- (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_primal_dual.cpp)
-- (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
-- (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
-
-## 二部マッチング
-
-- (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/hopcroft_karp.cpp)
-- (★★★☆) 重みつき二部マッチング (Hungarian 法)
-- (★★★★) 二部マッチングの bitset 高速化
-- (★★★★) アンバランス重みつき二部マッチング (in O((K^2 log N + K^3)N))
-
-## 二部マッチングの応用
-
-- (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/max_independent_set_of_bipartite_graph.cpp)
-- (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_vertex_cover_of_bipartite_graph.cpp)
-- (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_edge_cover_of_bipartite_graph.cpp)
-- (★★★☆) [DAG の最小パス被覆](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/dag_path_cover.cpp)
-
-## 劣モジュラ関数のグラフ表現
-
-- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/project_selection_problem.cpp)
-- (★★★☆) [2 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_submodular_optimization.cpp)
-- (★★★★) [3 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/three_variable_submodular_optimization.cpp)
-- (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/two_variable_monge_optimization.cpp)
-
-## 最小費用流の応用
-
-- (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_convex_flow.cpp)
-- (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/GraphNetworkFlow/min_cost_tension.cpp)
-
-
 
 　
 
@@ -647,6 +587,68 @@
 - (★★☆☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/floor_sum.cpp)
 - (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
+
+
+
+　
+　
+<a name="nf"></a>
+# ネットワークフロー (NETWORK FLOW)
+ネットワークフロー関連のアルゴリズムです。
+
+## 最大流
+
+- (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_ford_fulkerson.cpp)
+- (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_dinic.cpp)
+- (★★★☆) 最大流 (Push-Relabel 法)
+- (★★★☆) [最大流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_decomposition.cpp)
+
+## 最小カット
+
+- (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cut.cpp)
+- (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/stoer_wagner.cpp)
+- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法, in O(VE + V^2 log V))
+- (★★★★) Gomory-Hu 木
+
+## 最小費用流
+
+- (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual.cpp)
+- (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual_negative.cpp)
+- (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_circulating_flow.cpp)
+
+## b-flow
+
+- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_b_flow.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_b_flow_by_primal_dual.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
+
+## 二部マッチング
+
+- (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/hopcroft_karp.cpp)
+- (★★★☆) 重みつき二部マッチング (Hungarian 法)
+- (★★★★) 二部マッチングの bitset 高速化
+- (★★★★) アンバランス重みつき二部マッチング (in O((K^2 log N + K^3)N))
+
+## 二部マッチングの応用
+
+- (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_independent_set_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_vertex_cover_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_edge_cover_of_bipartite_graph.cpp)
+- (★★★☆) [DAG の最小パス被覆](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/dag_path_cover.cpp)
+
+## 劣モジュラ関数のグラフ表現
+
+- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/project_selection_problem.cpp)
+- (★★★☆) [2 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_submodular_optimization.cpp)
+- (★★★★) [3 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/three_variable_submodular_optimization.cpp)
+- (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_monge_optimization.cpp)
+
+## 最小費用流の応用
+
+- (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_convex_flow.cpp)
+- (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_tension.cpp)
+
 
 
 　
