@@ -104,6 +104,7 @@
 ## セグメント木
 
 - (★★☆☆) [セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree.cpp)
+- (★★★☆) 双対セグメント木
 - (★★★☆) [遅延評価セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
 - (★★★☆) [二次元セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_2d.cpp)
 - (★★★★) 動的セグメント木
@@ -658,7 +659,7 @@
 # 最適化 (OPTIMIZATION)
 最適化に関するアルゴリズムです。
 
-## 有名問題に対する動的計画法
+## 動的計画法
 
 - (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Optimization/knapsack.cpp)
 - (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Optimization/longest_increasing_sequence.cpp)
@@ -680,17 +681,8 @@
 
 - (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
 - (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp)
-- (★★★★) [Alien's Trick --- min: f(x) s.t. L <= g(x) < R (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens_upper_lower.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
-
-## 行最小値問題・単一始点最短路問題
-
-- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
-- (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
-- (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
-- (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
 
 ## 区分線形凸関数の活用 1 ： Convex Hull Trick
 
@@ -713,18 +705,29 @@
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
 
-## Monge 性, L 凸性
+## 行最小値問題・単一始点最短路問題
+
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
+- (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
+- (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
+- (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
+
+## Monge 最短路問題
+
+- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Aliens DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
+- (★★★★) Monge 全点間最短路問題 (in O(N^2))
+- (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
+
+## その他 Monge 性, L 凸性
 
 - (★☆☆☆) Monge 性の判定 (in O(NM))
 - (★★★☆) Monge 行列の積 (in O(N^2))
 - (★★★★) Monge 行列の min-plus 合成 (in O(N^2))
 - (★★★☆) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
-- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
-- (★★★★) Monge 単一始点 d-辺最短路問題 (by Aliens DP, in O(N log N))
-- (★★★★) Monge 全点間最短路問題 (in O(N^2))
-- (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
 ## マトロイド, M 凸性
 

@@ -1,19 +1,6 @@
 //
-// Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)
-// 
-/*
-    min_{x}: f(x) s.t. g(x) = K
-    = max_{λ は整数}: min_{x} (f(x) + λ(g(x) - K))
-
-    【仮定】
-　　・f(x), g(x): 0 以上の整数値をとる関数
-　　・K: 整数
-　　・g(x) = p となる x についての f(x) の最小値を h(p) とおくと、h(p) は p について下に凸な関数
-　　・h(K) < ∞ (g(x) = K となる x が存在)
-
-　　 【コメント】
-　　・制約条件が g(x) <= K の場合、h(p) の凸性から、最適解は「条件なしでの最適解」と「g(x) = K の場合の最適解」のいずれか
-*/
+// Monge 単一始点 d-辺最短路問題 (by Aliens DP), O(N (log N)^2)
+//   最短路問題を解くのには noshi's 簡易 LARSCH を用いる
 //
 // verified
 //   ABC 218 H - Red and Blue Lamps
@@ -135,11 +122,6 @@ template<class VAL> struct AliensTrick {
         return {-f, -g};
     }
 };
-
-
-//-----------------------------------------------//
-// Ofter Use: Monge Shortest Path for Aliens DP
-//-----------------------------------------------//
 
 // noshi's simplified LARSCH
 // find the shortest path from vertex 0 on DAG in O(N log N)

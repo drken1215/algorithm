@@ -24,7 +24,7 @@ using namespace std;
 
 
 // noshi's simplified LARSCH
-// find shortest path from vertex 0 on DAG with monotone cost in O(N log N)
+// find shortest path from vertex 0 on DAG in O(N log N)
 // vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
 template<class VAL> struct MongeShortestPath {
     VAL INF = numeric_limits<VAL>::max() / 2;
