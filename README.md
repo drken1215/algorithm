@@ -558,13 +558,14 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 乗法的関数
 
+- (★★☆☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
+- (★★★★) Euler のトーティエント関数の和
 - (★★★★) 高速ゼータ変換：約数倍数関係
 - (★★★★) [添字 GCD Convolution](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/fast_gcd_convolution.cpp)
 - (★★★★) 添字 LCM Convolution
 - (★★★★) Multivariate Multiplication
 - (★★★★) 乗法的関数の列挙
 - (★★★★) 乗法的関数の prefix sum の列挙
-- (★★★★) オイラー関数の和
 - (★★★★) 無平方数の個数
 - (★★★★) N 以下の素数の個数 (O(N^{2/3}))
 
@@ -593,10 +594,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他
 
-- (★☆☆☆) [負数にも対応した floor, ceil](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/floor_ceil.cpp)
 - (★☆☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/power_of_three.cpp)
-- (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/kth_root.cpp)
-- (★★☆☆) [Euler のトーティエント関数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/euler_function.cpp)
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/floor_sum.cpp)
 - (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/gauss_integer.cpp)
 
@@ -627,7 +625,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual.cpp)
 - (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual_negative.cpp)
 - (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_circulating_flow.cpp)
-- (★★★★) 費用流の s-t パス・サイクルへの分解
+- (★★★★) [費用流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_decomposition.cpp)
 
 ## b-flow
 
@@ -906,6 +904,11 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
 - (★☆☆☆) [ハニカムの 6 近傍](https://github.com/drken1215/algorithm/blob/master/Others/honeycomb_neighbors.cpp)
+
+## 不等式の処理
+
+- (★☆☆☆) [負数にも対応した floor, ceil](https://github.com/drken1215/algorithm/blob/master/Others/floor_ceil.cpp)
+- (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/Others/kth_root.cpp)
 
 ## ソート
 
