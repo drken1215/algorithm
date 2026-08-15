@@ -77,11 +77,11 @@
 - (★★★☆) ハッシュ関数
 - (★★★☆) ハッシュ構造体
 
-## N 以下の非負整数の順序つき集合
+## N 以下の非負整数の順序付き集合
 
-- (★★☆☆) [N 以下の非負整数の順序つき集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
-- (★★★★) [N 以下の非負整数の順序つき集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
-- (★★★★) N 以下の非負整数の順序つき集合 (by van Emde Boas 木)
+- (★★☆☆) [N 以下の非負整数の順序付き集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
+- (★★★★) [N 以下の非負整数の順序付き集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
+- (★★★★) N 以下の非負整数の順序付き集合 (by van Emde Boas 木)
 
 ## その他
 
@@ -601,7 +601,7 @@
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_dinic.cpp)
 - (★★★☆) 最大流 (Push-Relabel 法)
-- (★★★☆) [最大流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_decomposition.cpp)
+- (★★★☆) [フローの s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_decomposition.cpp)
 
 ## 最小カット
 
@@ -615,6 +615,7 @@
 - (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual.cpp)
 - (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual_negative.cpp)
 - (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_circulating_flow.cpp)
+- (★★★★) 費用流の s-t パス・サイクルへの分解
 
 ## b-flow
 
@@ -626,9 +627,9 @@
 ## 二部マッチング
 
 - (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/hopcroft_karp.cpp)
-- (★★★☆) 重みつき二部マッチング (Hungarian 法)
+- (★★★☆) 重み付き二部マッチング (Hungarian 法)
 - (★★★★) 二部マッチングの bitset 高速化
-- (★★★★) アンバランス重みつき二部マッチング (in O((K^2 log N + K^3)N))
+- (★★★★) アンバランス重み付き二部マッチング (in O((K^2 log N + K^3)N))
 
 ## 二部マッチングの応用
 
@@ -675,10 +676,11 @@
 - (★★☆☆) 黄金探索法
 - (★★★☆) Newton 法
 
-## LP, IP, MIP
+## 制約付き最適化
 
 - (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
-- (★★★★) [ラグランジュ緩和 (俗称：Aliens Trick)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp.cpp)
+- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp.cpp)
+- (★★★★) [Alien's Trick --- min: f(x) s.t. L <= g(x) < R (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens_upper_lower.cpp.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
 
@@ -719,7 +721,7 @@
 - (★★★☆) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., N における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
 - (★★★★) Monge 単一始点 d-辺最短路問題 (by Aliens DP, in O(N log N))
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
