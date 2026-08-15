@@ -8,8 +8,9 @@
 
 |分類|内容|具体例|
 |---|---|---|
-|**[DATA STRUCTURE](#ds)**|各種データ構造|Union-Find、Sparse Table など|
+|**[DATA STRUCTURE : BASIC](#dsb)**|基礎的なデータ構造|Union-Find など|
 |**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
+|**[DATA STRUCTURE : ADVANCED](#dsa)**|その他の高度なデータ構造|永続データ構造など|
 |**[GEOMETRY](#ge)**|計算幾何|円の交点など|
 |**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
 |**[MATH : LINEAR ALGEBRA](#mla)**|線形代数アルゴリズム|行列計算など|
@@ -31,73 +32,59 @@
 - (★★★★)：高度典型、NoviSteps グレード基準で 4D 以上相当
 
 
+
+
 　
-
-<a name="ds"></a>
-
-# データ構造 (DATA STRUCTURE)
-各種データ構造の実装です。
+<a name="dsb"></a>
+# 基礎的な (DATA STRUCTURE : BASIC)
+Union-Find など、基礎的なデータ構造の実装です。
 
 ## Union-Find
 
-- (★☆☆☆) [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_size.cpp)
-- (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
-- (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
-- (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_enumerable.cpp)
-- (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
-- (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
-- (★★★★) 動的 Union-Find
-- (★★★★) 並列 Union-Find
-- (★★★★) 領域 Union-Find
-- (★★★★) 完全永続 Union-Find
+- (★☆☆☆) [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_size.cpp)
+- (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_rank.cpp)
+- (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/weighted_union_find.cpp)
+- (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_enumerable.cpp)
+- (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_can_undo.cpp)
+- (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/partially_persistent_union_find.cpp)
 
-## ヒープ
+## ヒープ・キュー
 
-- (★☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructure/heap.cpp)
-- (★★★★) Skew Heap (マージ可能ヒープ)
-- (★★★★) Paring Heap (マージ可能ヒープ)
-- (★★★★) Radix Heap
-- (★★★★) Fibonacci Heap
+- (★☆☆☆) [二分ヒープ](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/heap.cpp)
+- (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/removable_queue.cpp)
+- (★★★☆) [両端 priority queue (削除も可能)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/double_ended_priority_queue.cpp)
 
-## キュー
+## ハッシュ・ハッシュテーブル
 
-- (★★☆☆) [削除可能 priority queue](https://github.com/drken1215/algorithm/blob/master/DataStructure/removable_queue.cpp)
-- (★★★☆) [両端 priority queue (削除も可能)](https://github.com/drken1215/algorithm/blob/master/DataStructure/double_ended_priority_queue.cpp)
-- (★★★★) 永続 queue
-
-## ハッシュ
-
-- (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/hash.cpp)
-- (★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructure/zobrist_hash.cpp)
+- (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/hash.cpp)
+- (★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/zobrist_hash.cpp)
+- (★★★☆) [ハッシュテーブル (64 bit 整数用)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/fast_hash_table.cpp)
 - (★★★☆) 根付き木のハッシュ
 
-## ハッシュテーブル
+## 順序付き集合
 
-- (★★★☆) [ハッシュテーブル (64 bit 整数用)](https://github.com/drken1215/algorithm/blob/master/DataStructure/fast_hash_table.cpp)
-- (★★★☆) ハッシュ関数
-- (★★★☆) ハッシュ構造体
-
-## N 以下の非負整数の順序付き集合
-
-- (★★☆☆) [N 以下の非負整数の順序付き集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
-- (★★★★) [N 以下の非負整数の順序付き集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
-- (★★★★) N 以下の非負整数の順序付き集合 (by van Emde Boas 木)
+- (★★☆☆) [順序付き集合 (by std::set)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/predecessor_set.cpp)
+- (★★☆☆) [N 以下の非負整数の順序付き集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/predecessor_bit.cpp)
+- (★★★☆) [N 以下の非負整数の順序付き集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/predecessor_64_tree.cpp)
+- (★★★☆) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/binary_trie.cpp)
+- (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作である必要がある場合）](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/intervals_set.cpp)
+- (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作でなくてもよい場合](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/intervals_set_with_noninvertible_del.cpp)
 
 ## その他
 
-- (★★☆☆) [オンライン二部グラフ判定](https://github.com/drken1215/algorithm/blob/master/DataStructure/online_bipartite_judging.cpp)
+- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/cumulative_sum.cpp)
+- (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/cumulative_sum_2D.cpp)
+- (★★☆☆) [オンライン二部グラフ判定](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/online_bipartite_judging.cpp)
 - (★★☆☆) ダブリング
-- (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructure/parallel_binary_search.cpp)
-- (★★★★) [動的 BitSet](https://github.com/drken1215/algorithm/blob/master/DataStructure/dynamic_bitset.cpp)
-- (★★★★) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
-- (★★★★) Dynamic Connectivity
-- (★★★★) 永続配列
+- (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/sliding_minimum.cpp)
+- (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/swag.cpp)
+- (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/mo.cpp)
+
+
 
 
 　
-
 <a name="dss"></a>
-
 # 区間系データ構造 (DATA STRUCTURE : SEGMENT)
 セグメント木や BIT など、区間クエリに強いデータ構造の実装です。
 
@@ -107,9 +94,6 @@
 - (★★★☆) 双対セグメント木
 - (★★★☆) [遅延評価セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_lazy.cpp)
 - (★★★☆) [二次元セグメント木](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_2d.cpp)
-- (★★★★) 動的セグメント木
-- (★★★★) 動的二次元セグメント木
-- (★★★★) 永続セグメント木
 - (★★★★) Segment Tree Beats (俗称)
 
 ## さまざまなセグメント木
@@ -124,8 +108,6 @@
 - (★★★☆) [BIT (区間加算, 区間和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_RAQ.cpp)
 - (★★★☆) [二次元 BIT](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D.cpp)
 - (★★★★) [二次元 BIT (領域加算, 領域和取得に両対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/binary_indexed_tree_2D_RAQ.cpp)
-- (★★★★) 動的 BIT
-- (★★★★) 動的二次元 BIT
 
 ## セグメント木・BIT の応用
 
@@ -144,12 +126,6 @@
 - (★★★★) [ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
 - (★★★★) [BIT on ウェーブレット行列 (一点加算対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
 - (★★★★) [セグメント木 on ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_on_wavelet_matrix.cpp)
-- (★★★★) 動的ウェーブレット行列
-
-## 区間の集合を set で管理するテク (Interval Set)
-
-- (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作である必要がある場合）](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set.cpp)
-- (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作でなくてもよい場合](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/intervals_set_with_noninvertible_del.cpp)
 
 ## Splay 木
 
@@ -159,7 +135,6 @@
 ## 赤黒木
 
 - (★★★★) 赤黒木
-- (★★★★) 永続赤黒木
 
 ## その他平衡二分探索木
 
@@ -169,13 +144,49 @@
 - (★★★★) 遅延伝播反転可能 RBST
 - (★★★★) 遅延伝播反転可能 Treap
 
+
+
+
+　
+<a name="dsa"></a>
+# 高度なデータ構造 (DATA STRUCTURE : ADVANCED)
+その他の高度なデータ構造の実装です。
+
+## 高度なヒープ
+
+- (★★★★) Skew Heap (マージ可能ヒープ)
+- (★★★★) Paring Heap (マージ可能ヒープ)
+- (★★★★) Radix Heap
+- (★★★★) Fibonacci Heap
+
+## 動的データ構造
+
+- (★★★★) 動的 Union-Find
+- (★★★★) [動的 bitset](https://github.com/drken1215/algorithm/blob/master/DataStructureAdvanced/dynamic_bitset.cpp)
+- (★★★★) 動的セグメント木
+- (★★★★) 動的二次元セグメント木
+- (★★★★) 動的 BIT
+- (★★★★) 動的二次元 BIT
+- (★★★★) 動的ウェーブレット行列
+
+## 並列データ構造
+
+- (★★★★) 並列 Union-Find
+- (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructureAdvanced/parallel_binary_search.cpp)
+
+## 永続データ構造
+
+- (★★★★) 永続配列
+- (★★★★) 永続 queue
+- (★★★★) 永続セグメント木
+- (★★★★) 完全永続 Union-Find
+- (★★★★) 永続赤黒木
+
 ## その他
 
-- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum.cpp)
-- (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/cumulative_sum_2D.cpp)
-- (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/sliding_minimum.cpp)
-- (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/swag.cpp)
-- (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/mo.cpp)
+- (★★★★) 領域 Union-Find
+- (★★★★) Dynamic Connectivity
+
 
 
 
@@ -868,7 +879,7 @@
 ## さまざまな木
 
 - (★★★☆) Union-Find のマージ過程を表す木
-- (★★★☆) [Cartesian Tree](https://github.com/drken1215/algorithm/blob/master/DataStructure/cartesian_tree.cpp)
+- (★★★☆) [Cartesian Tree](https://github.com/drken1215/algorithm/blob/master/Tree/cartesian_tree.cpp)
 - (★★★☆) Auxiliary Tree
 - (★★★☆) Inclusion Tree
 

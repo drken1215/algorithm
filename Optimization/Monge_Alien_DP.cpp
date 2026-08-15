@@ -178,10 +178,10 @@ template<class VAL> struct MongeShortestPath {
     }
 };
 
-// Aliens DP
+// Alien DP
 // find the d-edges shortest path from vertex 0 on DAG by Lagrange relaxation
 // vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
-template<class VAL> struct AliensDP {
+template<class VAL> struct AlienDP {
     // inner values
     MongeShortestPath<VAL> msp;
     AliensTrick<VAL> at;
@@ -230,7 +230,7 @@ void ABC_218_H() {
         if (i == 0) return -A[j - 2];
         else return -A[i - 1] - A[j - 2];
     };
-    AliensDP<long long> ad;
+    AlienDP<long long> ad;
     //ad.debug(N, cost);
     auto [resR, cntR] = ad.solve(N, cost, R);
     auto [resB, cntB] = ad.solve(N, cost, N - R);
