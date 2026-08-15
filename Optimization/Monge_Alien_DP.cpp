@@ -1,5 +1,5 @@
 //
-// Monge 単一始点 d-辺最短路問題 (by Aliens DP), O(N (log N)^2)
+// Monge 単一始点 d-辺最短路問題 (by Alien DP), O(N (log N)^2)
 //   最短路問題を解くのには noshi's 簡易 LARSCH を用いる
 //
 // verified
@@ -13,6 +13,8 @@ using namespace std;
 
 
 /*
+    Alien's Trick (by ラグランジュ緩和)
+
     min_{x}: f(x) s.t. g(x) = K
     = max_{λ は整数}: min_{x} (f(x) + λ(g(x) - K))
 

@@ -669,14 +669,6 @@
 - (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
 - (★★★★) 最適二分探索木 (Hu-Tucker 法, in O(N log N))
 
-## 連続最適化
-
-- (★☆☆☆) 二次方程式
-- (★☆☆☆) 二分探索法 (方程式の解を 1 つ求める)
-- (★★☆☆) 三分探索法
-- (★★☆☆) 黄金探索法
-- (★★★☆) Newton 法
-
 ## 制約付き最適化
 
 - (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
@@ -718,7 +710,7 @@
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Aliens DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
