@@ -679,8 +679,8 @@
 ## 制約付き最適化
 
 - (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
-- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp.cpp)
-- (★★★★) [Alien's Trick --- min: f(x) s.t. L <= g(x) < R (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens_upper_lower.cpp.cpp)
+- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp)
+- (★★★★) [Alien's Trick --- min: f(x) s.t. L <= g(x) < R (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens_upper_lower.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) 分枝限定法
 
