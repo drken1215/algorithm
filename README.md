@@ -36,7 +36,7 @@
 
 　
 <a name="dsb"></a>
-# 基礎的な (DATA STRUCTURE : BASIC)
+# 基礎的なデータ構造 (DATA STRUCTURE : BASIC)
 Union-Find など、基礎的なデータ構造の実装です。
 
 ## Union-Find
@@ -755,7 +755,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## SAT
 
-- (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/Searcg/two_sat.cpp)
+- (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/Search/two_sat.cpp)
 - (★★★★) SAT Solver
 
 ## ヒューリスティック探索
