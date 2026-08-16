@@ -75,7 +75,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/cumulative_sum.cpp)
 - (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/cumulative_sum_2D.cpp)
 - (★★☆☆) [オンライン二部グラフ判定](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/online_bipartite_judging.cpp)
-- (★★☆☆) ダブリング
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/sliding_minimum.cpp)
 - (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/swag.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/mo.cpp)
@@ -300,7 +299,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - (★★★☆) [全頂点対間最短路 (Johnson 法, in O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
 - (★★★☆) [SPFA (Shortest Path Faster Algorithm)](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
-- (★★★★) 補グラフの最短路
 
 ## 全域木, 路
 
@@ -327,6 +325,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## その他
 
 - (★★★☆) [サイクル基底 (XOR 和をとるもの)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_basis.cpp)
+- (★★★★) 補グラフの最短路
 - (★★★★) 二部グラフの辺彩色 (Alon 法, in O(E log E))
 
 
@@ -575,7 +574,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [中国剰余定理 (Garner 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/garner.cpp)
 - (★★★★) [ペル方程式](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/Pell_equation.cpp)
 - (★★★★) [平方剰余 (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_sqrt.cpp)
-- (★★★★) [Kth Root (MOD) (Tonelli–Shanks 法)](https://github.com/drken1215/algorithm/blob/master/MathNumberTheory/mod_kth_root.cpp)
+- (★★★★) Kth Root (MOD) (Tonelli–Shanks 法)
 
 ## 多倍長整数
 
@@ -610,14 +609,13 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_ford_fulkerson.cpp)
 - (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_dinic.cpp)
-- (★★★☆) 最大流 (Push-Relabel 法)
+- (★★★☆) [最大流 (Push-Relabel 法, in O(V^2√E))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_push_relabel.cpp)
 - (★★★☆) [フローの s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_decomposition.cpp)
 
 ## 最小カット
 
 - (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cut.cpp)
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/stoer_wagner.cpp)
-- (★★★★) 全頂点対間最小カット (Nagamochi-Ibaraki 法, in O(VE + V^2 log V))
 - (★★★★) Gomory-Hu 木
 
 ## 最小費用流
@@ -659,6 +657,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_convex_flow.cpp)
 - (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_tension.cpp)
+- (★★★★) Longest Shortest Path
+
 
 
 
@@ -717,8 +717,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## Monge 最短路問題
 
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
+- (★★★★) Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))
+- (★★★★) Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
@@ -888,6 +888,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) 動的直径
 - (★★★☆) 動的 rerooting
 - (★★★★) Level Ancester
+
 
 
 
