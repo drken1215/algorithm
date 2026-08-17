@@ -1,22 +1,10 @@
 //
-// Monge 単一始点最短路
-//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monge であることを仮定
-//   O(N log N)
+// onge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))
 //
 // verified
 //   AtCoder EDPC Z - Frog 3
 //     https://atcoder.jp/contests/dp/tasks/dp_z 
 //
-//   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
-//     https://codeforces.com/contest/319/problem/C 
-// 
-//   yukicoder No.705 ゴミ拾い Hard
-//     https://yukicoder.me/problems/no/705 
-//
-// Reference:
-//   noshi: 簡易版 LARSCH Algorithm
-//     https://noshi91.hatenablog.com/entry/2023/02/18/005856
-//  
 
 
 #include <bits/stdc++.h>
