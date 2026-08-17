@@ -1,5 +1,5 @@
 //
-// s-t 費用流を、s-t パスとサイクルとに分解する
+// max-flow (by Push-Relabel), in O(V^2√E)
 //
 // reference;
 //   hitonanode: Maxflow (push-relabel, Goldberg & Tarjan) （Push-relabel による最大流）
@@ -68,6 +68,9 @@ template<class FLOW> struct FlowGraph {
     }
     size_t size() const noexcept {
         return list.size();
+    }
+    size_t size_edegs() const noexcept {
+        return pos.size();
     }
     FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
         return list[e.to][e.rev];
@@ -346,7 +349,7 @@ template<class FLOW> FLOW PushRelabel
         }
     };
 
-    // 1-step
+    // run
     auto run = [&](int t) -> void {
         global_relabeling(t);
         int tick = (int)G.pos.size() * GlobalRelabelRreq;
