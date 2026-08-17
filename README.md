@@ -713,14 +713,14 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
 - (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
 - (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
-
+1
 ## Monge 最短路問題
 
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
-- (★★★★) Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))
 - (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
+- (★★★★) [コストのスライドアクセス対応例](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding.cpp)
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
 ## その他 Monge 性, L 凸性

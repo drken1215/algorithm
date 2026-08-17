@@ -78,6 +78,9 @@ template<class FLOW> struct FlowGraph {
     size_t size() const noexcept {
         return list.size();
     }
+    size_t size_edegs() const noexcept {
+        return pos.size();
+    }
     FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
         return list[e.to][e.rev];
     }
@@ -401,6 +404,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
     }
     size_t size() const noexcept {
         return list.size();
+    }
+    size_t size_edegs() const noexcept {
+        return pos.size();
     }
     FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
         return list[e.to][e.rev];
