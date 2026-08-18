@@ -2113,15 +2113,18 @@ template<class FLOW> struct FlowGraph {
     
     // getter
     vector<FlowEdge<FLOW>> &operator [] (int i) {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     const vector<FlowEdge<FLOW>> &operator [] (int i) const {
-        assert(0 <= i && i < list.size());
+        assert(0 <= i && i < (int)list.size());
         return list[i];
     }
     size_t size() const noexcept {
         return list.size();
+    }
+    size_t size_edegs() const noexcept {
+        return pos.size();
     }
     FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
         return list[e.to][e.rev];
@@ -2158,7 +2161,7 @@ template<class FLOW> struct FlowGraph {
     
     // add_edge
     void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         int from_id = int(list[from].size()), to_id = int(list[to].size());
         if (from == to) to_id++;
@@ -2167,7 +2170,7 @@ template<class FLOW> struct FlowGraph {
         list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap, cap));
     }
     void add_bidirected_edge(int from, int to, FLOW cap) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         assert(cap >= 0);
         add_edge(from, to, cap, cap);
     }
@@ -2252,6 +2255,7 @@ template<class FLOW> struct FlowGraph {
             FLOW rem;
             int eidx;
         };
+        assert(is_feasible(s, t));
         vector<vector<Arc>> fg(list.size());
         for (int v = 0; v < (int)list.size(); v++) {
             for (int j = 0; j < (int)list[v].size(); j++) {
@@ -2440,6 +2444,9 @@ template<class FLOW, class COST> struct FlowCostGraph {
     }
     size_t size() const noexcept {
         return list.size();
+    }
+    size_t size_edegs() const noexcept {
+        return pos.size();
     }
     FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
         return list[e.to][e.rev];

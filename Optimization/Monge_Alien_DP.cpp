@@ -191,7 +191,8 @@ template<class VAL> struct AlienDP {
         auto lag = [&](VAL lambda) -> pair<VAL, VAL> {
             auto fg = [&](int i, int j) -> VAL { return f(i, j) + lambda; };
             const auto &obj = msp.solve(N, fg);
-            auto cnt = msp.cnt[N], res = obj.back().first - lambda * cnt;
+            auto cnt = msp.cnt[N];
+            auto res = obj.back().first - lambda * cnt;
             return {res, cnt};
         };
         return at.solve(lag, D);
@@ -202,7 +203,8 @@ template<class VAL> struct AlienDP {
         auto lag = [&](VAL lambda) -> void {
             auto fg = [&](int i, int j) -> VAL { return f(i, j) + lambda; };
             const auto &dp = msp.solve(N, fg);
-            auto cnt = msp.cnt[N], res = dp.back().first - lambda * cnt;
+            auto cnt = msp.cnt[N];
+            auto res = dp.back().first - lambda * cnt;
             cout << lambda << ": " << res << "(" << cnt << "); (";
             for (int i = 0; i < (int)dp.size(); i++) {
                 if (i) cout << " ";

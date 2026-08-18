@@ -195,7 +195,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 幾何 (GEOMETRY)
 幾何アルゴリズムです。
 
-- (★★★☆) [全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
+- (★★★☆) [幾何 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Geometry/All.cpp)
 
 ## 基本要素
 
@@ -399,7 +399,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 形式的冪級数 (FPS)
 
-- (★★★★) [形式的冪級数：全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/formal_power_series.cpp)
+- (★★★★) [FPS 全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/formal_power_series.cpp)
 - (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/inv_formal_power_series.cpp)
 - (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/exp_formal_power_series.cpp)
 - (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/log_formal_power_series.cpp)
@@ -605,6 +605,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 # ネットワークフロー (NETWORK FLOW)
 ネットワークフロー関連のアルゴリズムです。
 
+- (★★★★) [フロー 全部乗せ](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/flow_all.cpp)
+
 ## 最大流
 
 - (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_ford_fulkerson.cpp)
@@ -716,11 +718,12 @@ Union-Find など、基礎的なデータ構造の実装です。
 1
 ## Monge 最短路問題
 
+- (★★★★) [Monge 最短路問題 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_shortest_path_all.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
-- (★★★★) [コストのスライドアクセス対応例](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding.cpp)
+- (★★★★) [辺コストのスライドアクセスへの対応例](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding.cpp)
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
 ## その他 Monge 性, L 凸性

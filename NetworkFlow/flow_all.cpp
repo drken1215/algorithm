@@ -1,0 +1,1838 @@
+//
+// Monge 最短路問題に関するアルゴリズム ほぼ全集
+//
+// verified
+//
+//
+//
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// edge class (for max-flow)
+template<class FLOW> struct FlowEdge {
+    // core members
+    int rev, from, to;
+    FLOW cap, icap, flow;
+    
+    // constructor
+    constexpr FlowEdge() noexcept = default;
+    constexpr FlowEdge(int rev, int from, int to, FLOW cap, FLOW rcap = 0) 
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream& s, const FlowEdge& e) {
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ")";
+    }
+};
+
+// graph class (for max-flow)
+template<class FLOW> struct FlowGraph {
+    // core members
+    vector<vector<FlowEdge<FLOW>>> list;
+    vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
+    
+    // constructor
+    FlowGraph(int n = 0) : list(n) { }
+    void init(int n = 0) {
+        list.clear(), list.resize(n);
+        pos.clear();
+    }
+    void clear() {
+        list.clear(), pos.clear();
+    }
+    
+    // getter
+    vector<FlowEdge<FLOW>> &operator [] (int i) {
+        assert(0 <= i && i < (int)list.size());
+        return list[i];
+    }
+    const vector<FlowEdge<FLOW>> &operator [] (int i) const {
+        assert(0 <= i && i < (int)list.size());
+        return list[i];
+    }
+    size_t size() const noexcept {
+        return list.size();
+    }
+    size_t size_edegs() const noexcept {
+        return pos.size();
+    }
+    FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) {
+        return list[e.to][e.rev];
+    }
+    const FlowEdge<FLOW> &get_rev_edge(const FlowEdge<FLOW> &e) const {
+        return list[e.to][e.rev];
+    }
+    FlowEdge<FLOW> &get_edge(int i) {
+        return list[pos[i].first][pos[i].second];
+    }
+    const FlowEdge<FLOW> &get_edge(int i) const {
+        return list[pos[i].first][pos[i].second];
+    }
+    vector<FlowEdge<FLOW>> get_edges() const {
+        vector<FlowEdge<FLOW>> edges;
+        for (int i = 0; i < (int)pos.size(); ++i) {
+            edges.push_back(get_edge(i));
+        }
+        return edges;
+    }
+    
+    // change edges
+    void reset() const {
+        for (int i = 0; i < (int)list.size(); ++i) {
+            for (FlowEdge<FLOW> &e : list[i]) e.reset();
+        }
+    }
+    void change_edge(FlowEdge<FLOW> &e, FLOW new_cap, FLOW new_rcap) {
+        assert(new_cap >= 0 && new_rcap >= 0);
+        FlowEdge<FLOW> &re = get_rev_edge(e);
+        e.cap = new_cap, e.icap = new_cap + new_rcap, e.flow = new_rcap;
+        re.cap = new_rcap, re.icap = new_cap + new_rcap, re.flow = new_cap;
+    }
+    
+    // add_edge
+    void add_edge(int from, int to, FLOW cap, FLOW rcap = 0) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
+        assert(cap >= 0);
+        int from_id = int(list[from].size()), to_id = int(list[to].size());
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowEdge<FLOW>(to_id, from, to, cap, rcap));
+        list[to].push_back(FlowEdge<FLOW>(from_id, to, from, rcap, cap));
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap);
+    }
+
+    // augment
+    FLOW augment(int s, int t, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        return dfs(dfs, s, up_flow);
+    };
+
+    // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
+    vector<int> find_cut(int s, int t) const {
+        vector<int> res(size(), 0);
+        auto dfs_s = [&](auto &&dfs_s, int v) -> void {
+            res[v] = 1;
+            for (const auto &e : list[v]) {
+                if (res[e.to] || e.cap <= 0) continue;
+                dfs_s(dfs_s, e.to);
+            }
+        };
+        auto dfs_t = [&](auto &&dfs_t, int v) -> void {
+            res[v] = -1;
+            for (const auto &e : list[v]) {
+                auto re = get_rev_edge(e);
+                if (res[e.to] || re.cap <= 0) continue;
+                dfs_t(dfs_t, e.to);
+            }
+        };
+        dfs_s(dfs_s, s), dfs_t(dfs_t, t);
+        return res;
+    }
+
+    // check if the s-t flow is feasible
+    bool is_feasible(int s, int t) const {
+        vector<FLOW> b(list.size(), FLOW(0));
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (const auto &e : list[v]) {
+                b[v] += (e.flow - get_rev_edge(e).flow) / 2;
+            }
+        }
+        if (b[s] + b[t] != 0) return false;
+        for (int v = 0; v < (int)list.size(); v++) {
+            if (v != s && v != t && b[v] != FLOW(0)) return false;
+        }
+        return true;
+    }
+    bool is_feasible(int s, int t, FLOW flow) const {
+        vector<FLOW> b(list.size(), FLOW(0));
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (const auto &e : list[v]) {
+                b[v] += (e.flow - get_rev_edge(e).flow) / 2;
+            }
+        }
+        if (b[s] != flow) return false;
+        if (b[t] != -flow) return false;
+        for (int v = 0; v < (int)list.size(); v++) {
+            if (v != s && v != t && b[v] != FLOW(0)) return false;
+        }
+        return true;
+    }
+
+    // decompose flow into s-t simple paths and cycles
+    using Path = vector<FlowEdge<FLOW>>;
+    pair<vector<Path>, vector<Path>> decompose(int s, int t) const {
+        struct Arc {
+            int to;
+            FLOW rem;
+            int eidx;
+        };
+        assert(is_feasible(s, t));
+        vector<vector<Arc>> fg(list.size());
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (int j = 0; j < (int)list[v].size(); j++) {
+                FLOW f = list[v][j].icap - list[v][j].cap;
+                if (f > 0) fg[v].push_back({list[v][j].to, f, j});
+            }
+        }
+        vector<int> ptr(list.size(), 0), onpath(list.size(), -1);
+        vector<pair<int, int>> route;
+        vector<int> used;
+        vector<Path> paths, cycles;
+
+        auto next_arc = [&](int v) -> int {
+            while (ptr[v] < (int)fg[v].size() && fg[v][ptr[v]].rem <= 0) ptr[v]++;
+            return (ptr[v] < (int)fg[v].size() ? ptr[v] : -1);
+        };
+        auto extract = [&](int begin, bool is_cycle) {
+            FLOW mi = numeric_limits<FLOW>::max();
+            for (int k = begin; k < (int)route.size(); k++) {
+                auto [v, i] = route[k];
+                mi = min(mi, fg[v][i].rem);
+            }
+            vector<FlowEdge<FLOW>> seq;
+            for (int k = begin; k < (int)route.size(); k++) {
+                auto [v, i] = route[k];
+                fg[v][i].rem -= mi;
+                FlowEdge<FLOW> e = list[v][fg[v][i].eidx];
+                e.flow = mi;
+                seq.push_back(e);
+            }
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
+        };
+        auto walk = [&](int start, bool stop_at_t) {
+            route.clear();
+            int v = start;
+            onpath[v] = 0;
+            used.push_back(v);
+            while (true) {
+                int i = next_arc(v), u = fg[v][i].to;
+                route.push_back({v, i});
+                if (stop_at_t && u == t) {
+                    extract(0, false);
+                    break;
+                }
+                if (onpath[u] != -1) {
+                    extract(onpath[u], true);
+                    break;
+                }
+                onpath[u] = (int)route.size();
+                used.push_back(u);
+                v = u;
+            }
+            for (int w : used) onpath[w] = -1;
+            used.clear();
+        };
+
+        // extract all s-t paths
+        while (next_arc(s) != -1) walk(s, true);
+
+        // decompose remained circulation into cycles
+        for (int v = 0; v < (int)list.size(); v++) while (next_arc(v) != -1) walk(v, false);
+
+        return {paths, cycles};
+    }
+
+    // debug
+    friend ostream& operator << (ostream& s, const FlowGraph &G) {
+        const auto &edges = G.get_edges();
+        for (const auto &e : edges) s << e << endl;
+        return s;
+    }
+};
+
+// Dinic
+template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
+    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    FLOW current_flow = 0;
+    vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
+    
+    // Dinic BFS
+    auto bfs = [&]() -> void {
+        level.assign((int)G.size(), -1);
+        level[s] = 0;
+        queue<int> que;
+        que.push(s);
+        while (!que.empty()) {
+            int v = que.front();
+            que.pop();
+            for (const FlowEdge<FLOW> &e : G[v]) {
+                if (level[e.to] < 0 && e.cap > 0) {
+                    level[e.to] = level[v] + 1;
+                    if (e.to == t) return;
+                    que.push(e.to);
+                }
+            }
+        }
+    };
+    
+    // Dinic DFS
+    auto dfs = [&](auto self, int v, FLOW up_flow) {
+        if (v == t) return up_flow;
+        FLOW res_flow = 0;
+        for (int &i = iter[v]; i < (int)G[v].size(); ++i) {
+            FlowEdge<FLOW> &e = G[v][i], &re = G.get_rev_edge(e);
+            if (level[v] >= level[e.to] || e.cap <= 0) continue;
+            FLOW flow = self(self, e.to, min(up_flow - res_flow, e.cap));
+            if (flow <= 0) continue;
+            res_flow += flow;
+            e.cap -= flow, e.flow += flow;
+            re.cap += flow, re.flow -= flow;
+            if (res_flow == up_flow) break;
+        }
+        return res_flow;
+    };
+    
+    // flow
+    while (current_flow < limit_flow) {
+        bfs();
+        if (level[t] < 0) break;
+        iter.assign((int)iter.size(), 0);
+        while (current_flow < limit_flow) {
+            FLOW flow = dfs(dfs, s, limit_flow - current_flow);
+            if (flow <= 0) break;
+            current_flow += flow;
+        }
+    }
+    return current_flow;
+};
+
+template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
+    return Dinic(G, s, t, numeric_limits<FLOW>::max());
+}
+
+// edge class (for min-cost flow)
+template<class FLOW, class COST> struct FlowCostEdge {
+    // core members
+    int rev, from, to;
+    FLOW cap, icap, flow;
+    COST cost;
+    
+    // constructor
+    constexpr FlowCostEdge() noexcept = default;
+    constexpr FlowCostEdge(int rev, int from, int to, FLOW cap, COST cost)
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(0), cost(cost) {
+    }
+    constexpr FlowCostEdge(int rev, int from, int to, FLOW cap, FLOW rcap, COST cost)
+        : rev(rev), from(from), to(to), cap(cap), icap(cap), flow(rcap), cost(cost) {
+    }
+    void reset() { 
+        flow -= icap - cap;
+        cap = icap;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream& s, const FlowCostEdge& e) {
+        return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.flow << ", " << e.cost << ")";
+    }
+};
+
+// graph class (for min-cost flow)
+template<class FLOW, class COST> struct FlowCostGraph {
+    // core members
+    vector<vector<FlowCostEdge<FLOW, COST>>> list;
+    vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
+    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool include_negative_edge = false;
+    
+    // constructor
+    FlowCostGraph(int n = 0) : list(n), pot(n), include_negative_edge(false) { }
+    void init(int n = 0) {
+        list.clear(), list.resize(n);
+        pos.clear();
+        pot.assign(n, 0);
+        include_negative_edge = false;
+    }
+    
+    // getter
+    vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) {
+        assert(0 <= i && i < (int)list.size());
+        return list[i];
+    }
+    const vector<FlowCostEdge<FLOW, COST>> &operator [] (int i) const {
+        assert(0 <= i && i < (int)list.size());
+        return list[i];
+    }
+    size_t size() const noexcept {
+        return list.size();
+    }
+    size_t size_edegs() const noexcept {
+        return pos.size();
+    }
+    FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) {
+        return list[e.to][e.rev];
+    }
+    const FlowCostEdge<FLOW, COST> &get_rev_edge(const FlowCostEdge<FLOW, COST> &e) const {
+        return list[e.to][e.rev];
+    }
+    FlowCostEdge<FLOW, COST> &get_edge(int i) {
+        return list[pos[i].first][pos[i].second];
+    }
+    const FlowCostEdge<FLOW, COST> &get_edge(int i) const {
+        return list[pos[i].first][pos[i].second];
+    }
+    vector<FlowCostEdge<FLOW, COST>> get_edges() const {
+        vector<FlowCostEdge<FLOW, COST>> edges;
+        for (int i = 0; i < (int)pos.size(); ++i) {
+            edges.push_back(get_edge(i));
+        }
+        return edges;
+    }
+    
+    // change edges
+    void reset() {
+        for (int i = 0; i < (int)list.size(); ++i) {
+            for (FlowCostEdge<FLOW, COST> &e : list[i]) e.reset();
+        }
+    }
+    
+    // add_edge
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
+        assert(cap >= 0);
+        int from_id = (int)list[from].size(), to_id = (int)list[to].size();
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, 0, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, 0, cap, -cost));
+        if (cost < 0) include_negative_edge = true;
+    }
+    void add_edge(int from, int to, FLOW cap, FLOW rcap, COST cost) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
+        assert(cap >= 0);
+        int from_id = (int)list[from].size(), to_id = (int)list[to].size();
+        if (from == to) to_id++;
+        pos.emplace_back(from, from_id);
+        list[from].push_back(FlowCostEdge<FLOW, COST>(to_id, from, to, cap, rcap, cost));
+        list[to].push_back(FlowCostEdge<FLOW, COST>(from_id, to, from, rcap, cap, -cost));
+        if (cost < 0) include_negative_edge = true;
+    }
+    void add_bidirected_edge(int from, int to, FLOW cap, COST cost) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
+        assert(cap >= 0);
+        add_edge(from, to, cap, cap, cost);
+    }
+
+    // find initial potential (to resolve initial negative-edge)
+    // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    bool calc_potential_dag() {
+        pot.assign(size(), 0);
+        vector<int> deg(size(), 0), st;
+        for (int v = 0; v < (int)size(); v++) for (const auto &e : list[v]) deg[e.to] += (e.cap > 0);
+        st.reserve(size());
+        for (int v = 0; v < (int)size(); v++) if (!deg[v]) st.emplace_back(v);
+        for (int i = 0; i < (int)size(); i++) {
+            if ((int)st.size() == i) return false;  // not DAG
+            int cur = st[i];
+            for (const auto &e : list[cur]) {
+                if (e.cap <= 0) continue;
+                deg[e.to]--;
+                if (deg[e.to] == 0) st.emplace_back(e.to);
+                if (pot[e.to] >= pot[cur] + e.cost) pot[e.to] = pot[cur] + e.cost;
+            }
+        }
+        return true;
+    }
+    bool calc_potential_spfa() {
+        pot.assign(size(), 0);
+        queue<int> que;
+        vector<bool> inque(size(), false);
+        vector<int> cnt(size(), 0);
+        for (int v = 0; v < (int)size(); v++) que.push(v), inque[v] = true;
+        while (!que.empty()) {
+            int cur = que.front();
+            que.pop();
+            inque[cur] = false;
+            if (cnt[cur] > (int)size()) return false;  // include negative-cycle
+            cnt[cur]++;
+            for (const auto &e : list[cur]) {
+                if (e.cap <= 0) continue;
+                if (pot[e.to] > pot[cur] + e.cost) {
+                    pot[e.to] = pot[cur] + e.cost;
+                    if (!inque[e.to]) inque[e.to] = true, que.push(e.to);
+                }
+            }
+        }
+        return true;
+    }
+    bool calc_potential() {
+        return calc_potential_dag() || calc_potential_spfa();
+    }
+    bool init_potential() {
+        if (!include_negative_edge) return true;
+        return calc_potential();
+    }
+
+    // decompose flow into s-t simple paths and cycles
+    using Path = vector<FlowCostEdge<FLOW, COST>>;
+    pair<vector<Path>, vector<Path>> decompose(int s, int t) const {
+        struct Arc {
+            int to;
+            FLOW rem;
+            int eidx;
+        };
+        vector<vector<Arc>> fg(list.size());
+        for (int v = 0; v < (int)list.size(); v++) {
+            for (int j = 0; j < (int)list[v].size(); j++) {
+                FLOW f = list[v][j].icap - list[v][j].cap;
+                if (f > 0) fg[v].push_back({list[v][j].to, f, j});
+            }
+        }
+        vector<Path> paths, cycles;
+
+        auto build = [&](const vector<pair<int,int>> &route, bool is_cycle) {
+            FLOW mi = numeric_limits<FLOW>::max();
+            for (auto [v,i] : route) mi = min(mi, fg[v][i].rem);
+            vector<FlowCostEdge<FLOW,COST>> seq;
+            for (auto [v,i] : route) {
+                fg[v][i].rem -= mi;
+                FlowCostEdge<FLOW,COST> e = list[v][fg[v][i].eidx];
+                e.flow = mi;
+                seq.push_back(e);
+            }
+            if (is_cycle) cycles.push_back(std::move(seq));
+            else paths.push_back(std::move(seq));
+        };
+
+        // Phase 1: extract all cycles and make graph DAG
+        const int NOTSEEN = 0, INSTACK = 1, FINISH = 2;
+        vector<int> color(list.size(), NOTSEEN);
+        vector<int> pos_in_stack(list.size(), -1);
+        vector<pair<int, int>> stk;
+        auto dfs = [&](auto &&dfs, int v) -> bool {
+            color[v] = INSTACK;
+            pos_in_stack[v] = (int)stk.size();
+            for (int i = 0; i < (int)fg[v].size(); i++) {
+                if (fg[v][i].rem <= 0) continue;
+                int u = fg[v][i].to;
+                if (color[u] == INSTACK) {
+                    vector<pair<int,int>> route;
+                    for (int k = pos_in_stack[u]; k < (int)stk.size(); k++) {
+                        route.push_back(stk[k]);
+                    }
+                    route.push_back({v, i});
+                    build(route, true);
+                    return true;
+                }
+                if (color[u] == NOTSEEN) {
+                    stk.push_back({v, i});
+                    if (dfs(dfs, u)) return true;
+                    stk.pop_back();
+                }
+            }
+            color[v] = FINISH;
+            pos_in_stack[v] = -1;
+            return false;
+        };
+        while (true) {
+            fill(color.begin(), color.end(), NOTSEEN);
+            stk.clear();
+            bool found = false;
+            for (int v = 0; v < (int)list.size() && !found; v++) {
+                if (color[v] == NOTSEEN && dfs(dfs, v)) found = true;
+            }
+            if (!found) break;
+        }
+
+        // Phase 2: find all s-t paths
+        vector<int> ptr(list.size(), 0);
+        auto next_arc = [&](int v) -> int {
+            while (ptr[v] < (int)fg[v].size() && fg[v][ptr[v]].rem <= 0) ptr[v]++;
+            return ptr[v] < (int)fg[v].size() ? ptr[v] : -1;
+        };
+        while (next_arc(s) != -1) {
+            vector<pair<int,int>> route;
+            int v = s;
+            while (v != t) {
+                int i = next_arc(v);
+                route.push_back({v, i});
+                v = fg[v][i].to;
+            }
+            build(route, false);
+        }
+        return {paths, cycles};
+    }
+
+    // debug
+    friend ostream& operator << (ostream& s, const FlowCostGraph &G) {
+        const auto &edges = G.get_edges();
+        for (const auto &e : edges) s << e << endl;
+        return s;
+    }
+};
+
+// min-cost max-flow (<= limit_flow), slope ver.
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
+{
+    // result values
+    FLOW cur_flow = 0;
+    COST cur_cost = 0, pre_cost = numeric_limits<COST>::max() / 2;
+    vector<pair<FLOW, COST>> res;
+    res.emplace_back(cur_flow, cur_cost);
+    
+    // intermediate values
+    vector<COST> dist((int)G.size(), numeric_limits<COST>::max() / 2);
+    vector<int> prevv((int)G.size(), -1), preve((int)G.size(), -1);
+    
+    // dual
+    auto dual_step = [&]() -> bool {
+        dist.assign((int)G.size(), numeric_limits<COST>::max() / 2);
+        dist[S] = 0;
+        priority_queue<pair<COST,int>, vector<pair<COST,int>>, greater<pair<COST,int>>> que;
+        que.emplace(0, S);
+        while (!que.empty()) {
+            auto [cur, v] = que.top();
+            que.pop();
+            if (cur > dist[v]) continue;
+            for (int i = 0; i < (int)G[v].size(); i++) {
+                const auto &e = G[v][i];
+                COST add = e.cost + G.pot[v] - G.pot[e.to];
+                if (e.cap > 0 && dist[e.to] > dist[v] + add) {
+                    dist[e.to] = dist[v] + add;
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    que.emplace(dist[e.to], e.to);
+                }
+            }
+        }
+        return dist[T] < numeric_limits<COST>::max() / 2;
+    };
+    
+    // primal
+    auto primal_step = [&]() -> void {
+        for (int v = 0; v < G.size(); v++) {
+            if (dist[v] < numeric_limits<COST>::max() / 2) G.pot[v] += dist[v];
+            else G.pot[v] = numeric_limits<COST>::max() / 2;
+        }
+        FLOW flow = limit_flow - cur_flow;
+        COST cost = G.pot[T] - G.pot[S];
+        for (int v = T; v != S; v = prevv[v]) {
+            flow = min(flow, G[prevv[v]][preve[v]].cap);
+        }
+        for (int v = T; v != S; v = prevv[v]) {
+            FlowCostEdge<FLOW, COST> &e = G[prevv[v]][preve[v]];
+            FlowCostEdge<FLOW, COST> &re = G.get_rev_edge(e);
+            e.cap -= flow, e.flow += flow;
+            re.cap += flow, re.flow -= flow;
+        }
+        cur_flow += flow;
+        cur_cost += flow * cost;
+        if (pre_cost == cost) res.pop_back();
+        res.emplace_back(cur_flow, cur_cost);
+        pre_cost = cost;
+    };
+
+    // initialize potential
+    assert(G.init_potential());
+    
+    // primal-dual
+    while (cur_flow < limit_flow) {
+        if (!dual_step()) break;
+        primal_step();
+    }
+    return res;
+}
+
+// min-cost max-flow, slope ver.
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T)
+{
+    return MinCostFlowSlope(G, S, T, numeric_limits<FLOW>::max());
+}
+
+// min-cost max-flow (<= limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
+{
+    return MinCostFlowSlope(G, S, T, limit_flow).back();
+}
+
+// min-cost max-flow (<= limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
+{
+    return MinCostFlow(G, S, T, numeric_limits<FLOW>::max());
+}
+
+
+// Min Cost Circulation Flow by Cost-Scaling 
+template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
+    COST eps = 0;
+    vector<FLOW> balance(G.size(), 0);
+    vector<COST> price(G.size(), 0);
+    
+    auto newcost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
+        return e.cost * (COST)G.size() - price[e.from] + price[e.to];
+    };
+
+    auto ConstructGaux = [&]() -> void {
+        vector<bool> visited(G.size(), false);
+        auto dfs = [&](auto &&dfs, int v) -> void {
+            visited[v] = true;
+            for (int i = 0; i < G[v].size(); ++i) {
+                FlowCostEdge<FLOW, COST> &e = G[v][i];
+                if (e.cap > 0 && !visited[e.to] && newcost(e) < 0) dfs(dfs, e.to);
+            }
+        };
+        for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) dfs(dfs, v);
+        for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
+    };
+
+    auto augment_blocking_flow = [&]() -> bool {
+        vector<int> iter(G.size(), 0);
+        auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
+            if (balance[v] < 0) {
+                FLOW dif = min(flow, -balance[v]);
+                balance[v] += dif;
+                return dif;
+            }
+            for (; iter[v] < G[v].size(); iter[v]++) {
+                auto &e = G[v][iter[v]], &re = G.get_rev_edge(e);
+                if (e.cap > 0 && newcost(e) < 0) {
+                    FLOW dif = augment(augment, e.to, min(flow, e.cap));
+                    if (dif > 0) {
+                        e.cap -= dif, e.flow += dif;
+                        re.cap += dif, re.flow -= dif;
+                        return dif;
+                    }
+                }
+            }
+            return 0;
+        };
+        bool finish = true;
+        for (int v = 0; v < G.size(); ++v) {
+            FLOW flow;
+            while (balance[v] > 0 && (flow = augment(augment, v, balance[v])) > 0)
+                balance[v] -= flow;
+            if (balance[v] > 0) finish = false;
+        }
+        if (finish) return true;
+        else return false;
+    };
+
+    for (int v = 0; v < G.size(); ++v) {
+        for (int i = 0; i < G[v].size(); ++i) {
+            FlowCostEdge<FLOW, COST> &e = G[v][i];
+            if (e.cap > 0) eps = max(eps, -e.cost * (COST)G.size());
+        }
+        price[v] = 0;
+    }
+    while (eps > 1) {
+        eps /= 2;
+        for (int v = 0; v < G.size(); ++v) {
+            for (int i = 0; i < G[v].size(); ++i) {
+                auto &e = G[v][i], &re = G.get_rev_edge(e);
+                if (e.cap > 0 && newcost(e) < 0) {
+                    FLOW flow = e.cap;
+                    balance[e.from] -= flow, balance[e.to] += flow;
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                }
+            }
+        }
+        while (true) {
+            ConstructGaux();
+            if (augment_blocking_flow()) break;
+        }
+    }
+    COST res = 0;
+    const auto &edges = G.get_edges();
+    for (const auto &e : edges) res += e.flow * e.cost;
+    return res;
+}
+
+// Maximum b-flow
+template<class FLOW> struct MaxBFlow {
+    // Edge
+    struct Edge {
+        int from, to;
+        FLOW lower_cap, upper_cap, flow;
+
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to 
+            << '(' << e.lower_cap << '~' << e.upper_cap << ')';
+        }
+    };
+
+    // inner values
+    int V;
+    vector<Edge> edges;
+    vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
+    FlowGraph<FLOW> G;
+
+    // constructor
+    MaxBFlow() {}
+    MaxBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW cap) {
+        assert(cap >= 0);
+        edges.push_back({from, to, 0, cap, 0});
+    }
+    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap) {
+        assert(lower_cap <= upper_cap);
+        edges.push_back({from, to, lower_cap, upper_cap, 0});
+    }
+    void set_ds(int v, FLOW ds) {
+        assert(0 <= v && v < V);
+        lower_dss[v] = ds, upper_dss[v] = ds;
+    }
+    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
+        assert(0 <= v && v < V);
+        assert(lower_ds <= upper_ds);
+        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // solver
+    pair<bool, FLOW> solve(int s, int t) {
+        assert(0 <= s && s < V);
+        assert(0 <= t && t < V);
+        assert(s != t);
+
+        // lower_ds, upper_ds -> strict ds
+        int super = V;
+        vector<FLOW> dss(V + 1, 0);
+        for (int i = 0; i < V; i++) {
+            if (lower_dss[i] == upper_dss[i]) dss[i] = lower_dss[i];
+            else if (lower_dss[i] >= 0) {
+                add_edge(super, i, lower_dss[i], upper_dss[i]);
+            } else if (upper_dss[i] < 0) {
+                add_edge(i, super, -upper_dss[i], -lower_dss[i]);
+            } else {
+                add_edge(super, i, upper_dss[i]);
+                add_edge(i, super, -lower_dss[i]);
+            }
+        }
+
+        // pre-flow lower_cap
+        G.init(V + 3);
+        for (const auto &e : edges) {
+            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
+            G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
+        }
+
+        // ds -> s2, t2
+        int s2 = V + 1, t2 = V + 2;
+        FLOW ssum = 0, tsum = 0;
+        for (int i = 0; i < V + 1; i++) {
+            if (dss[i] > 0) ssum += dss[i], G.add_edge(s2, i, dss[i]);
+            else if (dss[i] < 0) tsum -= dss[i], G.add_edge(i, t2, -dss[i]);
+        }
+        if (ssum != tsum) return {false, FLOW(-1)};
+
+        // main solver
+        FLOW a = Dinic(G, s2, t2);
+        FLOW b = Dinic(G, s2, t);
+        FLOW c = Dinic(G, s, t2); 
+        FLOW d = Dinic(G, s, t);
+        if (a + b != ssum || a + c != tsum) return {false, FLOW(-1)};
+        else return {true, c + d};
+    }
+};
+
+// Minimum Cost b-flow (come down to min-cost circulation)
+template<class FLOW, class COST> struct MinCostBFlow {
+    // Edge
+    struct Edge {
+        int from, to;
+        FLOW lower_cap, upper_cap, flow;
+        COST cost;
+
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to 
+            << '(' << e.lower_cap << '~' << e.upper_cap << ';' << e.cost << ')';
+        }
+    };
+
+    // inner values
+    int V;
+    vector<Edge> edges;
+    vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
+    vector<COST> dual;
+    FlowCostGraph<FLOW, COST> G;
+
+    // constructor
+    MinCostBFlow() {}
+    MinCostBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.push_back({from, to, 0, cap, 0, cost});
+    }
+    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
+        assert(lower_cap <= upper_cap);
+        edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
+    }
+    void set_ds(int v, FLOW ds) {
+        assert(0 <= v && v < V);
+        lower_dss[v] = ds, upper_dss[v] = ds;
+    }
+    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
+        assert(0 <= v && v < V);
+        assert(lower_ds <= upper_ds);
+        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // solver
+    pair<bool, COST> solve(bool calc_potential = true) {
+        // lower_ds, upper_ds -> strict ds
+        int super = V;
+        vector<FLOW> dss(V + 1, 0);
+        for (int i = 0; i < V; i++) {
+            if (lower_dss[i] == upper_dss[i]) dss[i] = lower_dss[i];
+            else if (lower_dss[i] >= 0) {
+                add_edge(super, i, lower_dss[i], upper_dss[i], 0);
+            } else if (upper_dss[i] < 0) {
+                add_edge(i, super, -upper_dss[i], -lower_dss[i], 0);
+            } else {
+                add_edge(super, i, upper_dss[i], 0);
+                add_edge(i, super, -lower_dss[i], 0);
+            }
+        }
+
+        // pre-flow lower_cap
+        FlowGraph<FLOW> sg(V + 3);
+        int s = V + 1, t = V + 2;
+        for (const auto &e : edges) {
+            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
+            sg.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
+        }
+
+        // ds -> s, t
+        FLOW ssum = 0, tsum = 0;
+        for (int i = 0; i < V + 1; i++) {
+            if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
+            else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
+        }
+
+        // feasibility check
+        if (ssum != tsum) return {false, COST(0)};
+        if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
+
+        // come down to min-cost circulation
+        G.init(V + 1);
+        for (int i = 0; i < (int)edges.size(); i++) {
+            auto &e = edges[i];
+            const auto &ge = sg.get_edge(i);
+            G.add_edge(ge.from, ge.to, ge.cap, ge.flow, e.cost);
+        }
+        MinCostCirculation(G);
+
+        // find min-cost
+        COST res = 0;
+        for (int i = 0; i < (int)edges.size(); i++) {
+            auto &e = edges[i];
+            const auto &ge = G.get_edge(i);
+            e.flow = e.upper_cap - ge.cap;
+            res += e.flow * e.cost;
+        }
+
+        // find dual
+        if (calc_potential) {
+            G.calc_potential();
+            dual = G.pot;
+            dual.pop_back();  // eliminate super-node
+        }
+        return {true, res};
+    }
+};
+
+// Hopcroft-Karp
+struct HopcroftKarp {
+    const int NOT_MATCHED = -1;
+    
+    // input
+    int size_left, size_right;
+    vector<vector<int>> list; // left to right
+    vector<vector<int>> rlist; // right to left
+
+    // results
+    vector<int> lr, rl;
+    
+    // intermediate results
+    vector<bool> seen, matched;
+    vector<int> level;
+    
+    // constructor
+    HopcroftKarp(int L, int R) : size_left(L), size_right(R), list(L), rlist(R) {}
+    void add_edge(int from, int to) {
+        assert(from >= 0 && from < size_left);
+        assert(to >= 0 && to < size_right);
+        list[from].emplace_back(to);
+        rlist[to].emplace_back(from);
+    }
+
+    // getter, debugger
+    const vector<int> &operator [] (int i) const { 
+        return list[i];
+    }
+    friend ostream& operator << (ostream& s, const HopcroftKarp& G) {
+        s << endl;
+        for (int i = 0; i < (int)G.list.size(); ++i) {
+            s << i << ": ";
+            for (int j = 0; j < (int)G.list[i].size(); ++j) {
+                s << G.list[i][j];
+                if (j + 1 != (int)G.list[i].size()) s << ", ";
+            }
+            s << endl;
+        }
+        return s;
+    }
+    
+    // solver
+    void hobfs() {
+        queue<int> que;
+        for (int left = 0; left < size_left; ++left) {
+            level[left] = -1;
+            if (!matched[left]) {
+                que.push(left);
+                level[left] = 0;
+            }
+        }
+        level[size_left] = size_left;
+        while (!que.empty()) {
+            int left = que.front();
+            que.pop();
+            for (int right : list[left]) {
+                int next = rl[right];
+                if (next == NOT_MATCHED) next = size_left;
+                if (level[next] == -1) {
+                    level[next] = level[left] + 1;
+                    que.push(next);
+                }
+            }
+        }
+    }
+    bool hodfs(int left) {
+        if (left == size_left) return true;
+        if (seen[left]) return false;
+        seen[left] = true;
+        for (int right : list[left]) {
+            int next = rl[right];
+            if (next == NOT_MATCHED) next = size_left;
+            if (level[next] > level[left] && hodfs(next)) {
+                lr[left] = right;
+                rl[right] = left;
+                return true;
+            }
+        }
+        return false;
+    }
+    int solve() {
+        seen.assign(size_left, false);
+        matched.assign(size_left, false);
+        level.assign(size_left + 1, -1);
+        lr.assign(size_left, -1);
+        rl.assign(size_right, -1);
+        int res = 0;
+        while (true) {
+            hobfs();
+            seen.assign(size_left, false);
+            bool finished = true;
+            for (int left = 0; left < size_left; ++left) {
+                if (!matched[left] && hodfs(left)) {
+                    matched[left] = true;
+                    ++res;
+                    finished = false;
+                }
+            }
+            if (finished) break;
+        }
+        for (int r = 0; r < size_right; r++) {
+            if (rl[r] != NOT_MATCHED) lr[rl[r]] = r;
+        }
+        return res;
+    }
+
+    // various construction
+    // max matching
+    vector<pair<int,int>> get_matching() {
+        vector<pair<int,int>> res;
+        for (int v = 0; v < size_left; v++) {
+            if (lr[v] == NOT_MATCHED) continue;
+            res.emplace_back(v, lr[v]);
+        }
+        return res;
+    }
+
+    // enumerate reachable nodes (0: left, 1: right)
+    const int LEFT = 0, RIGHT = 1;
+    pair<vector<bool>, vector<bool>> get_reachable() {
+        vector<bool> can_left(size_left, false);
+        vector<bool> can_right(size_right, false);
+        queue<pair<int,int>> que;
+        for (int v = 0; v < size_left; v++) {
+            if (lr[v] == NOT_MATCHED) {
+                can_left[v] = true;
+                que.push({LEFT, v});
+            }
+        }
+        while (!que.empty()) {
+            auto [which, v] = que.front();
+            que.pop();
+            if (which == LEFT) {
+                for (auto r : list[v]) {
+                    if (!can_right[r]) {
+                        can_right[r] = true;
+                        que.push({RIGHT, r});
+                    }
+                }
+            } else {
+                int l = rl[v];
+                if (l != NOT_MATCHED && !can_left[l]) {
+                    can_left[l] = true;
+                    que.push({LEFT, l});
+                }
+            }
+        }
+        return {can_left, can_right};
+    }
+
+    // max independent set (0: left, 1: right)
+    vector<pair<int,int>> get_independent_set() {
+        vector<pair<int,int>> res;
+        auto [can_left, can_right] = get_reachable();
+        for (int v = 0; v < size_left; v++) {
+            if (can_left[v]) res.emplace_back(LEFT, v);
+        }
+        for (int v = 0; v < size_right; v++) {
+            if (!can_right[v]) res.emplace_back(RIGHT, v);
+        }
+        return res;
+    }
+
+    // min vertex-cover (0: left, 1: right)
+    vector<pair<int,int>> get_vertex_cover() {
+        vector<pair<int,int>> res;
+        auto [can_left, can_right] = get_reachable();
+        for (int v = 0; v < size_left; v++) {
+            if (!can_left[v]) res.emplace_back(LEFT, v);
+        }
+        for (int v = 0; v < size_right; v++) {
+            if (can_right[v]) res.emplace_back(RIGHT, v);
+        }
+        return res;
+    }
+
+    // min edge-cover (0: left, 1: right)
+    vector<pair<int,int>> get_edge_cover() {
+        vector<pair<int,int>> res = get_matching();
+        for (int v = 0; v < size_left; v++) {
+            if (list[v].empty()) return vector<pair<int,int>>();  // infeasible
+            if (lr[v] == NOT_MATCHED) res.emplace_back(v, list[v][0]);
+        }
+        for (int v = 0; v < size_right; v++) {
+            if (rlist[v].empty()) return vector<pair<int,int>>();  // infeasible
+            if (rl[v] == NOT_MATCHED) res.emplace_back(rlist[v][0], v);
+        }
+        return res;
+    }
+};
+
+// DAG min path-cover by Hopcroft-Karp
+struct DagPathCover {
+    const int NOT_MATCHED = -1;
+    
+    // input
+    int V;
+    vector<vector<int>> list; // left to right
+
+    // results
+    vector<int> lr, rl;
+    
+    // intermediate results
+    vector<vector<int>> rlist; // right to left
+    vector<bool> seen, matched;
+    vector<int> level;
+    
+    // constructor
+    DagPathCover(int V) : V(V), list(V), rlist(V) {}
+    void add_edge(int from, int to) {
+        assert(from >= 0 && from < V);
+        assert(to >= 0 && to < V);
+        list[from].emplace_back(to);
+        rlist[to].emplace_back(from);
+    }
+
+    // getter, debugger
+    vector<int> &operator [] (int i) { return list[i]; }
+    const vector<int> &operator [] (int i) const { return list[i]; }
+    constexpr int size() const { return V; }
+    friend ostream& operator << (ostream& s, const DagPathCover& G) {
+        s << endl;
+        for (int i = 0; i < (int)G.list.size(); ++i) {
+            s << i << ": ";
+            for (int j = 0; j < (int)G.list[i].size(); ++j) {
+                s << G.list[i][j];
+                if (j + 1 != (int)G.list[i].size()) s << ", ";
+            }
+            s << endl;
+        }
+        return s;
+    }
+    
+    // solver
+    void hobfs() {
+        queue<int> que;
+        for (int left = 0; left < V; ++left) {
+            level[left] = -1;
+            if (!matched[left]) {
+                que.push(left);
+                level[left] = 0;
+            }
+        }
+        level[V] = V;
+        while (!que.empty()) {
+            int left = que.front();
+            que.pop();
+            for (int right : list[left]) {
+                int next = rl[right];
+                if (next == NOT_MATCHED) next = V;
+                if (level[next] == -1) {
+                    level[next] = level[left] + 1;
+                    que.push(next);
+                }
+            }
+        }
+    }
+    bool hodfs(int left) {
+        if (left == V) return true;
+        if (seen[left]) return false;
+        seen[left] = true;
+        for (int right : list[left]) {
+            int next = rl[right];
+            if (next == NOT_MATCHED) next = V;
+            if (level[next] > level[left] && hodfs(next)) {
+                lr[left] = right;
+                rl[right] = left;
+                return true;
+            }
+        }
+        return false;
+    }
+    int solve() {
+        seen.assign(V, false);
+        matched.assign(V, false);
+        level.assign(V + 1, -1);
+        lr.assign(V, -1);
+        rl.assign(V, -1);
+        int max_matching = 0;
+        while (true) {
+            hobfs();
+            seen.assign(V, false);
+            bool finished = true;
+            for (int left = 0; left < V; ++left) {
+                if (!matched[left] && hodfs(left)) {
+                    matched[left] = true;
+                    ++max_matching;
+                    finished = false;
+                }
+            }
+            if (finished) break;
+        }
+        for (int r = 0; r < V; r++) {
+            if (rl[r] != NOT_MATCHED) lr[rl[r]] = r;
+        }
+        return V - max_matching;
+    }
+
+    // max stable set
+    vector<int> get_stable_set() {
+        vector<int> res;
+        for (int v = 0; v < V; v++) {
+            if (rl[v] == NOT_MATCHED) res.emplace_back(v);
+        }
+        return res;
+    }
+
+    // min path cover
+    vector<vector<int>> get_path_cover() {
+        auto srcs = get_stable_set();
+        vector<vector<int>> res;
+        for (auto s : srcs) {
+            vector<int> path;
+            int v = s;
+            while (v != NOT_MATCHED) {
+                path.emplace_back(v);
+                v = lr[v];
+            }
+            res.emplace_back(path);
+        }
+        return res;
+    }
+};
+
+// 1, 2, 3-variable submodular optimization
+/*
+ N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
+ 
+ ・1 変数 xi に関するコスト (1 変数劣モジュラ関数)
+    xi = F のときのコスト, xi = T のときのコスト
+ 
+ ・2 変数 xi, xj 間の関係性についてのコスト (2 変数劣モジュラ関数)
+ 　　(xi, xj) = (F, F): コスト A
+ 　　(xi, xj) = (F, T): コスト B
+ 　　(xi, xj) = (T, F): コスト C
+ 　　(xi, xj) = (T, T): コスト D
+ 　(ただし、B + C >= A + D でなければならない)
+ 
+ ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
+    ・この場合は、特に Project Selection Problem と呼ばれ、俗に「燃やす埋める」などとも呼ばれる
+    ・xi = T, xj = F のときにコスト C がかかる
+ 
+ ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
+    ・xi = T, xj = T のときに (-D) の利得が得られる
+ 
+ ・3 変数 xi, xj, xk 間の関係性についてのコスト (3 変数劣モジュラ関数)
+ 　　(xi, xj, xk) = (F, F, F): コスト A
+ 　　(xi, xj, xk) = (F, F, T): コスト B
+ 　　(xi, xj, xk) = (F, T, F): コスト C
+ 　　(xi, xj, xk) = (F, T, T): コスト D
+ 　　(xi, xj, xk) = (T, F, F): コスト E
+ 　　(xi, xj, xk) = (T, F, T): コスト F
+ 　　(xi, xj, xk) = (T, T, F): コスト G
+ 　　(xi, xj, xk) = (T, T, T): コスト H
+ */
+// 1, 2, 3-variable submodular optimization
+template<class COST> struct ThreeVariableSubmodularOpt {
+    // constructors
+    ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
+    ThreeVariableSubmodularOpt(int n, COST inf = numeric_limits<COST>::max() / 2)
+    : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
+    
+    // initializer
+    void init(int n, COST inf = numeric_limits<COST>::max() / 2) {
+        N = n, S = n, T = n + 1;
+        OFFSET = 0, INF = inf;
+        list.clear();
+        list.resize(N + 2);
+        pos.clear();
+    }
+
+    // add constant cost
+    void add_cost(COST cost) {
+        OFFSET += cost;
+    }
+
+    // add 1-variable submodular function
+    void add_single_cost(int xi, COST false_cost, COST true_cost) {
+        assert(0 <= xi && xi < N);
+        if (false_cost >= true_cost) {
+            OFFSET += true_cost;
+            if (false_cost - true_cost > 0) add_edge(S, xi, false_cost - true_cost);
+        } else {
+            OFFSET += false_cost;
+            add_edge(xi, T, true_cost - false_cost);
+        }
+    }
+    void add_single_cost_01(int xi, COST false_cost, COST true_cost) {
+        add_single_cost(xi, false_cost, true_cost);
+    }
+    
+    // add "project selection" constraint
+    // xi = T, xj = F: strictly prohibited
+    void add_psp_constraint(int xi, int xj) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        add_edge(xi, xj, INF);
+    }
+    void add_psp_constraint_01(int xi, int xj) {
+        add_psp_constraint(xj, xi);
+    }
+    void add_psp_constraint_10(int xi, int xj) {
+        add_psp_constraint(xi, xj);
+    }
+    
+    // add "project selection" penalty
+    // xi = T, xj = F: cost C
+    void add_psp_penalty(int xi, int xj, COST C) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(C >= 0);
+        if (C > 0) add_edge(xi, xj, C);
+    }
+    void add_psp_penalty_01(int xi, int xj, COST C) {
+        add_psp_penalty(xj, xi, C);
+    }
+    void add_psp_penalty_10(int xi, int xj, COST C) {
+        add_psp_penalty(xi, xj, C);
+    }
+    
+    // add both True profit
+    // xi = T, xj = T: profit P (cost -P)
+    void add_both_true_profit(int xi, int xj, COST P) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(P >= 0);
+        OFFSET -= P;
+        if (P > 0) add_edge(S, xi, P);
+        if (P > 0) add_edge(xi, xj, P);
+    }
+    
+    // add both False profit
+    // xi = F, xj = F: profit P (cost -P)
+    void add_both_false_profit(int xi, int xj, COST P) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(P >= 0);
+        OFFSET -= P;
+        if (P > 0) add_edge(xj, T, P);
+        if (P > 0) add_edge(xi, xj, P);
+    }
+    
+    // add general 2-variable submodular function
+    // (xi, xj) = (F, F): A, (F, T): B
+    // (xi, xj) = (T, F): C, (T, T): D
+    void add_submodular_function(int xi, int xj, COST A, COST B, COST C, COST D) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(B + C >= A + D);  // assure submodular function
+        OFFSET += A;
+        add_single_cost(xi, 0, D - B);
+        add_single_cost(xj, 0, B - A);
+        if (B + C - A - D > 0) add_psp_penalty(xi, xj, B + C - A - D);
+    }
+    
+    // add all True profit
+    // y = F: not gain profit (= cost is P), T: gain profit (= cost is 0)
+    // y: T, xi: F is prohibited
+    void add_all_true_profit(const vector<int> &xs, COST P) {
+        assert(P >= 0);
+        int y = (int)list.size();
+        list.resize(y + 1);
+        OFFSET -= P;
+        add_edge(S, y, P);
+        for (auto xi : xs) {
+            assert(xi >= 0 && xi < N);
+            add_edge(y, xi, INF);
+        }
+    }
+    
+    // add all False profit
+    // y = F: gain profit (= cost is 0), T: not gain profit (= cost is P)
+    // xi = T, y = F is prohibited
+    void add_all_false_profit(const vector<int> &xs, COST P) {
+        assert(P >= 0);
+        int y = (int)list.size();
+        list.resize(y + 1);
+        OFFSET -= P;
+        add_edge(y, T, P);
+        for (auto xi : xs) {
+            assert(xi >= 0 && xi < N);
+            add_edge(xi, y, INF);
+        }
+    }
+    
+    // add general 3-variable submodular function
+    // (xi, xj, xk) = (F, F, F): cost A
+    // (xi, xj, xk) = (F, F, T): cost B
+    // (xi, xj, xk) = (F, T, F): cost C
+    // (xi, xj, xk) = (F, T, T): cost D
+    // (xi, xj, xk) = (T, F, F): cost E
+    // (xi, xj, xk) = (T, F, T): cost F
+    // (xi, xj, xk) = (T, T, F): cost G
+    // (xi, xj, xk) = (T, T, T): cost H
+    void add_submodular_function(int xi, int xj, int xk,
+                                 COST A, COST B, COST C, COST D,
+                                 COST E, COST F, COST G, COST H) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(0 <= xk && xk < N);
+        COST P = (A + D + F + G) - (B + C + E + H);
+        COST P12 = (C + E) - (A + G), P13 = (D + G) - (C + H);
+        COST P21 = (D + F) - (B + H), P23 = (B + C) - (A + D);
+        COST P31 = (B + E) - (A + F), P32 = (F + G) - (E + H);
+        assert(P12 >= 0 && P21 >= 0);
+        assert(P23 >= 0 && P32 >= 0);
+        assert(P31 >= 0 && P13 >= 0);
+        if (P >= 0) {
+            OFFSET += A;
+            add_single_cost(xi, 0, F - B);
+            add_single_cost(xj, 0, G - E);
+            add_single_cost(xk, 0, D - C);
+            add_psp_penalty(xj, xi, P12);
+            add_psp_penalty(xk, xj, P23);
+            add_psp_penalty(xi, xk, P31);
+            add_all_true_profit({xi, xj, xk}, P);
+        } else {
+            OFFSET += H;
+            add_single_cost(xi, C - G, 0);
+            add_single_cost(xj, B - D, 0);
+            add_single_cost(xk, E - F, 0);
+            add_psp_penalty(xi, xj, P21);
+            add_psp_penalty(xj, xk, P32);
+            add_psp_penalty(xk, xi, P13);
+            add_all_false_profit({xi, xj, xk}, -P);
+        }
+    }
+    
+    // solve
+    COST solve() {
+        return dinic() + OFFSET;
+    }
+    
+    // reconstrcut the optimal assignment
+    vector<bool> reconstruct() {
+        vector<bool> res(N, false), seen(list.size(), false);
+        queue<int> que;
+        seen[S] = true;
+        que.push(S);
+        while (!que.empty()) {
+            int v = que.front();
+            que.pop();
+            for (const auto &e : list[v]) {
+                if (e.cap > 0 && !seen[e.to]) {
+                    if (e.to < N) res[e.to] = true;
+                    seen[e.to] = true;
+                    que.push(e.to);
+                }
+            }
+        }
+        return res;
+    }
+    
+    // debug
+    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &tvs) {
+        const auto &edges = tvs.get_edges();
+        for (const auto &e : edges) s << e << endl;
+        return s;
+    }
+    
+private:
+    // edge class
+    struct Edge {
+        // core members
+        int rev, from, to;
+        COST cap;
+        
+        // constructor
+        Edge(int r, int f, int t, COST c) : rev(r), from(f), to(t), cap(c) {}
+        
+        // debug
+        friend ostream& operator << (ostream& s, const Edge& e) {
+            return s << e.from << "->" << e.to << '(' << e.cap << ')';
+        }
+    };
+    
+    // inner data
+    int N, S, T;
+    COST OFFSET, INF;
+    vector<vector<Edge>> list;
+    vector<pair<int,int>> pos;
+    
+    // add edge
+    Edge &get_rev_edge(const Edge &e) {
+        return list[e.to][e.rev];
+    }
+    Edge &get_edge(int i) {
+        return list[pos[i].first][pos[i].second];
+    }
+    const Edge &get_edge(int i) const {
+        return list[pos[i].first][pos[i].second];
+    }
+    vector<Edge> get_edges() const {
+        vector<Edge> edges;
+        for (int i = 0; i < (int)pos.size(); ++i) {
+            edges.push_back(get_edge(i));
+        }
+        return edges;
+    }
+    void add_edge(int from, int to, COST cap) {
+        if (cap <= 0) return;
+        pos.emplace_back(from, (int)list[from].size());
+        list[from].push_back(Edge((int)list[to].size(), from, to, cap));
+        list[to].push_back(Edge((int)list[from].size() - 1, to, from, 0));
+    }
+    
+    // Dinic's algorithm
+    COST dinic(COST limit_flow) {
+        COST current_flow = 0;
+        vector<int> level((int)list.size(), -1), iter((int)list.size(), 0);
+        queue<int> que;
+        
+        // Dinic BFS
+        auto bfs = [&]() -> void {
+            fill(level.begin(), level.end(), -1);
+            level[S] = 0;
+            while (!que.empty()) que.pop();
+            que.push(S);
+            while (!que.empty()) {
+                int v = que.front();
+                que.pop();
+                for (const Edge &e : list[v]) {
+                    if (level[e.to] < 0 && e.cap > 0) {
+                        level[e.to] = level[v] + 1;
+                        if (e.to == T) return;
+                        que.push(e.to);
+                    }
+                }
+            }
+        };
+        
+        // Dinic DFS
+        auto dfs = [&](auto self, int v, COST up_flow) {
+            if (v == S) return up_flow;
+            COST res_flow = 0;
+            for (int &i = iter[v]; i < (int)list[v].size(); i++) {
+                Edge &e = list[v][i], &re = get_rev_edge(e);
+                if (level[v] <= level[e.to] || re.cap <= 0) continue;
+                COST flow = self(self, e.to, min(up_flow - res_flow, re.cap));
+                if (flow <= 0) continue;
+                res_flow += flow;
+                e.cap += flow, re.cap -= flow;
+                if (res_flow == up_flow) return res_flow;
+            }
+            level[v] = (int)list.size();
+            return res_flow;
+        };
+        
+        // flow
+        while (current_flow < limit_flow) {
+            bfs();
+            if (level[T] < 0) break;
+            fill(iter.begin(), iter.end(), 0);
+            while (current_flow < limit_flow) {
+                COST flow = dfs(dfs, T, limit_flow - current_flow);
+                if (flow <= 0) break;
+                current_flow += flow;
+            }
+        }
+        return current_flow;
+    };
+    COST dinic() {
+        return dinic(numeric_limits<COST>::max() / 2);
+    }
+};
+
+// K-value Two Variable Monge Function Optimization 
+/*
+    X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
+
+    X[i] < d -> x[i][d] = 1
+    X[i] = d -> x[i][1] = 0, ..., x[i][d] = 0, x[i][d+1] = 1, ..., x[i][K] = 1
+
+    X[i] = 0   -> (1, 1, 1, ..., 1, 1)
+    X[i] = 1   -> (0, 1, 1, ..., 1, 1)
+    X[i] = 2   -> (0, 0, 1, ..., 1, 1)
+    ...
+    X[i] = K-2 -> (0, 0, 0, ..., 0, 1)
+    X[i] = K-1 -> (0, 0, 0, ..., 0, 0)
+ */
+template<class COST> struct TwoVariableMongeOpt {
+    // inner data
+    int N, N01;
+    COST INF;
+    vector<int> ks;  // size of x[i]
+    vector<vector<int>> x;  // index of x[i][k] in normal submodular optimization
+    ThreeVariableSubmodularOpt<COST> tvs;
+
+    // constructors
+    TwoVariableMongeOpt() {}
+    TwoVariableMongeOpt(int N, int K, COST inf = numeric_limits<COST>::max() / 2) {
+        vector<int> ks(N, K);
+        init(ks, inf);
+    }
+    TwoVariableMongeOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
+        init(ks, inf);
+    }
+    void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {
+        N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
+        x.resize(N);
+        for (int i = 0; i < N; i++) {
+            assert(ks[i] >= 2);
+            x[i].assign(ks[i], 0);
+            for (int k = 1; k < ks[i]; k++) x[i][k] = N01++;
+        }
+        tvs.init(N01, INF);
+        for (int i = 0; i < N; i++) {
+            for (int k = 1; k < ks[i] - 1; k++) {
+                tvs.add_psp_constraint(x[i][k], x[i][k + 1]);
+            }
+        }
+    }
+
+    // add constant cost
+    void add_cost(COST cost) {
+        tvs.add_cost(cost);
+    }
+
+    // add 1-variable function
+    void add_single_cost(int xi, const vector<COST> &cost) {
+        assert(0 <= xi && xi < N);
+        assert((int)cost.size() == ks[xi]);
+        tvs.add_cost(cost[ks[xi] - 1]);
+        for (int k = 1; k < ks[xi]; k++) {
+            tvs.add_single_cost(x[xi][k], 0, cost[k-1] - cost[k]);
+        }
+    }
+
+    // add 2-variable Monge function
+    // cost[i][j]+cost[i+1][j+1] <= cost[i+1][j]+cost[i][j+1]
+    void add_monge_function(int xi, int xj, vector<vector<COST>> cost) {
+        assert(0 <= xi && xi < N);
+        assert(0 <= xj && xj < N);
+        assert(xi != xj);
+        assert(cost.size() == ks[xi]);
+        assert(cost[0].size() == ks[xj]);
+        vector<COST> icost(ks[xi]), jcost(ks[xj]);
+        for (int ki = 0; ki < ks[xi]; ki++) {
+            icost[ki] = cost[ki][0];
+            for (int kj = 0; kj < ks[xj]; kj++) cost[ki][kj] -= icost[ki];
+        }
+        for (int kj = 0; kj < ks[xj]; kj++) {
+            jcost[kj] = cost[0][kj];
+            for (int ki = 0; ki < ks[xi]; ki++) cost[ki][kj] -= jcost[kj];
+        }
+        add_single_cost(xi, icost), add_single_cost(xj, jcost);
+        for (int ki = 1; ki < ks[xi]; ki++) {
+            for (int kj = 1; kj < ks[xj]; kj++) {
+                COST c = cost[ki][kj] - cost[ki][kj-1] - cost[ki-1][kj] + cost[ki-1][kj-1];
+                assert(c <= 0);
+                tvs.add_both_false_profit(x[xi][ki], x[xj][kj], -c);
+            }
+        }
+    }
+
+    // solve
+    COST solve() {
+        return tvs.solve();
+    }
+    
+    // reconstrcut the optimal assignment
+    vector<int> reconstruct() {
+        vector<int> res(N, 0);
+        vector<bool> tres = tvs.reconstruct();
+        for (int i = 0; i < N; i++) for (int ki = 1; ki < ks[i]; ki++) {
+            res[i] += not tres[x[i][ki]];
+        }
+        return res;
+    }
+};
+
+// min-cost tension
+/*
+    min_{p}: 
+        Σ_{v} b(v)p(v) + Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
+    s.t.
+        p(v) - p(u) <= d(e)
+    ->
+        b-flow (with demand-suply: b)
+        edge 
+            obj func: e = (u, v) with capacity c(e), cost l(e)
+            constraint: e = (u, v) with capacity INF, cost d(e)
+        optimal value *= -1
+
+    in general:
+        Σ_{v} b(v)p(v) + Σ_{e} f(p(v) - p(u)), where f is concave
+*/
+template<class FLOW, class COST> struct MinCostTension {
+    // inner values
+    int N;
+    COST OFFSET = 0;
+    MinCostBFlow<FLOW, COST> opt;
+
+    // constructor
+    MinCostTension() : OFFSET(0) {}
+    MinCostTension(int n) : N(n), OFFSET(0), opt(N) {}
+    void init(int n) {
+        N = n;
+        OFFSET = 0;
+        opt.init(n);
+    }
+
+    // add constant cost
+    void add_cost(COST cost) {
+        OFFSET += cost;
+    }
+
+    // add the part of obj func Σ_{v}b(v)p(v)
+    void add_single_coef(int v, FLOW b) {
+        assert(0 <= v && v < N);
+        assert(opt.lower_dss[v] == opt.upper_dss[v]);
+        opt.set_ds(v, opt.lower_dss[v] + b);
+    }
+
+    // add tha part of obj func Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
+    void add_tension_cost(int u, int v, FLOW c, COST l) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        assert(c >= 0);
+        opt.add_edge(u, v, c, l);
+    }
+
+    // add constraint p(v) - p(u) <= d
+    void add_tension_constraint(int u, int v, FLOW inf, COST d) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        opt.add_edge(u, v, inf, d);
+    }
+
+    // テンション p[v] - p[u] に関する区分線形凸関数 f を足す
+    // f を (min_{f}, 傾きが 0 以下・0 以上の部分の傾きの変化点の多重集合）で表す
+    // 変化点の多重集合を (変化点, 変化量) の vector で表す
+    void add_tension_convex_function(int u, int v, 
+    COST mif, const vector<pair<COST,FLOW>> &left, const vector<pair<COST,FLOW>> &right) {
+        assert(0 <= u && u < N);
+        assert(0 <= v && v < N);
+        assert(u != v);
+        add_cost(mif);
+        for (auto [x, d] : left) add_tension_cost(v, u, d, -x);
+        for (auto [x, d] : right) add_tension_cost(u, v, d, x);
+    }
+
+    // solver
+    pair<bool, COST> solve(bool calc_potential = true) {
+        auto [flag, cost] = opt.solve(calc_potential);
+        return make_pair(flag, OFFSET - cost);
+    }
+    vector<FLOW> reconstruct() {
+        return opt.dual;
+    }
+};
+
+
+//------------------------------//
+// Examples
+//------------------------------//
+
+int main () {
+
+}

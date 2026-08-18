@@ -26,6 +26,8 @@ using namespace std;
 
 
 /*
+    Alien's Trick (by ラグランジュ緩和)
+
     min_{x}: f(x) s.t. g(x) = K
     = max_{λ は整数}: min_{x} (f(x) + λ(g(x) - K))
 
@@ -197,7 +199,7 @@ template<class VAL> struct MongeShortestPath {
 // Aliens DP
 // find the d-edges shortest path from vertex 0 on DAG by Lagrange relaxation
 // vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
-template<class VAL> struct AliensDP {
+template<class VAL> struct AlienDP {
     // inner values
     MongeShortestPath<VAL> msp;
     AliensTrick<VAL> at;
@@ -207,7 +209,8 @@ template<class VAL> struct AliensDP {
         auto lag = [&](VAL lambda) -> pair<VAL, VAL> {
             auto fg = [&](int i, int j) -> VAL { return f(i, j) + lambda; };
             const auto &obj = msp.solve(N, fg);
-            auto cnt = msp.cnt[N], res = obj.back().first - lambda * cnt;
+            auto cnt = msp.cnt[N];
+            auto res = obj.back().first - lambda * cnt;
             return {res, cnt};
         };
         return at.solve(lag, D);
@@ -218,7 +221,8 @@ template<class VAL> struct AliensDP {
         auto lag = [&](VAL lambda) -> void {
             auto fg = [&](int i, int j) -> VAL { return f(i, j) + lambda; };
             const auto &dp = msp.solve(N, fg);
-            auto cnt = msp.cnt[N], res = dp.back().first - lambda * cnt;
+            auto cnt = msp.cnt[N];
+            auto res = dp.back().first - lambda * cnt;
             cout << lambda << ": " << res << "(" << cnt << "); (";
             for (int i = 0; i < (int)dp.size(); i++) {
                 if (i) cout << " ";
@@ -246,7 +250,7 @@ void ABC_218_H() {
         if (i == 0) return -A[j - 2];
         else return -A[i - 1] - A[j - 2];
     };
-    AliensDP<long long> ad;
+    AlienDP<long long> ad;
     //ad.debug(N, cost);
     auto [resR, cntR] = ad.solve(N, cost, R);
     auto [resB, cntB] = ad.solve(N, cost, N - R);
