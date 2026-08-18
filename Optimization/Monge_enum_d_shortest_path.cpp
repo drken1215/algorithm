@@ -5,6 +5,9 @@
 //   yukicoder No.952 危険な火薬庫
 //     https://yukicoder.me/problems/no/952
 //
+//   Monoxer Programming Contest for Engineers K - Coupon
+//     https://mofecoder.com/contests/monoxercon_202508/tasks/monoxercon_202508_k
+//
 
 
 #include <bits/stdc++.h>
@@ -99,7 +102,64 @@ void yukicoder_952() {
     for (int k = 1; k <= N; k++) cout << res[N + 1 - k] << endl;
 }
 
+// Monoxer Programming Contest for Engineers K - Coupon
+/*
+    f(i, j) = (S[j] - S[i]) - max_{i ≦ k < j} A[k] / 2 + (j - i - 1)^2
+*/
+template<class MeetSemiLattice> struct SparseTable {
+    using Func = function<MeetSemiLattice(MeetSemiLattice, MeetSemiLattice)>;
+
+    // core member
+    Func OP = [](const MeetSemiLattice &l, const MeetSemiLattice &r) {
+        return min(l, r);
+    };
+    vector<vector<MeetSemiLattice>> dat;
+    vector<int> height;
+    
+    SparseTable() {}
+    SparseTable(const vector<MeetSemiLattice> &vec) {
+        init(vec);
+    }
+    SparseTable(const vector<MeetSemiLattice> &vec, const Func &op)  {
+        init(vec, op);
+    }
+    void init(const vector<MeetSemiLattice> &vec) {
+        int n = (int)vec.size(), h = 1;
+        while ((1<<h) <= n) ++h;
+        dat.assign(h, vector<MeetSemiLattice>(1<<h));
+        height.assign(n+1, 0);
+        for (int i = 2; i <= n; i++) height[i] = height[i>>1]+1;
+        for (int i = 0; i < n; ++i) dat[0][i] = vec[i];
+        for (int i = 1; i < h; ++i) {
+            for (int j = 0; j < n; ++j)
+                dat[i][j] = OP(dat[i-1][j], dat[i-1][min(j+(1<<(i-1)),n-1)]);
+        }
+    }
+    void init(const vector<MeetSemiLattice> &vec, const Func &op) {
+        OP = op;
+        init(vec);
+    }
+    
+    MeetSemiLattice get(int a, int b) {
+        return OP(dat[height[b-a]][a], dat[height[b-a]][b-(1<<height[b-a])]);
+    }
+};
+void MonoxerCoupon() {
+    long long N;
+    cin >> N;
+    vector<long long> A(N), S(N+1, 0);
+    for (int i = 0; i < N; i++) cin >> A[i], S[i+1] = S[i] + A[i];
+    SparseTable<long long> sparsetable(A, [](long long p, long long q){return max(p, q);});
+    auto f = [&](int i, int j) -> long long {
+        return S[j] - S[i] - sparsetable.get(i, j)/2 + (j - i - 1) * (j - i - 1);
+    };
+    MongeShortestPathWithDEdges<long long> msp;
+    auto res = msp.solve(N, f, N);
+    for (int i = 1; i <= N; i++) cout << res[i] << endl;
+}
+
 
 int main() {
-    yukicoder_952();
+    //yukicoder_952();
+    MonoxerCoupon();
 }
