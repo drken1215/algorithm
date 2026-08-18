@@ -16,6 +16,90 @@ using namespace std;
 
 
 //------------------------------//
+// Utility
+//------------------------------//
+
+using ll = long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
+using pint = pair<int, int>;
+using pll = pair<long long, long long>;
+using tll = array<long long, 3>;
+using fll = array<long long, 4>;
+using vint = vector<int>;
+using vll = vector<long long>;
+using dint = deque<int>;
+using dll = deque<long long>;
+using vvint = vector<vector<int>>;
+using vvll = vector<vector<long long>>;
+using vpll = vector<pair<long long, long long>>;
+template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+
+template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
+template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
+template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
+template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
+template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
+template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
+template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
+template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
+
+#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
+#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
+#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
+#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
+#define EB emplace_back
+#define PF push_front
+#define PB push_back
+#define MP make_pair
+#define FI first
+#define SE second
+#define ALL(x) x.begin(), x.end()
+#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+
+// input
+template<class T> istream& operator >> (istream &is, vector<T> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, deque<T> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+
+// output
+template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
+{ return s << '<' << P[0] << "," << P[1] << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
+{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
+{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
+template<class T> ostream& operator << (ostream &s, const vector<T> &P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, const deque<T> &P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, const vector<vector<T>> &P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, const set<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, const multiset<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, const unordered_set<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
+void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
+void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
+const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
+const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
+
+
+//------------------------------//
 // よく使うアルゴリズムたち
 //------------------------------//
 
@@ -154,18 +238,21 @@ template<class VAL> struct MongeShortestPath {
 };
 
 // find the d-edges shortest path for d = 1, 2, ..., D, in O(ND)
-// vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+// vertex: 0, 1, 2, ..., N
+// you can choose SMAWK or Monotone Minima
 template<class VAL> struct MongeShortestPathWithDEdges {
     VAL INF = numeric_limits<VAL>::max() / 2;
 
     // solver
-    template<class FUNC> vector<VAL> solve(int N, const FUNC &f, int D) {
+    template<class FUNC> vector<VAL> solve(int N, const FUNC &f, int D, const string &solver = "smawk") {
         assert(D <= N);
         vector<VAL> res{VAL(0)}, dp(N + 1, INF);
         dp[0] = 0;
         auto f2 = [&](int i, int j) -> VAL { return (j < i ? dp[j] + f(j, i) : INF); };
         for (int d = 1; d <= D; d++) {
-            const auto &tmp = SMAWK<VAL>(N + 1, N + 1, f2);
+            vector<pair<VAL, int>> tmp;
+            if (solver == "smawk") tmp = SMAWK<VAL>(N + 1, N + 1, f2);
+            else if (solver == "monotone") tmp = MonotoneMinima<VAL>(N + 1, N + 1, f2);
             for (int i = d; i <= N; i++) dp[i] = tmp[i].first;
             res.emplace_back(dp[N]);
         }
@@ -289,16 +376,18 @@ template<class VAL> struct AliensTrick {
 // Alien DP
 // find the d-edges shortest path from vertex 0 on DAG by Lagrange relaxation
 // vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+// you can choose noshi LARSCH or LARSCH
 template<class VAL> struct AlienDP {
     // inner values
     MongeShortestPath<VAL> msp;
     AliensTrick<VAL> at;
 
     // solver
-    template<class FUNC> pair<VAL, VAL> solve(int N, const FUNC &f, VAL D) {
+    template<class FUNC> pair<VAL, VAL> solve(int N, const FUNC &f, VAL D, const string &solver = "noshi") {
         auto lag = [&](VAL lambda) -> pair<VAL, VAL> {
             auto fg = [&](int i, int j) -> VAL { return f(i, j) + lambda; };
-            const auto &obj = msp.solve(N, fg);
+            vector<pair<VAL, int>> obj;
+            if (solver == "noshi") obj = msp.solve(N, fg);
             auto cnt = msp.cnt[N];
             auto res = obj.back().first - lambda * cnt;
             return {res, cnt};
@@ -330,11 +419,67 @@ template<class VAL> struct AlienDP {
 //------------------------------//
 
 // Codeforces Round 438 (Div. 1 + Div. 2 combined) F. Yet Another Minimization Problem
-void Codeforces438_F() {
+// by Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))
+void Codeforces438_F_enum() {
+    long long N, K;
+    cin >> N >> K;
+    vector<long long> A(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
 
+    vector<long long> nums(N + 1, 0);
+    long long left = 0, right = 0, score = 0;
+    auto add = [&](int i) -> void {
+        score += nums[A[i]];
+        nums[A[i]]++;
+    };
+    auto del = [&](int i) -> void {
+        nums[A[i]]--;
+        score -= nums[A[i]];
+    };
+    auto f = [&](int i, int j) -> long long {
+        while (left < i) del(left++);
+        while (i < left) add(--left);
+        while (right < j) add(right++);
+        while (j < right) del(--right);
+        return score;
+    };
+    MongeShortestPathWithDEdges<long long> msp;
+    auto res = msp.solve(N, f, K, "monotone");
+    cout << res[K] << endl;
+}
+
+// Codeforces Round 438 (Div. 1 + Div. 2 combined) F. Yet Another Minimization Problem
+// by Alien DP
+void Codeforces438_F_alien() {
+    long long N, K;
+    cin >> N >> K;
+    vector<long long> A(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+
+    vector<long long> nums(N + 1, 0);
+    long long left = 0, right = 0, score = 0;
+    auto add = [&](int i) -> void {
+        score += nums[A[i]];
+        nums[A[i]]++;
+    };
+    auto del = [&](int i) -> void {
+        nums[A[i]]--;
+        score -= nums[A[i]];
+    };
+    auto f = [&](int i, int j) -> long long {
+        while (left < i) del(left++);
+        while (i < left) add(--left);
+        while (right < j) add(right++);
+        while (j < right) del(--right);
+        return score;
+    };
+    AlienDP<long long> msp;
+    auto res = msp.solve(N, f, K);
+    cout << res.first << endl;
 }
 
 
 int main() {
-    Codeforces438_F();
+    //Codeforces438_F_enum();
+    Codeforces438_F_alien();
 }

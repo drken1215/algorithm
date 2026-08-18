@@ -387,6 +387,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 多項式・FPS (MATH : POLYNOMIAL)
 多項式や FPS に関するアルゴリズムです
 
+- (★★★★) [多項式・FPS 全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/formal_power_series.cpp)
+
 ## FFT, NTT, Convolution
 
 - (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/FFT.cpp)
@@ -399,7 +401,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 形式的冪級数 (FPS)
 
-- (★★★★) [FPS 全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/formal_power_series.cpp)
 - (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/inv_formal_power_series.cpp)
 - (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/exp_formal_power_series.cpp)
 - (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/log_formal_power_series.cpp)
