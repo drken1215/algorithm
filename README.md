@@ -59,7 +59,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★☆☆) [ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/hash.cpp)
 - (★★☆☆) [Zobrist ハッシュ](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/zobrist_hash.cpp)
 - (★★★☆) [ハッシュテーブル (64 bit 整数用)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/fast_hash_table.cpp)
-- (★★★☆) 根付き木のハッシュ
 
 ## 順序付き集合
 
@@ -160,8 +159,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 動的データ構造
 
-- (★★★★) 動的 Union-Find
 - (★★★★) [動的 bitset](https://github.com/drken1215/algorithm/blob/master/DataStructureAdvanced/dynamic_bitset.cpp)
+- (★★★★) 動的 Union-Find
 - (★★★★) 動的セグメント木
 - (★★★★) 動的二次元セグメント木
 - (★★★★) 動的 BIT
@@ -170,8 +169,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 並列データ構造
 
-- (★★★★) 並列 Union-Find
 - (★★★☆) [並列二分探索](https://github.com/drken1215/algorithm/blob/master/DataStructureAdvanced/parallel_binary_search.cpp)
+- (★★★★) 並列 Union-Find
 
 ## 永続データ構造
 
@@ -183,6 +182,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他
 
+- (★★★☆) 根付き木のハッシュ
 - (★★★★) 領域 Union-Find
 - (★★★★) Dynamic Connectivity
 
@@ -671,6 +671,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 最適化 (OPTIMIZATION)
 最適化に関するアルゴリズムです。
 
+- (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_all.cpp)
+- (★★★★) マトロイド 全部乗せ
+
 ## 動的計画法
 
 - (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Optimization/knapsack.cpp)
@@ -693,7 +696,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
 - (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log C))
-- (★★★★) [一般化 Convex Hull Trick (Monge, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
 ## 区分線形凸関数の活用 2 ： Slope Trick
@@ -720,7 +722,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Monge 最短路問題
 
-- (★★★★) [Monge 最短路問題 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_shortest_path_all.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
@@ -734,6 +735,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) Monge 行列の積 (in O(N^2))
 - (★★★★) Monge 行列の min-plus 合成 (in O(N^2))
 - (★★★☆) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
+- (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 
 ## マトロイド, M 凸性
 

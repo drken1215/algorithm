@@ -5,6 +5,12 @@
 //   AtCoder EDPC Z - Frog 3 (for simple LARSCH)
 //     https://atcoder.jp/contests/dp/tasks/dp_z 
 //
+//   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
+//     https://codeforces.com/contest/319/problem/C 
+// 
+//   yukicoder No.705 ゴミ拾い Hard
+//     https://yukicoder.me/problems/no/705 
+//
 //   ABC 218 H - Red and Blue Lamps (for Alien DP)
 //     https://atcoder.jp/contests/abc218/tasks/abc218_h
 //
@@ -415,6 +421,50 @@ void EDPC_Z() {
     cout << res[N-1].first << endl;
 }
 
+// Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
+/*
+    A: 単調増加, B: 単調減少, ともに長さ N
+    i -> j のコストが、B[i] × A[j] で与えられる ..... 単調増加 × 単調減少は Monge
+    スタート: 0, ゴール: N-1
+*/
+void Codeforces_189_C() {
+    long long N;
+    cin >> N;
+    vector<long long> A(N), B(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    for (int i = 0; i < N; i++) cin >> B[i];
+    auto func = [&](int i, int j) -> long long {
+        return B[i] * A[j];
+    };
+    MongeShortestPath<long long> msp;
+    auto res = msp.solve(N-1, func);
+    cout << res[N-1].first << endl;
+}
+
+// yukicoder No.705 ゴミ拾い Hard
+/*
+    A, X, Y: N 個
+    これらを区間に分割していく
+    　dp[j] = min_{0 ≦ i < j}(dp[i] + |A[j-1] - X[i]|^3 + |-Y[i]|^3)
+    i -> j のコスト：|A[j-1] - X[i]|^3 + |-Y[i]|^3 ...... 差の凸関数 (Monge) + 縞々 (Monge) -> Monge
+    スタート: 0, ゴール: N
+*/
+void yukicoder_705() {
+    int N;
+    cin >> N;
+    vector<long long> A(N), X(N), Y(N);
+    for (int i = 0; i < N; i++) cin >> A[i];
+    for (int i = 0; i < N; i++) cin >> X[i];
+    for (int i = 0; i < N; i++) cin >> Y[i];
+    auto func = [&](int i, int j) -> long long {
+        long long dx = abs(A[j-1] - X[i]), dy = abs(Y[i]);
+        return dx * dx * dx + dy * dy * dy;
+    };
+    MongeShortestPath<long long> msp;
+    auto res = msp.solve(N, func);
+    cout << res[N].first << endl;
+}
+
 // ABC 218 H - Red and Blue Lamps
 void ABC_218_H() {
     long long N, R;
@@ -518,6 +568,8 @@ void Codeforces438_F_alien() {
 
 int main() {
     //EDPC_Z();
+    //Codeforces_189_C();
+    //yukicoder_705();
     //ABC_218_H();
     //yukicoder_952();
     //Codeforces438_F_enum();
