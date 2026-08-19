@@ -67,8 +67,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★☆☆) [N 以下の非負整数の順序付き集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/predecessor_bit.cpp)
 - (★★★☆) [N 以下の非負整数の順序付き集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/predecessor_64_tree.cpp)
 - (★★★☆) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/binary_trie.cpp)
-- (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作である必要がある場合）](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/intervals_set.cpp)
-- (★★★☆) [区間の集合を set で管理するテク（del と add が互いに逆操作でなくてもよい場合](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/intervals_set_with_noninvertible_del.cpp)
+- (★★★☆) [区間の集合を set で管理するテク (del と add が互いに逆操作である必要がある場合)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/intervals_set.cpp)
+- (★★★☆) [区間の集合を set で管理するテク (del と add が互いに逆操作でなくてもよい場合)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/intervals_set_with_noninvertible_del.cpp)
 
 ## その他
 
@@ -709,15 +709,15 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
 
-## 行最小値問題・単一始点最短路問題d
+## 行最小値問題・単一始点最短路問題
 
 - (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
 - (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
 - (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
-- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
+- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
 - (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
-1
+
 ## Monge 最短路問題
 
 - (★★★★) [Monge 最短路問題 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_shortest_path_all.cpp)
