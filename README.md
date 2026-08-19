@@ -121,7 +121,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## ウェーブレット行列
 
-- (★★★★) [ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
+- (★★★☆) [ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/wavelet_matrix.cpp)
 - (★★★★) [BIT on ウェーブレット行列 (一点加算対応)](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/BIT_on_wavelet_matrix.cpp)
 - (★★★★) [セグメント木 on ウェーブレット行列](https://github.com/drken1215/algorithm/blob/master/DataStructureSegment/segment_tree_on_wavelet_matrix.cpp)
 
@@ -656,11 +656,16 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [3 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/three_variable_submodular_optimization.cpp)
 - (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_monge_optimization.cpp)
 
+## series-parallel グラフ上の最小費用流の slope trick 帰着
+
+- (★★★☆) 2 端子 + Line グラフ上の最小費用流
+
 ## 最小費用流の応用
 
 - (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_convex_flow.cpp)
 - (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_tension.cpp)
 - (★★★★) Longest Shortest Path
+
 
 
 
@@ -706,7 +711,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 区分線形凸関数の活用 3 ： Min Plus Convolution
 
-- (★★★★) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/Optimization/min_plus_convolution_convex_convex.cpp)
+- (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/Optimization/min_plus_convolution_convex_convex.cpp)
 - (★★★★) Min Plus Convolution (凸と任意)
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
@@ -715,16 +720,16 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
-- (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
-- (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
+- (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
+- (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
+- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
-- (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
 
 ## Monge 最短路問題
 
+- (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
@@ -733,8 +738,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★☆☆☆) Monge 性の判定 (in O(NM))
 - (★★★☆) Monge 行列の積 (in O(N^2))
-- (★★★★) Monge 行列の min-plus 合成 (in O(N^2))
-- (★★★☆) Monge 性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
+- (★★★☆) Monge 行列の min-plus 合成 (in O(N^2))
+- (★★★☆) Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
 - (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 
 ## マトロイド, M 凸性
