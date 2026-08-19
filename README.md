@@ -73,7 +73,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/cumulative_sum.cpp)
 - (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/cumulative_sum_2D.cpp)
-- (★★☆☆) [オンライン二部グラフ判定](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/online_bipartite_judging.cpp)
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/sliding_minimum.cpp)
 - (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/swag.cpp)
 - (★★★☆) [Mo 法](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/mo.cpp)
@@ -249,6 +248,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 三次元幾何
 
 - (★★★☆) [三次元幾何一式](https://github.com/drken1215/algorithm/blob/master/Geometry/basic_elements_3D.cpp)
+- (★★★☆) 四面体 (AOJ 2060)
 
 ## その他
 
@@ -324,6 +324,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他
 
+- (★★☆☆) [オンライン二部グラフ判定 (by Union-Find)](https://github.com/drken1215/algorithm/blob/master/Graph/online_bipartite_judging.cpp)
 - (★★★☆) [サイクル基底 (XOR 和をとるもの)](https://github.com/drken1215/algorithm/blob/master/Graph/cycle_basis.cpp)
 - (★★★★) 補グラフの最短路
 - (★★★★) 二部グラフの辺彩色 (Alon 法, in O(E log E))
@@ -943,7 +944,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - (★★☆☆) [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
-- (★★★☆) 四面体 (AOJ 2060)
 
 
 
