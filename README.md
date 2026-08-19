@@ -618,7 +618,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 最小カット
 
-- (★★★☆) [最小カット (= 最大流)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cut.cpp)
+- (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cut.cpp)
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/stoer_wagner.cpp)
 - (★★★★) Gomory-Hu 木
 
@@ -659,7 +659,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## series-parallel グラフ上の最小費用流の slope trick 帰着
 
-- (★★★☆) 2 端子 + Line グラフ上の最小費用流
+- (★★★☆) 2 端子 Line グラフ上の最小費用流
+- (★★★☆) 2 端子 2 x N グリッドグラフ上の最小費用流
 
 ## 最小費用流の応用
 
