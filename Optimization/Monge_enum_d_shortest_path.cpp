@@ -72,7 +72,6 @@ template<class VAL> struct MongeShortestPathWithDEdges {
         for (int d = 1; d <= D; d++) {
             vector<pair<VAL, int>> tmp;
             if (solver == "smawk") tmp = SMAWK<VAL>(N + 1, N + 1, f2);
-            else if (solver == "monotone") tmp = MonotoneMinima<VAL>(N + 1, N + 1, f2);
             for (int i = d; i <= N; i++) dp[i] = tmp[i].first;
             res.emplace_back(dp[N]);
         }

@@ -709,21 +709,22 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
 
-## 行最小値問題・単一始点最短路問題
+## 行最小値問題・単一始点最短路問題d
 
 - (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
 - (★★★★) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
 - (★★★★) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
-- (★★★★) [辺コストのスライドアクセスへの対応例](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
+- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
 - (★★★★) Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
 1
 ## Monge 最短路問題
 
 - (★★★★) [Monge 最短路問題 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_shortest_path_all.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) Monge 全点間最短路問題 (in O(N^2))
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 
