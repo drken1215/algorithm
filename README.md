@@ -4,6 +4,7 @@
 プログラミングコンテストに参加する場面などを想定して、
 「実装例」または「ライブラリ」として使用することを念頭に置いています。
 
+
 ## 目次
 
 |分類|内容|具体例|
@@ -23,6 +24,8 @@
 |**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
+
+リンクが付いていないものは、ライブラリ整備予定であることを意味しています。
 
 ## 難易度表記の目安
 
@@ -737,7 +740,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他 Monge 性, L 凸性
 
-- (★☆☆☆) Monge 性の判定 (in O(NM))
+- (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_checker.cpp)
 - (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_min_plus_composition.cpp)
 - (★★★☆) Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
 - (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)

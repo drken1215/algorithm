@@ -27,6 +27,50 @@
 using namespace std;
 
 
+// check whether N x M matrix f is Monge or not, in O(NM)
+template<class FUNC> bool is_monge
+(int N, int M, const FUNC &f, bool upper_triangular = false, bool output_detail = true) {
+    assert(N > 0 && M > 0);
+    for (int i = 0; i + 1 < N; i++) {
+        for (int j = (upper_triangular ? i+2 : 0); j + 1 < M; j++) {
+            auto f00 = f(i, j), f01 = f(i, j + 1), f10 = f(i + 1, j), f11 = f(i + 1, j + 1);
+            if (f00 + f11 > f10 + f01) {
+                if (output_detail) {
+                    cout << "Not Monge! " << endl;
+                    cout << "f(" << i << ", " << j << ") = " << f(i, j) << ", ";
+                    cout << "f(" << i << ", " << j + 1 << ") = " << f(i, j + 1) << endl;
+                    cout << "f(" << i + 1 << ", " << j << ") = " << f(i + 1, j) << ", ";
+                    cout << "f(" << i + 1 << ", " << j + 1 << ") = " << f(i + 1, j + 1) << endl;
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// check whether N x M matrix f is anti-Monge or not, in O(NM)
+template<class FUNC> bool is_anti_monge
+(int N, int M, const FUNC &f, bool upper_triangular = false, bool output_detail = true) {
+    assert(N > 0 && M > 0);
+    for (int i = 0; i + 1 < N; i++) {
+        for (int j = (upper_triangular ? i+2 : 0); j + 1 < M; j++) {
+            auto f00 = f(i, j), f01 = f(i, j + 1), f10 = f(i + 1, j), f11 = f(i + 1, j + 1);
+            if (f00 + f11 < f10 + f01) {
+                if (output_detail) {
+                    cout << "Not anti-Monge! " << endl;
+                    cout << "f(" << i << ", " << j << ") = " << f(i, j) << ", ";
+                    cout << "f(" << i << ", " << j + 1 << ") = " << f(i, j + 1) << endl;
+                    cout << "f(" << i + 1 << ", " << j << ") = " << f(i + 1, j) << ", ";
+                    cout << "f(" << i + 1 << ", " << j + 1 << ") = " << f(i + 1, j + 1) << endl;
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
 // f(i, j) must be monotone (argmin is not decreasing)
 // slide access OK
@@ -393,6 +437,58 @@ template<class VAL> struct AlienDP {
             cout << ")" << endl;
         };
         for (VAL lambda = start; lambda <= goal; lambda++) lag(lambda);
+    }
+};
+
+// Convex Hull Trick (using Li Chao Tree)
+/*
+    Func：Monge 性を仮定
+    - MIN: クエリ x の取りうる最小値
+    - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
+    - INF: 最大値
+ 
+    - insert (Func f_i): add f_i, O(log N)
+    - query (x): min_i{ f_i(x) }, O(log N)
+*/
+template<class T> struct CHT {
+    using Func = function<T(T)>;
+    struct Node {
+        Func func;
+        Node *left, *right;
+        Node(const Func& f) : left(nullptr), right(nullptr) {
+            func = f;
+        }
+    };
+    
+    const T MIN, MAX, INF;
+    Node* root;
+    
+    CHT(T MIN, T MAX, T INF) : MIN(MIN), MAX(MAX), INF(INF), root(nullptr) { }
+    Node* insert(Node* p, T low, T high, Func& f) {
+        if (!p) return new Node(f);
+        if (p->func(low) <= f(low) && p->func(high) <= f(high)) return p;
+        if (p->func(low) >= f(low) && p->func(high) >= f(high)) {
+            p->func = f;
+            return p;
+        }
+        T mid = (low + high) / 2;
+        if (p->func(mid) > f(mid)) swap(p->func, f);
+        if (p->func(low) >= f(low)) p->left = insert(p->left, low, mid, f);
+        else p->right = insert(p->right, mid, high, f);
+        return p;      
+    }
+    void insert(Func f) {
+        root = insert(root, MIN, MAX, f);
+    }
+    T query(Node* p, T low, T high, T x) {
+        if (!p) return INF;
+        if (low == high) return p->func(x);
+        T mid = (low + high) / 2;
+        if (x <= mid) return min(p->func(x), query(p->left, low, mid, x));
+        else return min(p->func(x), query(p->right, mid, high, x));
+    }
+    T query(T x) {
+        return query(root, MIN, MAX, x);
     }
 };
 
