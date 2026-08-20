@@ -741,8 +741,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## その他 Monge 性, L 凸性
 
 - (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_checker.cpp)
-- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Knuth_Yao.cpp)
-- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_min_plus_composition.cpp)
+- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_min_plus_composition.cpp)
+- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Knuth_Yao.cpp)
 - (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
 
 ## マトロイド, M 凸性
