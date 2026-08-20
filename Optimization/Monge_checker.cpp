@@ -1,6 +1,5 @@
 //
-// 上三角 (N+1) x (N+1) Monge 行列 A, B に対して
-//   C[i][j] = min_{i <= k < j} (A[i][k] + A[k][j])
+// N x M 行列 f が Monge / anti-Monge であるかを判定する
 //
 // verified
 //   ABC 254 B - Mongeness
