@@ -660,10 +660,10 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [3 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/three_variable_submodular_optimization.cpp)
 - (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_monge_optimization.cpp)
 
-## series-parallel グラフ上の最小費用流の slope trick 帰着
+## 特殊なグラフ上の最小費用流の slope trick 帰着
 
-- (★★★☆) 2 端子 1 x N Line グラフ上の最小費用流
-- (★★★☆) 2 端子 2 x N グリッドグラフ上の最小費用流
+- (★★★★) 2 端子 + 1 x N Line グラフ上の最小費用流 (by maroon 典型)
+- (★★★★) 2 x N グリッドグラフ上の最小費用流 (by series-parallel)
 
 ## 最小費用流の応用
 
@@ -732,9 +732,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Monge 最短路問題
 
-- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 - (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
 

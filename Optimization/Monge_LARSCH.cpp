@@ -1,21 +1,16 @@
 //
-// Monge 単一始点最短路 by LARSCH 法 in O(N)
-//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monge であることを仮定
+// Monge 最短路問題に関するアルゴリズム全集
 //
 // verified
-//   AtCoder EDPC Z - Frog 3
+//   AtCoder EDPC Z - Frog 3 (for simple LARSCH, LARSCH, monge CHT)
 //     https://atcoder.jp/contests/dp/tasks/dp_z 
 //
-//   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
+//   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry (for simple LARSCH, LARSCH, monge CHT)
 //     https://codeforces.com/contest/319/problem/C 
 // 
-//   yukicoder No.705 ゴミ拾い Hard
+//   yukicoder No.705 ゴミ拾い Hard (for simple LARSCH, LARSCH, monge CHT)
 //     https://yukicoder.me/problems/no/705 
 //
-// Reference:
-//   noshi: 簡易版 LARSCH Algorithm
-//     https://noshi91.hatenablog.com/entry/2023/02/18/005856
-//  
 
 
 #include <bits/stdc++.h>
@@ -24,10 +19,114 @@ using namespace std;
 
 // LARSCH, in O(N)
 // vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
-template<class VAL> struct LARSCH {
+template<class VAL, class FUNC> struct LARSCH {
+    struct RowReduce;
+    struct ColReduce;
+    struct ColMap {
+        const ColMap* parent = nullptr;
+        const vector<int> *v = nullptr;
+        constexpr int mapping(int i) const {
+            int x = (v ? (*v)[i] : i);
+            return (parent ? parent->mapping(x) : x);
+        }
+    };
+    struct Eval {
+        const FUNC *f = nullptr;
+        long long a = 1, b = 0;  // row = a * i + b
+        const ColMap *cm = nullptr;
+        constexpr VAL operator () (int i, int j) const {
+            int i2 = int(a * i + b), j2 = (cm ? cm -> mapping(j) : j);
+            return (*f)(i2, j2);
+        }
+    };
+    struct RowReduce {
+        int N;
+        Eval e;
+        int cur_row = 0, state = 0;
+        unique_ptr<ColReduce> rec;
+        constexpr RowReduce(int N_, const Eval &e_) : N(N_), e(e_) {
+            int M = N / 2;
+            if (M > 0) {
+                Eval e2 = e;
+                e2.a = e.a * 2, e2.b = e.a + e.b;
+                rec = make_unique<ColReduce>(M, e2);
+            }
+        }
+        constexpr void reset() {
+            cur_row = 0, state = 0;
+            if (rec) rec->reset();
+        }
+        int get_argmin() {
+            int i = cur_row++;
+            if (!(i & 1)) {
+                int prev = state, next = (i + 1 == N ? N - 1 : rec->get_argmin());
+                state = next;
+                int res = prev;
+                for (int j = prev + 1; j <= next; j++) {
+                    if (e(i, res) > e(i, j)) res = j;
+                }
+                return res;
+            } else {
+                return (e(i, state) <= e(i, i) ? state : i);
+            }
+        }
+    };
+    struct ColReduce {
+        int N;
+        Eval e;
+        int cur_row = 0;
+        vector<int> cols;
+        ColMap cm;
+        RowReduce rec;
+        constexpr ColReduce(int N_, const Eval &e_) 
+        : N(N_), e(e_), cols(), cm{e.cm, &cols}, rec(N_, Eval{e.f, e.a, e.b, &cm}) {
+            cols.reserve(N);
+        } 
+        constexpr void reset() {
+            cur_row = 0;
+            cols.clear();
+            rec.reset();
+        }
+        constexpr void push_col(int i, int j) {
+            while (!cols.empty()) {
+                int siz = (int)cols.size();
+                if (siz == i) break;
+                int last = cols.back();
+                if (e(siz - 1, last) > e(siz - 1, j)) cols.pop_back();
+                else break;
+            }
+            if ((int)cols.size() != N) cols.emplace_back(j);
+        }
+        constexpr int get_argmin() {
+            int i = cur_row++;
+            if (i == 0) {
+                cols.clear();
+                cols.emplace_back(0);
+            } else {
+                push_col(i, i * 2 - 1);
+                push_col(i, i * 2);
+            }
+            return cols[rec.get_argmin()];
+        }
+    };
 
+    FUNC f;
+    ColMap root_cm;
+    Eval root_eval;
+    unique_ptr<RowReduce> base;
+    explicit LARSCH(int N_, const FUNC &f_) 
+    : f(std::move(f_)), root_cm{nullptr, nullptr}, root_eval{&f, 1, 0, &root_cm} {
+        base = make_unique<RowReduce>(N_, root_eval);
+    }
+    constexpr void reset() {
+        base->reset();
+    }
+    constexpr int get_argmin() {
+        return base->get_argmin();
+    }
 };
 
+// Monge Shortest Path Wrapper
 template<class VAL> struct MongeShortestPath {
     VAL INF = numeric_limits<VAL>::max() / 2;
     int CNT_INF = numeric_limits<int>::max() / 2;
@@ -36,97 +135,29 @@ template<class VAL> struct MongeShortestPath {
     vector<VAL> dp;
     vector<int> cnt, prev;
 
-    // solver (random access ver)
-    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f, bool minimize_cnt = true) {
+    // solver
+    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f) {
+        vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
         dp.assign(N + 1, INF);
         cnt.assign(N + 1, CNT_INF);
         prev.assign(N + 1, 0);
         dp[0] = 0, cnt[0] = 0;
-
-        auto relax = [&](int l, int r) -> void {
-            VAL val = dp[l] + f(l, r);
-            int cn = cnt[l] + 1;
-            if (dp[r] > val || (dp[r] == val && (minimize_cnt ? cn < cnt[r] : cn > cnt[r]))) {
-                dp[r] = val;
-                cnt[r] = cn;
-                prev[r] = l;
-            }
+        auto f2 = [&](int i, int j) -> VAL {
+            i++;
+            if (i <= j) return INF;
+            else return dp[j] + f(j, i);
         };
-        auto rec = [&](auto &&rec, int l, int r) -> void {
-            if (r - l <= 1) return;
-            int m = (l + r) / 2;
-            for (int k = prev[l]; k <= prev[r]; k++) relax(k, m);
-            rec(rec, l, m);
-            for (int k = l + 1; k <= m; k++) relax(k, r);
-            rec(rec, m, r);
-        };
-
-        if (N > 0) relax(0, N), rec(rec, 0, N);
-        vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
+        LARSCH<VAL, decltype(f2)> lar(N, f2);
+        for (int r = 1; r <= N; r++) {
+            int l = lar.get_argmin();
+            dp[r] = dp[l] + f(l, r);
+            prev[r] = l;
+            cnt[r] = cnt[l] + 1;
+        }
         res[0].first = VAL(0);
-        for (int i = 1; i <= N; i++) res[i] = {dp[i], prev[i]};
+        for (int r = 1; r <= N; r++) res[r] = {dp[r], prev[r]};
         return res;
     }
-
-    // solver (slide access ver)
-    template<class STATE, class ADD, class DEL, class GETCOST> vector<pair<VAL, int>> solve
-    (int N, const STATE &ini, const ADD &add, const DEL &del, const GETCOST &get, bool minimize_cnt = true) {
-        dp.assign(N + 1, INF);
-        cnt.assign(N + 1, CNT_INF);
-        prev.assign(N + 1, 0);
-        dp[0] = 0, cnt[0] = 0;
-
-        STATE win[2] = { ini, ini };
-        int cl[2] = {0, 0}, cr[2] = {0, 0};
-
-        auto move_cursor = [&](int c, int l, int r) {
-            while (cr[c] < r) add(win[c], cr[c]++);
-            while (cl[c] > l) add(win[c], --cl[c]);
-            while (cr[c] > r) del(win[c], --cr[c]);
-            while (cl[c] < l) del(win[c], cl[c]++);
-        };
-        auto relax = [&](int c, int l, int r) {
-            move_cursor(c, l, r);
-            VAL val = dp[l] + get(win[c]);
-            int cn = cnt[l] + 1;
-            if (dp[r] > val || (dp[r] == val && (minimize_cnt ? cn < cnt[r] : cn > cnt[r]))) {
-                dp[r] = val;
-                cnt[r] = cn;
-                prev[r] = l;
-            }
-        };
-        auto rec = [&](auto &&rec, int l, int r) -> void {
-            if (r - l <= 1) return;
-            int m = (l + r) / 2;
-            for (int k = prev[l]; k <= prev[r]; k++) relax(0, k, m);
-            rec(rec, l, m);
-            for (int k = l + 1; k <= m; k++) relax(1, k, r);
-            rec(rec, m, r);
-        };
-
-        if (N > 0) relax(0, 0, N), rec(rec, 0, N);
-        vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
-        res[0].first = VAL(0);
-        for (int i = 1; i <= N; i++) res[i] = {dp[i], prev[i]};
-        return res;
-    }
-
-    // 遷移回数を問わない場合
-// template <typename T, typename F>
-// vc<T> monge_shortest_path(int N, F f) {
-//   vc<T> dp(N + 1, infty<T>);
-//   dp[0] = 0;
-//   LARSCH<T> larsch(N, [&](int i, int j) -> T {
-//     ++i;
-//     if (i <= j) return infty<T>;
-//     return dp[j] + f(j, i);
-//   });
-//   FOR(r, 1, N + 1) {
-//     int l = larsch.get_argmin();
-//     dp[r] = dp[l] + f(l, r);
-//   }
-//   return dp;
-// }
 
     vector<int> reconstruct() {
         int N = (int)dp.size() - 1;
@@ -159,7 +190,7 @@ void EDPC_Z() {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
     MongeShortestPath<long long> msp;
-    auto res = msp.solve(N-1, func);
+    const auto &res = msp.solve(N-1, func);
     cout << res[N-1].first << endl;
 }
 

@@ -1,22 +1,16 @@
 //
-// Monge 単一始点最短路
-//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monge であることを仮定
-//   O(N log N)
+// Monge 最短路問題に関するアルゴリズム全集
 //
 // verified
-//   AtCoder EDPC Z - Frog 3
+//   AtCoder EDPC Z - Frog 3 (for simple LARSCH, LARSCH, monge CHT)
 //     https://atcoder.jp/contests/dp/tasks/dp_z 
 //
-//   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
+//   Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry (for simple LARSCH, LARSCH, monge CHT)
 //     https://codeforces.com/contest/319/problem/C 
 // 
-//   yukicoder No.705 ゴミ拾い Hard
+//   yukicoder No.705 ゴミ拾い Hard (for simple LARSCH, LARSCH, monge CHT)
 //     https://yukicoder.me/problems/no/705 
 //
-// Reference:
-//   noshi: 簡易版 LARSCH Algorithm
-//     https://noshi91.hatenablog.com/entry/2023/02/18/005856
-//  
 
 
 #include <bits/stdc++.h>
@@ -26,7 +20,8 @@ using namespace std;
 // noshi's simplified LARSCH
 // find shortest path from vertex 0 on DAG in O(N log N)
 // vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
-template<class VAL> struct MongeShortestPath {
+// slide access OK
+template<class VAL> struct SimpleLARSCH {
     VAL INF = numeric_limits<VAL>::max() / 2;
     int CNT_INF = numeric_limits<int>::max() / 2;
 
@@ -34,7 +29,7 @@ template<class VAL> struct MongeShortestPath {
     vector<VAL> dp;
     vector<int> cnt, prev;
 
-    // solver
+    // solver (random access ver)
     template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f, bool minimize_cnt = true) {
         dp.assign(N + 1, INF);
         cnt.assign(N + 1, CNT_INF);
@@ -43,10 +38,10 @@ template<class VAL> struct MongeShortestPath {
 
         auto relax = [&](int l, int r) -> void {
             VAL val = dp[l] + f(l, r);
-            int c = cnt[l] + 1;
-            if (dp[r] > val || (dp[r] == val && (minimize_cnt ? c < cnt[r] : c > cnt[r]))) {
+            int cn = cnt[l] + 1;
+            if (dp[r] > val || (dp[r] == val && (minimize_cnt ? cn < cnt[r] : cn > cnt[r]))) {
                 dp[r] = val;
-                cnt[r] = c;
+                cnt[r] = cn;
                 prev[r] = l;
             }
         };
@@ -63,6 +58,33 @@ template<class VAL> struct MongeShortestPath {
         vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
         res[0].first = VAL(0);
         for (int i = 1; i <= N; i++) res[i] = {dp[i], prev[i]};
+        return res;
+    }
+
+    vector<int> reconstruct() {
+        int N = (int)dp.size() - 1;
+        vector<int> path;
+        for (int v = N; v > 0; v = prev[v]) path.emplace_back(v);
+        path.emplace_back(0);
+        reverse(path.begin(), path.end());
+        return path;
+    }
+};
+
+// Monge Shortest Path Wrapper
+template<class VAL> struct MongeShortestPath {
+    VAL INF = numeric_limits<VAL>::max() / 2;
+    int CNT_INF = numeric_limits<int>::max() / 2;
+
+    // results
+    vector<VAL> dp;
+    vector<int> cnt, prev;
+
+    // solver (random access ver)
+    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f) {
+        SimpleLARSCH<VAL> slar;
+        const auto &res = slar.solve(N, f, true);
+        dp = slar.dp, cnt = slar.cnt, prev = slar.prev;
         return res;
     }
 
@@ -97,7 +119,7 @@ void EDPC_Z() {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
     MongeShortestPath<long long> msp;
-    auto res = msp.solve(N-1, func);
+    const auto &res = msp.solve(N-1, func);
     cout << res[N-1].first << endl;
 }
 
