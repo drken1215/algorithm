@@ -699,6 +699,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
 - (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
+- (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
 - (★★★★) 分枝限定法
 
 ## 区分線形凸関数の活用 1 ： Convex Hull Trick
@@ -747,8 +748,23 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## マトロイド, M 凸性
 
+- (★★★☆) 二値マトロイド
+- (★★★☆) グラフマトロイド
+- (★★★☆) 分割マトロイド
+- (★★★☆) 横断マトロイド
 - (★★★☆) マトロイド上の Greedy 法
+
+## その他マトロイド, M 凸性
+
 - (★★★★) マトロイド交差
+- (★★★★) 重み付きマトロイド交差
+- (★★★★) マトロイド Union
+- (★★★★) 線形マトロイドパリティ
+- (★★★★) 最大辺数最小重みの辺素な二つの全域森
+
+## その他
+
+- (★★★★) 基多面体
 
 
 
