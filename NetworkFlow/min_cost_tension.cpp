@@ -9,6 +9,9 @@
 //   JAG 夏合宿 2010 Day4 I - How to Create a Good Game (AOJ 2230)
 //     https://onlinejudge.u-aizu.ac.jp/problems/2230
 //
+//   AtCoder ABC 224 H - Security Camera 2
+//     https://atcoder.jp/contests/abc224/tasks/abc224_h
+//
 //   AtCoder ABC 347 G - Grid Coloring 2
 //     https://atcoder.jp/contests/abc347/tasks/abc347_g
 //
@@ -951,6 +954,40 @@ void AOJ_2230() {
     cout << res << endl;
 }
 
+// AtCoder ABC 224 H - Security Camera 2
+/*
+    左：x - s, 右：s - x で置換
+*/ 
+void ABC_224_H() {
+    const long long INF = 1LL << 30;
+    long long L, R;
+    cin >> L >> R;
+    vector<long long> A(L), B(R);
+    vector<vector<long long>> C(L, vector<long long>(R));
+    for (int i = 0; i < L; i++) cin >> A[i];
+    for (int i = 0; i < R; i++) cin >> B[i];
+    for (int i = 0; i < L; i++) for (int j = 0; j < R; j++) cin >> C[i][j];
+
+    long long s = L + R, sum = 0;
+    MinCostTension<long long, long long> mct(L + R + 1);
+    for (int i = 0; i < L; i++) {
+        mct.add_single_coef(i, A[i]);
+        mct.add_tension_constraint(i, s, INF, 0);
+        sum += A[i];
+    }
+    for (int i = 0; i < R; i++) {
+        mct.add_single_coef(i+L, -B[i]);
+        mct.add_tension_constraint(s, i+L, INF, 0);
+        sum -= B[i];
+    }
+    mct.add_single_coef(s, -sum);
+    for (int i = 0; i < L; i++) for (int j = 0; j < R; j++) {
+        mct.add_tension_constraint(i, j+L, INF, -C[i][j]);
+    }
+    auto [flag, cost] = mct.solve();
+    cout << cost << endl;
+}
+
 // AtCoder ABC 347 G - Grid Coloring 2
 /*
     目的関数はテンションについての以下の区分線形凸関数
@@ -1304,8 +1341,9 @@ void ABC_393_G() {
 
 int main() {
     //AOJ_2230();
+    ABC_224_H();
     //ABC_347_G();
     //ABC_397_G();
     //AOJ_3171();
-    ABC_393_G();
+    //ABC_393_G();
 }
