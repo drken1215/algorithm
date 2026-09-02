@@ -92,6 +92,9 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     void add_single_cost_01(int xi, COST false_cost, COST true_cost) {
         add_single_cost(xi, false_cost, true_cost);
     }
+    void add_single_cost_10(int xi, COST false_cost, COST true_cost) {
+        add_single_cost(xi, true_cost, false_cost);
+    }
     
     // add "project selection" constraint
     // xi = T, xj = F: strictly prohibited
