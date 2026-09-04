@@ -156,6 +156,19 @@ template<class FLOW> struct FlowGraph {
         return res;
     }
 
+    // finc cutset
+    vector<FlowEdge<FLOW>> find_cutset(int s, int t) const {
+        vector<int> cut = find_cut(s, t);
+        vector<FlowEdge<FLOW>> res;
+        const auto &edges = get_edges();
+        for (const auto &e : edges) {
+            if (cut[e.from] == 1 && cut[e.to] != 1) {
+                res.emplace_back(e);
+            }
+        }
+        return res;
+    }
+
     // check if the s-t flow is feasible
     bool is_feasible(int s, int t) const {
         vector<FLOW> b(list.size(), FLOW(0));
