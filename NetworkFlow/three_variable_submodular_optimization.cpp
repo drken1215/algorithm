@@ -507,7 +507,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // add all True profit
     // y = F: not gain profit (= cost is P), T: gain profit (= cost is 0)
     // y: T, xi: F is prohibited
-    void add_all_true_profit(const vector<int> &xs, COST P) {
+    template<class INT> void add_all_true_profit(const vector<INT> &xs, COST P) {
         assert(P >= 0);
         OFFSET -= P;
         int y = (int)G.size();
@@ -522,7 +522,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // add all False profit
     // y = F: gain profit (= cost is 0), T: not gain profit (= cost is P)
     // xi = T, y = F is prohibited
-    void add_all_false_profit(const vector<int> &xs, COST P) {
+    template<class INT> void add_all_false_profit(const vector<INT> &xs, COST P) {
         assert(P >= 0);
         OFFSET -= P;
         int y = (int)G.size();

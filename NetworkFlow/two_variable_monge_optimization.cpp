@@ -635,10 +635,10 @@ template<class COST> struct TwoVariableMongeOpt {
         vector<int> ks(N, K);
         init(ks, inf);
     }
-    TwoVariableMongeOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
+   template<class INT> TwoVariableMongeOpt(const vector<INT> &ks, COST inf = numeric_limits<COST>::max() / 2) {
         init(ks, inf);
     }
-    void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {
+    template<class INT> void init(const vector<INT> &iks, COST inf = numeric_limits<COST>::max() / 2) {
         N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
         x.resize(N);
         for (int i = 0; i < N; i++) {
