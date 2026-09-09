@@ -1561,9 +1561,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
 // K-value Two Variable Monge Function Optimization 
 /*
     X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
-
-    X[i] < d -> x[i][d] = 1
-    X[i] = d -> x[i][1] = 0, ..., x[i][d] = 0, x[i][d+1] = 1, ..., x[i][K] = 1
+    set X[i] <= d  ⇔  x[i][d] = 1
 
     X[i] = 0   -> (1, 1, 1, ..., 1, 1)
     X[i] = 1   -> (0, 1, 1, ..., 1, 1)
@@ -1594,12 +1592,12 @@ template<class COST> struct TwoVariableMongeOpt {
         x.resize(N);
         for (int i = 0; i < N; i++) {
             assert(ks[i] >= 2);
-            x[i].assign(ks[i], 0);
-            for (int k = 1; k < ks[i]; k++) x[i][k] = N01++;
+            x[i].assign(ks[i] - 1, 0);
+            for (int k = 0; k < ks[i] - 1; k++) x[i][k] = N01++;
         }
         tvs.init(N01, INF);
         for (int i = 0; i < N; i++) {
-            for (int k = 1; k < ks[i] - 1; k++) {
+            for (int k = 0; k < ks[i] - 2; k++) {
                 tvs.add_psp_constraint(x[i][k], x[i][k + 1]);
             }
         }
@@ -1615,37 +1613,55 @@ template<class COST> struct TwoVariableMongeOpt {
         assert(0 <= xi && xi < N);
         assert((int)cost.size() == ks[xi]);
         tvs.add_cost(cost[ks[xi] - 1]);
-        for (int k = 1; k < ks[xi]; k++) {
-            tvs.add_single_cost(x[xi][k], 0, cost[k-1] - cost[k]);
+        for (int k = 0; k < ks[xi] - 1; k++) {
+            tvs.add_single_cost(x[xi][k], 0, cost[k] - cost[k + 1]);
         }
     }
 
     // add 2-variable Monge function
-    // cost[i][j]+cost[i+1][j+1] <= cost[i+1][j]+cost[i][j+1]
-    void add_monge_function(int xi, int xj, vector<vector<COST>> cost) {
+    void add_monge_function(int xi, int xj, const vector<vector<COST>> &cost) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         assert(xi != xj);
-        assert(cost.size() == ks[xi]);
-        assert(cost[0].size() == ks[xj]);
-        vector<COST> icost(ks[xi]), jcost(ks[xj]);
-        for (int ki = 0; ki < ks[xi]; ki++) {
-            icost[ki] = cost[ki][0];
-            for (int kj = 0; kj < ks[xj]; kj++) cost[ki][kj] -= icost[ki];
-        }
-        for (int kj = 0; kj < ks[xj]; kj++) {
-            jcost[kj] = cost[0][kj];
-            for (int ki = 0; ki < ks[xi]; ki++) cost[ki][kj] -= jcost[kj];
-        }
-        add_single_cost(xi, icost), add_single_cost(xj, jcost);
-        for (int ki = 1; ki < ks[xi]; ki++) {
-            for (int kj = 1; kj < ks[xj]; kj++) {
-                COST c = cost[ki][kj] - cost[ki][kj-1] - cost[ki-1][kj] + cost[ki-1][kj-1];
-                assert(c <= 0);
-                tvs.add_both_false_profit(x[xi][ki], x[xj][kj], -c);
+        assert((int)cost.size() == ks[xi]);
+        assert((int)cost[0].size() == ks[xj]);
+        vector<COST> icost(ks[xi], 0), jcost(ks[xj], 0);
+        for (int ki = 0; ki < ks[xi]; ki++) icost[ki] = cost[ki][0];
+        for (int kj = 1; kj < ks[xj]; kj++) jcost[kj] = cost[ks[xi] - 1][kj] - cost[ks[xi] - 1][0];
+        add_single_cost(xi, icost);
+        add_single_cost(xj, jcost);
+        for (int ki = 0; ki < ks[xi] - 1; ki++) {
+            for (int kj = 0; kj < ks[xj] - 1; kj++) {
+                COST c = cost[ki][kj + 1] - cost[ki][kj] - cost[ki + 1][kj + 1] + cost[ki + 1][kj];
+                assert(c >= 0);
+                tvs.add_psp_penalty(x[xi][ki], x[xj][kj], c);
             }
         }
     }
+
+    // add all smaller profit (x[xs[i]] <= a[i])
+    template<class INT> void add_all_smaller_profit(const vector<INT> &xs, const vector<INT> &a, COST P) {
+        assert(xs.size() == a.size());
+        vector<INT> txs;
+        for (int i = 0; i < (int)xs.size(); i++) {
+            assert(a[i] >= 0);
+            if (a[i] >= ks[xs[i]] - 1) continue;
+            txs[i].emplace_back(x[xs[i]][a[i]]);  // x <= a equals x[a] = True
+        }
+        tvs.add_all_true_profit(txs, P);
+    }
+
+    // add all larger profit (x[xs[i]] > a[i])
+    template<class INT> void add_all_larger_profit(const vector<INT> &xs, const vector<INT> &a, COST P) {
+        assert(xs.size() == a.size());
+        vector<INT> txs;
+        for (int i = 0; i < (int)xs.size(); i++) {
+            assert(a[i] < ks[xs[i]] - 1);
+            if (a[i] < 0) continue;
+            txs.emplace_back(x[xs[i]][a[i]]);  // x > a equals x[a] = False
+        }
+        tvs.add_all_false_profit(txs, P);
+    } 
 
     // solve
     COST solve() {
@@ -1656,7 +1672,7 @@ template<class COST> struct TwoVariableMongeOpt {
     vector<int> reconstruct() {
         vector<int> res(N, 0);
         vector<bool> tres = tvs.reconstruct();
-        for (int i = 0; i < N; i++) for (int ki = 1; ki < ks[i]; ki++) {
+        for (int i = 0; i < N; i++) for (int ki = 0; ki < ks[i] - 1; ki++) {
             res[i] += not tres[x[i][ki]];
         }
         return res;

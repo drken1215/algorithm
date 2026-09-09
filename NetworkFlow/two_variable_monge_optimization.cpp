@@ -751,7 +751,8 @@ void ABC_326_G() {
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             X[i][j] = j;
-            cin >> L[i][j], L[i][j] -= 2;
+            cin >> L[i][j], L[i][j]--;
+            L[i][j]--;  // x[j] > L[j] でボーナスとなるように
         }
     }
     TwoVariableMongeOpt<long long> opt(N, 5);
