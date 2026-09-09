@@ -1309,7 +1309,6 @@ struct DagPathCover {
     }
 };
 
-// 1, 2, 3-variable submodular optimization
 /*
  N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
  
@@ -1454,7 +1453,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // add all True profit
     // y = F: not gain profit (= cost is P), T: gain profit (= cost is 0)
     // y: T, xi: F is prohibited
-    void add_all_true_profit(const vector<int> &xs, COST P) {
+    template<class INT> void add_all_true_profit(const vector<INT> &xs, COST P) {
         assert(P >= 0);
         OFFSET -= P;
         int y = (int)G.size();
@@ -1469,7 +1468,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // add all False profit
     // y = F: gain profit (= cost is 0), T: not gain profit (= cost is P)
     // xi = T, y = F is prohibited
-    void add_all_false_profit(const vector<int> &xs, COST P) {
+    template<class INT> void add_all_false_profit(const vector<INT> &xs, COST P) {
         assert(P >= 0);
         OFFSET -= P;
         int y = (int)G.size();
@@ -1551,8 +1550,11 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     }
     
     // debug
-    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &tvs) {
-        const auto &edges = tvs.G.get_edges();
+    vector<FlowEdge<COST>> get_edges() const {
+        return G.get_edges();
+    }
+    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &opt) {
+        const auto &edges = opt.get_edges();
         for (const auto &e : edges) s << e << endl;
         return s;
     }
@@ -1584,10 +1586,10 @@ template<class COST> struct TwoVariableMongeOpt {
         vector<int> ks(N, K);
         init(ks, inf);
     }
-    TwoVariableMongeOpt(const vector<int> &ks, COST inf = numeric_limits<COST>::max() / 2) {
+   template<class INT> TwoVariableMongeOpt(const vector<INT> &ks, COST inf = numeric_limits<COST>::max() / 2) {
         init(ks, inf);
     }
-    void init(const vector<int> &iks, COST inf = numeric_limits<COST>::max() / 2) {
+    template<class INT> void init(const vector<INT> &iks, COST inf = numeric_limits<COST>::max() / 2) {
         N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
         x.resize(N);
         for (int i = 0; i < N; i++) {
@@ -1664,8 +1666,8 @@ template<class COST> struct TwoVariableMongeOpt {
     } 
 
     // solve
-    COST solve() {
-        return tvs.solve();
+    COST solve(const string &solver = "dinic") {
+        return tvs.solve(solver);
     }
     
     // reconstrcut the optimal assignment
@@ -1676,6 +1678,16 @@ template<class COST> struct TwoVariableMongeOpt {
             res[i] += not tres[x[i][ki]];
         }
         return res;
+    }
+
+    // debug
+    vector<FlowEdge<COST>> get_edges() const {
+        return tvs.get_edges();
+    }
+    friend ostream& operator << (ostream& s, const TwoVariableMongeOpt &opt) {
+        const auto &edges = opt.get_edges();
+        for (const auto &e : edges) s << e << endl;
+        return s;
     }
 };
 

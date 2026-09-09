@@ -602,8 +602,11 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     }
     
     // debug
-    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &tvs) {
-        const auto &edges = tvs.G.get_edges();
+    vector<FlowEdge<COST>> get_edges() const {
+        return G.get_edges();
+    }
+    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &opt) {
+        const auto &edges = opt.get_edges();
         for (const auto &e : edges) s << e << endl;
         return s;
     }
@@ -715,8 +718,8 @@ template<class COST> struct TwoVariableMongeOpt {
     } 
 
     // solve
-    COST solve() {
-        return tvs.solve();
+    COST solve(const string &solver = "dinic") {
+        return tvs.solve(solver);
     }
     
     // reconstrcut the optimal assignment
@@ -727,6 +730,16 @@ template<class COST> struct TwoVariableMongeOpt {
             res[i] += not tres[x[i][ki]];
         }
         return res;
+    }
+
+    // debug
+    vector<FlowEdge<COST>> get_edges() const {
+        return tvs.get_edges();
+    }
+    friend ostream& operator << (ostream& s, const TwoVariableMongeOpt &opt) {
+        const auto &edges = opt.get_edges();
+        for (const auto &e : edges) s << e << endl;
+        return s;
     }
 };
 
