@@ -45,6 +45,9 @@ template<class FLOW> struct FlowGraph {
         list.clear(), list.resize(n);
         pos.clear();
     }
+    void resize(int n) {
+        list.resize(n);
+    }
     void clear() {
         list.clear(), pos.clear();
     }
@@ -1337,20 +1340,23 @@ struct DagPathCover {
  　　(xi, xj, xk) = (T, T, F): コスト G
  　　(xi, xj, xk) = (T, T, T): コスト H
  */
-// 1, 2, 3-variable submodular optimization
+// submodular optimization
 template<class COST> struct ThreeVariableSubmodularOpt {
+    // Graph
+    int N, S, T;
+    COST OFFSET, INF;
+    FlowGraph<COST> G;
+
     // constructors
     ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
     ThreeVariableSubmodularOpt(int n, COST inf = numeric_limits<COST>::max() / 2)
-    : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), list(n + 2) {}
+    : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), G(n + 2) {}
     
     // initializer
     void init(int n, COST inf = numeric_limits<COST>::max() / 2) {
         N = n, S = n, T = n + 1;
         OFFSET = 0, INF = inf;
-        list.clear();
-        list.resize(N + 2);
-        pos.clear();
+        G.init(N + 2);
     }
 
     // add constant cost
@@ -1363,14 +1369,17 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(0 <= xi && xi < N);
         if (false_cost >= true_cost) {
             OFFSET += true_cost;
-            if (false_cost - true_cost > 0) add_edge(S, xi, false_cost - true_cost);
+            if (false_cost - true_cost > 0) G.add_edge(S, xi, false_cost - true_cost);
         } else {
             OFFSET += false_cost;
-            add_edge(xi, T, true_cost - false_cost);
+            G.add_edge(xi, T, true_cost - false_cost);
         }
     }
     void add_single_cost_01(int xi, COST false_cost, COST true_cost) {
         add_single_cost(xi, false_cost, true_cost);
+    }
+    void add_single_cost_10(int xi, COST false_cost, COST true_cost) {
+        add_single_cost(xi, true_cost, false_cost);
     }
     
     // add "project selection" constraint
@@ -1379,7 +1388,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         assert(xi != xj);
-        add_edge(xi, xj, INF);
+        G.add_edge(xi, xj, INF);
     }
     void add_psp_constraint_01(int xi, int xj) {
         add_psp_constraint(xj, xi);
@@ -1395,7 +1404,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(0 <= xj && xj < N);
         assert(xi != xj);
         assert(C >= 0);
-        if (C > 0) add_edge(xi, xj, C);
+        if (C > 0) G.add_edge(xi, xj, C);
     }
     void add_psp_penalty_01(int xi, int xj, COST C) {
         add_psp_penalty(xj, xi, C);
@@ -1412,8 +1421,8 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(xi != xj);
         assert(P >= 0);
         OFFSET -= P;
-        if (P > 0) add_edge(S, xi, P);
-        if (P > 0) add_edge(xi, xj, P);
+        if (P > 0) G.add_edge(S, xi, P);
+        if (P > 0) G.add_edge(xi, xj, P);
     }
     
     // add both False profit
@@ -1424,8 +1433,8 @@ template<class COST> struct ThreeVariableSubmodularOpt {
         assert(xi != xj);
         assert(P >= 0);
         OFFSET -= P;
-        if (P > 0) add_edge(xj, T, P);
-        if (P > 0) add_edge(xi, xj, P);
+        if (P > 0) G.add_edge(xj, T, P);
+        if (P > 0) G.add_edge(xi, xj, P);
     }
     
     // add general 2-variable submodular function
@@ -1447,13 +1456,13 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // y: T, xi: F is prohibited
     void add_all_true_profit(const vector<int> &xs, COST P) {
         assert(P >= 0);
-        int y = (int)list.size();
-        list.resize(y + 1);
         OFFSET -= P;
-        add_edge(S, y, P);
+        int y = (int)G.size();
+        G.resize(y + 1);
+        G.add_edge(S, y, P);
         for (auto xi : xs) {
             assert(xi >= 0 && xi < N);
-            add_edge(y, xi, INF);
+            G.add_edge(y, xi, INF);
         }
     }
     
@@ -1462,13 +1471,13 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // xi = T, y = F is prohibited
     void add_all_false_profit(const vector<int> &xs, COST P) {
         assert(P >= 0);
-        int y = (int)list.size();
-        list.resize(y + 1);
         OFFSET -= P;
-        add_edge(y, T, P);
+        int y = (int)G.size();
+        G.resize(y + 1);
+        G.add_edge(y, T, P);
         for (auto xi : xs) {
             assert(xi >= 0 && xi < N);
-            add_edge(xi, y, INF);
+            G.add_edge(xi, y, INF);
         }
     }
     
@@ -1516,20 +1525,21 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     }
     
     // solve
-    COST solve() {
-        return dinic() + OFFSET;
+    COST solve(const string solver = "dinic") {
+        if (solver == "dinic") return Dinic(G, S, T) + OFFSET;
+        return COST(0);
     }
     
     // reconstrcut the optimal assignment
     vector<bool> reconstruct() {
-        vector<bool> res(N, false), seen(list.size(), false);
+        vector<bool> res(N, false), seen(G.size(), false);
         queue<int> que;
         seen[S] = true;
         que.push(S);
         while (!que.empty()) {
             int v = que.front();
             que.pop();
-            for (const auto &e : list[v]) {
+            for (const auto &e : G[v]) {
                 if (e.cap > 0 && !seen[e.to]) {
                     if (e.to < N) res[e.to] = true;
                     seen[e.to] = true;
@@ -1542,114 +1552,9 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     
     // debug
     friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &tvs) {
-        const auto &edges = tvs.get_edges();
+        const auto &edges = tvs.G.get_edges();
         for (const auto &e : edges) s << e << endl;
         return s;
-    }
-    
-private:
-    // edge class
-    struct Edge {
-        // core members
-        int rev, from, to;
-        COST cap;
-        
-        // constructor
-        Edge(int r, int f, int t, COST c) : rev(r), from(f), to(t), cap(c) {}
-        
-        // debug
-        friend ostream& operator << (ostream& s, const Edge& e) {
-            return s << e.from << "->" << e.to << '(' << e.cap << ')';
-        }
-    };
-    
-    // inner data
-    int N, S, T;
-    COST OFFSET, INF;
-    vector<vector<Edge>> list;
-    vector<pair<int,int>> pos;
-    
-    // add edge
-    Edge &get_rev_edge(const Edge &e) {
-        return list[e.to][e.rev];
-    }
-    Edge &get_edge(int i) {
-        return list[pos[i].first][pos[i].second];
-    }
-    const Edge &get_edge(int i) const {
-        return list[pos[i].first][pos[i].second];
-    }
-    vector<Edge> get_edges() const {
-        vector<Edge> edges;
-        for (int i = 0; i < (int)pos.size(); ++i) {
-            edges.push_back(get_edge(i));
-        }
-        return edges;
-    }
-    void add_edge(int from, int to, COST cap) {
-        if (cap <= 0) return;
-        pos.emplace_back(from, (int)list[from].size());
-        list[from].push_back(Edge((int)list[to].size(), from, to, cap));
-        list[to].push_back(Edge((int)list[from].size() - 1, to, from, 0));
-    }
-    
-    // Dinic's algorithm
-    COST dinic(COST limit_flow) {
-        COST current_flow = 0;
-        vector<int> level((int)list.size(), -1), iter((int)list.size(), 0);
-        queue<int> que;
-        
-        // Dinic BFS
-        auto bfs = [&]() -> void {
-            fill(level.begin(), level.end(), -1);
-            level[S] = 0;
-            while (!que.empty()) que.pop();
-            que.push(S);
-            while (!que.empty()) {
-                int v = que.front();
-                que.pop();
-                for (const Edge &e : list[v]) {
-                    if (level[e.to] < 0 && e.cap > 0) {
-                        level[e.to] = level[v] + 1;
-                        if (e.to == T) return;
-                        que.push(e.to);
-                    }
-                }
-            }
-        };
-        
-        // Dinic DFS
-        auto dfs = [&](auto self, int v, COST up_flow) {
-            if (v == S) return up_flow;
-            COST res_flow = 0;
-            for (int &i = iter[v]; i < (int)list[v].size(); i++) {
-                Edge &e = list[v][i], &re = get_rev_edge(e);
-                if (level[v] <= level[e.to] || re.cap <= 0) continue;
-                COST flow = self(self, e.to, min(up_flow - res_flow, re.cap));
-                if (flow <= 0) continue;
-                res_flow += flow;
-                e.cap += flow, re.cap -= flow;
-                if (res_flow == up_flow) return res_flow;
-            }
-            level[v] = (int)list.size();
-            return res_flow;
-        };
-        
-        // flow
-        while (current_flow < limit_flow) {
-            bfs();
-            if (level[T] < 0) break;
-            fill(iter.begin(), iter.end(), 0);
-            while (current_flow < limit_flow) {
-                COST flow = dfs(dfs, T, limit_flow - current_flow);
-                if (flow <= 0) break;
-                current_flow += flow;
-            }
-        }
-        return current_flow;
-    };
-    COST dinic() {
-        return dinic(numeric_limits<COST>::max() / 2);
     }
 };
 

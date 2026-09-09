@@ -53,6 +53,9 @@ template<class FLOW> struct FlowGraph {
         list.clear(), list.resize(n);
         pos.clear();
     }
+    void resize(int n) {
+        list.resize(n);
+    }
     void clear() {
         list.clear(), pos.clear();
     }

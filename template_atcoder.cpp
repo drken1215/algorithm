@@ -2107,6 +2107,9 @@ template<class FLOW> struct FlowGraph {
         list.clear(), list.resize(n);
         pos.clear();
     }
+    void resize(int n) {
+        list.resize(n);
+    }
     void clear() {
         list.clear(), pos.clear();
     }
@@ -2215,6 +2218,19 @@ template<class FLOW> struct FlowGraph {
             }
         };
         dfs_s(dfs_s, s), dfs_t(dfs_t, t);
+        return res;
+    }
+
+    // finc cutset
+    vector<FlowEdge<FLOW>> find_cutset(int s, int t) const {
+        vector<int> cut = find_cut(s, t);
+        vector<FlowEdge<FLOW>> res;
+        const auto &edges = get_edges();
+        for (const auto &e : edges) {
+            if (cut[e.from] == 1 && cut[e.to] != 1) {
+                res.emplace_back(e);
+            }
+        }
         return res;
     }
 
@@ -2332,7 +2348,7 @@ template<class FLOW> struct FlowGraph {
 
 // Dinic
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
-    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    assert(0 <= s && s < (int)G.size() && 0 <= t && t < (int)G.size() && s != t);
     FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     

@@ -656,9 +656,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 劣モジュラ関数のグラフ表現
 
 - (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/project_selection_problem.cpp)
-- (★★★☆) [2 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_submodular_optimization.cpp)
-- (★★★★) [3 変数 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/three_variable_submodular_optimization.cpp)
-- (★★★★) [2 変数 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_monge_optimization.cpp)
+- (★★★★) [3 変数以下 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/three_variable_submodular_optimization.cpp)
+- (★★★★) [2 変数以下 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_monge_optimization.cpp)
 
 ## 特殊なグラフ上の最小費用流の slope trick 帰着
 
