@@ -2,6 +2,9 @@
 // 2 変数 Monge 関数の和の最小化
 //
 // verified:
+//   AtCoder ABC 326 G - Unlock Achievement (for larger, bigger)
+//     https://atcoder.jp/contests/abc326/tasks/abc326_g
+//
 //   AtCoder ABC 347 G - Grid Coloring 2 (5 値)
 //     https://atcoder.jp/contests/abc347/tasks/abc347_g
 //
@@ -502,7 +505,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // add all True profit
     // y = F: not gain profit (= cost is P), T: gain profit (= cost is 0)
     // y: T, xi: F is prohibited
-    void add_all_true_profit(const vector<int> &xs, COST P) {
+    template<class INT> void add_all_true_profit(const vector<INT> &xs, COST P) {
         assert(P >= 0);
         OFFSET -= P;
         int y = (int)G.size();
@@ -517,7 +520,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
     // add all False profit
     // y = F: gain profit (= cost is 0), T: not gain profit (= cost is P)
     // xi = T, y = F is prohibited
-    void add_all_false_profit(const vector<int> &xs, COST P) {
+    template<class INT> void add_all_false_profit(const vector<INT> &xs, COST P) {
         assert(P >= 0);
         OFFSET -= P;
         int y = (int)G.size();
@@ -609,9 +612,7 @@ template<class COST> struct ThreeVariableSubmodularOpt {
 // K-value Two Variable Monge Function Optimization 
 /*
     X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
-
-    X[i] < d -> x[i][d] = 1
-    X[i] = d -> x[i][1] = 0, ..., x[i][d] = 0, x[i][d+1] = 1, ..., x[i][K] = 1
+    set X[i] <= d  ⇔  x[i][d] = 1
 
     X[i] = 0   -> (1, 1, 1, ..., 1, 1)
     X[i] = 1   -> (0, 1, 1, ..., 1, 1)
@@ -642,12 +643,12 @@ template<class COST> struct TwoVariableMongeOpt {
         x.resize(N);
         for (int i = 0; i < N; i++) {
             assert(ks[i] >= 2);
-            x[i].assign(ks[i], 0);
-            for (int k = 1; k < ks[i]; k++) x[i][k] = N01++;
+            x[i].assign(ks[i] - 1, 0);
+            for (int k = 0; k < ks[i] - 1; k++) x[i][k] = N01++;
         }
         tvs.init(N01, INF);
         for (int i = 0; i < N; i++) {
-            for (int k = 1; k < ks[i] - 1; k++) {
+            for (int k = 0; k < ks[i] - 2; k++) {
                 tvs.add_psp_constraint(x[i][k], x[i][k + 1]);
             }
         }
@@ -663,37 +664,55 @@ template<class COST> struct TwoVariableMongeOpt {
         assert(0 <= xi && xi < N);
         assert((int)cost.size() == ks[xi]);
         tvs.add_cost(cost[ks[xi] - 1]);
-        for (int k = 1; k < ks[xi]; k++) {
-            tvs.add_single_cost(x[xi][k], 0, cost[k-1] - cost[k]);
+        for (int k = 0; k < ks[xi] - 1; k++) {
+            tvs.add_single_cost(x[xi][k], 0, cost[k] - cost[k + 1]);
         }
     }
 
     // add 2-variable Monge function
-    // cost[i][j]+cost[i+1][j+1] <= cost[i+1][j]+cost[i][j+1]
-    void add_monge_function(int xi, int xj, vector<vector<COST>> cost) {
+    void add_monge_function(int xi, int xj, const vector<vector<COST>> &cost) {
         assert(0 <= xi && xi < N);
         assert(0 <= xj && xj < N);
         assert(xi != xj);
-        assert(cost.size() == ks[xi]);
-        assert(cost[0].size() == ks[xj]);
-        vector<COST> icost(ks[xi]), jcost(ks[xj]);
-        for (int ki = 0; ki < ks[xi]; ki++) {
-            icost[ki] = cost[ki][0];
-            for (int kj = 0; kj < ks[xj]; kj++) cost[ki][kj] -= icost[ki];
-        }
-        for (int kj = 0; kj < ks[xj]; kj++) {
-            jcost[kj] = cost[0][kj];
-            for (int ki = 0; ki < ks[xi]; ki++) cost[ki][kj] -= jcost[kj];
-        }
-        add_single_cost(xi, icost), add_single_cost(xj, jcost);
-        for (int ki = 1; ki < ks[xi]; ki++) {
-            for (int kj = 1; kj < ks[xj]; kj++) {
-                COST c = cost[ki][kj] - cost[ki][kj-1] - cost[ki-1][kj] + cost[ki-1][kj-1];
-                assert(c <= 0);
-                tvs.add_both_false_profit(x[xi][ki], x[xj][kj], -c);
+        assert((int)cost.size() == ks[xi]);
+        assert((int)cost[0].size() == ks[xj]);
+        vector<COST> icost(ks[xi], 0), jcost(ks[xj], 0);
+        for (int ki = 0; ki < ks[xi]; ki++) icost[ki] = cost[ki][0];
+        for (int kj = 1; kj < ks[xj]; kj++) jcost[kj] = cost[ks[xi] - 1][kj] - cost[ks[xi] - 1][0];
+        add_single_cost(xi, icost);
+        add_single_cost(xj, jcost);
+        for (int ki = 0; ki < ks[xi] - 1; ki++) {
+            for (int kj = 0; kj < ks[xj] - 1; kj++) {
+                COST c = cost[ki][kj + 1] - cost[ki][kj] - cost[ki + 1][kj + 1] + cost[ki + 1][kj];
+                assert(c >= 0);
+                tvs.add_psp_penalty(x[xi][ki], x[xj][kj], c);
             }
         }
     }
+
+    // add all smaller profit (x[xs[i]] <= a[i])
+    template<class INT> void add_all_smaller_profit(const vector<INT> &xs, const vector<INT> &a, COST P) {
+        assert(xs.size() == a.size());
+        vector<INT> txs;
+        for (int i = 0; i < (int)xs.size(); i++) {
+            assert(a[i] >= 0);
+            if (a[i] >= ks[xs[i]] - 1) continue;
+            txs[i].emplace_back(x[xs[i]][a[i]]);  // x <= a equals x[a] = True
+        }
+        tvs.add_all_true_profit(txs, P);
+    }
+
+    // add all larger profit (x[xs[i]] > a[i])
+    template<class INT> void add_all_larger_profit(const vector<INT> &xs, const vector<INT> &a, COST P) {
+        assert(xs.size() == a.size());
+        vector<INT> txs;
+        for (int i = 0; i < (int)xs.size(); i++) {
+            assert(a[i] < ks[xs[i]] - 1);
+            if (a[i] < 0) continue;
+            txs.emplace_back(x[xs[i]][a[i]]);  // x > a equals x[a] = False
+        }
+        tvs.add_all_false_profit(txs, P);
+    } 
 
     // solve
     COST solve() {
@@ -704,7 +723,7 @@ template<class COST> struct TwoVariableMongeOpt {
     vector<int> reconstruct() {
         vector<int> res(N, 0);
         vector<bool> tres = tvs.reconstruct();
-        for (int i = 0; i < N; i++) for (int ki = 1; ki < ks[i]; ki++) {
+        for (int i = 0; i < N; i++) for (int ki = 0; ki < ks[i] - 1; ki++) {
             res[i] += not tres[x[i][ki]];
         }
         return res;
@@ -715,6 +734,38 @@ template<class COST> struct TwoVariableMongeOpt {
 //------------------------------//
 // Examples
 //------------------------------//
+
+#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
+#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
+#define ALL(x) x.begin(), x.end()
+
+// AtCoder ABC 326 G - Unlock Achievement
+// skill level: 0, 1, 2, 3, 4
+void ABC_326_G() {
+    long long N, M;
+    cin >> N >> M;
+    vector C(N, 0LL), A(M, 0LL);
+    vector X(M, vector(N, 0LL)), L(M, vector(N, 0LL));
+    for (int i = 0; i < N; i++) cin >> C[i];
+    for (int i = 0; i < M; i++) cin >> A[i];
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            X[i][j] = j;
+            cin >> L[i][j], L[i][j] -= 2;
+        }
+    }
+    TwoVariableMongeOpt<long long> opt(N, 5);
+    for (int i = 0; i < N; i++) {
+        vector<long long> cost(5, 0);
+        for (int j = 1; j < 5; j++) cost[j] = cost[j - 1] + C[i];
+        opt.add_single_cost(i, cost);
+    }
+    for (int i = 0; i < M; i++) {
+        opt.add_all_larger_profit(X[i], L[i], A[i]);
+    }
+    long long res = -opt.solve();
+    cout << res << endl;
+}
 
 // AtCoder ABC 347 G - Grid Coloring 2
 void ABC_347_G() {
@@ -749,10 +800,8 @@ void ABC_347_G() {
 }
 
 // AtCoder ARC 129 E - Yet Another Minimization
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
 void ARC_129_E() {
-    long long N, M, INF = 1LL<<45;
+    long long N, M;
     cin >> N >> M;
     vector A(N, vector(M, 0LL)), C(N, vector(M, 0LL)), W(N, vector(N, 0LL));
     REP(i, N) REP(j, M) cin >> A[i][j] >> C[i][j];
@@ -793,7 +842,6 @@ void ARC_107_F() {
 }
 
 // KUPC 2017 H - Make a Potion
-#define ALL(x) x.begin(), x.end()
 void KUPC_2017_H() {
     using i128 = __int128_t; 
     long long N, M, INF = 1LL<<60;
@@ -875,7 +923,8 @@ void ABC_397_G() {
 
 
 int main() {
-    ABC_347_G();
+    ABC_326_G();
+    //ABC_347_G();
     //ARC_129_E();
     //ARC_107_F();
     //KUPC_2017_H();
