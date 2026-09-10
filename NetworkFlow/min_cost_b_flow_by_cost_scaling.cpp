@@ -15,6 +15,9 @@
 //   JAG 夏合宿 2013 Day4 I - Multi Path Story (AOJ 2627, cost-scaling が苦手説あり: TLE ギリギリ)
 //     https://onlinejudge.u-aizu.ac.jp/challenges/sources/JAG/Summer/2627?year=2013
 //
+//   Educational Codeforces Round 80 F. Red-Blue Graph
+//     https://codeforces.com/contest/1288/problem/F
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -723,7 +726,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
         // debug
         friend ostream& operator << (ostream& s, const Edge& e) {
             return s << e.from << "->" << e.to 
-            << '(' << e.lower_cap << '~' << e.upper_cap << ';' << e.cost << ')';
+            << "(" << e.flow << "; " << e.lower_cap << "~" << e.upper_cap << "; " << e.cost << ")";
         }
     };
 
@@ -732,8 +735,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
     vector<Edge> edges;
     vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
     vector<COST> dual;
-    FlowCostGraph<FLOW, COST> G;
-
+    
     // constructor
     MinCostBFlow() {}
     MinCostBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
@@ -755,6 +757,17 @@ template<class FLOW, class COST> struct MinCostBFlow {
         assert(0 <= v && v < V);
         assert(lower_ds <= upper_ds);
         lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // getter
+    Edge &get_edge(int i) {
+        return edges[i];
+    }
+    const Edge &get_edge(int i) const {
+        return edges[i];
+    }
+    vector<Edge> get_edges() const {
+        return edges;
     }
 
     // solver
@@ -794,7 +807,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
         if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
 
         // come down to min-cost circulation
-        G.init(V + 1);
+        FlowCostGraph<FLOW, COST> G(V + 1);
         for (int i = 0; i < (int)edges.size(); i++) {
             auto &e = edges[i];
             const auto &ge = sg.get_edge(i);
@@ -946,10 +959,49 @@ void AOJ_2627() {
     cout << cost << endl;
 }
 
+// Educational Codeforces Round 80 F. Red-Blue Graph
+void EducationalCodeforces80_F() {
+    long long L, R, M, costR, costB, INF = 10000;
+    string sl, sr;
+    cin >> L >> R >> M >> costR >> costB >> sl >> sr;
+    MinCostBFlow<long long, long long> G(L + R);
+    for (int i = 0; i < L; i++) {
+        if (sl[i] == 'R') G.set_ds(i, 1, INF);
+        else if (sl[i] == 'B') G.set_ds(i, -INF, -1);
+        else G.set_ds(i, -INF, INF);
+    }
+    for (int j = 0; j < R; j++) {
+        if (sr[j] == 'R') G.set_ds(j+L, -INF, -1);
+        else if (sr[j] == 'B') G.set_ds(j+L, 1, INF);
+        else G.set_ds(j+L, -INF, INF);
+    }
+    for (int i = 0; i < M; i++) {
+        int u, v;
+        cin >> u >> v, u--, v--;
+        G.add_edge(u, v+L, 1, costR);
+        G.add_edge(v+L, u, 1, costB);
+    }
+    auto [flag, mincost] = G.solve();
+     if (!flag) {
+        cout << -1 << endl;
+        return;
+     }
+    auto es = G.get_edges();
+    string res(M, 'U');
+    for (int i = 0; i < M; i++) {
+        auto e = es[i*2], re = es[i*2+1];
+        if (e.flow == 1) res[i] = 'R';
+        else if (re.flow == 1) res[i] = 'B';
+    }
+    cout << mincost << endl;
+    cout << res << endl;
+}
+
 
 int main() {
     //Yosupo_Minimum_Cost_b_flow();
     //ABC_421_G();
     //KUPC_2014_I();
-    AOJ_2627();
+    //AOJ_2627();
+    EducationalCodeforces80_F();
 }

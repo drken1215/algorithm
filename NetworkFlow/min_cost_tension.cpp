@@ -733,6 +733,7 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
 }
 
 // Minimum Cost b-flow (come down to min-cost circulation)
+// Minimum Cost b-flow (come down to min-cost circulation)
 template<class FLOW, class COST> struct MinCostBFlow {
     // Edge
     struct Edge {
@@ -743,7 +744,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
         // debug
         friend ostream& operator << (ostream& s, const Edge& e) {
             return s << e.from << "->" << e.to 
-            << '(' << e.lower_cap << '~' << e.upper_cap << ';' << e.cost << ')';
+            << "(" << e.flow << "; " << e.lower_cap << "~" << e.upper_cap << "; " << e.cost << ")";
         }
     };
 
@@ -752,8 +753,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
     vector<Edge> edges;
     vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
     vector<COST> dual;
-    FlowCostGraph<FLOW, COST> G;
-
+    
     // constructor
     MinCostBFlow() {}
     MinCostBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
@@ -775,6 +775,17 @@ template<class FLOW, class COST> struct MinCostBFlow {
         assert(0 <= v && v < V);
         assert(lower_ds <= upper_ds);
         lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // getter
+    Edge &get_edge(int i) {
+        return edges[i];
+    }
+    const Edge &get_edge(int i) const {
+        return edges[i];
+    }
+    vector<Edge> get_edges() const {
+        return edges;
     }
 
     // solver
@@ -814,7 +825,7 @@ template<class FLOW, class COST> struct MinCostBFlow {
         if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
 
         // come down to min-cost circulation
-        G.init(V + 1);
+        FlowCostGraph<FLOW, COST> G(V + 1);
         for (int i = 0; i < (int)edges.size(); i++) {
             auto &e = edges[i];
             const auto &ge = sg.get_edge(i);
