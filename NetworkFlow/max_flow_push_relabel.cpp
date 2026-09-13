@@ -144,6 +144,29 @@ template<class FLOW> struct FlowGraph {
         };
         return dfs(dfs, s, up_flow);
     };
+    FLOW augment(int s, int t, vector<FlowEdge<FLOW>> &path, FLOW up_flow = numeric_limits<FLOW>::max()) {
+        vector<bool> seen(size(), false);
+        auto dfs = [&](auto &&dfs, int v, vector<FlowEdge<FLOW>> &path, FLOW up_flow) -> FLOW {
+            if (v == t) return up_flow;
+            seen[v] = true;
+            for (int i = 0; i < (int)list[v].size(); i++) {
+                FlowEdge<FLOW> &e = list[v][i], &re = get_rev_edge(e);
+                if (seen[e.to] || e.cap <= 0) continue;
+                FLOW flow = dfs(dfs, e.to, path, min(up_flow, e.cap));
+                if (flow > 0) {
+                    e.cap -= flow, e.flow += flow;
+                    re.cap += flow, re.flow -= flow;
+                    path.emplace_back(e);
+                    return flow;
+                }
+            }  
+            return FLOW(0); 
+        };
+        path.clear();
+        FLOW res = dfs(dfs, s, path, up_flow);
+        reverse(path.begin(), path.end());
+        return res;
+    };
 
     // find reachable nodes from node s (1: s-domain, -1: t-domain, 0: no reach)
     vector<int> find_cut(int s, int t) const {
