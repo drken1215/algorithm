@@ -13,15 +13,15 @@
 |**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
 |**[DATA STRUCTURE : ADVANCED](#dsa)**|その他の高度なデータ構造|永続データ構造など|
 |**[DISCRETE CONVEXITY](#convex)**|離散凸性に関するアルゴリズム|slope trick、LARSCH 法など|
-|**[FLOW](#flow)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
-|**[GEOMETRY](#ge)**|計算幾何|円の交点など|
-|**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
-|**[LINEAR ALGEBRA](#mla)**|線形代数アルゴリズム|行列計算など|
+|**[FLOW](#flow)**|ネットワークフローに関するアルゴリズム|Ford-Fulkerson 法など|
+|**[FPS・POLYNOMIAL](#fps)**|形式的冪級数や多項式に関するアルゴリズム|多項式補間、FPS 合成など|
+|**[GEOMETRY](#ge)**|計算幾何に関するアルゴリズム|円の交点など|
+|**[GRAPH](#gt)**|グラフに関するアルゴリズム|強連結成分分解など|
+|**[LINEAR ALGEBRA](#mla)**|線形代数に関するアルゴリズム|行列計算など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**[POLYNOMIAL](#mpo)**|多項式・FPS アルゴリズム|多項式補間、FPS 合成など|
-|**[SEARCH・OPTIMIZATION](#ser)**|探索・最適化のアルゴリズム|全探索, 二分探索など|
-|**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
+|**[SEARCH・OPTIMIZATION](#ser)**|探索・最適化に関するアルゴリズム|全探索, 二分探索など|
+|**[STRING](#st)**|文字列に関するアルゴリズム|Suffix Array、KMP 法など|
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
@@ -243,7 +243,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Knuth_Yao.cpp)
 - (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_general.cpp)
 
-## マトロイド, M 凸性
+## さまざまなマトロイド
 
 - (★★★☆) 二値マトロイド
 - (★★★☆) グラフマトロイド
@@ -328,6 +328,83 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_convex_flow.cpp)
 - (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_tension.cpp)
 - (★★★★) Longest Shortest Path
+
+
+
+
+　
+ㅤ
+<a name="fps"></a>
+# 形式的冪級数・多項式 (FPS・POLYNOMIAL)
+形式的冪級数や多項式に関するアルゴリズムです
+
+- (★★★★) [形式的冪級数・多項式　全部乗せ](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/formal_power_series.cpp)
+
+## FFT, NTT, Convolution
+
+- (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/FFT.cpp)
+- (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/NTT.cpp)
+- (★★★☆) [任意 mod Convolution (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/NTT_any_mod.cpp)
+- (★★★★) [mod 2^64 Convolution](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/NTT_mod_2_64.cpp)
+- (★★★★) Relaxed Convolution
+- (★★★★) 二次元 FFT
+- (★★★★) 多変数巡回 FFT
+
+## 形式的冪級数 (FPS)
+
+- (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/inv_formal_power_series.cpp)
+- (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/exp_formal_power_series.cpp)
+- (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/log_formal_power_series.cpp)
+- (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/pow_formal_power_series.cpp)
+- (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/sqrt_formal_power_series.cpp)
+
+## FPS のアルゴリズム
+
+- (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/bostan_mori.cpp)
+- (★★★★) [Berlekamp-Massey 法](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/berlekamp_massey.cpp)
+- (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/power_projection.cpp)
+- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/composition_formal_power_series.cpp)
+- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/compositional_inverse_formal_power_series.cpp)
+- (★★★★) pow 列挙
+- (★★★★) 部分分数分解
+- (★★★★) 常微分方程式
+- (★★★★) 三角関数
+
+## さまざまな FPS
+
+- (★★★★) オンライン FPS
+- (★★★★) 多変数 FPS
+
+## 多項式の基底変換
+
+- (★★★☆) [Polynomial Taylor Shift (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_taylor_shift.cpp)
+- (★★★☆) Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))
+- (★★★★) [多項式補間 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_interpolation.cpp)
+- (★★★★) [多項式補間 (等比数列のとき) (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_interpolation_in_geometric_sequence.cpp)
+- (★★★★) [Multipoint Evaluation (in O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/multipoint_evaluation.cpp)
+- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/multipoint_evaluation_in_geometric_sequence.cpp)
+- (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_monomial_to_newton.cpp)
+
+## 多項式のアルゴリズム
+
+- (★★★☆) [多項式マージテク (次数の総和が D の多項式の総積 in O(D (log D)^2))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_merge_technique.cpp)
+- (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_mod_pow.cpp)
+- (★★★☆) [多項式の middle product (c[i] = sum_j a[i+j]b[j])](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_middle_product.cpp)
+- (★★★★) [多項式の評価点シフト (in O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_shift_sampling.cpp)
+- (★★★★) [多項式の除算 (by NTT, inv of FPS, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_div.cpp)
+- (★★★★) [多項式 GCD (by half-gcd, in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_gcd.cpp)
+- (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/FPSandPolynomial/polynomial_root_finding.cpp)
+
+## さまざまな値の高速計算
+
+- (★★★★) 自然数の k 乗和 (Faulhaber の公式)
+- (★★★★) Σ{i=0}^{n-1} r^i i^d
+- (★★★★) Σ{i=0}^{∞} r^i i^d
+- (★★★★) Σ{i=0}^{n-1} a^i f(i)
+- (★★★★) N! mod P (by FPS, O(√P log P))
+- (★★★★) Tetration
+- (★★★★) 二項係数の prefix sum の多点評価
+- (★★★★) Karatsuba 法
 
 
 
@@ -435,13 +512,14 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 最短路問題
 
-- (★☆☆☆) [重みなしグラフの最短路 (BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
-- (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (0-1 BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
+- (★☆☆☆) [重みなしグラフの最短路 (by BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
+- (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (by 0-1 BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
 - (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, in O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
 - (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, in O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
 - (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - (★★★☆) [全頂点対間最短路 (Johnson 法, in O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)
 - (★★★☆) [SPFA (Shortest Path Faster Algorithm)](https://github.com/drken1215/algorithm/blob/master/Graph/spfa.cpp)
+- (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
 
 ## 全域木, 路
 
@@ -461,7 +539,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 一般グラフのマッチング
 
-- (★★★★) [重みなし一般グラフの最大マッチング (行列補間, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/max_general_matching_by_matrix_completion.cpp)
+- (★★★★) [重みなし一般グラフの最大マッチング (by 行列補間, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/max_general_matching_by_matrix_completion.cpp)
 - (★★★★) 重みなし一般グラフの最大マッチング (Edmonds 法, in O(V^3))
 - (★★★★) 重み付き一般グラフの最大マッチング (Edmonds 法, in O(V^3))
 
@@ -527,8 +605,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 　
 <a name="mc"></a>
-# 組合せ (MATH : COMBINATORICS)
-数え上げなど、組合せ数学に関するアルゴリズムです。
+# 数学：組合せ論 (MATH : COMBINATORICS)
+数え上げやゲームなど、組合せ論に関するアルゴリズムです。
 
 ## Modint
 
@@ -588,7 +666,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 　
 <a name="mmt"></a>
-# 整数 (MATH : NUMBER THEORY)
+# 数学：整数論 (MATH : NUMBER THEORY)
 整数論的アルゴリズムです。
 
 ## 約数, 倍数
@@ -667,85 +745,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 
 
-　
-ㅤ
-<a name="mpo"></a>
-# 多項式・FPS (POLYNOMIAL)
-多項式や FPS に関するアルゴリズムです
-
-- (★★★★) [多項式・FPS 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Polynomial/formal_power_series.cpp)
-
-## FFT, NTT, Convolution
-
-- (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/Polynomial/FFT.cpp)
-- (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/Polynomial/NTT.cpp)
-- (★★★☆) [任意 mod Convolution (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/Polynomial/NTT_any_mod.cpp)
-- (★★★★) [mod 2^64 Convolution](https://github.com/drken1215/algorithm/blob/master/Polynomial/NTT_mod_2_64.cpp)
-- (★★★★) Relaxed Convolution
-- (★★★★) 二次元 FFT
-- (★★★★) 多変数巡回 FFT
-
-## 形式的冪級数 (FPS)
-
-- (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/inv_formal_power_series.cpp)
-- (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/exp_formal_power_series.cpp)
-- (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/log_formal_power_series.cpp)
-- (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/pow_formal_power_series.cpp)
-- (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/sqrt_formal_power_series.cpp)
-
-## FPS のアルゴリズム
-
-- (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/Polynomial/bostan_mori.cpp)
-- (★★★★) [Berlekamp-Massey 法](https://github.com/drken1215/algorithm/blob/master/Polynomial/berlekamp_massey.cpp)
-- (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/Polynomial/power_projection.cpp)
-- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/composition_formal_power_series.cpp)
-- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/compositional_inverse_formal_power_series.cpp)
-- (★★★★) pow 列挙
-- (★★★★) 部分分数分解
-- (★★★★) 常微分方程式
-- (★★★★) 三角関数
-
-## さまざまな FPS
-
-- (★★★★) オンライン FPS
-- (★★★★) 多変数 FPS
-
-## 多項式の基底変換
-
-- (★★★☆) [Polynomial Taylor Shift (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_taylor_shift.cpp)
-- (★★★☆) Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))
-- (★★★★) [多項式補間 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_interpolation.cpp)
-- (★★★★) [多項式補間 (等比数列のとき) (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_interpolation_in_geometric_sequence.cpp)
-- (★★★★) [Multipoint Evaluation (in O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/multipoint_evaluation.cpp)
-- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/multipoint_evaluation_in_geometric_sequence.cpp)
-- (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_monomial_to_newton.cpp)
-
-## 多項式のアルゴリズム
-
-- (★★★☆) [多項式マージテク (次数の総和が D の多項式の総積 in O(D (log D)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_merge_technique.cpp)
-- (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_mod_pow.cpp)
-- (★★★☆) [多項式の middle product (c[i] = sum_j a[i+j]b[j])](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_middle_product.cpp)
-- (★★★★) [多項式の評価点シフト (in O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_shift_sampling.cpp)
-- (★★★★) [多項式の除算 (by NTT, inv of FPS, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_div.cpp)
-- (★★★★) [多項式 GCD (by half-gcd, in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_gcd.cpp)
-- (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_root_finding.cpp)
-
-## さまざまな値の高速計算
-
-- (★★★★) 自然数の k 乗和 (Faulhaber の公式)
-- (★★★★) Σ{i=0}^{n-1} r^i i^d
-- (★★★★) Σ{i=0}^{∞} r^i i^d
-- (★★★★) Σ{i=0}^{n-1} a^i f(i)
-- (★★★★) N! mod P (by FPS, O(√P log P))
-- (★★★★) Tetration
-- (★★★★) 二項係数の prefix sum の多点評価
-- (★★★★) Karatsuba 法
-
-
-
 
 　
-
 <a name="ser"></a>
 # 探索・最適化 (SEARCH・OPTIMIZATION)
 探索や最適化に関するアルゴリズムです。
@@ -769,7 +770,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな最適化技法
 
-- (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
 - (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Search/Lagrange_relaxation_Aliens.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Search/simplex_method.cpp)
 - (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
