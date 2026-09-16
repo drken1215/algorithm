@@ -12,20 +12,20 @@
 |**[DATA STRUCTURE : BASIC](#dsb)**|基礎的なデータ構造|Union-Find など|
 |**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
 |**[DATA STRUCTURE : ADVANCED](#dsa)**|その他の高度なデータ構造|永続データ構造など|
+|**[DISCRETE CONVEXITY](#convex)**|離散凸性に関するアルゴリズム|slope trick、LARSCH 法など|
+|**[FLOW](#flow)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
 |**[GEOMETRY](#ge)**|計算幾何|円の交点など|
 |**[GRAPH](#gt)**|グラフアルゴリズム|強連結成分分解など|
-|**[MATH : LINEAR ALGEBRA](#mla)**|線形代数アルゴリズム|行列計算など|
-|**[MATH : POLYNOMIAL](#mpo)**|多項式・FPS アルゴリズム|多項式補間、FPS 合成など|
+|**[LINEAR ALGEBRA](#mla)**|線形代数アルゴリズム|行列計算など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**[NETWORK FLOW](#nf)**|ネットワークフローアルゴリズム|Ford-Fulkerson 法など|
-|**[OPTIMIZATION](#opt)**|最適化のアルゴリズム|動的計画法など|
-|**[SEARCH](#ser)**|探索のアルゴリズム|全探索, 二分探索など|
+|**[POLYNOMIAL](#mpo)**|多項式・FPS アルゴリズム|多項式補間、FPS 合成など|
+|**[SEARCH・OPTIMIZATION](#ser)**|探索・最適化のアルゴリズム|全探索, 二分探索など|
 |**[STRING](#st)**|文字列アルゴリズム|Suffix Array、KMP 法など|
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
 
-リンクが付いていないものは、ライブラリ整備予定であることを意味しています。
+リンクが付いていないものは、実装予定であることを意味しています。
 
 ## 難易度表記の目安
 
@@ -191,6 +191,146 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 
 
+ㅤ
+<a name="convex"></a>
+# 離散凸性 (DISCRETE CONVEXITY)
+離散凸性に関するアルゴリズムです。
+
+- (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_all.cpp)
+- (★★★★) マトロイド 全部乗せ
+
+## 区分線形凸関数の活用 1 ： Convex Hull Trick
+
+- (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick.cpp)
+- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log C))
+- (★★★★) 2D Line container (max(ax + by) クエリ)
+
+## 区分線形凸関数の活用 2 ： Slope Trick
+
+- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/slope_trick.cpp)
+- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/dual_slope_trick.cpp)
+- (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/super_slope_trick.cpp)
+
+## 区分線形凸関数の活用 3 ： Min Plus Convolution
+
+- (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/min_plus_convolution_convex_convex.cpp)
+- (★★★★) Min Plus Convolution (凸と任意)
+- (★★★★) Min Plus Convolution (凹と任意)
+- (★★★★) Axiotis-Tzamos Knapsack
+
+## 行最小値問題・単一始点最短路問題
+
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/monotone_minima.cpp)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/monotone_minima_DD.cpp)
+- (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK.cpp)
+- (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK_DD.cpp)
+- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_enum_d_shortest_path.cpp)
+- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/shortest_path_sliding.cpp)
+
+## Monge 最短路問題
+
+- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_sliding_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_LARSCH.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Alien_DP.cpp)
+- (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
+
+## その他 Monge 性, L 凸性
+
+- (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_checker.cpp)
+- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_min_plus_composition.cpp)
+- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Knuth_Yao.cpp)
+- (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_general.cpp)
+
+## マトロイド, M 凸性
+
+- (★★★☆) 二値マトロイド
+- (★★★☆) グラフマトロイド
+- (★★★☆) 分割マトロイド
+- (★★★☆) 横断マトロイド
+- (★★★☆) マトロイド上の Greedy 法
+
+## その他マトロイド, M 凸性
+
+- (★★★★) マトロイド交差
+- (★★★★) 重み付きマトロイド交差
+- (★★★★) マトロイド Union
+- (★★★★) 線形マトロイドパリティ
+- (★★★★) 最大辺数最小重みの辺素な二つの全域森
+- (★★★★) 基多面体
+
+
+
+
+ㅤ
+<a name="flow"></a>
+# フロー (FLOW)
+フロー関連のアルゴリズムです。
+
+- (★★★★) [フロー 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Flow/flow_all.cpp)
+
+## 最大流
+
+- (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_ford_fulkerson.cpp)
+- (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_dinic.cpp)
+- (★★★☆) [最大流 (Push-Relabel 法, in O(V^2√E))](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_push_relabel.cpp)
+- (★★★☆) [フローの s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_decomposition.cpp)
+
+## 最小カット
+
+- (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cut.cpp)
+- (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Flow/stoer_wagner.cpp)
+- (★★★★) Gomory-Hu 木
+
+## 最小費用流
+
+- (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_flow_primal_dual.cpp)
+- (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_flow_primal_dual_negative.cpp)
+- (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_circulating_flow.cpp)
+- (★★★★) [費用流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_flow_decomposition.cpp)
+
+## b-flow
+
+- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/Flow/max_b_flow.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_primal_dual.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_cost_scaling.cpp)
+- (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_network_simplex_method.cpp)
+
+## 二部マッチング
+
+- (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/Flow/hopcroft_karp.cpp)
+- (★★★☆) 重み付き二部マッチング (Hungarian 法)
+- (★★★★) 二部マッチングの bitset 高速化
+- (★★★★) アンバランス重み付き二部マッチング (in O((K^2 log N + K^3)N))
+
+## 二部マッチングの応用
+
+- (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/Flow/max_independent_set_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/Flow/min_vertex_cover_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/Flow/min_edge_cover_of_bipartite_graph.cpp)
+- (★★★☆) [DAG の最小パス被覆](https://github.com/drken1215/algorithm/blob/master/Flow/dag_path_cover.cpp)
+
+## 劣モジュラ関数のグラフ表現
+
+- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/Flow/project_selection_problem.cpp)
+- (★★★★) [3 変数以下 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/Flow/three_variable_submodular_optimization.cpp)
+- (★★★★) [2 変数以下 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/Flow/two_variable_monge_optimization.cpp)
+
+## 特殊なグラフ上の最小費用流の slope trick 帰着
+
+- (★★★★) 1 端子 + パスグラフ上の最小費用流 (by slope trick)
+- (★★★★) K 端子 + パスグラフ上の最小費用流 (by maroon 典型)
+- (★★★★) 2 x N グリッドグラフ上の最小費用流 (by series-parallel -> slope trick)
+
+## 最小費用流の応用
+
+- (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_convex_flow.cpp)
+- (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_tension.cpp)
+- (★★★★) Longest Shortest Path
+
+
+
 
 　
 <a name="ge"></a>
@@ -337,32 +477,32 @@ Union-Find など、基礎的なデータ構造の実装です。
 　
 
 <a name="mla"></a>
-# 線形代数 (MATH : LINEAR ALGEBRA)
+# 線形代数 (LINEAR ALGEBRA)
 行列計算など、線形代数に関するアルゴリズムです
 
 ## 体上の行列
 
-- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_double.cpp)
-- (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_modp.cpp)
-- (★★★☆) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_field.cpp)
+- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_double.cpp)
+- (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_modp.cpp)
+- (★★★☆) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_field.cpp)
 
 ## 環上の行列
 
-- (★★★☆) [半環上の行列 (加法・乗法, 行列累乗)](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_semiring.cpp)
-- (★★★★) [Euclid 環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 log M)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_euclid_ring.cpp)
-- (★★★★) [Fp 係数の多項式行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 D)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_polynomial.cpp)
-- (★★★★) [一般の可換環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_ring.cpp)
+- (★★★☆) [半環上の行列 (加法・乗法, 行列累乗)](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_semiring.cpp)
+- (★★★★) [Euclid 環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 log M)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_euclid_ring.cpp)
+- (★★★★) [Fp 係数の多項式行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3 D)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_polynomial.cpp)
+- (★★★★) [一般の可換環上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^4)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_ring.cpp)
 
 ## 行列式
 
-- (★★★★) [任意 mod 行列式 (by Euclid 環上の行列式計算 in O(N^3 log M)))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_determinant_in_general_mod.cpp)
-- (★★★★) [Fp 体上の行列の特性多項式 (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/characteristic_polynomial.cpp)
-- (★★★★) [Fp 体上の行列の行列式 det(M0 + M1x) (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/determinant_matrix_linear_expression.cpp)
+- (★★★★) [任意 mod 行列式 (by Euclid 環上の行列式計算 in O(N^3 log M)))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_determinant_in_general_mod.cpp)
+- (★★★★) [Fp 体上の行列の特性多項式 (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/characteristic_polynomial.cpp)
+- (★★★★) [Fp 体上の行列の行列式 det(M0 + M1x) (in O(N^3))](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/determinant_matrix_linear_expression.cpp)
 
 ## F2 体上の線形代数
 
-- (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/matrix_binary.cpp)
-- (★★★☆) [XOR 基底 (俗称：noshi 基底)](https://github.com/drken1215/algorithm/blob/master/MathLinearAlgebra/xor_basis.cpp)
+- (★★★☆) [F2 体上の行列 (with bitset 高速化)](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/matrix_binary.cpp)
+- (★★★☆) [XOR 基底 (俗称：noshi 基底)](https://github.com/drken1215/algorithm/blob/master/LinearAlgebra/xor_basis.cpp)
 - (★★★☆) F2 ベクトル空間の交差
 
 ## その他の行列アルゴリズム
@@ -381,83 +521,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) K 重対角行列 (行列式計算 in O(NK^2))
 - (★★★★) 二項係数行列の作用
 - (★★★★) スターリング数行列の作用
-
-
-
-
-　
-
-<a name="mpo"></a>
-# 多項式・FPS (MATH : POLYNOMIAL)
-多項式や FPS に関するアルゴリズムです
-
-- (★★★★) [多項式・FPS 全部乗せ](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/formal_power_series.cpp)
-
-## FFT, NTT, Convolution
-
-- (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/FFT.cpp)
-- (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/NTT.cpp)
-- (★★★☆) [任意 mod Convolution (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/NTT_any_mod.cpp)
-- (★★★★) [mod 2^64 Convolution](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/NTT_mod_2_64.cpp)
-- (★★★★) Relaxed Convolution
-- (★★★★) 二次元 FFT
-- (★★★★) 多変数巡回 FFT
-
-## 形式的冪級数 (FPS)
-
-- (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/inv_formal_power_series.cpp)
-- (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/exp_formal_power_series.cpp)
-- (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/log_formal_power_series.cpp)
-- (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/pow_formal_power_series.cpp)
-- (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/sqrt_formal_power_series.cpp)
-
-## FPS のアルゴリズム
-
-- (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/bostan_mori.cpp)
-- (★★★★) [Berlekamp-Massey 法](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/berlekamp_massey.cpp)
-- (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/power_projection.cpp)
-- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/composition_formal_power_series.cpp)
-- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/compositional_inverse_formal_power_series.cpp)
-- (★★★★) pow 列挙
-- (★★★★) 部分分数分解
-- (★★★★) 常微分方程式
-- (★★★★) 三角関数
-
-## さまざまな FPS
-
-- (★★★★) オンライン FPS
-- (★★★★) 多変数 FPS
-
-## 多項式の基底変換
-
-- (★★★☆) [Polynomial Taylor Shift (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_taylor_shift.cpp)
-- (★★★☆) Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))
-- (★★★★) [多項式補間 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_interpolation.cpp)
-- (★★★★) [多項式補間 (等比数列のとき) (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_interpolation_in_geometric_sequence.cpp)
-- (★★★★) [Multipoint Evaluation (in O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/multipoint_evaluation.cpp)
-- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/multipoint_evaluation_in_geometric_sequence.cpp)
-- (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_monomial_to_newton.cpp)
-
-## 多項式のアルゴリズム
-
-- (★★★☆) [多項式マージテク (次数の総和が D の多項式の総積 in O(D (log D)^2))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_merge_technique.cpp)
-- (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_mod_pow.cpp)
-- (★★★☆) [多項式の middle product (c[i] = sum_j a[i+j]b[j])](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_middle_product.cpp)
-- (★★★★) [多項式の評価点シフト (in O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_shift_sampling.cpp)
-- (★★★★) [多項式の除算 (by NTT, inv of FPS, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_div.cpp)
-- (★★★★) [多項式 GCD (by half-gcd, in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_gcd.cpp)
-- (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/MathPolynomial/polynomial_root_finding.cpp)
-
-## さまざまな値の高速計算
-
-- (★★★★) 自然数の k 乗和 (Faulhaber の公式)
-- (★★★★) Σ{i=0}^{n-1} r^i i^d
-- (★★★★) Σ{i=0}^{∞} r^i i^d
-- (★★★★) Σ{i=0}^{n-1} a^i f(i)
-- (★★★★) N! mod P (by FPS, O(√P log P))
-- (★★★★) Tetration
-- (★★★★) 二項係数の prefix sum の多点評価
-- (★★★★) Karatsuba 法
 
 
 
@@ -605,164 +668,78 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 
 　
-　
-<a name="nf"></a>
-# ネットワークフロー (NETWORK FLOW)
-ネットワークフロー関連のアルゴリズムです。
+ㅤ
+<a name="mpo"></a>
+# 多項式・FPS (POLYNOMIAL)
+多項式や FPS に関するアルゴリズムです
 
-- (★★★★) [フロー 全部乗せ](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/flow_all.cpp)
+- (★★★★) [多項式・FPS 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Polynomial/formal_power_series.cpp)
 
-## 最大流
+## FFT, NTT, Convolution
 
-- (★★★☆) [最大流 (Ford-Fulkerson 法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_ford_fulkerson.cpp)
-- (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_dinic.cpp)
-- (★★★☆) [最大流 (Push-Relabel 法, in O(V^2√E))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_push_relabel.cpp)
-- (★★★☆) [フローの s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_flow_decomposition.cpp)
+- (★★★☆) [FFT (高速フーリエ変換)](https://github.com/drken1215/algorithm/blob/master/Polynomial/FFT.cpp)
+- (★★★☆) [NTT (高速剰余変換)](https://github.com/drken1215/algorithm/blob/master/Polynomial/NTT.cpp)
+- (★★★☆) [任意 mod Convolution (mod < 10^9)](https://github.com/drken1215/algorithm/blob/master/Polynomial/NTT_any_mod.cpp)
+- (★★★★) [mod 2^64 Convolution](https://github.com/drken1215/algorithm/blob/master/Polynomial/NTT_mod_2_64.cpp)
+- (★★★★) Relaxed Convolution
+- (★★★★) 二次元 FFT
+- (★★★★) 多変数巡回 FFT
 
-## 最小カット
+## 形式的冪級数 (FPS)
 
-- (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cut.cpp)
-- (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/stoer_wagner.cpp)
-- (★★★★) Gomory-Hu 木
+- (★★★★) [Inv of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/inv_formal_power_series.cpp)
+- (★★★★) [Exp of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/exp_formal_power_series.cpp)
+- (★★★★) [Log of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/log_formal_power_series.cpp)
+- (★★★★) [Pow of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/pow_formal_power_series.cpp)
+- (★★★★) [Sqrt of FPS](https://github.com/drken1215/algorithm/blob/master/Polynomial/sqrt_formal_power_series.cpp)
 
-## 最小費用流
+## FPS のアルゴリズム
 
-- (★★★☆) [最小費用流 (Primal-Dual 法, 正辺のみ)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual.cpp)
-- (★★★☆) [最小費用流 (Primal-Dual 法, 負辺対応 by ポテンシャル, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_primal_dual_negative.cpp)
-- (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_circulating_flow.cpp)
-- (★★★★) [費用流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_flow_decomposition.cpp)
+- (★★★★) [Bostan-Mori 法](https://github.com/drken1215/algorithm/blob/master/Polynomial/bostan_mori.cpp)
+- (★★★★) [Berlekamp-Massey 法](https://github.com/drken1215/algorithm/blob/master/Polynomial/berlekamp_massey.cpp)
+- (★★★★) [Power Projection](https://github.com/drken1215/algorithm/blob/master/Polynomial/power_projection.cpp)
+- (★★★★) [FPS の合成 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/composition_formal_power_series.cpp)
+- (★★★★) [FPS の逆関数 (Kinoshita-Li 法, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/compositional_inverse_formal_power_series.cpp)
+- (★★★★) pow 列挙
+- (★★★★) 部分分数分解
+- (★★★★) 常微分方程式
+- (★★★★) 三角関数
 
-## b-flow
+## さまざまな FPS
 
-- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_b_flow.cpp)
-- (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_b_flow_by_primal_dual.cpp)
-- (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_b_flow_by_cost_scaling.cpp)
-- (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_b_flow_by_network_simplex_method.cpp)
+- (★★★★) オンライン FPS
+- (★★★★) 多変数 FPS
 
-## 二部マッチング
+## 多項式の基底変換
 
-- (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/hopcroft_karp.cpp)
-- (★★★☆) 重み付き二部マッチング (Hungarian 法)
-- (★★★★) 二部マッチングの bitset 高速化
-- (★★★★) アンバランス重み付き二部マッチング (in O((K^2 log N + K^3)N))
+- (★★★☆) [Polynomial Taylor Shift (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_taylor_shift.cpp)
+- (★★★☆) Lagrange 補間 (f(0), f(1), ..., f(D) -> f(x))
+- (★★★★) [多項式補間 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_interpolation.cpp)
+- (★★★★) [多項式補間 (等比数列のとき) (in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_interpolation_in_geometric_sequence.cpp)
+- (★★★★) [Multipoint Evaluation (in O(M(log M)^2 + N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/multipoint_evaluation.cpp)
+- (★★★★) [Multipoint Evaluation (等比数列のとき) (by chirp z-transform, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/multipoint_evaluation_in_geometric_sequence.cpp)
+- (★★★★) [多項式の基底変換：Monomial 基底 → Newton 基底 (in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_monomial_to_newton.cpp)
 
-## 二部マッチングの応用
+## 多項式のアルゴリズム
 
-- (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/max_independent_set_of_bipartite_graph.cpp)
-- (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_vertex_cover_of_bipartite_graph.cpp)
-- (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_edge_cover_of_bipartite_graph.cpp)
-- (★★★☆) [DAG の最小パス被覆](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/dag_path_cover.cpp)
+- (★★★☆) [多項式マージテク (次数の総和が D の多項式の総積 in O(D (log D)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_merge_technique.cpp)
+- (★★★☆) [多項式の累乗 f(x)^e mod g(x)](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_mod_pow.cpp)
+- (★★★☆) [多項式の middle product (c[i] = sum_j a[i+j]b[j])](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_middle_product.cpp)
+- (★★★★) [多項式の評価点シフト (in O((N + M)log(N + M))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_shift_sampling.cpp)
+- (★★★★) [多項式の除算 (by NTT, inv of FPS, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_div.cpp)
+- (★★★★) [多項式 GCD (by half-gcd, in O(N(log N)^2))](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_gcd.cpp)
+- (★★★★) [多項式の零点を求める (mod 998244353)](https://github.com/drken1215/algorithm/blob/master/Polynomial/polynomial_root_finding.cpp)
 
-## 劣モジュラ関数のグラフ表現
+## さまざまな値の高速計算
 
-- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/project_selection_problem.cpp)
-- (★★★★) [3 変数以下 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/three_variable_submodular_optimization.cpp)
-- (★★★★) [2 変数以下 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/two_variable_monge_optimization.cpp)
-
-## 特殊なグラフ上の最小費用流の slope trick 帰着
-
-- (★★★★) 1 端子 + パスグラフ上の最小費用流 (by slope trick)
-- (★★★★) K 端子 + パスグラフ上の最小費用流 (by maroon 典型)
-- (★★★★) 2 x N グリッドグラフ上の最小費用流 (by series-parallel -> slope trick)
-
-## 最小費用流の応用
-
-- (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_convex_flow.cpp)
-- (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/NetworkFlow/min_cost_tension.cpp)
-- (★★★★) Longest Shortest Path
-
-
-
-
-
-　
-
-<a name="opt"></a>
-# 最適化 (OPTIMIZATION)
-最適化に関するアルゴリズムです。
-
-- (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_all.cpp)
-- (★★★★) マトロイド 全部乗せ
-
-## 動的計画法
-
-- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Optimization/knapsack.cpp)
-- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Optimization/longest_increasing_sequence.cpp)
-- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/Optimization/lcs.cpp)
-- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Optimization/edit_distance.cpp)
-- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Optimization/largest_square_in_grid.cpp)
-- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
-- (★★★★) 最適二分探索木 (Hu-Tucker 法, in O(N log N))
-
-## 制約付き最適化
-
-- (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
-- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp)
-- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
-- (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
-- (★★★★) 分枝限定法
-
-## 区分線形凸関数の活用 1 ： Convex Hull Trick
-
-- (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick.cpp)
-- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log C))
-- (★★★★) 2D Line container (max(ax + by) クエリ)
-
-## 区分線形凸関数の活用 2 ： Slope Trick
-
-- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
-- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
-- (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/Optimization/super_slope_trick.cpp)
-
-## 区分線形凸関数の活用 3 ： Min Plus Convolution
-
-- (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/Optimization/min_plus_convolution_convex_convex.cpp)
-- (★★★★) Min Plus Convolution (凸と任意)
-- (★★★★) Min Plus Convolution (凹と任意)
-- (★★★★) Axiotis-Tzamos Knapsack
-
-## 行最小値問題・単一始点最短路問題
-
-- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
-- (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
-- (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
-- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
-- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
-
-## Monge 最短路問題
-
-- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_LARSCH.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
-- (★★★★) anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
-
-## その他 Monge 性, L 凸性
-
-- (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_checker.cpp)
-- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_min_plus_composition.cpp)
-- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Knuth_Yao.cpp)
-- (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_general.cpp)
-
-## マトロイド, M 凸性
-
-- (★★★☆) 二値マトロイド
-- (★★★☆) グラフマトロイド
-- (★★★☆) 分割マトロイド
-- (★★★☆) 横断マトロイド
-- (★★★☆) マトロイド上の Greedy 法
-
-## その他マトロイド, M 凸性
-
-- (★★★★) マトロイド交差
-- (★★★★) 重み付きマトロイド交差
-- (★★★★) マトロイド Union
-- (★★★★) 線形マトロイドパリティ
-- (★★★★) 最大辺数最小重みの辺素な二つの全域森
-- (★★★★) 基多面体
-
+- (★★★★) 自然数の k 乗和 (Faulhaber の公式)
+- (★★★★) Σ{i=0}^{n-1} r^i i^d
+- (★★★★) Σ{i=0}^{∞} r^i i^d
+- (★★★★) Σ{i=0}^{n-1} a^i f(i)
+- (★★★★) N! mod P (by FPS, O(√P log P))
+- (★★★★) Tetration
+- (★★★★) 二項係数の prefix sum の多点評価
+- (★★★★) Karatsuba 法
 
 
 
@@ -770,15 +747,33 @@ Union-Find など、基礎的なデータ構造の実装です。
 　
 
 <a name="ser"></a>
-# 探索 (SEARCH)
-探索に関するアルゴリズムです。
+# 探索・最適化 (SEARCH・OPTIMIZATION)
+探索や最適化に関するアルゴリズムです。
 
-## さまざまな全探索
+## さまざまな全探索法
 
 - (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Search/next_combination.cpp)
 - (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Search/subset_enumeration.cpp)
 - (★★☆☆) 上位集合の列挙
 - (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Search/sudoku.cpp)
+
+## さまざまな動的計画法
+
+- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Search/knapsack.cpp)
+- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Search/longest_increasing_sequence.cpp)
+- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/Search/lcs.cpp)
+- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Search/edit_distance.cpp)
+- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Search/largest_square_in_grid.cpp)
+- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Search/histogram.cpp)
+- (★★★★) 最適二分探索木 (Hu-Tucker 法, in O(N log N))
+
+## さまざまな最適化技法
+
+- (★★★☆) 最短路問題の双対問題 (俗称：牛ゲー)
+- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Search/Lagrange_relaxation_Aliens.cpp)
+- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Search/simplex_method.cpp)
+- (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
+- (★★★★) 分枝限定法
 
 ## SAT
 
