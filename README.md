@@ -13,14 +13,14 @@
 |**[DATA STRUCTURE : SEGMENT](#dss)**|区間クエリに強いデータ構造|セグメント木、BIT など|
 |**[DATA STRUCTURE : ADVANCED](#dsa)**|その他の高度なデータ構造|永続データ構造など|
 |**[DISCRETE CONVEXITY](#convex)**|離散凸性に関するアルゴリズム|slope trick、LARSCH 法など|
-|**[FLOW](#flow)**|ネットワークフローに関するアルゴリズム|Ford-Fulkerson 法など|
-|**[FPS・POLYNOMIAL](#fps)**|形式的冪級数や多項式に関するアルゴリズム|多項式補間、FPS 合成など|
-|**[GEOMETRY](#ge)**|計算幾何に関するアルゴリズム|円の交点など|
+|**[FLOW](#flow)**|フローに関するアルゴリズム|Ford-Fulkerson 法など|
+|**[FPS・POLYNOMIAL](#fps)**|FPS や多項式のアルゴリズム|多項式補間、FPS 合成など|
+|**[GEOMETRY](#ge)**|計算幾何アルゴリズム|円の交点など|
 |**[GRAPH](#gt)**|グラフに関するアルゴリズム|強連結成分分解など|
-|**[LINEAR ALGEBRA](#mla)**|線形代数に関するアルゴリズム|行列計算など|
+|**[LINEAR ALGEBRA](#mla)**|線形代数のアルゴリズム|行列計算など|
 |**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
 |**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解、最大公約数など|
-|**[SEARCH・OPTIMIZATION](#ser)**|探索・最適化に関するアルゴリズム|全探索, 二分探索など|
+|**[SEARCH・OPTIMIZATION](#ser)**|探索・最適化のアルゴリズム|全探索, 二分探索など|
 |**[STRING](#st)**|文字列に関するアルゴリズム|Suffix Array、KMP 法など|
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアー、木の直径など|
 |**[OTHERS](#ot)**|その他|xorshift、サイコロなど|
