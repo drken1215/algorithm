@@ -5,6 +5,9 @@
 //   Yosupo Library Checker - Minimum Cost b-flow
 //     https://judge.yosupo.jp/problem/min_cost_b_flow
 //
+//   Codeforces Round 826 (Div. 3) G. Kirill and Company（他の方法では TLE した）
+//     https://codeforces.com/contest/1741/problem/G
+//
 
 
 #pragma GCC optimize("Ofast")
@@ -64,12 +67,17 @@ template<class FLOW, class COST> struct NetworkSimplex {
 
     // setter
     void add_edge(int from, int to, FLOW lower, FLOW upper, COST cost) {
+        assert(lower <= upper);
         edges.push_back({from, to, upper - lower, cost});
         edges.push_back({to, from, 0, -cost});
         lowers.push_back(lower);
         dss[from] -= lower;
         dss[to] += lower;
         M = (int)edges.size();
+    }
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= FLOW(0));
+        add_edge(from, to, FLOW(0), cap, cost);
     }
     void add_ds(int v, FLOW ds) {
         assert(v >= 0 && v < N);
@@ -319,6 +327,67 @@ void Yosupo_Minimum_Cost_b_flow() {
 }
 
 
+// Codeforces Round 826 (Div. 3) G. Kirill and Company
+void Codeforces826_G() {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    int T;
+    cin >> T;
+    while (T--) {
+        int N, M, F, K, INF = 6;
+        cin >> N >> M;
+        vector<vector<int>> G(N);
+        for (int i = 0; i < M; i++) {
+            int a, b; cin >> a >> b; a--, b--;
+            G[a].emplace_back(b), G[b].emplace_back(a);
+        }
+        vector<vector<int>> prev(N);
+        vector<int> dp(N, -1);
+        queue<int> que;
+        dp[0] = 0;
+        que.push(0);
+        while (!que.empty()) {
+            auto v = que.front(); que.pop();
+            for (auto v2 : G[v]) {
+                if (dp[v2] == -1) {
+                    dp[v2] = dp[v] + 1;
+                    prev[v2].emplace_back(v);
+                    que.push(v2);
+                } else if (dp[v2] == dp[v] + 1) {
+                    prev[v2].emplace_back(v);
+                }
+            }
+        }
+        cin >> F;
+        vector<int> where(F), allnum(N, 0), nothavenum(N, 0), havenum(N, 0);
+        for (int i = 0; i < F; i++) {
+            cin >> where[i], where[i]--;
+            allnum[where[i]]++;
+        }
+        cin >> K;
+        for (int i = 0; i < K; i++) {
+            int v; cin >> v, v--;
+            nothavenum[where[v]]++;
+        }
+        for (int v = 0; v < N; v++) havenum[v] = allnum[v] - nothavenum[v];
+
+        int s = N * 2, t = N;
+        NetworkSimplex<int, int> FG(N * 2 + 1);
+        for (int v = 0; v < N; v++) {
+            if (havenum[v] > 0) FG.add_edge(s, v, havenum[v], 0);
+            if (nothavenum[v] > 0) FG.add_edge(v, v+N, 1, -nothavenum[v]);
+            FG.add_edge(v, v+N, INF, 0);
+            for (auto v2 : prev[v]) FG.add_edge(v+N, v2, INF, 0);
+        }
+        FG.add_edge(t, s, INF, 0);
+        auto [flag, mincost] = FG.solve();
+        int res = K + mincost;
+        cout << res << endl;
+    }
+}
+
+
 int main() {
-    Yosupo_Minimum_Cost_b_flow();
+    //Yosupo_Minimum_Cost_b_flow();
+    Codeforces826_G();
 }

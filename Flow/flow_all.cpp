@@ -1,10 +1,6 @@
 //
 // フローアルゴリズム ほぼ全集
 //
-// verified
-//
-//
-//
 
 
 #include <bits/stdc++.h>
@@ -896,6 +892,11 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
     return res;
 }
 
+
+//------------------------------//
+// b-flow
+//------------------------------//
+
 // Maximum b-flow
 template<class FLOW> struct MaxBFlow {
     // Edge
@@ -1094,6 +1095,11 @@ template<class FLOW, class COST> struct MinCostBFlow {
         return {true, res};
     }
 };
+
+
+//------------------------------//
+// Bipartite Matching
+//------------------------------//
 
 // Hopcroft-Karp
 struct HopcroftKarp {
@@ -1419,6 +1425,11 @@ struct DagPathCover {
         return res;
     }
 };
+
+
+//------------------------------//
+// Monge Function Minimization
+//------------------------------//
 
 /*
  N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
@@ -1801,6 +1812,11 @@ template<class COST> struct TwoVariableMongeOpt {
         return s;
     }
 };
+
+
+//------------------------------//
+// Min-cost Tension
+//------------------------------//
 
 // min-cost tension
 /*
