@@ -1,5 +1,42 @@
 //
-// フローアルゴリズム ほぼ全集
+// 最小費用 b-flow by three methods:
+//    ・primal-dual (負閉路 NG)
+//    ・cost-scaling
+//    ・network simplex (多くの場合最速)
+//
+// verified
+//   Yosupo Library Checker - Minimum Cost b-flow (N <= 100)
+//   (primal-dual: 負閉路 NG, cost-scaling: 15 ms, simplex: 2 ms)
+//     https://judge.yosupo.jp/problem/min_cost_b_flow
+//
+//   ABC 421 G - Increase to make it Increasing (N <= 300)
+//   (primal-dual: 4 ms, cost-scaling: 24 ms, simplex: 2 ms)
+//     https://atcoder.jp/contests/abc421/tasks/abc421_g
+//
+//   KUPC 2014 I - Rain (N <= 10^4, ただし K <= 15 によって流量が小さい)
+//   (primal-dual: 35 ms, cost-scaling: TLE, simplex: 681 ms)
+//     https://atcoder.jp/contests/kupc2014/tasks/kupc2014_i
+//
+//   JAG 夏合宿 2013 Day4 I - Multi Path Story (N <= 1000)
+//   (primal-dual: 18 ms, cost-scaling: 2590 ms, simplex: 6 ms)
+//     https://onlinejudge.u-aizu.ac.jp/problems/2627
+//
+//   Educational Codeforces Round 80 F. Red-Blue Graph (N <= 200)
+//   (primal-dual: 62 ms, cost-scaling: 46 ms, simplex: 62 ms)
+//     https://codeforces.com/contest/1288/problem/F
+//
+//   UTPC 2011 H - キャッシュ戦略 (N <= 10^4, 本来は流量 M <= 10 だがそれを活かさない解法をしている）
+//   (primal-dual: TLE, cost-scaling: TLE, simplex: 1130 ms)
+//   #pragma GCC optimize("Ofast") を入れるとむしろ遅くなる！！！
+//     https://atcoder.jp/contests/utpc2011/tasks/utpc2011_8
+//
+//   Codeforces Round 826 (Div. 3) G. Kirill and Company 
+//   (primal-dual: 負閉路 NG, cost-scaling: 1046 ms, simplex: 62 ms)
+//     https://codeforces.com/contest/1741/problem/G
+//
+//   AtCoder ABC 393 G - Unevenness (for using frac<i128> and dual)
+//   (primal-dual: 負閉路 NG, cost-scaling: 830 ms, simplex: 116 ms)
+//     https://atcoder.jp/contests/abc393/tasks/abc393_g
 //
 
 
@@ -37,9 +74,9 @@ template<class S, class T> ostream& operator << (ostream &s, const unordered_map
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 
 
-//------------------------------//
-// Flow
-//------------------------------//
+//--------------------------------//
+// max flow, min-cost flow
+//--------------------------------//
 
 // edge class (for max-flow)
 template<class FLOW> struct FlowEdge {
@@ -339,7 +376,7 @@ template<class FLOW> struct FlowGraph {
 
 // Dinic
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
-    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    assert(0 <= s && s < (int)G.size() && 0 <= t && t < (int)G.size() && s != t);
     FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     
@@ -853,7 +890,7 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
 
 
 //--------------------------------//
-// Minumum Cost b-flow
+// b-flow
 //--------------------------------//
 
 // Minimum Cost b-flow (by primal-dual, negative cycle is NG)
@@ -1392,909 +1429,505 @@ template<class FLOW, class COST> struct MinCostBFlow {
 
 
 //------------------------------//
-// Maximum b-flow
+// Solver
 //------------------------------//
 
-// Maximum b-flow
-template<class FLOW> struct MaxBFlow {
-    // Edge
-    struct Edge {
-        int from, to;
-        FLOW lower_cap, upper_cap, flow;
+// Yosupo Libray Checker - Minimum Cost b-flow
+using i128 = __int128_t;
+i128 to_integer(const string &s) {
+    i128 res = 0;
+    for (auto c : s) {
+         if (isdigit(c)) res = res * 10 + (c - '0');
+    }
+    if (s[0] == '-') res *= -1;
+    return res;
+}
+istream& operator >> (istream &is, i128 &x) {
+    string s;
+    is >> s;
+    x = to_integer(s);
+    return is;
+}
+ostream& operator << (ostream &os, const i128 &x) {
+    i128 ax = (x >= 0 ? x : -x);
+    char buffer[128];
+    char *d = end(buffer);
+    do {
+         --d;
+        *d = "0123456789"[ax % 10];
+        ax /= 10;
+    } while (ax != 0);
+    if (x < 0) {
+        --d;
+        *d = '-';
+    }
+    int len = end(buffer) - d;
+    if (os.rdbuf()->sputn(d, len) != len) {
+        os.setstate(ios_base::badbit);
+    }
+    return os;
+}
+void Yosupo_Minimum_Cost_b_flow(const string solver) {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
 
-        // debug
-        friend ostream& operator << (ostream& s, const Edge& e) {
-            return s << e.from << "->" << e.to 
-            << '(' << e.lower_cap << '~' << e.upper_cap << ')';
+    int N, M;
+    cin >> N >> M;
+    MinCostBFlow<long long, i128> G(N);
+    vector<i128> B(N);
+    for (int i = 0; i < N; i++) cin >> B[i], G.set_ds(i, B[i]);
+    vector<int> s(M), t(M);
+    vector<i128> l(M), u(M), c(M);
+    for (int i = 0; i < M; i++) {
+        cin >> s[i] >> t[i] >> l[i] >> u[i] >> c[i];
+        G.add_edge(s[i], t[i], l[i], u[i], c[i]);
+    }
+    auto [exist, res] = G.solve(solver, true);
+    if (!exist) cout << "infeasible" << '\n';
+    else {
+        const auto &dual = G.get_duals();
+        const auto &es = G.get_edges();
+        cout << res << '\n';
+        for (auto v : dual) cout << v << '\n';
+        for (const auto &e : es) cout << e.flow << '\n';
+    }
+}
+
+// ABC 421 G - Increase to make it Increasing
+void ABC_421_G(const string solver) {
+    long long N, M, INF = 1LL<<45; cin >> N >> M;
+    vector<long long> A(N), D(N+1, INF);
+    D[0] = 0;
+    for (int i = 0; i < N; i++) {
+        cin >> A[i];
+        if (i) D[i] = A[i] - A[i-1];
+    }
+
+    MinCostBFlow<long long, long long> G(N+1);
+    for (int v = 0; v <= N; v++) {
+        if (D[v] >= 0) G.set_ds(v, 0, D[v]);
+        else G.set_ds(v, -INF, D[v]);
+    }
+    for (int i = 0; i < M; i++) {
+        long long u, v; cin >> u >> v; u--;
+        G.add_edge(v, u, INF, 1);
+    }
+    auto [flag, cost] = G.solve(solver);
+    cout << (flag ? cost : -1) << endl;
+}
+
+// KUPC 2014 I - Rain
+void KUPC_2014_I(const string solver) {
+    int N, M, K, INF = 1LL<<20;
+    cin >> N >> M >> K;
+    vector<long long> C(K), A(M), B(M), D(M), b(N, 0); 
+    for (int i = 0; i < K; i++) cin >> C[i], C[i]--;
+    for (int i = 0; i < M; i++) cin >> A[i] >> B[i] >> D[i], A[i]--, B[i]--;
+    for (int i = 0; i < K; i++) b[A[C[i]]]++, b[B[C[i]]]--;
+    MinCostBFlow<int, long long> G(N);
+    for (int i = 0; i < N; i++) G.set_ds(i, b[i]);
+    for (int i = 0; i < M; i++) G.add_edge(B[i], A[i], INF, D[i]);
+    auto [flag, cost] = G.solve(solver);
+    cout << (flag ? cost : -1) << endl;
+}
+
+// JAG 夏合宿 2013 Day4 I - Multi Path Story (AOJ 2627)
+void AOJ_2627(const string solver) {
+    long long N, INF = 1LL << 45;
+    cin >> N;
+    MinCostBFlow<long long, long long> G(N + 1);
+    long long t = N;
+    for (int v = 0; v < N; v++) {
+        int D;
+        cin >> D;
+        for (int i = 0; i < D; i++) {
+            long long to, w;
+            cin >> to >> w, to--;
+            G.add_edge(v, to, 1, INF, w);
         }
+    }
+    for (int v = 1; v < N; v++) G.add_edge(v, t, 0, INF, 0);
+    G.add_edge(t, 0, 0, INF, 0);
+    auto [flag, cost] = G.solve(solver);
+    cout << cost << endl;
+}
+
+// Educational Codeforces Round 80 F. Red-Blue Graph
+void EducationalCodeforces80_F(const string solver) {
+    long long L, R, M, costR, costB, INF = 10000;
+    string sl, sr;
+    cin >> L >> R >> M >> costR >> costB >> sl >> sr;
+    MinCostBFlow<long long, long long> G(L + R);
+    for (int i = 0; i < L; i++) {
+        if (sl[i] == 'R') G.set_ds(i, 1, INF);
+        else if (sl[i] == 'B') G.set_ds(i, -INF, -1);
+        else G.set_ds(i, -INF, INF);
+    }
+    for (int j = 0; j < R; j++) {
+        if (sr[j] == 'R') G.set_ds(j+L, -INF, -1);
+        else if (sr[j] == 'B') G.set_ds(j+L, 1, INF);
+        else G.set_ds(j+L, -INF, INF);
+    }
+    for (int i = 0; i < M; i++) {
+        int u, v;
+        cin >> u >> v, u--, v--;
+        G.add_edge(u, v+L, 1, costR);
+        G.add_edge(v+L, u, 1, costB);
+    }
+    auto [flag, mincost] = G.solve(solver);
+     if (!flag) {
+        cout << -1 << endl;
+        return;
+     }
+    auto es = G.get_edges();
+    string res(M, 'U');
+    for (int i = 0; i < M; i++) {
+        auto e = es[i*2], re = es[i*2+1];
+        if (e.flow == 1) res[i] = 'R';
+        else if (re.flow == 1) res[i] = 'B';
+    }
+    cout << mincost << endl;
+    cout << res << endl;
+}
+
+// UTPC 2011 H - キャッシュ戦略
+void UTPC2011_H(const string solver) {
+    int M, N, K;
+    cin >> M >> N >> K;
+    vector<int> W(N), A(K);
+    for (int i = 0; i < N; i++) cin >> W[i];
+    for (int i = 0; i < K; i++) cin >> A[i], A[i]--;
+    int s = K * 3, t = s + 1;
+    MinCostBFlow<int, int> G(K * 3 + 2);
+    for (int v = 0; v < K; v++) {
+        G.add_edge(s, v, 1, W[A[v]]);
+        G.add_edge(v+K*2, v, 1, W[A[v]]);  // 空の状態からは常に行ける
+        G.add_edge(v+K, t, 1, 0);
+        G.add_edge(v, v+K, 1, 1, 0);  // 流量下限も 1
+
+        // 次の同じ色のボールが来るまでキープする場合
+        for (int v2 = v+1; v2 < K; v2++) {
+            if (A[v] == A[v2]) {
+                G.add_edge(v+K, v2, 1, 0);
+                break;
+            }
+        }
+
+        // 箱からボールを取り出す頂点との絡み
+        if (v+1 < K) {
+            G.add_edge(v+K, (v+1)+K*2, 1, 0);
+            G.add_edge(v+K*2, (v+1)+K*2, M, 0);
+        }
+    }
+    G.add_edge(t, s, M, 0);
+    auto [flag, mincost] = G.solve(solver);
+    cout << mincost << endl;
+}
+
+// Codeforces Round 826 (Div. 3) G. Kirill and Company
+void Codeforces826_G(const string solver) {
+    cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    int T;
+    cin >> T;
+    while (T--) {
+        int N, M, F, K, INF = 6;
+        cin >> N >> M;
+        vector<vector<int>> G(N);
+        for (int i = 0; i < M; i++) {
+            int a, b; cin >> a >> b; a--, b--;
+            G[a].emplace_back(b), G[b].emplace_back(a);
+        }
+        vector<vector<int>> prev(N);
+        vector<int> dp(N, -1);
+        queue<int> que;
+        dp[0] = 0;
+        que.push(0);
+        while (!que.empty()) {
+            auto v = que.front(); que.pop();
+            for (auto v2 : G[v]) {
+                if (dp[v2] == -1) {
+                    dp[v2] = dp[v] + 1;
+                    prev[v2].emplace_back(v);
+                    que.push(v2);
+                } else if (dp[v2] == dp[v] + 1) {
+                    prev[v2].emplace_back(v);
+                }
+            }
+        }
+        cin >> F;
+        vector<int> where(F), allnum(N, 0), nothavenum(N, 0), havenum(N, 0);
+        for (int i = 0; i < F; i++) {
+            cin >> where[i], where[i]--;
+            allnum[where[i]]++;
+        }
+        cin >> K;
+        for (int i = 0; i < K; i++) {
+            int v; cin >> v, v--;
+            nothavenum[where[v]]++;
+        }
+        for (int v = 0; v < N; v++) havenum[v] = allnum[v] - nothavenum[v];
+
+        int s = N * 2, t = N;
+        MinCostBFlow<int, int> FG(N * 2 + 1);
+        for (int v = 0; v < N; v++) {
+            if (havenum[v] > 0) FG.add_edge(s, v, havenum[v], 0);
+            if (nothavenum[v] > 0) FG.add_edge(v, v+N, 1, -nothavenum[v]);
+            FG.add_edge(v, v+N, INF, 0);
+            for (auto v2 : prev[v]) FG.add_edge(v+N, v2, INF, 0);
+        }
+        FG.add_edge(t, s, INF, 0);
+        auto [flag, mincost] = FG.solve(solver);
+        int res = K + mincost;
+        cout << res << endl;
+    }
+}
+
+// AtCoder ABC 393 G - Unevenness
+template<class T> struct SternBrocotTree {
+    template<class Func> static tuple<T, T, T, T> binary_search(Func check, T lim) {
+        assert(check(0, 1));
+        assert(!check(1, 0));
+        auto rec = [&](auto &&rec, bool which, T &a, T &b, T c, T d) -> void {
+            if (a + c > lim || b + d > lim) return;
+            if (check(a + c, b + d) == which) {
+                a += c, b += d;
+                rec(rec, which, a, b, c + c, d + d);
+            }
+            if (a + c <= lim && b + d <= lim && check(a + c, b + d) == which) a += c, b += d;
+        };
+        T a = 0, b = 1, c = 1, d = 0;
+        while (a + c <= lim && b + d <= lim) {
+            rec(rec, true, a, b, c, d);
+            rec(rec, false, c, d, a, b);
+        }
+        return {a, b, c, d};
+    }
+};
+template<class T = long long> struct frac {
+    // gcd
+    static T gcd(T a, T b) {
+        a = max(a, -a), b = max(b, -b);
+        while (b) {
+            a %= b;
+            swap(a, b);
+        }
+        return a;
+    }
+
+    // inner values
+    T first, second;
+
+    // constructor
+    frac& normalize() {
+        if (first == 0 && second != 0) {
+            second = 1;
+            return *this;
+        }
+        if (second == 0 && first != 0) {
+            first = 1;
+            return *this;
+        }
+        if (second < 0) first = -first, second = -second;
+        T d = gcd(max(first, -first), second);
+        if (d == 0) first = 0, second = 1;
+        else first /= d, second /= d;
+        return *this;
+    }
+    frac(const frac&) = default;
+    frac& operator = (const frac&) = default;
+    constexpr frac(T f = 0, T s = 1) : first(f), second(s) { 
+        normalize(); 
+    }
+    constexpr frac& operator = (T a) { 
+        *this = frac(a, 1); 
+        return *this;
+    }
+    constexpr long double to_double() const {
+        assert(second != 0);
+        return (long double)(first) / (long double)(second);
+    }
+    friend constexpr long double to_double(const frac &r) {
+        return r.to_double();
+    }
+
+    // comparison operators
+    constexpr bool operator == (const frac &r) const {
+        return this->first == r.first && this->second == r.second;
+    }
+    constexpr bool operator != (const frac &r) const {
+        return this->first != r.first || this->second != r.second;
+    }
+    constexpr bool operator < (const frac &r) const {
+        return this->first * r.second < this->second * r.first;
+    }
+    constexpr bool operator > (const frac &r) const {
+        return this->first * r.second > this->second * r.first;
+    }
+    constexpr bool operator <= (const frac &r) const {
+        return this->first * r.second <= this->second * r.first;
+    }
+    constexpr bool operator >= (const frac &r) const {
+        return this->first * r.second >= this->second * r.first;
+    }
+    
+    // arithmetic operators
+    constexpr frac& operator += (const frac &r) {
+        this->first = this->first * r.second + this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator -= (const frac &r) {
+        this->first = this->first * r.second - this->second * r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator *= (const frac &r) {
+        this->first *= r.first;
+        this->second *= r.second;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac& operator /= (const frac &r) {
+        this->first *= r.second;
+        this->second *= r.first;
+        this->normalize();
+        return *this;
+    }
+    constexpr frac operator + () const { return frac(*this); }
+    constexpr frac operator - () const { return frac(0) - frac(*this); }
+    constexpr frac operator + (const frac &r) const { return frac(*this) += r; }
+    constexpr frac operator - (const frac &r) const { return frac(*this) -= r; }
+    constexpr frac operator * (const frac &r) const { return frac(*this) *= r; }
+    constexpr frac operator / (const frac &r) const { return frac(*this) /= r; }
+    friend constexpr ostream& operator << (ostream &os, const frac<T> &x) {
+        os << x.first; 
+        if (x.second != 1) os << "/" << x.second;
+        return os;
+    }
+};
+void ABC_393_G(const string solver) {
+    using i128 = __int128_t;
+    using FR = frac<i128>;
+    using SBT = SternBrocotTree<long long>;
+    long long N, P, Q;
+    cin >> N >> P >> Q;
+    FR K(P, Q);
+    vector A(N, vector(N, 0LL));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) cin >> A[i][j];
+
+    // 目的関数の値
+    auto calc_obj = [&](const vector<FR> &x) -> FR {
+        FR res = 0;
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            if (i+1 < N) res += max(x[i*N+j] - x[(i+1)*N+j], x[(i+1)*N+j] - x[i*N+j]);
+            if (j+1 < N) res += max(x[i*N+j] - x[i*N+j+1], x[i*N+j+1] - x[i*N+j]);
+        }
+        return res;
     };
 
-    // inner values
-    int V;
-    vector<Edge> edges;
-    vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
-    FlowGraph<FLOW> G;
+    // 小さい λ では負の値になり、ある程度大きい λ では 0 になる。0 になる瞬間が最適解。
+    auto calc_penalty = [&](const vector<FR> &x) -> FR {
+        FR res = 0;
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            res += max(x[i*N+j] - FR(A[i][j]), FR(A[i][j]) - x[i*N+j]);
+        }
+        return res - K;
+    };
 
-    // constructor
-    MaxBFlow() {}
-    MaxBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
-
-    // setter
-    void add_edge(int from, int to, FLOW cap) {
-        assert(cap >= 0);
-        edges.push_back({from, to, 0, cap, 0});
-    }
-    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap) {
-        assert(lower_cap <= upper_cap);
-        edges.push_back({from, to, lower_cap, upper_cap, 0});
-    }
-    void set_ds(int v, FLOW ds) {
-        assert(0 <= v && v < V);
-        lower_dss[v] = ds, upper_dss[v] = ds;
-    }
-    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
-        assert(0 <= v && v < V);
-        assert(lower_ds <= upper_ds);
-        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
-    }
-
-    // solver
-    pair<bool, FLOW> solve(int s, int t) {
-        assert(0 <= s && s < V);
-        assert(0 <= t && t < V);
-        assert(s != t);
-
-        // lower_ds, upper_ds -> strict ds
-        int super = V;
-        vector<FLOW> dss(V + 1, 0);
-        for (int i = 0; i < V; i++) {
-            if (lower_dss[i] == upper_dss[i]) dss[i] = lower_dss[i];
-            else if (lower_dss[i] >= 0) {
-                add_edge(super, i, lower_dss[i], upper_dss[i]);
-            } else if (upper_dss[i] < 0) {
-                add_edge(i, super, -upper_dss[i], -lower_dss[i]);
-            } else {
-                add_edge(super, i, upper_dss[i]);
-                add_edge(i, super, -lower_dss[i]);
+    // Stern-Brocot 木上の二分探索を実施する
+    /*
+    min: Σ_{u < v}(max(0, x[v] - x[u]) + max(0, x[u] - x[v]))
+            + λ(Σ_{v}(max(0, x[v] - A[v]) + max(0, A[v] - x[v])) - P/Q)
+    */
+    auto optimize = [&](FR r, vector<FR> &x) -> FR {
+        MinCostBFlow<FR, FR> G(N * N + 1);
+        int s = N * N;
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            if (i+1 < N) {
+                int u = i*N+j, v = (i+1)*N+j;
+                G.add_edge(u, v, FR(1), FR(0));
+                G.add_edge(v, u, FR(1), FR(0));
             }
-        }
-
-        // pre-flow lower_cap
-        G.init(V + 3);
-        for (const auto &e : edges) {
-            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
-            G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
-        }
-
-        // ds -> s2, t2
-        int s2 = V + 1, t2 = V + 2;
-        FLOW ssum = 0, tsum = 0;
-        for (int i = 0; i < V + 1; i++) {
-            if (dss[i] > 0) ssum += dss[i], G.add_edge(s2, i, dss[i]);
-            else if (dss[i] < 0) tsum -= dss[i], G.add_edge(i, t2, -dss[i]);
-        }
-        if (ssum != tsum) return {false, FLOW(-1)};
-
-        // main solver
-        FLOW a = Dinic(G, s2, t2);
-        FLOW b = Dinic(G, s2, t);
-        FLOW c = Dinic(G, s, t2); 
-        FLOW d = Dinic(G, s, t);
-        if (a + b != ssum || a + c != tsum) return {false, FLOW(-1)};
-        else return {true, c + d};
-    }
-};
-
-
-//------------------------------//
-// Bipartite Matching
-//------------------------------//
-
-// Hopcroft-Karp
-struct HopcroftKarp {
-    const int NOT_MATCHED = -1;
-    
-    // input
-    int size_left, size_right;
-    vector<vector<int>> list; // left to right
-    vector<vector<int>> rlist; // right to left
-
-    // results
-    vector<int> lr, rl;
-    
-    // intermediate results
-    vector<bool> seen, matched;
-    vector<int> level;
-    
-    // constructor
-    HopcroftKarp(int L, int R) : size_left(L), size_right(R), list(L), rlist(R) {}
-    void add_edge(int from, int to) {
-        assert(from >= 0 && from < size_left);
-        assert(to >= 0 && to < size_right);
-        list[from].emplace_back(to);
-        rlist[to].emplace_back(from);
-    }
-
-    // getter, debugger
-    const vector<int> &operator [] (int i) const { 
-        return list[i];
-    }
-    friend ostream& operator << (ostream& s, const HopcroftKarp& G) {
-        s << endl;
-        for (int i = 0; i < (int)G.list.size(); ++i) {
-            s << i << ": ";
-            for (int j = 0; j < (int)G.list[i].size(); ++j) {
-                s << G.list[i][j];
-                if (j + 1 != (int)G.list[i].size()) s << ", ";
+            if (j+1 < N) {
+                int u = i*N+j, v = i*N+j+1;
+                G.add_edge(u, v, FR(1), FR(0));
+                G.add_edge(v, u, FR(1), FR(0));
             }
-            s << endl;
+            int v = i*N+j;
+            G.add_edge(s, v, r, FR(A[i][j]));
+            G.add_edge(v, s, r, -FR(A[i][j]));
         }
-        return s;
-    }
+        auto [flag, cost] = G.solve(solver, true);  // dual も求める
+        auto ans = G.dual;
+        assert(ans.size() == N * N + 1);
+        for (int i = 0; i < N * N; i++) x[i] = ans[i] - ans[s];
+        return cost - r * K;
+    };
+    auto check = [&](i128 a, i128 b) -> bool {
+        FR r(a, b);
+        vector<FR> x(N*N);
+        if (a == 1 && b == 0) return false;
+        auto cost = optimize(r, x);
+        return calc_penalty(x) > 0;
+    };
     
-    // solver
-    void hobfs() {
-        queue<int> que;
-        for (int left = 0; left < size_left; ++left) {
-            level[left] = -1;
-            if (!matched[left]) {
-                que.push(left);
-                level[left] = 0;
-            }
-        }
-        level[size_left] = size_left;
-        while (!que.empty()) {
-            int left = que.front();
-            que.pop();
-            for (int right : list[left]) {
-                int next = rl[right];
-                if (next == NOT_MATCHED) next = size_left;
-                if (level[next] == -1) {
-                    level[next] = level[left] + 1;
-                    que.push(next);
-                }
-            }
+    vector<FR> pre_x(N*N), nex_x(N*N), x(N*N);
+    if (!check(0, 1)) {
+        vector<FR> x(N*N);
+        optimize(FR(0, 1), x);
+    } else {
+        auto [a, b, c, d] = SBT::binary_search(check, 10000000000000LL);
+        FR pre_r(a, b), nex_r(c, d);
+        auto pre_all_cost = optimize(pre_r, pre_x);
+        auto nex_all_cost = optimize(nex_r, nex_x);
+        auto pre_obj = calc_obj(pre_x), nex_obj = calc_obj(nex_x);
+        auto pre_penalty = calc_penalty(pre_x), nex_penalty = calc_penalty(nex_x);
+        for (int i = 0; i < N*N; i++) {
+            x[i] = (pre_x[i]*(-nex_penalty) + nex_x[i]*pre_penalty) / (pre_penalty - nex_penalty);
         }
     }
-    bool hodfs(int left) {
-        if (left == size_left) return true;
-        if (seen[left]) return false;
-        seen[left] = true;
-        for (int right : list[left]) {
-            int next = rl[right];
-            if (next == NOT_MATCHED) next = size_left;
-            if (level[next] > level[left] && hodfs(next)) {
-                lr[left] = right;
-                rl[right] = left;
-                return true;
-            }
-        }
-        return false;
+    auto res = calc_obj(x);
+    cout << fixed << setprecision(20) << to_double(res) << endl;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) cout << to_double(x[i*N+j]) << " ";
+        cout << endl;
     }
-    int solve() {
-        seen.assign(size_left, false);
-        matched.assign(size_left, false);
-        level.assign(size_left + 1, -1);
-        lr.assign(size_left, -1);
-        rl.assign(size_right, -1);
-        int res = 0;
-        while (true) {
-            hobfs();
-            seen.assign(size_left, false);
-            bool finished = true;
-            for (int left = 0; left < size_left; ++left) {
-                if (!matched[left] && hodfs(left)) {
-                    matched[left] = true;
-                    ++res;
-                    finished = false;
-                }
-            }
-            if (finished) break;
-        }
-        for (int r = 0; r < size_right; r++) {
-            if (rl[r] != NOT_MATCHED) lr[rl[r]] = r;
-        }
-        return res;
-    }
-
-    // various construction
-    // max matching
-    vector<pair<int,int>> get_matching() {
-        vector<pair<int,int>> res;
-        for (int v = 0; v < size_left; v++) {
-            if (lr[v] == NOT_MATCHED) continue;
-            res.emplace_back(v, lr[v]);
-        }
-        return res;
-    }
-
-    // enumerate reachable nodes (0: left, 1: right)
-    const int LEFT = 0, RIGHT = 1;
-    pair<vector<bool>, vector<bool>> get_reachable() {
-        vector<bool> can_left(size_left, false);
-        vector<bool> can_right(size_right, false);
-        queue<pair<int,int>> que;
-        for (int v = 0; v < size_left; v++) {
-            if (lr[v] == NOT_MATCHED) {
-                can_left[v] = true;
-                que.push({LEFT, v});
-            }
-        }
-        while (!que.empty()) {
-            auto [which, v] = que.front();
-            que.pop();
-            if (which == LEFT) {
-                for (auto r : list[v]) {
-                    if (!can_right[r]) {
-                        can_right[r] = true;
-                        que.push({RIGHT, r});
-                    }
-                }
-            } else {
-                int l = rl[v];
-                if (l != NOT_MATCHED && !can_left[l]) {
-                    can_left[l] = true;
-                    que.push({LEFT, l});
-                }
-            }
-        }
-        return {can_left, can_right};
-    }
-
-    // max independent set (0: left, 1: right)
-    vector<pair<int,int>> get_independent_set() {
-        vector<pair<int,int>> res;
-        auto [can_left, can_right] = get_reachable();
-        for (int v = 0; v < size_left; v++) {
-            if (can_left[v]) res.emplace_back(LEFT, v);
-        }
-        for (int v = 0; v < size_right; v++) {
-            if (!can_right[v]) res.emplace_back(RIGHT, v);
-        }
-        return res;
-    }
-
-    // min vertex-cover (0: left, 1: right)
-    vector<pair<int,int>> get_vertex_cover() {
-        vector<pair<int,int>> res;
-        auto [can_left, can_right] = get_reachable();
-        for (int v = 0; v < size_left; v++) {
-            if (!can_left[v]) res.emplace_back(LEFT, v);
-        }
-        for (int v = 0; v < size_right; v++) {
-            if (can_right[v]) res.emplace_back(RIGHT, v);
-        }
-        return res;
-    }
-
-    // min edge-cover (0: left, 1: right)
-    vector<pair<int,int>> get_edge_cover() {
-        vector<pair<int,int>> res = get_matching();
-        for (int v = 0; v < size_left; v++) {
-            if (list[v].empty()) return vector<pair<int,int>>();  // infeasible
-            if (lr[v] == NOT_MATCHED) res.emplace_back(v, list[v][0]);
-        }
-        for (int v = 0; v < size_right; v++) {
-            if (rlist[v].empty()) return vector<pair<int,int>>();  // infeasible
-            if (rl[v] == NOT_MATCHED) res.emplace_back(rlist[v][0], v);
-        }
-        return res;
-    }
-};
-
-// DAG min path-cover by Hopcroft-Karp
-struct DagPathCover {
-    const int NOT_MATCHED = -1;
-    
-    // input
-    int V;
-    vector<vector<int>> list; // left to right
-
-    // results
-    vector<int> lr, rl;
-    
-    // intermediate results
-    vector<vector<int>> rlist; // right to left
-    vector<bool> seen, matched;
-    vector<int> level;
-    
-    // constructor
-    DagPathCover(int V) : V(V), list(V), rlist(V) {}
-    void add_edge(int from, int to) {
-        assert(from >= 0 && from < V);
-        assert(to >= 0 && to < V);
-        list[from].emplace_back(to);
-        rlist[to].emplace_back(from);
-    }
-
-    // getter, debugger
-    vector<int> &operator [] (int i) { return list[i]; }
-    const vector<int> &operator [] (int i) const { return list[i]; }
-    constexpr int size() const { return V; }
-    friend ostream& operator << (ostream& s, const DagPathCover& G) {
-        s << endl;
-        for (int i = 0; i < (int)G.list.size(); ++i) {
-            s << i << ": ";
-            for (int j = 0; j < (int)G.list[i].size(); ++j) {
-                s << G.list[i][j];
-                if (j + 1 != (int)G.list[i].size()) s << ", ";
-            }
-            s << endl;
-        }
-        return s;
-    }
-    
-    // solver
-    void hobfs() {
-        queue<int> que;
-        for (int left = 0; left < V; ++left) {
-            level[left] = -1;
-            if (!matched[left]) {
-                que.push(left);
-                level[left] = 0;
-            }
-        }
-        level[V] = V;
-        while (!que.empty()) {
-            int left = que.front();
-            que.pop();
-            for (int right : list[left]) {
-                int next = rl[right];
-                if (next == NOT_MATCHED) next = V;
-                if (level[next] == -1) {
-                    level[next] = level[left] + 1;
-                    que.push(next);
-                }
-            }
-        }
-    }
-    bool hodfs(int left) {
-        if (left == V) return true;
-        if (seen[left]) return false;
-        seen[left] = true;
-        for (int right : list[left]) {
-            int next = rl[right];
-            if (next == NOT_MATCHED) next = V;
-            if (level[next] > level[left] && hodfs(next)) {
-                lr[left] = right;
-                rl[right] = left;
-                return true;
-            }
-        }
-        return false;
-    }
-    int solve() {
-        seen.assign(V, false);
-        matched.assign(V, false);
-        level.assign(V + 1, -1);
-        lr.assign(V, -1);
-        rl.assign(V, -1);
-        int max_matching = 0;
-        while (true) {
-            hobfs();
-            seen.assign(V, false);
-            bool finished = true;
-            for (int left = 0; left < V; ++left) {
-                if (!matched[left] && hodfs(left)) {
-                    matched[left] = true;
-                    ++max_matching;
-                    finished = false;
-                }
-            }
-            if (finished) break;
-        }
-        for (int r = 0; r < V; r++) {
-            if (rl[r] != NOT_MATCHED) lr[rl[r]] = r;
-        }
-        return V - max_matching;
-    }
-
-    // max stable set
-    vector<int> get_stable_set() {
-        vector<int> res;
-        for (int v = 0; v < V; v++) {
-            if (rl[v] == NOT_MATCHED) res.emplace_back(v);
-        }
-        return res;
-    }
-
-    // min path cover
-    vector<vector<int>> get_path_cover() {
-        auto srcs = get_stable_set();
-        vector<vector<int>> res;
-        for (auto s : srcs) {
-            vector<int> path;
-            int v = s;
-            while (v != NOT_MATCHED) {
-                path.emplace_back(v);
-                v = lr[v];
-            }
-            res.emplace_back(path);
-        }
-        return res;
-    }
-};
+}
 
 
-//------------------------------//
-// Monge Function Minimization
-//------------------------------//
+int main() {
+    //Yosupo_Minimum_Cost_b_flow("primal_dual");
+    //Yosupo_Minimum_Cost_b_flow("cost_scaling");
+    //Yosupo_Minimum_Cost_b_flow("network_simplex");
 
-/*
- N 個の bool 変数 x_0, x_1, ..., x_{N-1} について、以下の形のコストが定められたときの最小コストを求める
- 
- ・1 変数 xi に関するコスト (1 変数劣モジュラ関数)
-    xi = F のときのコスト, xi = T のときのコスト
- 
- ・2 変数 xi, xj 間の関係性についてのコスト (2 変数劣モジュラ関数)
- 　　(xi, xj) = (F, F): コスト A
- 　　(xi, xj) = (F, T): コスト B
- 　　(xi, xj) = (T, F): コスト C
- 　　(xi, xj) = (T, T): コスト D
- 　(ただし、B + C >= A + D でなければならない)
- 
- ・よくある例は、A = B = D = 0, C >= 0 の形である (特に関数化している)
-    ・この場合は、特に Project Selection Problem と呼ばれ、俗に「燃やす埋める」などとも呼ばれる
-    ・xi = T, xj = F のときにコスト C がかかる
- 
- ・他に面白い例として、A = B = C = 0, D <= 0 の形もある (これも関数化している)
-    ・xi = T, xj = T のときに (-D) の利得が得られる
- 
- ・3 変数 xi, xj, xk 間の関係性についてのコスト (3 変数劣モジュラ関数)
- 　　(xi, xj, xk) = (F, F, F): コスト A
- 　　(xi, xj, xk) = (F, F, T): コスト B
- 　　(xi, xj, xk) = (F, T, F): コスト C
- 　　(xi, xj, xk) = (F, T, T): コスト D
- 　　(xi, xj, xk) = (T, F, F): コスト E
- 　　(xi, xj, xk) = (T, F, T): コスト F
- 　　(xi, xj, xk) = (T, T, F): コスト G
- 　　(xi, xj, xk) = (T, T, T): コスト H
- */
-// submodular optimization
-template<class COST> struct ThreeVariableSubmodularOpt {
-    // Graph
-    int N, S, T;
-    COST OFFSET, INF;
-    FlowGraph<COST> G;
+    //ABC_421_G("primal_dual");
+    //ABC_421_G("cost_scaling");
+    //ABC_421_G("network_simplex");
 
-    // constructors
-    ThreeVariableSubmodularOpt() : N(2), S(0), T(0), OFFSET(0) {}
-    ThreeVariableSubmodularOpt(int n, COST inf = numeric_limits<COST>::max() / 2)
-    : N(n), S(n), T(n + 1), OFFSET(0), INF(inf), G(n + 2) {}
-    
-    // initializer
-    void init(int n, COST inf = numeric_limits<COST>::max() / 2) {
-        N = n, S = n, T = n + 1;
-        OFFSET = 0, INF = inf;
-        G.init(N + 2);
-    }
+    //KUPC_2014_I("primal_dual");
+    //KUPC_2014_I("cost_scaling");
+    //KUPC_2014_I("network_simplex");
 
-    // add constant cost
-    void add_cost(COST cost) {
-        OFFSET += cost;
-    }
+    //AOJ_2627("primal_dual");
+    //AOJ_2627("cost_scaling");
+    //AOJ_2627("network_simplex");
 
-    // add 1-variable submodular function
-    void add_single_cost(int xi, COST false_cost, COST true_cost) {
-        assert(0 <= xi && xi < N);
-        if (false_cost >= true_cost) {
-            OFFSET += true_cost;
-            if (false_cost - true_cost > 0) G.add_edge(S, xi, false_cost - true_cost);
-        } else {
-            OFFSET += false_cost;
-            G.add_edge(xi, T, true_cost - false_cost);
-        }
-    }
-    void add_single_cost_01(int xi, COST false_cost, COST true_cost) {
-        add_single_cost(xi, false_cost, true_cost);
-    }
-    void add_single_cost_10(int xi, COST false_cost, COST true_cost) {
-        add_single_cost(xi, true_cost, false_cost);
-    }
-    
-    // add "project selection" constraint
-    // xi = T, xj = F: strictly prohibited
-    void add_psp_constraint(int xi, int xj) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(xi != xj);
-        G.add_edge(xi, xj, INF);
-    }
-    void add_psp_constraint_01(int xi, int xj) {
-        add_psp_constraint(xj, xi);
-    }
-    void add_psp_constraint_10(int xi, int xj) {
-        add_psp_constraint(xi, xj);
-    }
-    
-    // add "project selection" penalty
-    // xi = T, xj = F: cost C
-    void add_psp_penalty(int xi, int xj, COST C) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(xi != xj);
-        assert(C >= 0);
-        if (C > 0) G.add_edge(xi, xj, C);
-    }
-    void add_psp_penalty_01(int xi, int xj, COST C) {
-        add_psp_penalty(xj, xi, C);
-    }
-    void add_psp_penalty_10(int xi, int xj, COST C) {
-        add_psp_penalty(xi, xj, C);
-    }
-    
-    // add both True profit
-    // xi = T, xj = T: profit P (cost -P)
-    void add_both_true_profit(int xi, int xj, COST P) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(xi != xj);
-        assert(P >= 0);
-        OFFSET -= P;
-        if (P > 0) G.add_edge(S, xi, P);
-        if (P > 0) G.add_edge(xi, xj, P);
-    }
-    
-    // add both False profit
-    // xi = F, xj = F: profit P (cost -P)
-    void add_both_false_profit(int xi, int xj, COST P) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(xi != xj);
-        assert(P >= 0);
-        OFFSET -= P;
-        if (P > 0) G.add_edge(xj, T, P);
-        if (P > 0) G.add_edge(xi, xj, P);
-    }
-    
-    // add general 2-variable submodular function
-    // (xi, xj) = (F, F): A, (F, T): B
-    // (xi, xj) = (T, F): C, (T, T): D
-    void add_submodular_function(int xi, int xj, COST A, COST B, COST C, COST D) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(xi != xj);
-        assert(B + C >= A + D);  // assure submodular function
-        OFFSET += A;
-        add_single_cost(xi, 0, D - B);
-        add_single_cost(xj, 0, B - A);
-        if (B + C - A - D > 0) add_psp_penalty(xi, xj, B + C - A - D);
-    }
-    
-    // add all True profit
-    // y = F: not gain profit (= cost is P), T: gain profit (= cost is 0)
-    // y: T, xi: F is prohibited
-    template<class INT> void add_all_true_profit(const vector<INT> &xs, COST P) {
-        assert(P >= 0);
-        OFFSET -= P;
-        int y = (int)G.size();
-        G.resize(y + 1);
-        G.add_edge(S, y, P);
-        for (auto xi : xs) {
-            assert(xi >= 0 && xi < N);
-            G.add_edge(y, xi, INF);
-        }
-    }
-    
-    // add all False profit
-    // y = F: gain profit (= cost is 0), T: not gain profit (= cost is P)
-    // xi = T, y = F is prohibited
-    template<class INT> void add_all_false_profit(const vector<INT> &xs, COST P) {
-        assert(P >= 0);
-        OFFSET -= P;
-        int y = (int)G.size();
-        G.resize(y + 1);
-        G.add_edge(y, T, P);
-        for (auto xi : xs) {
-            assert(xi >= 0 && xi < N);
-            G.add_edge(xi, y, INF);
-        }
-    }
-    
-    // add general 3-variable submodular function
-    // (xi, xj, xk) = (F, F, F): cost A
-    // (xi, xj, xk) = (F, F, T): cost B
-    // (xi, xj, xk) = (F, T, F): cost C
-    // (xi, xj, xk) = (F, T, T): cost D
-    // (xi, xj, xk) = (T, F, F): cost E
-    // (xi, xj, xk) = (T, F, T): cost F
-    // (xi, xj, xk) = (T, T, F): cost G
-    // (xi, xj, xk) = (T, T, T): cost H
-    void add_submodular_function(int xi, int xj, int xk,
-                                 COST A, COST B, COST C, COST D,
-                                 COST E, COST F, COST G, COST H) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(0 <= xk && xk < N);
-        COST P = (A + D + F + G) - (B + C + E + H);
-        COST P12 = (C + E) - (A + G), P13 = (D + G) - (C + H);
-        COST P21 = (D + F) - (B + H), P23 = (B + C) - (A + D);
-        COST P31 = (B + E) - (A + F), P32 = (F + G) - (E + H);
-        assert(P12 >= 0 && P21 >= 0);
-        assert(P23 >= 0 && P32 >= 0);
-        assert(P31 >= 0 && P13 >= 0);
-        if (P >= 0) {
-            OFFSET += A;
-            add_single_cost(xi, 0, F - B);
-            add_single_cost(xj, 0, G - E);
-            add_single_cost(xk, 0, D - C);
-            add_psp_penalty(xj, xi, P12);
-            add_psp_penalty(xk, xj, P23);
-            add_psp_penalty(xi, xk, P31);
-            add_all_true_profit({xi, xj, xk}, P);
-        } else {
-            OFFSET += H;
-            add_single_cost(xi, C - G, 0);
-            add_single_cost(xj, B - D, 0);
-            add_single_cost(xk, E - F, 0);
-            add_psp_penalty(xi, xj, P21);
-            add_psp_penalty(xj, xk, P32);
-            add_psp_penalty(xk, xi, P13);
-            add_all_false_profit({xi, xj, xk}, -P);
-        }
-    }
-    
-    // solve
-    COST solve(const string solver = "dinic") {
-        if (solver == "dinic") return Dinic(G, S, T) + OFFSET;
-        return COST(0);
-    }
-    
-    // reconstrcut the optimal assignment
-    vector<bool> reconstruct() {
-        vector<bool> res(N, false), seen(G.size(), false);
-        queue<int> que;
-        seen[S] = true;
-        que.push(S);
-        while (!que.empty()) {
-            int v = que.front();
-            que.pop();
-            for (const auto &e : G[v]) {
-                if (e.cap > 0 && !seen[e.to]) {
-                    if (e.to < N) res[e.to] = true;
-                    seen[e.to] = true;
-                    que.push(e.to);
-                }
-            }
-        }
-        return res;
-    }
-    
-    // debug
-    vector<FlowEdge<COST>> get_edges() const {
-        return G.get_edges();
-    }
-    friend ostream& operator << (ostream& s, const ThreeVariableSubmodularOpt &opt) {
-        const auto &edges = opt.get_edges();
-        for (const auto &e : edges) s << e << endl;
-        return s;
-    }
-};
+    //EducationalCodeforces80_F("primal_dual");
+    //EducationalCodeforces80_F("cost_scaling");
+    //EducationalCodeforces80_F("network_simplex");
 
-// K-value Two Variable Monge Function Optimization 
-/*
-    X[i] = 0, 1, ..., K-1 -> (x[i][1], ..., x[i][K-1])
-    set X[i] <= d  ⇔  x[i][d] = 1
+    //UTPC2011_H("primal_dual");
+    //UTPC2011_H("cost_scaling");
+    //UTPC2011_H("network_simplex");
 
-    X[i] = 0   -> (1, 1, 1, ..., 1, 1)
-    X[i] = 1   -> (0, 1, 1, ..., 1, 1)
-    X[i] = 2   -> (0, 0, 1, ..., 1, 1)
-    ...
-    X[i] = K-2 -> (0, 0, 0, ..., 0, 1)
-    X[i] = K-1 -> (0, 0, 0, ..., 0, 0)
- */
-template<class COST> struct TwoVariableMongeOpt {
-    // inner data
-    int N, N01;
-    COST INF;
-    vector<int> ks;  // size of x[i]
-    vector<vector<int>> x;  // index of x[i][k] in normal submodular optimization
-    ThreeVariableSubmodularOpt<COST> tvs;
+    //Codeforces826_G("primal_dual");
+    //Codeforces826_G("cost_scaling");
+    //Codeforces826_G("network_simplex");
 
-    // constructors
-    TwoVariableMongeOpt() {}
-    TwoVariableMongeOpt(int N, int K, COST inf = numeric_limits<COST>::max() / 2) {
-        vector<int> ks(N, K);
-        init(ks, inf);
-    }
-   template<class INT> TwoVariableMongeOpt(const vector<INT> &ks, COST inf = numeric_limits<COST>::max() / 2) {
-        init(ks, inf);
-    }
-    template<class INT> void init(const vector<INT> &iks, COST inf = numeric_limits<COST>::max() / 2) {
-        N = (int)iks.size(), INF = inf, ks = iks, N01 = 0;
-        x.resize(N);
-        for (int i = 0; i < N; i++) {
-            assert(ks[i] >= 2);
-            x[i].assign(ks[i] - 1, 0);
-            for (int k = 0; k < ks[i] - 1; k++) x[i][k] = N01++;
-        }
-        tvs.init(N01, INF);
-        for (int i = 0; i < N; i++) {
-            for (int k = 0; k < ks[i] - 2; k++) {
-                tvs.add_psp_constraint(x[i][k], x[i][k + 1]);
-            }
-        }
-    }
-
-    // add constant cost
-    void add_cost(COST cost) {
-        tvs.add_cost(cost);
-    }
-
-    // add 1-variable function
-    void add_single_cost(int xi, const vector<COST> &cost) {
-        assert(0 <= xi && xi < N);
-        assert((int)cost.size() == ks[xi]);
-        tvs.add_cost(cost[ks[xi] - 1]);
-        for (int k = 0; k < ks[xi] - 1; k++) {
-            tvs.add_single_cost(x[xi][k], 0, cost[k] - cost[k + 1]);
-        }
-    }
-
-    // add 2-variable Monge function
-    void add_monge_function(int xi, int xj, const vector<vector<COST>> &cost) {
-        assert(0 <= xi && xi < N);
-        assert(0 <= xj && xj < N);
-        assert(xi != xj);
-        assert((int)cost.size() == ks[xi]);
-        assert((int)cost[0].size() == ks[xj]);
-        vector<COST> icost(ks[xi], 0), jcost(ks[xj], 0);
-        for (int ki = 0; ki < ks[xi]; ki++) icost[ki] = cost[ki][0];
-        for (int kj = 1; kj < ks[xj]; kj++) jcost[kj] = cost[ks[xi] - 1][kj] - cost[ks[xi] - 1][0];
-        add_single_cost(xi, icost);
-        add_single_cost(xj, jcost);
-        for (int ki = 0; ki < ks[xi] - 1; ki++) {
-            for (int kj = 0; kj < ks[xj] - 1; kj++) {
-                COST c = cost[ki][kj + 1] - cost[ki][kj] - cost[ki + 1][kj + 1] + cost[ki + 1][kj];
-                assert(c >= 0);
-                tvs.add_psp_penalty(x[xi][ki], x[xj][kj], c);
-            }
-        }
-    }
-
-    // add all smaller profit (x[xs[i]] <= a[i])
-    template<class INT> void add_all_smaller_profit(const vector<INT> &xs, const vector<INT> &a, COST P) {
-        assert(xs.size() == a.size());
-        vector<INT> txs;
-        for (int i = 0; i < (int)xs.size(); i++) {
-            assert(a[i] >= 0);
-            if (a[i] >= ks[xs[i]] - 1) continue;
-            txs[i].emplace_back(x[xs[i]][a[i]]);  // x <= a equals x[a] = True
-        }
-        tvs.add_all_true_profit(txs, P);
-    }
-
-    // add all larger profit (x[xs[i]] > a[i])
-    template<class INT> void add_all_larger_profit(const vector<INT> &xs, const vector<INT> &a, COST P) {
-        assert(xs.size() == a.size());
-        vector<INT> txs;
-        for (int i = 0; i < (int)xs.size(); i++) {
-            assert(a[i] < ks[xs[i]] - 1);
-            if (a[i] < 0) continue;
-            txs.emplace_back(x[xs[i]][a[i]]);  // x > a equals x[a] = False
-        }
-        tvs.add_all_false_profit(txs, P);
-    } 
-
-    // solve
-    COST solve(const string &solver = "dinic") {
-        return tvs.solve(solver);
-    }
-    
-    // reconstrcut the optimal assignment
-    vector<int> reconstruct() {
-        vector<int> res(N, 0);
-        vector<bool> tres = tvs.reconstruct();
-        for (int i = 0; i < N; i++) for (int ki = 0; ki < ks[i] - 1; ki++) {
-            res[i] += not tres[x[i][ki]];
-        }
-        return res;
-    }
-
-    // debug
-    vector<FlowEdge<COST>> get_edges() const {
-        return tvs.get_edges();
-    }
-    friend ostream& operator << (ostream& s, const TwoVariableMongeOpt &opt) {
-        const auto &edges = opt.get_edges();
-        for (const auto &e : edges) s << e << endl;
-        return s;
-    }
-};
-
-
-//------------------------------//
-// Min-cost Tension
-//------------------------------//
-
-// min-cost tension
-/*
-    min_{p}: 
-        Σ_{v} b(v)p(v) + Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
-    s.t.
-        p(v) - p(u) <= d(e)
-    ->
-        b-flow (with demand-suply: b)
-        edge 
-            obj func: e = (u, v) with capacity c(e), cost l(e)
-            constraint: e = (u, v) with capacity INF, cost d(e)
-        optimal value *= -1
-
-    in general:
-        Σ_{v} b(v)p(v) + Σ_{e} f(p(v) - p(u)), where f is concave
-*/
-template<class FLOW, class COST> struct MinCostTension {
-    // inner values
-    int N;
-    COST OFFSET = 0;
-    MinCostBFlow<FLOW, COST> opt;
-
-    // constructor
-    MinCostTension() : OFFSET(0) {}
-    MinCostTension(int n) : N(n), OFFSET(0), opt(N) {}
-    void init(int n) {
-        N = n;
-        OFFSET = 0;
-        opt.init(n);
-    }
-
-    // add constant cost
-    void add_cost(COST cost) {
-        OFFSET += cost;
-    }
-
-    // add the part of obj func Σ_{v}b(v)p(v)
-    void add_single_coef(int v, FLOW b) {
-        assert(0 <= v && v < N);
-        assert(opt.lower_dss[v] == opt.upper_dss[v]);
-        opt.set_ds(v, opt.lower_dss[v] + b);
-    }
-
-    // add tha part of obj func Σ_{e} {c(e) max(0, p(v) - p(u) - l(e)}
-    void add_tension_cost(int u, int v, FLOW c, COST l) {
-        assert(0 <= u && u < N);
-        assert(0 <= v && v < N);
-        assert(u != v);
-        assert(c >= 0);
-        opt.add_edge(u, v, c, l);
-    }
-
-    // add constraint p(v) - p(u) <= d
-    void add_tension_constraint(int u, int v, FLOW inf, COST d) {
-        assert(0 <= u && u < N);
-        assert(0 <= v && v < N);
-        assert(u != v);
-        opt.add_edge(u, v, inf, d);
-    }
-
-    // テンション p[v] - p[u] に関する区分線形凸関数 f を足す
-    // f を (min_{f}, 傾きが 0 以下・0 以上の部分の傾きの変化点の多重集合）で表す
-    // 変化点の多重集合を (変化点, 変化量) の vector で表す
-    void add_tension_convex_function(int u, int v, 
-    COST mif, const vector<pair<COST,FLOW>> &left, const vector<pair<COST,FLOW>> &right) {
-        assert(0 <= u && u < N);
-        assert(0 <= v && v < N);
-        assert(u != v);
-        add_cost(mif);
-        for (auto [x, d] : left) add_tension_cost(v, u, d, -x);
-        for (auto [x, d] : right) add_tension_cost(u, v, d, x);
-    }
-
-    // solver
-    pair<bool, COST> solve(bool calc_potential = true) {
-        auto [flag, cost] = opt.solve(calc_potential);
-        return make_pair(flag, OFFSET - cost);
-    }
-    vector<FLOW> reconstruct() {
-        return opt.dual;
-    }
-};
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-int main () {
-
+    //ABC_393_G("primal_dual");
+    //ABC_393_G("cost_scaling");
+    ABC_393_G("network_simplex");
 }

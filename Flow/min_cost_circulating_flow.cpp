@@ -273,77 +273,91 @@ template<class FLOW, class COST> struct FlowCostGraph {
 
 // Min Cost Circulation Flow by Cost-Scaling 
 template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
-    COST eps = 0;
+    const int N = (int)G.size();
+    const COST SCALE = N + 1;
+    COST eps = 1;
     vector<FLOW> balance(G.size(), 0);
     vector<COST> price(G.size(), 0);
     
-    auto newcost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
-        return e.cost * (COST)G.size() - price[e.from] + price[e.to];
+    auto reduced_cost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
+        return e.cost * SCALE - price[e.from] + price[e.to];
     };
 
     auto ConstructGaux = [&]() -> void {
         vector<bool> visited(G.size(), false);
-        auto dfs = [&](auto &&dfs, int v) -> void {
-            visited[v] = true;
-            for (int i = 0; i < G[v].size(); ++i) {
-                FlowCostEdge<FLOW, COST> &e = G[v][i];
-                if (e.cap > 0 && !visited[e.to] && newcost(e) < 0) dfs(dfs, e.to);
+        vector<int> st;
+        st.reserve(N);
+        for (int s = 0; s < N; s++) {
+            if (balance[s] <= 0 || visited[s]) continue;
+            visited[s] = true;
+            st.push_back(s);
+            while (!st.empty()) {
+                int v = st.back();
+                st.pop_back();
+                for (const auto &e : G[v]) {
+                    if (e.cap <= 0 || reduced_cost(e) >= 0 || visited[e.to]) continue;
+                    visited[e.to] = true;
+                    st.push_back(e.to);
+                }
             }
-        };
-        for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) dfs(dfs, v);
+        }
         for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
     };
 
     auto augment_blocking_flow = [&]() -> bool {
-        vector<int> iter(G.size(), 0);
+        vector<int> iter(N, 0);
         auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
             if (balance[v] < 0) {
                 FLOW dif = min(flow, -balance[v]);
                 balance[v] += dif;
                 return dif;
             }
-            for (; iter[v] < G[v].size(); iter[v]++) {
-                auto &e = G[v][iter[v]], &re = G.get_rev_edge(e);
-                if (e.cap > 0 && newcost(e) < 0) {
-                    FLOW dif = augment(augment, e.to, min(flow, e.cap));
-                    if (dif > 0) {
-                        e.cap -= dif, e.flow += dif;
-                        re.cap += dif, re.flow -= dif;
-                        return dif;
-                    }
-                }
+            for (int &i = iter[v]; i < (int)G[v].size(); i++) {
+                auto &e = G[v][i];
+                if (e.cap <= 0 || reduced_cost(e) >= 0) continue;
+                FLOW dif = augment(augment, e.to, min(flow, e.cap));
+                if (dif <= 0) continue;
+                auto &re = G.get_rev_edge(e);
+                e.cap -= dif, e.flow += dif;
+                re.cap += dif, re.flow -= dif;
+                return dif;
             }
-            return 0;
+            return FLOW(0);
         };
         bool finish = true;
-        for (int v = 0; v < G.size(); ++v) {
-            FLOW flow;
-            while (balance[v] > 0 && (flow = augment(augment, v, balance[v])) > 0)
-                balance[v] -= flow;
+        for (int v = 0; v < N; ++v) {
+            while (balance[v] > 0) {
+                FLOW f = augment(augment, v, balance[v]);
+                if (f <= 0) break;
+                balance[v] -= f;
+            }
             if (balance[v] > 0) finish = false;
         }
-        if (finish) return true;
-        else return false;
+        return finish;
     };
 
-    for (int v = 0; v < G.size(); ++v) {
-        for (int i = 0; i < G[v].size(); ++i) {
-            FlowCostEdge<FLOW, COST> &e = G[v][i];
-            if (e.cap > 0) eps = max(eps, -e.cost * (COST)G.size());
+    // eps init
+    COST need = 0;
+    for (int v = 0; v < N; v++) {
+        for (const auto &e : G[v]) {
+            if (e.cap <= 0) continue;
+            need = max(need, -e.cost * SCALE);
         }
-        price[v] = 0;
     }
+    while (eps < need) eps *= 2;
+
+    // cost scaling
     while (eps > 1) {
         eps /= 2;
-        for (int v = 0; v < G.size(); ++v) {
-            for (int i = 0; i < G[v].size(); ++i) {
-                auto &e = G[v][i], &re = G.get_rev_edge(e);
-                if (e.cap > 0 && newcost(e) < 0) {
-                    FLOW flow = e.cap;
-                    balance[e.from] -= flow, balance[e.to] += flow;
-                    e.cap -= flow, e.flow += flow;
-                    re.cap += flow, re.flow -= flow;
-                }
+        for (int v = 0; v < N; v++) {
+            for (int i = 0; i < (int)G[v].size(); i++) {
+                auto &e = G[v][i];
+                if (e.cap <= 0 || reduced_cost(e) >= 0) continue;
+                auto &re = G.get_rev_edge(e);
+                FLOW f = e.cap;
+                balance[e.from] -= f, balance[e.to] += f;
+                e.cap -= f, e.flow += f;
+                re.cap += f, re.flow -= f;
             }
         }
         while (true) {

@@ -42,9 +42,6 @@
 */
 
 
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -669,79 +666,187 @@ template<class FLOW, class COST> struct FlowCostGraph {
     }
 };
 
+// min-cost max-flow (<= limit_flow), slope ver.
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
+{
+    // result values
+    FLOW cur_flow = 0;
+    COST cur_cost = 0, pre_cost = numeric_limits<COST>::max() / 2;
+    vector<pair<FLOW, COST>> res;
+    res.emplace_back(cur_flow, cur_cost);
+    
+    // intermediate values
+    vector<COST> dist((int)G.size(), numeric_limits<COST>::max() / 2);
+    vector<int> prevv((int)G.size(), -1), preve((int)G.size(), -1);
+    
+    // dual
+    auto dual_step = [&]() -> bool {
+        dist.assign((int)G.size(), numeric_limits<COST>::max() / 2);
+        dist[S] = 0;
+        priority_queue<pair<COST,int>, vector<pair<COST,int>>, greater<pair<COST,int>>> que;
+        que.emplace(0, S);
+        while (!que.empty()) {
+            auto [cur, v] = que.top();
+            que.pop();
+            if (cur > dist[v]) continue;
+            for (int i = 0; i < (int)G[v].size(); i++) {
+                const auto &e = G[v][i];
+                COST add = e.cost + G.pot[v] - G.pot[e.to];
+                if (e.cap > 0 && dist[e.to] > dist[v] + add) {
+                    dist[e.to] = dist[v] + add;
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    que.emplace(dist[e.to], e.to);
+                }
+            }
+        }
+        return dist[T] < numeric_limits<COST>::max() / 2;
+    };
+    
+    // primal
+    auto primal_step = [&]() -> void {
+        for (int v = 0; v < G.size(); v++) {
+            if (dist[v] < numeric_limits<COST>::max() / 2) G.pot[v] += dist[v];
+            else G.pot[v] = numeric_limits<COST>::max() / 2;
+        }
+        FLOW flow = limit_flow - cur_flow;
+        COST cost = G.pot[T] - G.pot[S];
+        for (int v = T; v != S; v = prevv[v]) {
+            flow = min(flow, G[prevv[v]][preve[v]].cap);
+        }
+        for (int v = T; v != S; v = prevv[v]) {
+            FlowCostEdge<FLOW, COST> &e = G[prevv[v]][preve[v]];
+            FlowCostEdge<FLOW, COST> &re = G.get_rev_edge(e);
+            e.cap -= flow, e.flow += flow;
+            re.cap += flow, re.flow -= flow;
+        }
+        cur_flow += flow;
+        cur_cost += flow * cost;
+        if (pre_cost == cost) res.pop_back();
+        res.emplace_back(cur_flow, cur_cost);
+        pre_cost = cost;
+    };
+
+    // initialize potential
+    assert(G.init_potential());
+    
+    // primal-dual
+    while (cur_flow < limit_flow) {
+        if (!dual_step()) break;
+        primal_step();
+    }
+    return res;
+}
+
+// min-cost max-flow, slope ver.
+template<class FLOW, class COST> vector<pair<FLOW, COST>>
+MinCostFlowSlope(FlowCostGraph<FLOW, COST> &G, int S, int T)
+{
+    return MinCostFlowSlope(G, S, T, numeric_limits<FLOW>::max());
+}
+
+// min-cost max-flow (<= limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T, FLOW limit_flow)
+{
+    return MinCostFlowSlope(G, S, T, limit_flow).back();
+}
+
+// min-cost max-flow (<= limit_flow)
+template<class FLOW, class COST> pair<FLOW, COST>
+MinCostFlow(FlowCostGraph<FLOW, COST> &G, int S, int T)
+{
+    return MinCostFlow(G, S, T, numeric_limits<FLOW>::max());
+}
+
 // Min Cost Circulation Flow by Cost-Scaling 
 template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COST> &G) {
-    COST eps = 0;
+    const int N = (int)G.size();
+    const COST SCALE = N + 1;
+    COST eps = 1;
     vector<FLOW> balance(G.size(), 0);
     vector<COST> price(G.size(), 0);
     
-    auto newcost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
-        return e.cost * (COST)G.size() - price[e.from] + price[e.to];
+    auto reduced_cost = [&](const FlowCostEdge<FLOW, COST> &e) -> COST {
+        return e.cost * SCALE - price[e.from] + price[e.to];
     };
 
     auto ConstructGaux = [&]() -> void {
         vector<bool> visited(G.size(), false);
-        auto dfs = [&](auto &&dfs, int v) -> void {
-            visited[v] = true;
-            for (int i = 0; i < G[v].size(); ++i) {
-                FlowCostEdge<FLOW, COST> &e = G[v][i];
-                if (e.cap > 0 && !visited[e.to] && newcost(e) < 0) dfs(dfs, e.to);
+        vector<int> st;
+        st.reserve(N);
+        for (int s = 0; s < N; s++) {
+            if (balance[s] <= 0 || visited[s]) continue;
+            visited[s] = true;
+            st.push_back(s);
+            while (!st.empty()) {
+                int v = st.back();
+                st.pop_back();
+                for (const auto &e : G[v]) {
+                    if (e.cap <= 0 || reduced_cost(e) >= 0 || visited[e.to]) continue;
+                    visited[e.to] = true;
+                    st.push_back(e.to);
+                }
             }
-        };
-        for (int v = 0; v < G.size(); ++v) if (balance[v] > 0) dfs(dfs, v);
+        }
         for (int v = 0; v < G.size(); ++v) if (visited[v]) price[v] += eps;
     };
 
     auto augment_blocking_flow = [&]() -> bool {
-        vector<int> iter(G.size(), 0);
+        vector<int> iter(N, 0);
         auto augment = [&](auto &&augment, int v, FLOW flow) -> FLOW {
             if (balance[v] < 0) {
                 FLOW dif = min(flow, -balance[v]);
                 balance[v] += dif;
                 return dif;
             }
-            for (; iter[v] < G[v].size(); iter[v]++) {
-                auto &e = G[v][iter[v]], &re = G.get_rev_edge(e);
-                if (e.cap > 0 && newcost(e) < 0) {
-                    FLOW dif = augment(augment, e.to, min(flow, e.cap));
-                    if (dif > 0) {
-                        e.cap -= dif, e.flow += dif;
-                        re.cap += dif, re.flow -= dif;
-                        return dif;
-                    }
-                }
+            for (int &i = iter[v]; i < (int)G[v].size(); i++) {
+                auto &e = G[v][i];
+                if (e.cap <= 0 || reduced_cost(e) >= 0) continue;
+                FLOW dif = augment(augment, e.to, min(flow, e.cap));
+                if (dif <= 0) continue;
+                auto &re = G.get_rev_edge(e);
+                e.cap -= dif, e.flow += dif;
+                re.cap += dif, re.flow -= dif;
+                return dif;
             }
-            return 0;
+            return FLOW(0);
         };
         bool finish = true;
-        for (int v = 0; v < G.size(); ++v) {
-            FLOW flow;
-            while (balance[v] > 0 && (flow = augment(augment, v, balance[v])) > 0)
-                balance[v] -= flow;
+        for (int v = 0; v < N; ++v) {
+            while (balance[v] > 0) {
+                FLOW f = augment(augment, v, balance[v]);
+                if (f <= 0) break;
+                balance[v] -= f;
+            }
             if (balance[v] > 0) finish = false;
         }
-        if (finish) return true;
-        else return false;
+        return finish;
     };
 
-    for (int v = 0; v < G.size(); ++v) {
-        for (int i = 0; i < G[v].size(); ++i) {
-            FlowCostEdge<FLOW, COST> &e = G[v][i];
-            if (e.cap > 0) eps = max(eps, -e.cost * (COST)G.size());
+    // eps init
+    COST need = 0;
+    for (int v = 0; v < N; v++) {
+        for (const auto &e : G[v]) {
+            if (e.cap <= 0) continue;
+            need = max(need, -e.cost * SCALE);
         }
-        price[v] = 0;
     }
+    while (eps < need) eps *= 2;
+
+    // cost scaling
     while (eps > 1) {
         eps /= 2;
-        for (int v = 0; v < G.size(); ++v) {
-            for (int i = 0; i < G[v].size(); ++i) {
-                auto &e = G[v][i], &re = G.get_rev_edge(e);
-                if (e.cap > 0 && newcost(e) < 0) {
-                    FLOW flow = e.cap;
-                    balance[e.from] -= flow, balance[e.to] += flow;
-                    e.cap -= flow, e.flow += flow;
-                    re.cap += flow, re.flow -= flow;
-                }
+        for (int v = 0; v < N; v++) {
+            for (int i = 0; i < (int)G[v].size(); i++) {
+                auto &e = G[v][i];
+                if (e.cap <= 0 || reduced_cost(e) >= 0) continue;
+                auto &re = G.get_rev_edge(e);
+                FLOW f = e.cap;
+                balance[e.from] -= f, balance[e.to] += f;
+                e.cap -= f, e.flow += f;
+                re.cap += f, re.flow -= f;
             }
         }
         while (true) {
@@ -755,121 +860,540 @@ template<class FLOW, class COST> COST MinCostCirculation(FlowCostGraph<FLOW, COS
     return res;
 }
 
-// Minimum Cost b-flow (come down to min-cost circulation)
-// Minimum Cost b-flow (come down to min-cost circulation)
-template<class FLOW, class COST> struct MinCostBFlow {
-    // Edge
-    struct Edge {
-        int from, to;
-        FLOW lower_cap, upper_cap, flow;
-        COST cost;
 
-        // debug
-        friend ostream& operator << (ostream& s, const Edge& e) {
-            return s << e.from << "->" << e.to 
-            << "(" << e.flow << "; " << e.lower_cap << "~" << e.upper_cap << "; " << e.cost << ")";
-        }
-    };
+//--------------------------------//
+// Minumum Cost b-flow
+//--------------------------------//
 
+// Minimum Cost b-flow (by primal-dual, negative cycle is NG)
+template<class FLOW, class COST> struct MinCostBFlowByPrimalDual {
     // inner values
-    int V;
-    vector<Edge> edges;
-    vector<FLOW> lower_dss, upper_dss;  // demand (< 0) and supply (> 0)
+    int N;
+    FlowCostGraph<FLOW, COST> G;
+    vector<FLOW> dss;  // demand (< 0) and supply (> 0)
     vector<COST> dual;
-    
+
     // constructor
-    MinCostBFlow() {}
-    MinCostBFlow(int V) : V(V), lower_dss(V, 0), upper_dss(V, 0) {}
+    explicit MinCostBFlowByPrimalDual(int n) : N(n), G(n + 2), dss(n, 0) {}
 
     // setter
     void add_edge(int from, int to, FLOW cap, COST cost) {
         assert(cap >= 0);
-        edges.push_back({from, to, 0, cap, 0, cost});
-    }
-    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
-        assert(lower_cap <= upper_cap);
-        edges.push_back({from, to, lower_cap, upper_cap, 0, cost});
+        G.add_edge(from, to, cap, cost);
     }
     void set_ds(int v, FLOW ds) {
-        assert(0 <= v && v < V);
-        lower_dss[v] = ds, upper_dss[v] = ds;
+        assert(0 <= v && v < N);
+        dss[v] = ds;
     }
-    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
-        assert(0 <= v && v < V);
-        assert(lower_ds <= upper_ds);
-        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    void set_ds(const vector<FLOW> &vds) {
+        assert((int)vds.size() == N);
+        dss = vds;
     }
 
     // getter
-    Edge &get_edge(int i) {
-        return edges[i];
+    FlowCostEdge<FLOW, COST> &get_edge(int i) {
+        return G.get_edge(i);
     }
-    const Edge &get_edge(int i) const {
-        return edges[i];
+    const FlowCostEdge<FLOW, COST> &get_edge(int i) const {
+        return G.get_edge(i);
     }
-    vector<Edge> get_edges() const {
-        return edges;
+    vector<FlowCostEdge<FLOW, COST>> get_edges() const {
+        return G.get_edges();
+    }
+    COST get_dual(int v) const {
+        return dual[v];
+    }
+    vector<COST> get_duals() const {
+        return dual;
     }
 
     // solver
-    pair<bool, COST> solve(bool calc_potential = true) {
-        // lower_ds, upper_ds -> strict ds
-        int super = V;
-        vector<FLOW> dss(V + 1, 0);
-        for (int i = 0; i < V; i++) {
-            if (lower_dss[i] == upper_dss[i]) dss[i] = lower_dss[i];
-            else if (lower_dss[i] >= 0) {
-                add_edge(super, i, lower_dss[i], upper_dss[i], 0);
-            } else if (upper_dss[i] < 0) {
-                add_edge(i, super, -upper_dss[i], -lower_dss[i], 0);
-            } else {
-                add_edge(super, i, upper_dss[i], 0);
-                add_edge(i, super, -lower_dss[i], 0);
-            }
-        }
-
-        // pre-flow lower_cap
-        FlowGraph<FLOW> sg(V + 3);
-        int s = V + 1, t = V + 2;
-        for (const auto &e : edges) {
-            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
-            sg.add_edge(e.from, e.to, e.upper_cap - e.lower_cap);
-        }
-
-        // ds -> s, t
+    pair<bool, COST> solve(bool calc_potential = false) {
+        // dss treatment
+        int s = N, t = N + 1;
         FLOW ssum = 0, tsum = 0;
-        for (int i = 0; i < V + 1; i++) {
-            if (dss[i] > 0) ssum += dss[i], sg.add_edge(s, i, dss[i]);
-            else if (dss[i] < 0) tsum -= dss[i], sg.add_edge(i, t, -dss[i]);
+        for (int v = 0; v < N; v++) {
+            if (dss[v] > 0) ssum += dss[v], G.add_edge(s, v, dss[v], COST(0));
+            else if (dss[v] < 0) tsum -= dss[v], G.add_edge(v, t, -dss[v], COST(0));
         }
 
         // feasibility check
         if (ssum != tsum) return {false, COST(0)};
-        if (Dinic(sg, s, t) < ssum) return {false, COST(0)};
-
-        // come down to min-cost circulation
-        FlowCostGraph<FLOW, COST> G(V + 1);
-        for (int i = 0; i < (int)edges.size(); i++) {
-            auto &e = edges[i];
-            const auto &ge = sg.get_edge(i);
-            G.add_edge(ge.from, ge.to, ge.cap, ge.flow, e.cost);
-        }
-        MinCostCirculation(G);
-
-        // find min-cost
-        COST res = 0;
-        for (int i = 0; i < (int)edges.size(); i++) {
-            auto &e = edges[i];
-            const auto &ge = G.get_edge(i);
-            e.flow = e.upper_cap - ge.cap;
-            res += e.flow * e.cost;
-        }
+        
+        // min-cost flow
+        auto [maxflow, mincost] = MinCostFlow(G, s, t, ssum);
+        if (maxflow < ssum) return {false, COST(0)};
 
         // find dual
         if (calc_potential) {
             G.calc_potential();
             dual = G.pot;
-            dual.pop_back();  // eliminate super-node
+            dual.pop_back(), dual.pop_back();  // eliminate s, t
+        }
+        return {true, mincost};
+    }
+};
+
+// Minimum Cost b-flow (by cost-scaling min-cost circulation)
+template<class FLOW, class COST> struct MinCostBFlowByCostScaling {
+    // inner Edge
+    struct InnerEdge {
+        int from, to;
+        FLOW cap;
+        COST cost;
+        InnerEdge(int from_, int to_, FLOW cap_, COST cost_) : from(from_), to(to_), cap(cap_), cost(cost_) {}
+        friend ostream& operator << (ostream& s, const InnerEdge& e) {
+            return s << e.from << " -> " << e.to << " (" << e.cap << ", " << e.cost << ")";
+        }
+    };
+
+    // inner values
+    int N;
+    FlowCostGraph<FLOW, COST> G;
+    vector<InnerEdge> edges;
+    vector<FLOW> dss;  // demand (< 0) and supply (> 0)
+    vector<COST> dual;
+
+    // constructor
+    explicit MinCostBFlowByCostScaling(int n = 0) : N(n), G(n), dss(n, 0) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.push_back(InnerEdge(from, to, cap, cost));
+    }
+    void set_ds(int v, FLOW ds) {
+        assert(0 <= v && v < N);
+        dss[v] = ds;
+    }
+    void set_ds(const vector<FLOW> &vds) {
+        assert((int)vds.size() == N);
+        dss = vds;
+    }
+
+    // getter
+    FlowCostEdge<FLOW, COST> &get_edge(int i) {
+        return G.get_edge(i);
+    }
+    const FlowCostEdge<FLOW, COST> &get_edge(int i) const {
+        return G.get_edge(i);
+    }
+    vector<FlowCostEdge<FLOW, COST>> get_edges() const {
+        return G.get_edges();
+    }
+    COST get_dual(int v) const {
+        return dual[v];
+    }
+    vector<COST> get_duals() const {
+        return dual;
+    }
+
+    // solver
+    pair<bool, COST> solve(bool calc_potential = true) {
+        // push s-t flow
+        FlowGraph<FLOW> preG(N + 2);
+        int s = N, t = N + 1;
+        for (const auto &e : edges) preG.add_edge(e.from, e.to, e.cap);
+        FLOW ssum = 0, tsum = 0;
+        for (int v = 0; v < N; v++) {
+            if (dss[v] > 0) ssum += dss[v], preG.add_edge(s, v, dss[v]);
+            else if (dss[v] < 0) tsum -= dss[v], preG.add_edge(v, t, -dss[v]);
+        }
+
+        // feasibility check
+        if (ssum != tsum) return {false, COST(0)};
+        if (Dinic(preG, s, t) < ssum) return {false, COST(0)};
+
+        // come down to min-cost circulation
+        for (int i = 0; i < (int)edges.size(); i++) {
+            const auto &e = edges[i];
+            const auto &ge = preG.get_edge(i);
+            G.add_edge(ge.from, ge.to, ge.cap, ge.flow, e.cost);
+        }
+        COST mincost = MinCostCirculation(G);
+
+        // find dual
+        if (calc_potential) {
+            G.calc_potential();
+            dual = G.pot;
+        }
+        return {true, mincost};
+    }
+};
+
+// Network Simplex Method
+template<class FLOW, class COST> struct MinCostBFlowByNetworkSimplex {
+    // inner Edge
+    struct InnerEdge {
+        int from, to;
+        FLOW cap;
+        COST cost;
+        InnerEdge(int from_, int to_, FLOW cap_, COST cost_) : from(from_), to(to_), cap(cap_), cost(cost_) {}
+    };
+    struct Parent {
+        int p, e;
+        FLOW up, down;
+    };
+
+    // inner values
+    int N, original_edge_size;
+    vector<InnerEdge> edges;
+    vector<FLOW> dss;  // demand (< 0) and supply (> 0)
+    bool feasible;
+    COST total_cost;
+    vector<COST> dual;
+
+    // intermediate results
+    int BUCKET_SIZE, MINOR_LIMIT;
+    vector<Parent> parents;
+    vector<int> depth, nex, pre, candidates;
+
+    // constructor
+    explicit MinCostBFlowByNetworkSimplex(int n = 0) : N(n), dss(n) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.emplace_back(from, to, cap, cost);
+        edges.emplace_back(to, from, 0, -cost);
+    }
+    void set_ds(int v, FLOW ds) {
+        assert(0 <= v && v < N);
+        dss[v] = ds;
+    }
+    void set_ds(const vector<FLOW> &vds) {
+        assert((int)vds.size() == N);
+        dss = vds;
+    }
+
+    // getter
+    FLOW get_flow(int i) const {
+        return edges[(i * 2) ^ 1].cap;
+    }
+    COST get_dual(int v) const {
+        return dual[v];
+    }
+    vector<COST> get_duals() const {
+        return dual;
+    }
+
+    // solver
+    pair<bool, COST> solve() {
+        BUCKET_SIZE = max(int(sqrt(double(edges.size())) * 0.2), 10);
+        MINOR_LIMIT = max(int(BUCKET_SIZE * 0.1), 3);
+        precompute();
+        candidates.reserve(BUCKET_SIZE);
+        int ei = 0;
+        while (true) {
+            for (int i = 0; i < MINOR_LIMIT; i++) if (!minor()) break;
+            COST best = 0;
+            int best_ei = -1;
+            candidates.clear();
+            for (int i = 0; i < (int)edges.size(); i++) {
+                if (edges[ei].cap > 0) {
+                    COST clen = edges[ei].cost + dual[edges[ei ^ 1].to] - dual[edges[ei].to];
+                    if (clen < 0) {
+                        if (clen < best) best = clen, best_ei = ei;
+                        candidates.push_back(ei);
+                        if ((int)candidates.size() == BUCKET_SIZE) break;
+                    }
+                }
+                ei++;
+                if (ei == (int)edges.size()) ei = 0;
+            }
+            if (candidates.empty()) break;
+            push_flow(best_ei);
+        }
+        if (!postcompute()) return {false, COST(-1)};
+        else return {true, total_cost};
+    }
+
+    void connect(int a, int b) {
+        nex[a] = b, pre[b] = a;
+    }
+
+    void precompute() {
+        original_edge_size = (int)edges.size();
+        dual.assign(N + 1, 0); 
+        parents.resize(N), depth.assign(N + 1, 1); 
+        nex.assign((N + 1) * 2, 0), pre.assign((N + 1) * 2, 0);
+        COST inf_cost = 1;
+        for (int i = 0; i < (int)edges.size(); i += 2) {
+            inf_cost += (edges[i].cost >= 0 ? edges[i].cost : -edges[i].cost);
+        }
+        edges.reserve((int)edges.size() + N * 2);
+        for (int i = 0; i < N; i++) {
+            if (dss[i] >= 0) {
+                edges.push_back(InnerEdge(i, N, 0, inf_cost));
+                edges.push_back(InnerEdge(N, i, dss[i], -inf_cost));
+                dual[i] = -inf_cost;
+            } else {
+                edges.push_back(InnerEdge(i, N, -dss[i], -inf_cost));
+                edges.push_back(InnerEdge(N, i, 0, inf_cost));
+                dual[i] = inf_cost;
+            }
+            int e = (int)edges.size() - 2;
+            parents[i] = {N, e, edges[e].cap, edges[e ^ 1].cap};
+        }
+        depth[N] = 0;
+        for (int i = 0; i < N + 1; i++) connect(i * 2, i * 2 + 1);
+        for (int i = 0; i < N; i++) connect(i * 2 + 1, nex[N * 2]), connect(N * 2, i * 2);
+    }
+
+    bool postcompute() {
+        for (int i = 0; i < N; i++) {
+            edges[parents[i].e].cap = parents[i].up;
+            edges[parents[i].e ^ 1].cap = parents[i].down;
+        }
+        feasible = true;
+        for (int i = 0; i < N; i++) {
+            int e = original_edge_size + i * 2;
+            if (dss[i] >= 0) {
+                if (edges[e ^ 1].cap > 0) feasible = false;
+            } else {
+                if (edges[e].cap > 0) feasible = false;
+            }
+        }
+        if (!feasible) return false;
+        total_cost = 0;
+        for (int i = 0; i < (int)edges.size(); i += 2) {
+            total_cost += edges[i ^ 1].cap * edges[i].cost;
+        }
+        dual.pop_back();
+        return true;
+    }
+
+    void push_flow(int ei0) {
+        int u0 = edges[ei0 ^ 1].to, v0 = edges[ei0].to, del_u = v0;
+        FLOW f = edges[ei0].cap;
+        COST clen = edges[ei0].cost + dual[u0] - dual[v0];
+        bool del_u_side = true;
+        int lca = get_lca(u0, v0, f, del_u_side, del_u);
+        if (f > 0) {
+            int u = u0, v = v0;
+            while (u != lca) parents[u].up += f, parents[u].down -= f, u = parents[u].p;
+            while (v != lca) parents[v].up -= f, parents[v].down += f, v = parents[v].p;
+        }
+        int u = u0, par = v0;
+        auto p_caps = make_pair(edges[ei0].cap - f, edges[ei0 ^ 1].cap + f);
+        COST p_diff = -clen;
+        if (!del_u_side) {
+            swap(u, par); 
+            swap(p_caps.first, p_caps.second);
+            p_diff *= -1;
+        }
+        int par_e = ei0 ^ (del_u_side ? 0 : 1);
+        while (par != del_u) {
+            int d = depth[par], idx = u * 2;
+            while (idx != u * 2 + 1) {
+                if (idx % 2 == 0) d++, dual[idx / 2] += p_diff, depth[idx / 2] = d;
+                else d--;
+                idx = nex[idx];
+            }
+            connect(pre[u * 2], nex[u * 2 + 1]);
+            connect(u * 2 + 1, nex[par * 2]);
+            connect(par * 2, u * 2);
+            swap(parents[u].e, par_e);
+            par_e ^= 1;
+            swap(parents[u].up, p_caps.first); 
+            swap(parents[u].down, p_caps.second);
+            swap(p_caps.first, p_caps.second);
+            int next_u = parents[u].p; 
+            parents[u].p = par;
+            par = u;
+            u = next_u;
+        }
+        edges[par_e].cap = p_caps.first;
+        edges[par_e ^ 1].cap = p_caps.second;
+    }
+
+    bool minor() {
+        if (candidates.empty()) return false;
+        COST best = 0;
+        int best_ei = -1;
+        int i = 0;
+        while (i < int(candidates.size())) {
+            int ei = candidates[i];
+            if (edges[ei].cap <= 0) {
+                swap(candidates[i], candidates.back());
+                candidates.pop_back();
+                continue;
+            }
+            COST clen = edges[ei].cost + dual[edges[ei ^ 1].to] - dual[edges[ei].to];
+            if (clen >= 0) {
+                swap(candidates[i], candidates.back());
+                candidates.pop_back();
+                continue;
+            }
+            if (clen < best) best = clen, best_ei = ei;
+            i++;
+        }
+        if (best_ei == -1) return false;
+        push_flow(best_ei);
+        return true;
+    }
+
+    int get_lca(int u, int v, FLOW &flow, bool &del_u_side, int &del_u) {
+        auto up_u = [&]() {
+            if (parents[u].down < flow) flow = parents[u].down, del_u = u, del_u_side = true;
+            u = parents[u].p;
+        };
+        auto up_v = [&]() {
+            if (parents[v].up <= flow) flow = parents[v].up, del_u = v, del_u_side = false;
+            v = parents[v].p;
+        };
+        if (depth[u] >= depth[v]) {
+            int num = depth[u] - depth[v];
+            for (int i = 0; i < num; i++) up_u();
+        } else {
+            int num = depth[v] - depth[u];
+            for (int i = 0; i < num; i++) up_v();
+        }
+        while (u != v) up_u(), up_v();
+        return u;
+    }
+};
+
+// b-flow manager
+template<class FLOW, class COST> struct MinCostBFlow {
+    // Edge
+    struct InnerEdge {
+        int from, to;
+        FLOW lower_cap, upper_cap, flow;
+        COST cost;
+        InnerEdge(int from_, int to_, FLOW lower_, FLOW upper_, COST cost_)
+            : from(from_), to(to_), lower_cap(lower_), upper_cap(upper_), flow(0), cost(cost_) {}
+        friend ostream& operator << (ostream& s, const InnerEdge& e) {
+            return s << e.from << "->" << e.to 
+            << " (" << e.flow << "/" << e.lower_cap << "~" << e.upper_cap << ", " << e.cost << ")";
+        }
+    };
+
+    // inner values
+    int N;
+    vector<InnerEdge> edges;
+    vector<FLOW> lower_dss, upper_dss, dss;  // demand (< 0) and supply (> 0)
+    vector<COST> dual;
+    
+    // constructor
+    explicit MinCostBFlow(int n = 0) : N(n), lower_dss(n, 0), upper_dss(n, 0), dss(n, 0) {}
+
+    // setter
+    void add_edge(int from, int to, FLOW cap, COST cost) {
+        assert(cap >= 0);
+        edges.push_back(InnerEdge(from, to, 0, cap, cost));
+    }
+    void add_edge(int from, int to, FLOW lower_cap, FLOW upper_cap, COST cost) {
+        assert(lower_cap <= upper_cap);
+        edges.push_back(InnerEdge(from, to, lower_cap, upper_cap, cost));
+    }
+    void set_ds(int v, FLOW ds) {
+        assert(0 <= v && v < N);
+        lower_dss[v] = ds, upper_dss[v] = ds;
+    }
+    void set_ds(int v, FLOW lower_ds, FLOW upper_ds) {
+        assert(0 <= v && v < N);
+        assert(lower_ds <= upper_ds);
+        lower_dss[v] = lower_ds, upper_dss[v] = upper_ds;
+    }
+
+    // getter
+    InnerEdge &get_edge(int i) {
+        return edges[i];
+    }
+    const InnerEdge &get_edge(int i) const {
+        return edges[i];
+    }
+    vector<InnerEdge> get_edges() const {
+        return edges;
+    }
+    COST get_dual(int v) const {
+        return dual[v];
+    }
+    vector<COST> get_duals() const {
+        return dual;
+    }
+
+    // solver
+    bool pre_compute() {
+        bool need_super_node = false;
+        for (int v = 0; v < N; v++) {
+            if (lower_dss[v] == upper_dss[v]) dss[v] = lower_dss[v];
+            else need_super_node = true;
+        }
+
+        // lower_ds, upper_ds -> strict ds
+        if (need_super_node) {
+            int super = N;
+            dss.assign(N + 1, 0);
+            for (int v = 0; v < N; v++) {
+                if (lower_dss[v] >= 0) {
+                    add_edge(super, v, lower_dss[v], upper_dss[v], 0);
+                } else if (upper_dss[v] < 0) {
+                    add_edge(v, super, -upper_dss[v], -lower_dss[v], 0);
+                } else {
+                    add_edge(super, v, upper_dss[v], 0);
+                    add_edge(v, super, -lower_dss[v], 0);
+                }
+            }
+        }
+
+        // push lower_cap
+        for (const auto &e : edges) {
+            dss[e.to] += e.lower_cap, dss[e.from] -= e.lower_cap;
+        }
+        return need_super_node;
+    }
+    pair<bool, COST> solve(const string solver = "network_simplex", bool calc_potential = false) {
+        bool need_super_node = pre_compute();
+        COST res = 0;
+        if (solver == "primal_dual") {
+            MinCostBFlowByPrimalDual<FLOW, COST> G(N + (int)need_super_node);
+            G.set_ds(dss);
+            for (const auto &e : edges) G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap, e.cost);
+            auto [feasible, mincost] = G.solve(calc_potential);
+            if (!feasible) return {false, COST(0)};
+            for (int i = 0; i < (int)edges.size(); i++) {
+                auto &e = edges[i];
+                const auto &ge = G.get_edge(i);
+                e.flow = e.upper_cap - ge.cap;
+                res += e.flow * e.cost;
+            }
+            if (calc_potential) {
+                dual = G.get_duals();
+                if (need_super_node) dual.pop_back();
+            }
+        } else if (solver == "cost_scaling") {
+            MinCostBFlowByCostScaling<FLOW, COST> G(N + (int)need_super_node);
+            G.set_ds(dss);
+            for (const auto &e : edges) G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap, e.cost);
+            auto [feasible, mincost] = G.solve(calc_potential);
+            if (!feasible) return {false, COST(0)};
+            for (int i = 0; i < (int)edges.size(); i++) {
+                auto &e = edges[i];
+                const auto &ge = G.get_edge(i);
+                e.flow = e.upper_cap - ge.cap;
+                res += e.flow * e.cost;
+            }
+            if (calc_potential) {
+                dual = G.get_duals();
+                if (need_super_node) dual.pop_back();
+            }
+        } else if (solver == "network_simplex") {
+            MinCostBFlowByNetworkSimplex<FLOW, COST> G(N + (int)need_super_node);
+            G.set_ds(dss);
+            for (const auto &e : edges) G.add_edge(e.from, e.to, e.upper_cap - e.lower_cap, e.cost);
+            auto [feasible, mincost] = G.solve();
+            if (!feasible) return {false, COST(0)};
+            for (int i = 0; i < (int)edges.size(); i++) {
+                auto &e = edges[i];
+                e.flow = e.lower_cap + G.get_flow(i);
+                res += e.flow * e.cost;
+            }
+            if (calc_potential) {
+                dual = G.get_duals();
+                if (need_super_node) dual.pop_back();
+            }
         }
         return {true, res};
     }
@@ -954,8 +1478,8 @@ template<class FLOW, class COST> struct MinCostTension {
     }
 
     // solver
-    pair<bool, COST> solve(bool calc_potential = true) {
-        auto [flag, cost] = opt.solve(calc_potential);
+    pair<bool, COST> solve(const string solver = "network_simplex", bool calc_potential = true) {
+        auto [flag, cost] = opt.solve(solver, calc_potential);
         return make_pair(flag, OFFSET - cost);
     }
     vector<FLOW> reconstruct() {
@@ -1391,9 +1915,9 @@ void ABC_393_G() {
 
 int main() {
     //AOJ_2230();
-    ABC_224_H();
+    //ABC_224_H();
     //ABC_347_G();
     //ABC_397_G();
     //AOJ_3171();
-    //ABC_393_G();
+    ABC_393_G();
 }

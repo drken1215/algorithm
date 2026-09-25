@@ -276,6 +276,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_dinic.cpp)
 - (★★★☆) [最大流 (Push-Relabel 法, in O(V^2√E))](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_push_relabel.cpp)
 - (★★★☆) [フローの s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_decomposition.cpp)
+- (★★★★) [最小流量制約付き最大 b-flow](https://github.com/drken1215/algorithm/blob/master/Flow/max_b_flow.cpp)
 
 ## 最小カット
 
@@ -290,9 +291,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [最小費用循環流 (Goldberg-Tarjan 法, by cost-scaling, 負閉路 OK)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_circulating_flow.cpp)
 - (★★★★) [費用流の s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_flow_decomposition.cpp)
 
-## b-flow
+## 最小費用 b-flow
 
-- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/Flow/max_b_flow.cpp)
+- (★★★★) [b-flow 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_all.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_primal_dual.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_cost_scaling.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_network_simplex_method.cpp)
