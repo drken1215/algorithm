@@ -1,10 +1,11 @@
 //
 // 最小費用 b-flow by three methods:
-//    ・primal-dual (負閉路 NG)
-//    ・cost-scaling
-//    ・network simplex (多くの場合最速)
+//   ・primal-dual (負閉路 NG)
+//   ・cost-scaling
+//   ・network simplex (多くの場合最速)
+// network simples はとくに、#pragma GCC optimize("Ofast") を入れるとむしろ遅くなる！！！
 //
-// verified
+// verified:
 //   Yosupo Library Checker - Minimum Cost b-flow (N <= 100)
 //   (primal-dual: 負閉路 NG, cost-scaling: 15 ms, simplex: 2 ms)
 //     https://judge.yosupo.jp/problem/min_cost_b_flow
@@ -27,7 +28,10 @@
 //
 //   UTPC 2011 H - キャッシュ戦略 (N <= 10^4, 本来は流量 M <= 10 だがそれを活かさない解法をしている）
 //   (primal-dual: TLE, cost-scaling: TLE, simplex: 1130 ms)
-//   #pragma GCC optimize("Ofast") を入れるとむしろ遅くなる！！！
+//     https://atcoder.jp/contests/utpc2011/tasks/utpc2011_8
+//
+//   UTPC 2011 H - キャッシュ戦略 (N <= 10^4, 要求 j を辺 (j, j+1) と解釈することで流量 M <= 10 を活かす解法に)
+//   (primal-dual: 27 ms, cost-scaling: ms, simplex: 358 ms)
 //     https://atcoder.jp/contests/utpc2011/tasks/utpc2011_8
 //
 //   Codeforces Round 826 (Div. 3) G. Kirill and Company 
@@ -465,7 +469,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // core members
     vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
-    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    vector<COST> pot;  // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
     bool include_negative_edge = false;
     
     // constructor
@@ -1590,7 +1594,7 @@ void EducationalCodeforces80_F(const string solver) {
     cout << res << endl;
 }
 
-// UTPC 2011 H - キャッシュ戦略
+// UTPC 2011 H - キャッシュ戦略（ナイーブ）
 void UTPC2011_H(const string solver) {
     int M, N, K;
     cin >> M >> N >> K;
@@ -1622,6 +1626,39 @@ void UTPC2011_H(const string solver) {
     G.add_edge(t, s, M, 0);
     auto [flag, mincost] = G.solve(solver);
     cout << mincost << endl;
+}
+
+// UTPC 2011 H - キャッシュ戦略（想定解法）
+void UTPC2011_H_improved(const string solver) {
+    // 操作 i のボールを入れることを、辺 (i, i+1) を通るものと言い換える
+    int M, N, K;
+    cin >> M >> N >> K;
+    int INF = M;
+    vector<int> W(N), A(K);
+    for (int i = 0; i < N; i++) cin >> W[i];
+    for (int i = 0; i < K; i++) cin >> A[i], A[i]--;
+
+    int s = 0, t = K, negloop = 0;
+    MinCostBFlow<int, int> G(K+1);
+    for (int i = 0; i < K; i++) {
+        G.add_edge(i, i+1, 1, 1, W[A[i]]);  // どの操作 i も必ず一度は通らないといけないという「マスト辺」を設定！
+        G.add_edge(i, i+1, M, 0);  // 残りはコスト 0 で用意しておく（空箱）
+    }
+    for (int i = 0; i < K; i++) {
+        for (int j = i+1; j < K; j++) {
+            if (A[i] == A[j]) {
+                if (j == i+1) negloop -= W[A[i]];  // primal-dual で解くなら、負重みの自己ループを除去しておく
+                else {
+                    // 辺 (i, i+1) を占有したあと、W[A[i]] の利得を得ながらワープ（ワープすると間のマスト辺を取れなくなる）
+                    G.add_edge(i+1, j, 1, -W[A[i]]);  
+                }
+                break;
+            }
+        }
+    }
+    G.set_ds(s, M), G.set_ds(t, -M);
+    auto [flag, mincost] = G.solve(solver);
+    cout << mincost + negloop << endl;
 }
 
 // Codeforces Round 826 (Div. 3) G. Kirill and Company
@@ -1923,11 +1960,15 @@ int main() {
     //UTPC2011_H("cost_scaling");
     //UTPC2011_H("network_simplex");
 
+    UTPC2011_H_improved("primal_dual");
+    //UTPC2011_H_improved("cost_scaling");
+    //UTPC2011_H_improved("network_simplex");
+
     //Codeforces826_G("primal_dual");
     //Codeforces826_G("cost_scaling");
     //Codeforces826_G("network_simplex");
 
     //ABC_393_G("primal_dual");
     //ABC_393_G("cost_scaling");
-    ABC_393_G("network_simplex");
+    //ABC_393_G("network_simplex");
 }

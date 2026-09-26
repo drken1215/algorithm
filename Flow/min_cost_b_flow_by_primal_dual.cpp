@@ -445,7 +445,7 @@ template<class FLOW, class COST> struct FlowCostGraph {
     // core members
     vector<vector<FlowCostEdge<FLOW, COST>>> list;
     vector<pair<int,int>> pos;  // pos[i] := {vertex, order of list[vertex]} of i-th edge
-    vector<COST> pot; // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
+    vector<COST> pot;  // pot[v] := potential (e.cost + pot[e.from] - pos[e.to] >= 0)
     bool include_negative_edge = false;
     
     // constructor
