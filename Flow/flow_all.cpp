@@ -89,7 +89,7 @@ template<class S, class T> ostream& operator << (ostream &s, const unordered_map
 
 
 //------------------------------//
-// Flow
+// Max Flow
 //------------------------------//
 
 // edge class (for max-flow)
@@ -447,6 +447,144 @@ template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flo
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t) {
     return Dinic(G, s, t, numeric_limits<FLOW>::max());
 }
+
+// Push-Relabel
+// we can skip 2nd phase if we should know only about maxflow and residual graph
+template<class FLOW> FLOW PushRelabel
+(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow, bool do_2nd_phase = false) {
+    assert(0 <= s && s < (int)G.size());
+    assert(0 <= t && t < (int)G.size());
+    assert(s != t);
+    const int GlobalRelabelRreq = 5;
+    const bool UseGapRelabeling = true;
+    struct PushQueue {
+        vector<pair<int, int>> even, odd;
+        int num_even, num_odd;
+        void init(int N) { even.resize(N), odd.resize(N), num_even = num_odd = 0; }
+        void clear() { num_even = num_odd = 0; }
+        int size() const { return num_even + num_odd; }
+        bool empty() const { return size() == 0; }
+        int highest() const {
+            int a = (num_even > 0 ? even[num_even - 1].second : -1);
+            int b = (num_odd > 0 ? odd[num_odd - 1].second : -1);
+            return (a > b ? a : b);
+        }
+        void push(int v, int h) {
+            if (h & 1) odd[num_odd++] = {v, h};
+            else even[num_even++] = {v, h};
+        }
+        int pop() {
+            if (num_even == 0 || (num_odd > 0 && odd[num_odd - 1].second > even[num_even - 1].second)) {
+                return odd[--num_odd].first;
+            } else {
+                return even[--num_even].first;
+            }
+        }
+    } push_que;
+
+    int gap, N = (int)G.size();
+    vector<int> dist, dcnt;
+    vector<FLOW> excess;
+
+    // heuristics
+    auto global_relabeling = [&](int t) -> void {
+        push_que.clear();
+        if (UseGapRelabeling) gap = 1, dcnt.assign(N + 1, 0);
+        dist.assign(N, N);
+        dist[t] = 0;
+        static vector<int> que;
+        if (que.empty()) que.resize(N);
+        que[0] = t;
+        int qb = 0, qe = 1;
+        while (qb < qe) {
+            int now = que[qb++];
+            if (UseGapRelabeling) gap = dist[now] + 1, dcnt[dist[now]]++;
+            if (excess[now] > 0) push_que.push(now, dist[now]);
+            for (const auto &e : G[now]) {
+                if (G.get_rev_edge(e).cap > 0 && dist[e.to] == N) {
+                    dist[e.to] = dist[now] + 1;
+                    while ((int)que.size() <= qe) que.emplace_back(0);
+                    que[qe++] = e.to;
+                }
+            }
+        }
+    };
+
+    // push
+    auto push = [&](int v, FlowEdge<FLOW> &e) -> void {
+        auto &re = G.get_rev_edge(e);
+        FLOW delta = e.cap < excess[v] ? e.cap : excess[v];
+        excess[v] -= delta, e.cap -= delta, e.flow += delta;
+        excess[e.to] += delta, re.cap += delta, re.flow -= delta;
+        if (excess[e.to] > 0 && excess[e.to] <= delta) {
+            if (!UseGapRelabeling || dist[e.to] <= gap) push_que.push(e.to, dist[e.to]);
+        }
+    };
+
+    // run
+    auto run = [&](int t) -> void {
+        global_relabeling(t);
+        int tick = (int)G.pos.size() * GlobalRelabelRreq;
+        while (!push_que.empty()) {
+            int v = push_que.pop();
+            if (UseGapRelabeling && dist[v] > gap) continue;
+            int dnex = N * 2 - 1;
+            for (auto &e : G[v]) {
+                if (e.cap <= 0) continue;
+                if (dist[e.to] == dist[v] - 1) {
+                    push(v, e);
+                    if (excess[v] <= 0) break;
+                } else {
+                    if (dist[e.to] + 1 < dnex) dnex = dist[e.to] + 1;
+                }
+            }
+            if (excess[v] > 0) {
+                if (UseGapRelabeling) {
+                    if (dnex != dist[v] && dcnt[dist[v]] == 1 && dist[v] < gap) gap = dist[v];
+                    if (dnex == gap) gap++;
+                    while (push_que.highest() > gap) push_que.pop();
+                    if (dnex > gap) dnex = N;
+                    if (dist[v] != dnex) dcnt[dist[v]]--, dcnt[dnex]++;
+                }
+                dist[v] = dnex;
+                if (!UseGapRelabeling || dist[v] < gap) push_que.push(v, dist[v]);
+            }
+            if (GlobalRelabelRreq && --tick == 0) {
+                tick = (int)G.pos.size() * GlobalRelabelRreq;
+                global_relabeling(t);
+            }
+        }
+    };
+
+    // 1st phase: find preflow
+    excess.assign(N, 0), dist.assign(N, 0);
+    excess[s] += limit_flow, excess[t] -= limit_flow;
+    dist[s] = N;
+    if (UseGapRelabeling) gap = 1, dcnt.assign(N + 1, 0), dcnt[0] = N - 1;
+    push_que.init(N);
+    for (auto &e : G[s]) push(s, e);
+    run(t);
+    FLOW res = excess[t] + limit_flow;
+
+    // 2nd phase: convert preflow into flow
+    if (do_2nd_phase) {
+        excess[s] += excess[t], excess[t] = 0;
+        global_relabeling(s);
+        run(s);
+        assert(excess == vector<FLOW>(N, 0));
+    }
+    return res;
+}
+
+template<class FLOW> FLOW PushRelabel
+(FlowGraph<FLOW> &G, int s, int t, bool do_2nd_phase = false) {
+    return PushRelabel(G, s, t, numeric_limits<FLOW>::max(), do_2nd_phase);
+}
+
+
+//------------------------------//
+// Min-Cost Flow
+//------------------------------//
 
 // edge class (for min-cost flow)
 template<class FLOW, class COST> struct FlowCostEdge {
