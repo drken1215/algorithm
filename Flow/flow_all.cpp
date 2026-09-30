@@ -390,7 +390,7 @@ template<class FLOW> struct FlowGraph {
 
 // Dinic
 template<class FLOW> FLOW Dinic(FlowGraph<FLOW> &G, int s, int t, FLOW limit_flow) {
-    assert(0 <= s && s < G.size() && 0 <= t && t < G.size() && s != t);
+    assert(0 <= s && s < (int)G.size() && 0 <= t && t < (int)G.size() && s != t);
     FLOW current_flow = 0;
     vector<int> level((int)G.size(), -1), iter((int)G.size(), 0);
     
