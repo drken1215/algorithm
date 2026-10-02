@@ -1070,6 +1070,9 @@ template<class FLOW, class COST> struct MinCostBFlowByNetworkSimplex {
     FLOW get_flow(int i) const {
         return edges[(i * 2) ^ 1].cap;
     }
+    COST get_cost(int i) const {
+        return edges[(i * 2)].cost;
+    }
     COST get_dual(int v) const {
         return dual[v];
     }
@@ -1113,7 +1116,7 @@ template<class FLOW, class COST> struct MinCostBFlowByNetworkSimplex {
     }
 
     void precompute() {
-        original_edge_size = (int)edges.size();
+        original_edge_size = (int)edges.size() / 2;
         dual.assign(N + 1, 0); 
         parents.resize(N), depth.assign(N + 1, 1); 
         nex.assign((N + 1) * 2, 0), pre.assign((N + 1) * 2, 0);
@@ -1147,7 +1150,7 @@ template<class FLOW, class COST> struct MinCostBFlowByNetworkSimplex {
         }
         feasible = true;
         for (int i = 0; i < N; i++) {
-            int e = original_edge_size + i * 2;
+            int e = (original_edge_size + i) * 2;
             if (dss[i] >= 0) {
                 if (edges[e ^ 1].cap > 0) feasible = false;
             } else {
@@ -1156,8 +1159,8 @@ template<class FLOW, class COST> struct MinCostBFlowByNetworkSimplex {
         }
         if (!feasible) return false;
         total_cost = 0;
-        for (int i = 0; i < (int)edges.size(); i += 2) {
-            total_cost += edges[i ^ 1].cap * edges[i].cost;
+        for (int i = 0; i < original_edge_size; i++) {
+            total_cost += get_cost(i) * get_flow(i);
         }
         dual.pop_back();
         return true;
