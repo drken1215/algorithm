@@ -282,7 +282,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cut.cpp)
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Flow/stoer_wagner.cpp)
-- (★★★★) Gomory-Hu 木
+- (★★★★) [Gomory-Hu 木](https://github.com/drken1215/algorithm/blob/master/Flow/gomory_hu_tree.cpp)
 
 ## 最小費用流
 
@@ -328,7 +328,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★★) [最小凸費用 b-flow (by primal-dual)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_convex_flow.cpp)
 - (★★★★) [最小費用テンション (最小費用流問題の双対問題)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_tension.cpp)
-- (★★★★) Longest Shortest Path
 
 
 

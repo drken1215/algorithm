@@ -4,7 +4,7 @@ using namespace std;
 
 
 //------------------------------//
-// Utility
+// Template
 //------------------------------//
 
 using ll = long long;
@@ -82,6 +82,11 @@ template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
 template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
 { for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+
+//------------------------------//
+// Utility
+//------------------------------//
 
 // Yes/No
 void yes(bool a) { cout << (a ? "yes" : "no") << endl; }

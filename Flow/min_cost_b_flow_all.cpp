@@ -49,7 +49,7 @@ using namespace std;
 
 
 //------------------------------//
-// Utility
+// Template
 //------------------------------//
 
 using ll = long long;
