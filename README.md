@@ -276,11 +276,12 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [最大流 (Dinic 法, in O(V^2E))](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_dinic.cpp)
 - (★★★☆) [最大流 (Push-Relabel 法, in O(V^2√E))](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_push_relabel.cpp)
 - (★★★☆) [フローの s-t パス・サイクルへの分解](https://github.com/drken1215/algorithm/blob/master/Flow/max_flow_decomposition.cpp)
-- (★★★★) [最小流量制約付き最大 b-flow](https://github.com/drken1215/algorithm/blob/master/Flow/max_b_flow.cpp)
+- (★★★★) [最小流量制約付き最大流](https://github.com/drken1215/algorithm/blob/master/Flow/max_b_flow.cpp)
 
 ## 最小カット
 
 - (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cut.cpp)
+- (★★★☆) 
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Flow/stoer_wagner.cpp)
 - (★★★★) [Gomory-Hu 木](https://github.com/drken1215/algorithm/blob/master/Flow/gomory_hu_tree.cpp)
 
@@ -293,7 +294,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 最小費用 b-flow
 
-- (★★★★) [b-flow 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_all.cpp)
+- (★★★★) [最小費用 b-flow 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_all.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by primal-dual, 負閉路 NG)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_primal_dual.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by cost-scaling)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_cost_scaling.cpp)
 - (★★★★) [最小流量制約付き最小費用 b-flow (by ネットワーク単体法)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cost_b_flow_by_network_simplex_method.cpp)
@@ -301,8 +302,12 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 二部マッチング
 
 - (★★★☆) [二部マッチング (Hopcroft-Karp 法, in O(E√V))](https://github.com/drken1215/algorithm/blob/master/Flow/hopcroft_karp.cpp)
-- (★★★☆) 重み付き二部マッチング (Hungarian 法)
-- (★★★★) 二部マッチングの bitset 高速化
+- (★★★★) 密グラフの二部マッチングの高速化 (by bitset 高速化)
+
+## 重み付き二部マッチング
+
+- (★★★☆) 重み付き二部マッチング (Hungarian 法, in O(N^3))
+- (★★★★) 重み付き二部マッチング (LAPJV 法, in O(N^3) faster)
 - (★★★★) アンバランス重み付き二部マッチング (in O((K^2 log N + K^3)N))
 
 ## 二部マッチングの応用

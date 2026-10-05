@@ -1,7 +1,7 @@
 //
 // 3 変数劣モジュラ関数のグラフ表現
 //
-// verified (3 変数は未 verify):
+// example:
 //   競プロ典型 90 問 040 - Get More Money（★7）
 //     https://atcoder.jp/contests/typical90/tasks/typical90_an
 //
