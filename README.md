@@ -281,7 +281,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 最小カット
 
 - (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cut.cpp)
-- (★★★☆) 
+- (★★★☆) 最小カットの構造の解明 (by 残余グラフの SCC)
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Flow/stoer_wagner.cpp)
 - (★★★★) [Gomory-Hu 木](https://github.com/drken1215/algorithm/blob/master/Flow/gomory_hu_tree.cpp)
 

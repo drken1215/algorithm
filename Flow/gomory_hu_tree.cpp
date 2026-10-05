@@ -6,6 +6,9 @@
 //   Codeforces Round 200 (Div. 1) E. Pumping Stations
 //     https://codeforces.com/contest/343/problem/E
 //
+//   パ研合宿2024　第1日「SpeedRun」 R - Maximum Water Flow
+//     https://atcoder.jp/contests/pakencamp-2024-day1/tasks/pakencamp_2024_day1_r
+//
 
 
 #include <bits/stdc++.h>
@@ -671,7 +674,7 @@ void Codeforces200_E() {
     }
     auto G = GomoryHuTree(FG);
 
-    int res = 0, ma = -1, start;
+    int res = 0, ma = -1, start = 0;
     for (int v = 0; v < N; v++) for (auto e : G[v]) {
         res += e.val;
         if (ma < e.val) ma = e.val, start = v;
@@ -695,6 +698,114 @@ void Codeforces200_E() {
 }
 
 
+// パ研合宿2024　第1日「SpeedRun」 R - Maximum Water Flow
+template<class VAL> struct Hungarian {
+    // inner values
+    int L, R;  // left size, right size
+    vector<vector<VAL>> G;
+
+    // results
+    vector<int> lr, rl;
+    vector<VAL> dualL, dualR;
+    
+    // constructor
+    explicit Hungarian(const vector<vector<VAL>> &G_) 
+        : L((int)G_.size()), R((int)G_[0].size()), G(G_) { 
+        assert(L <= R);
+    }
+
+    // getter
+    vector<int> get_lr() const { return lr; };
+    vector<int> get_rl() const { return rl; };
+    pair<vector<VAL>, vector<VAL>> get_dual() const { return {dualL, dualR}; };
+    
+    // solver
+    VAL solve() {
+        lr.assign(L, -1), rl.assign(R, -1);
+        dualL.assign(L, VAL(0)), dualR.assign(R, VAL(0));
+        vector<VAL> dist(R);
+        vector<int> index(R), prev(R);
+        iota(index.begin(), index.end(), 0);
+
+        auto calc_residue = [&](int i, int j) -> VAL { return G[i][j] - dualR[j]; };
+        for (int f = 0; f < L; f++) {
+            for (int j = 0; j < R; j++) dist[j] = calc_residue(f, j), prev[j] = f;
+            VAL w = 0;
+            int j = 0, l = 0;
+            for (int s = 0, t = 0;;) {
+                if (s == t) {
+                    l = s, w = dist[index[t++]];
+                    for (int k = t; k < R; k++) {
+                        j = index[k];
+                        if (dist[j] <= w) {
+                            if (dist[j] < w) t = s, w = dist[j];
+                            index[k] = index[t], index[t++] = j;
+                        }
+                    }
+                    for (int k = s; k < t; k++) {
+                        j = index[k];
+                        if (rl[j] < 0) goto augment;
+                    }
+                }
+                int q = index[s++], i = rl[q];
+                for (int k = t; k < R; k++) {
+                    j = index[k];
+                    VAL h = calc_residue(i, j) - calc_residue(i, q) + w;
+                    if (h < dist[j]) {
+                        dist[j] = h, prev[j] = i;
+                        if (h == w) {
+                            if (rl[j] < 0) goto augment;
+                            index[k] = index[t], index[t++] = j;
+                        }
+                    }
+                }
+            }
+        augment:
+            for (int k = 0; k < l; k++) dualR[index[k]] += dist[index[k]] - w;
+            int i = 0;
+            do {
+                rl[j] = i = prev[j];
+                swap(j, lr[i]);
+            } while (i != f);
+        }
+        VAL res = 0;
+        for (int i = 0; i < L; i++) {
+            res += G[i][lr[i]];
+            dualL[i] = G[i][lr[i]] - dualR[lr[i]];
+        }
+        return res;
+    }
+};
+void Paken2024Day1_R() {
+    const long long INF = 1LL << 50;
+    long long N, M, u, v, w;
+    cin >> N >> M;
+    FlowGraph<long long> FG(N);
+    for (int i = 0; i < M; i++) {
+        cin >> u >> v >> w, u--, v--;
+        FG.add_bidirected_edge(u, v, w);
+    }
+    auto G = GomoryHuTree(FG);
+    auto calc = [&](auto &&calc, int v, int t, int p = -1) -> long long {
+        if (v == t) return INF;
+        for (auto e : G[v]) {
+            if (e.to == p) continue;
+            long long x = calc(calc, e.to, t, v);
+            if (x != -1) return min(e.val, x);
+        }
+        return -1;
+    };
+    vector<vector<long long>> cost(N, vector<long long>(N));
+    for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+        if (i == j) cost[i][j] = INF;
+        else cost[i][j] = -calc(calc, i, j);
+    }
+    Hungarian<long long> opt(cost);
+    cout << -opt.solve() << endl;
+}
+
+
 int main() {
-    Codeforces200_E(); 
+    //Codeforces200_E(); 
+    Paken2024Day1_R();
 }
