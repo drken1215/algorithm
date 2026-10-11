@@ -263,6 +263,14 @@ vector<T> merge_and_unique(const vector<T> &a, const Ts &...z) {
     return res;
 }
 
+// inverse
+template<class T> vector<T> inverse_permutation(const vector<T> &p) {
+    int N = (int)p.size();
+    vector<T> res(N);
+    for (int i = 0; i < N; i++) res[p[i]] = i;
+    return res;
+}
+
 // kth root
 // N < 2^64, K <= 64
 uint64_t kth_root(uint64_t N, uint64_t K = 2) {
