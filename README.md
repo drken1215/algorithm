@@ -775,6 +775,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな最適化技法
 
+- (★☆☆☆) [二分探索](https://github.com/drken1215/algorithm/blob/master/Search/binary_search.cpp)
 - (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Search/Lagrange_relaxation_Aliens.cpp)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Search/simplex_method.cpp)
 - (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
