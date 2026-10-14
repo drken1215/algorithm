@@ -1,4 +1,4 @@
-// code template is in https://github.com/drken1215/algorithm/blob/master/template_minimum.cpp
+// Template codes are in https://github.com/drken1215/algorithm
 #include <bits/stdc++.h>
 using namespace std;
 
