@@ -23,8 +23,9 @@
 using namespace std;
 
 
-// find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
+// find min_j f(i, j) for all i, by SMAWK, O(H + W)
 // f(i, j) must be totally monotone
+// slide access NG
 template<class VAL, class FUNC> void SMAWKRec
 (const vector<int> &X, const vector<int> &Y, const FUNC &f, vector<pair<VAL, int>> &res) {
     if (X.empty()) return;
