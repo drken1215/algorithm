@@ -1,5 +1,7 @@
 //
-// Monge 最短路問題に関するアルゴリズム全集
+// anti-Monge 単一始点最短路問題 by D&D SMAWK
+//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が angi-Monge であることを仮定
+//   O(KN log N), 定義域が j >= i+K のとき
 //
 // verified
 //   ABC 480 G - Zonal Score Minimization
@@ -11,7 +13,7 @@
 using namespace std;
 
 
-// find min_j f(i, j) for all i, by , O(H + W log H)
+// find min_j f(i, j) for all i, by SMAWK, O(H + W)
 // f(i, j) must be totally monotone
 // slide access NG
 template<class VAL, class FUNC> void SMAWKRec
