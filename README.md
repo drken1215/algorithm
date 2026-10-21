@@ -232,10 +232,10 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_shortest_path_by_CHT.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Alien_DP.cpp)
-- (★★★★) [anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_shortest_path_by_CHT.cpp)
+- (★★★★) anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))
 - (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_SMAWK_DD.cpp)
 
 ## その他 Monge 性, L 凸性

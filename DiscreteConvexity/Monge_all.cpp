@@ -169,8 +169,8 @@ template<class FUNC> bool is_anti_monge
     - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
     - INF: 最大値
  
-    - insert (Func f_i): add f_i, O(log N)
-    - query (x): min_i{ f_i(x) }, O(log N)
+    - insert (Func f_i): add f_i, O(log X)
+    - query (x): min_i{ f_i(x) }, O(log X)
 */
 template<class T> struct MongeCHT {
     using Func = function<T(T)>;
@@ -238,9 +238,9 @@ template<class T> struct MongeCHT {
     }
 };
 
-// find shortest path on DAG with anti-Monge cost, by D&D SMAWK, O(NK log N)
+// find shortest path on DAG with Monge cost, by Convex Hull Trick, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be anti-Monge, j >= i + K
+// f(i, j) must be Monge
 template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
