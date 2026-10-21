@@ -1,5 +1,7 @@
 //
-// Monge 最短路問題に関するアルゴリズム全集
+// Monge 単一始点最短路問題 by noshi's simple LARSCH
+//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monge であることを仮定
+//   O(N log N)
 //
 // verified
 //   AtCoder EDPC Z - Frog 3 (for simple LARSCH, LARSCH, monge CHT)

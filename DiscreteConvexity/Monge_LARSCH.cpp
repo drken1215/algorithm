@@ -1,5 +1,7 @@
 //
-// Monge 最短路問題に関するアルゴリズム全集
+// Monge 単一始点最短路問題 by LARSCH
+//   頂点数 N+1 の DAG, 頂点 i, j 間のコスト f(i, j) が Monge であることを仮定
+//   O(N)
 //
 // verified
 //   AtCoder EDPC Z - Frog 3 (for simple LARSCH, LARSCH, monge CHT)
@@ -11,6 +13,10 @@
 //   yukicoder No.705 ゴミ拾い Hard (for simple LARSCH, LARSCH, monge CHT)
 //     https://yukicoder.me/problems/no/705 
 //
+// Reference:
+//   tatyam: Monge の手引き書
+//     https://speakerdeck.com/tatyam_prime/monge-noshou-yin-shu
+//   
 
 
 #include <bits/stdc++.h>

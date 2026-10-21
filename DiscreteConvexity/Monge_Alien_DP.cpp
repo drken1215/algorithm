@@ -1,6 +1,6 @@
 //
-// Monge 単一始点 d-辺最短路問題 (by Alien DP), O(N (log N)^2)
-//   最短路問題を解くのには noshi's 簡易 LARSCH を用いる
+// Monge 単一始点 d-辺最短路問題 (by Alien DP)
+//   最短路問題を解くのには noshi's 簡易 LARSCH を用いると、O(N (log N)^2)
 //
 // verified
 //   ABC 218 H - Red and Blue Lamps

@@ -2,6 +2,9 @@
 // Monge 最短路問題に関するアルゴリズム全集
 //
 // verified
+//   COLOCON 2018 Final C - スペースエクスプローラー高橋君 (for Monge CHT)
+//     https://beta.atcoder.jp/contests/colopl2018-final-open/tasks/colopl2018_final_c
+//
 //   AtCoder EDPC Z - Frog 3 (for simple LARSCH, LARSCH, monge CHT)
 //     https://atcoder.jp/contests/dp/tasks/dp_z 
 //
@@ -29,6 +32,91 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
+//------------------------------//
+// Template
+//------------------------------//
+
+using ll = long long;
+using i128 = __int128_t;
+using u128 = __uint128_t;
+using pint = pair<int, int>;
+using pll = pair<long long, long long>;
+using tll = array<long long, 3>;
+using fll = array<long long, 4>;
+using vint = vector<int>;
+using vll = vector<long long>;
+using dint = deque<int>;
+using dll = deque<long long>;
+using vvint = vector<vector<int>>;
+using vvll = vector<vector<long long>>;
+using vpll = vector<pair<long long, long long>>;
+template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
+
+template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
+template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
+template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
+template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
+template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
+template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
+template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
+template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
+template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
+
+#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
+#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
+#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
+#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
+#define EB emplace_back
+#define PF push_front
+#define PB push_back
+#define MP make_pair
+#define FI first
+#define SE second
+#define ALL(x) x.begin(), x.end()
+
+// input stream
+template<class T> istream& operator >> (istream &is, vector<T> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, deque<T> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
+{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
+
+// output stream
+#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
+template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
+{ return s << '<' << P.first << ", " << P.second << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
+{ return s << '<' << P[0] << "," << P[1] << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
+{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
+template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
+{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
+template<class T> ostream& operator << (ostream &s, const vector<string> &P)
+{ for (int i = 0; i < P.size(); ++i) { s << P[i] << endl; } return s; }
+template<class T> ostream& operator << (ostream &s, const vector<T> &P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, const deque<T> &P)
+{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
+template<class T> ostream& operator << (ostream &s, const vector<vector<T>> &P)
+{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
+template<class T> ostream& operator << (ostream &s, const set<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, const multiset<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class T> ostream& operator << (ostream &s, const unordered_set<T> &P)
+{ for (auto it : P) { s << "<" << it << "> "; } return s; }
+template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
+{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
+
+
+//------------------------------//
+// Monge
+//------------------------------//
 
 // check whether N x M matrix f is Monge or not, in O(NM)
 template<class FUNC> bool is_monge
@@ -72,6 +160,100 @@ template<class FUNC> bool is_anti_monge
         }
     }
     return true;
+}
+
+// Convex Hull Trick
+/*
+    Func：Monge 性 or anti-Monge 性を仮定
+    - MIN: クエリ x の取りうる最小値
+    - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
+    - INF: 最大値
+ 
+    - insert (Func f_i): add f_i, O(log N)
+    - query (x): min_i{ f_i(x) }, O(log N)
+*/
+template<class T> struct MongeCHT {
+    using Func = function<T(T)>;
+    struct IndexedFunc {
+        Func f;
+        int id;
+        IndexedFunc(Func f, int id) : f(std::move(f)), id(id) {}
+        T eval(T x) const { return f(x); };
+    };
+    struct Node {
+        IndexedFunc func;
+        unique_ptr<Node> left, right;
+        explicit Node(IndexedFunc f) : func(std::move(f)) {}
+    };
+    
+    const T MIN, MAX, INF = numeric_limits<T>::max() / 2;
+    unique_ptr<Node> root;
+    int next_id = 0;
+    
+    MongeCHT() {}
+    MongeCHT(T MIN, T MAX, T INF = numeric_limits<T>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
+        assert(MIN <= MAX);
+    }
+
+    // insert
+    void insert(unique_ptr<Node> &p, T low, T high, IndexedFunc &f) {
+        if (!p) {
+            p = make_unique<Node>(std::move(f));
+            return;
+        }
+        if (p->func.eval(low) <= f.eval(low) && p->func.eval(high) <= f.eval(high)) return;
+        if (p->func.eval(low) >= f.eval(low) && p->func.eval(high) >= f.eval(high)) {
+            p->func = std::move(f);
+            return;
+        }
+        T mid = (low + high) / 2;
+        if (p->func.eval(mid) > f.eval(mid)) swap(p->func, f);
+        if (low == high) return;
+        if (p->func.eval(low) >= f.eval(low)) insert(p->left, low, mid, f);
+        else insert(p->right, mid + 1, high, f);
+    }
+    int insert(Func f) {
+        int id = next_id++;
+        IndexedFunc func(std::move(f), id);
+        insert(root, MIN, MAX, func);
+        return id;
+    }
+    void clear() {
+        root.reset();
+        next_id = 0;
+    }
+
+    // query
+    pair<T, int> query(const unique_ptr<Node>& p, T low, T high, T x) const {
+        if (!p) return {INF, -1};
+        pair<T, int> res = {p->func.eval(x), p->func.id};
+        if (low == high) return res;
+        T mid = (low + high) / 2;
+        if (x <= mid) return min(res, query(p->left, low, mid, x));
+        else return min(res, query(p->right, mid + 1, high, x));
+    }
+    pair<T, int> query(T x) const {
+        assert(MIN <= x && x <= MAX);
+        return query(root, MIN, MAX, x);
+    }
+};
+
+// find shortest path on DAG with anti-Monge cost, by D&D SMAWK, O(NK log N)
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be anti-Monge, j >= i + K
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+    VAL INF = numeric_limits<VAL>::max() / 2;
+    vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
+    MongeCHT<VAL> cht(1, N, INF);
+    dp[0].first = 0;
+    for (int i = 0; i < N; i++) {
+        auto f2 = [&, i](int j) -> long long {
+            return dp[i].first + f(i, j);
+        };
+        cht.insert(f2);
+        dp[i + 1] = cht.query(i + 1);
+    };
+    return dp;
 }
 
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
@@ -470,6 +652,8 @@ template<class VAL> struct MongeShortestPath {
             res = DDMonotoneMinima<VAL>(N, f);
         } else if (solver == "smawk") {
             res = DDSMAWK<VAL>(N, f);
+        } else if (solver == "cht") {
+            res = MongeShortestPathByCHT<VAL>(N, f);
         } else {
             cout << "no solver" << endl;
             assert(true);
@@ -775,6 +959,21 @@ template<class T> struct CHT {
 // Examples
 //------------------------------//
 
+// COLOCON 2018 Final C - スペースエクスプローラー高橋君
+void COLOCON_2018_final_C() {
+    long long N;
+    cin >> N;
+    vector<long long> a(N), res(N);
+    for (int i = 0; i < N; ++i) cin >> a[i];
+    MongeCHT<long long> cht(0, 210000, 1LL<<60);
+    for (long long i = 0; i < N; ++i) {
+        auto func = [i, &a](long long x) -> long long { return (x - i) * (x - i) + a[i]; };
+        cht.insert(func);
+    }
+    for (long long i = 0; i < N; ++i) res[i] = cht.query(i).first;
+    for (int i = 0; i < N; ++i) cout << res[i] << endl;
+}
+
 // AtCoder EDPC Z - Frog 3
 /*
     H は単調増加数列
@@ -996,15 +1195,19 @@ void ABC_480_G() {
 
 
 int main() {
+    //COLOCON_2018_final_C();
     //EDPC_Z("simple_larsch");
     //EDPC_Z("larsch");
+    //EDPC_Z("cht");
     //Codeforces_189_C("simple_larsch");
     //Codeforces_189_C("larsch");
+    //Codeforces_189_C("cht");
     //yukicoder_705("simple_larsch");
     //yukicoder_705("larsch");
+    yukicoder_705("cht");
     //ABC_218_H();
     //yukicoder_952();
     //Codeforces438_F_enum();
     //Codeforces438_F_alien();
-    ABC_480_G();
+    //ABC_480_G();
 }
