@@ -225,7 +225,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/monotone_minima_DD.cpp)
 - (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK.cpp)
 - (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK_DD.cpp)
-- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/shortest_path_sliding.cpp)
 
 ## Monge 最短路問題
@@ -235,6 +234,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Alien_DP.cpp)
+- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_enum_d_shortest_path.cpp)
 - (★★★★) anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))
 - (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_SMAWK_DD.cpp)
 

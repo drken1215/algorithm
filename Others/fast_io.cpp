@@ -20,9 +20,9 @@
 using namespace std;
 
 
-static constexpr int BUF_SIZE = 1 << 17;
-
 struct FastRead {
+    static constexpr int BUF_SIZE = 1 << 17;
+
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
@@ -135,6 +135,8 @@ public:
 };
 
 class FastWrite {
+    static constexpr int BUF_SIZE = 1 << 17;
+
 private:
     FILE *stream_;
     array<char, BUF_SIZE> buf_;
@@ -272,7 +274,6 @@ public:
     }
     template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
 };
-
 
 
 //------------------------------//
