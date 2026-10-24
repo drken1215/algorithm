@@ -23,8 +23,8 @@ using namespace std;
 
 // Convex Hull Trick
 /*
-    Func：Monge 性を仮定
-    注意点：SMAWK や LARSCH とは異なり、i < j なる領域だけでなく、全領域での Monge 性が必要
+    Func: Monge 性を仮定
+    注意点：SMAWK や LARSCH とは異なり、i < j なる領域だけでなく、全領域での Monge 性が必要！！！
 
     - MIN: クエリ x の取りうる最小値
     - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
@@ -99,22 +99,31 @@ template<class T> struct MongeCHT {
     }
 };
 
-// find shortest path on DAG with Monge cost, by Convex Hull Trick, O(N log N)
+// find shortest path on DAG with Monge or anti-Monge cost, by Convex Hull Trick, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be Monge
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+// f(i, j) must be Monge or anti-Monge
+// domain: j >= start[i], start is non-decreasing
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
+    assert((int)start.size() == N);
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     MongeCHT<VAL> cht(1, N, INF);
     dp[0].first = 0;
-    for (int i = 0; i < N; i++) {
-        auto f2 = [&, i](int j) -> long long {
-            return dp[i].first + f(i, j);
-        };
-        cht.insert(f2);
-        dp[i + 1] = cht.query(i + 1);
+    int i = 0;
+    for (int j = 1; j <= N; j++) {
+        while (i < N && j >= start[i]) {
+            auto f2 = [&, i](int j) -> long long { return dp[i].first + f(i, j); };
+            cht.insert(f2);
+            i++;
+        }
+        dp[j] = cht.query(j);
     };
     return dp;
+}
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+    vector<int> start(N);
+    for (int i = 0; i < N; i++) start[i] = i + 1;
+    return MongeShortestPathByCHT<VAL>(N, f, start);
 }
 
 

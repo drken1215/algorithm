@@ -164,7 +164,9 @@ template<class FUNC> bool is_anti_monge
 
 // Convex Hull Trick
 /*
-    Func：Monge 性 or anti-Monge 性を仮定
+    Func: Monge 性を仮定
+    注意点：SMAWK や LARSCH とは異なり、i < j なる領域だけでなく、全領域での Monge 性が必要！！！
+
     - MIN: クエリ x の取りうる最小値
     - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
     - INF: 最大値
@@ -238,21 +240,31 @@ template<class T> struct MongeCHT {
     }
 };
 
-// find shortest path on DAG with Monge cost, by Convex Hull Trick, O(N log N)
+// find shortest path on DAG with Monge or anti-Monge cost, by Convex Hull Trick, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be Monge
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+// f(i, j) must be Monge or anti-Monge
+// domain: j >= start[i], start is non-decreasing
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
+    assert((int)start.size() == N);
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     MongeCHT<VAL> cht(1, N, INF);
     dp[0].first = 0;
+    int i = 0;
     for (int j = 1; j <= N; j++) {
-        int i = j - 1;
-        auto f2 = [&, i](int j) -> long long { return dp[i].first + f(i, j); };
-        cht.insert(f2);
+        while (i < N && j >= start[i]) {
+            auto f2 = [&, i](int j) -> long long { return dp[i].first + f(i, j); };
+            cht.insert(f2);
+            i++;
+        }
         dp[j] = cht.query(j);
     };
     return dp;
+}
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+    vector<int> start(N);
+    for (int i = 0; i < N; i++) start[i] = i + 1;
+    return MongeShortestPathByCHT<VAL>(N, f, start);
 }
 
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
@@ -1153,18 +1165,11 @@ void ABC_480_G_CHT() {
         else return stma.get(l, r) - stmi.get(l, r);
     };
     //assert(is_anti_monge(N + 1, N + 1, func));
-
-    vector<long long> dp(N + 1, INF);
-    MongeCHT<long long> cht(1, N, INF);
-    dp[0] = 0;
-    for (int j = 2; j <= N; j++) {
-        int i = j - 2;  // (i -> i + 1) は禁止なので、その部分の挿入は遅らせる
-        auto func2 = [&, i](int j) -> long long { return dp[i] + func(i, j); };
-        cht.insert(func2);
-        auto [val, id] = cht.query(j);
-        dp[j] = val;
-    }
-    cout << dp[N] << endl;
+    
+    vector<int> start(N);
+    for (int i = 0; i < N; i++) start[i] = i + 2;  // 辺 (i, i + 1) は禁止
+    auto res = MongeShortestPathByCHT<long long>(N, func, start);
+    cout << res.back().first << endl;
 }
 
 
@@ -1175,7 +1180,7 @@ int main() {
     //EDPC_Z("cht");
     //Codeforces_189_C("simple_larsch");
     //Codeforces_189_C("larsch");
-    Codeforces_189_C("cht");
+    //Codeforces_189_C("cht");
     //yukicoder_705("simple_larsch");
     //yukicoder_705("larsch");
     //yukicoder_705("cht");
@@ -1184,5 +1189,5 @@ int main() {
     //Codeforces438_F_enum();
     //Codeforces438_F_alien();
     //ABC_480_G_SMAWK();
-    //ABC_480_G_CHT();
+    ABC_480_G_CHT();
 }
