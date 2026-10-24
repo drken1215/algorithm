@@ -1,3 +1,4 @@
+
 //
 // Monge 最短路問題に関するアルゴリズム全集
 //
@@ -162,10 +163,10 @@ template<class FUNC> bool is_anti_monge
     return true;
 }
 
-// Convex Hull Trick
+// Dynamic Li Chao Tree for Pairwise Single Crossing Functions
 /*
-    Func: Monge 性を仮定
-    注意点：SMAWK や LARSCH とは異なり、i < j なる領域だけでなく、全領域での Monge 性が必要！！！
+    Func: Pairwise Single Crossing 性を仮定
+    注意点：i < j なる領域だけでなく、全領域での Pairwise Single Crossing 性が必要！！！
 
     - MIN: クエリ x の取りうる最小値
     - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
@@ -174,13 +175,13 @@ template<class FUNC> bool is_anti_monge
     - insert (Func f_i): add f_i, O(log X)
     - query (x): min_i{ f_i(x) }, O(log X)
 */
-template<class T> struct MongeCHT {
-    using Func = function<T(T)>;
+template<class VAL> struct DynamicLiChaoTreeForPSC {
+    using Func = function<VAL(VAL)>;
     struct IndexedFunc {
         Func f;
         int id;
         IndexedFunc(Func f, int id) : f(std::move(f)), id(id) {}
-        T eval(T x) const { return f(x); };
+        VAL eval(VAL x) const { return f(x); };
     };
     struct Node {
         IndexedFunc func;
@@ -188,17 +189,17 @@ template<class T> struct MongeCHT {
         explicit Node(IndexedFunc f) : func(std::move(f)) {}
     };
     
-    const T MIN, MAX, INF = numeric_limits<T>::max() / 2;
+    const VAL MIN, MAX, INF = numeric_limits<VAL>::max() / 2;
     unique_ptr<Node> root;
     int next_id = 0;
     
-    MongeCHT() {}
-    MongeCHT(T MIN, T MAX, T INF = numeric_limits<T>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
+    DynamicLiChaoTreeForPSC() {}
+    DynamicLiChaoTreeForPSC(VAL MIN, VAL MAX, VAL INF = numeric_limits<VAL>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
         assert(MIN <= MAX);
     }
 
     // insert
-    void insert(unique_ptr<Node> &p, T low, T high, IndexedFunc &f) {
+    void insert(unique_ptr<Node> &p, VAL low, VAL high, IndexedFunc &f) {
         if (!p) {
             p = make_unique<Node>(std::move(f));
             return;
@@ -208,7 +209,7 @@ template<class T> struct MongeCHT {
             p->func = std::move(f);
             return;
         }
-        T mid = (low + high) / 2;
+        VAL mid = (low + high) / 2;
         if (p->func.eval(mid) > f.eval(mid)) swap(p->func, f);
         if (low == high) return;
         if (p->func.eval(low) >= f.eval(low)) insert(p->left, low, mid, f);
@@ -226,29 +227,34 @@ template<class T> struct MongeCHT {
     }
 
     // query
-    pair<T, int> query(const unique_ptr<Node>& p, T low, T high, T x) const {
+    pair<VAL, int> query(const unique_ptr<Node>& p, VAL low, VAL high, VAL x) const {
         if (!p) return {INF, -1};
-        pair<T, int> res = {p->func.eval(x), p->func.id};
+        pair<VAL, int> res = {p->func.eval(x), p->func.id};
         if (low == high) return res;
-        T mid = (low + high) / 2;
+        VAL mid = (low + high) / 2;
         if (x <= mid) return min(res, query(p->left, low, mid, x));
         else return min(res, query(p->right, mid + 1, high, x));
     }
-    pair<T, int> query(T x) const {
+    pair<VAL, int> query(VAL x) const {
         assert(MIN <= x && x <= MAX);
         return query(root, MIN, MAX, x);
     }
 };
 
-// find shortest path on DAG with Monge or anti-Monge cost, by Convex Hull Trick, O(N log N)
+// find shortest path on DAG with Pairwise Single Crossing cost, by Li Chao Tree, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be Monge or anti-Monge
-// domain: j >= start[i], start is non-decreasing
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
+// A(j, i) = dp[i] + f(i, j) must be Pairwise Single Crossing (must be in all 0 <= i, j <= N, including i >= j)
+// Attention: Even if f is Pairwise Single Crossing, A is not necessarily Pairwise Single Crossing
+// edges: (i, j), j >= start[i] (i + 1 <= start[i] <= N + 1), start is non-decreasing
+template<class VAL, class FUNC> vector<pair<VAL, int>> PSCShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
     assert((int)start.size() == N);
+    for (int i = 0; i < N; i++) {
+        assert(i + 1 <= start[i] && start[i] <= N + 1);
+        if (i > 0) assert(start[i - 1] <= start[i]);
+    }
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
-    MongeCHT<VAL> cht(1, N, INF);
+    DynamicLiChaoTreeForPSC<VAL> cht(1, N, INF);
     dp[0].first = 0;
     int i = 0;
     for (int j = 1; j <= N; j++) {
@@ -261,10 +267,10 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(in
     };
     return dp;
 }
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+template<class VAL, class FUNC> vector<pair<VAL, int>> PSCShortestPathByCHT(int N, const FUNC &f) {
     vector<int> start(N);
     for (int i = 0; i < N; i++) start[i] = i + 1;
-    return MongeShortestPathByCHT<VAL>(N, f, start);
+    return PSCShortestPathByCHT<VAL>(N, f, start);
 }
 
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
@@ -288,9 +294,10 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinima(int H, int
     return res;
 }
 
-// find shortest path on DAG with monotone cost, by D&D Monotone Minima, O(N (log N)^2)
+// find shortest path on DAG by D&D Monotone Minima, O(N (log N)^2)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be monotone (argmin is not decreasing)
+// A(j, i) = dp[i] + f(i, j) must be monotone (argmin is not decreasing)
+// Attention: Even if f is monotone, A is not necessarily monotone
 // slide access OK
 template<class VAL, class FUNC> vector<pair<VAL, int>> DDMonotoneMinima(int N, const FUNC &f) {
     vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
@@ -351,9 +358,11 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> SMAWK(int H, int W, const
     return res;
 }
 
-// find shortest path on DAG with totally monotone cost, by D&D SMAWK, O(N log N)
+// find shortest path on DAG by D&D SMAWK, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be totally monotone
+// A(j, i) = dp[i] + f(i, j) must be totally monotone
+// Attention: Even if f is totally monotone, A is not necessarily totally monotone
+// slide access NG
 template<class VAL, class FUNC> vector<pair<VAL, int>> DDSMAWK(int N, const FUNC &f) {
     vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     vector<pair<VAL, int>> tmp(N + 1);
@@ -376,7 +385,9 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> DDSMAWK(int N, const FUNC
 
 // find shortest path on DAG with anti-Monge cost, by D&D SMAWK, O(NK log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be anti-Monge, j >= i + K
+// f(i, j) must be anti-Monge in j >= i + K
+// Then, A(j, i) = dp[i] + f(i, j) is also anti-Monge
+// slide access NG
 template<class VAL, class FUNC> vector<pair<VAL, int>> antiMongeDDSMAWK(int N, const FUNC &f, int K = 1) {
     assert(K >= 1);
     const VAL INF = numeric_limits<VAL>::max() / 4;
@@ -419,7 +430,8 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> antiMongeDDSMAWK(int N, c
 
 // noshi's simplified LARSCH
 // find shortest path from vertex 0 on DAG in O(N log N)
-// vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 // slide access OK
 template<class VAL> struct SimpleLARSCH {
     VAL INF = numeric_limits<VAL>::max() / 2;
@@ -515,7 +527,8 @@ template<class VAL> struct SimpleLARSCH {
 };
 
 // LARSCH, in O(N)
-// vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 template<class VAL, class FUNC> struct LARSCH {
     struct RowReduce;
     struct ColReduce;
@@ -624,6 +637,8 @@ template<class VAL, class FUNC> struct LARSCH {
 };
 
 // Monge Shortest Path Wrapper
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 template<class VAL> struct MongeShortestPath {
     VAL INF = numeric_limits<VAL>::max() / 2;
     int CNT_INF = numeric_limits<int>::max() / 2;
@@ -664,7 +679,7 @@ template<class VAL> struct MongeShortestPath {
         } else if (solver == "smawk") {
             res = DDSMAWK<VAL>(N, f);
         } else if (solver == "cht") {
-            res = MongeShortestPathByCHT<VAL>(N, f);
+            res = PSCShortestPathByCHT<VAL>(N, f);
         } else {
             cout << "no solver" << endl;
             assert(true);
@@ -700,6 +715,7 @@ template<class VAL> struct MongeShortestPath {
 
 // find the d-edges shortest path for d = 1, 2, ..., D, in O(ND)
 // vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 // you can choose SMAWK (random access) or Monotone Minima (slide access)
 template<class VAL> struct MongeShortestPathWithDEdges {
     VAL INF = numeric_limits<VAL>::max() / 2;
@@ -924,7 +940,7 @@ void COLOCON_2018_final_C() {
     cin >> N;
     vector<long long> a(N), res(N);
     for (int i = 0; i < N; ++i) cin >> a[i];
-    MongeCHT<long long> cht(0, 210000, 1LL<<60);
+    DynamicLiChaoTreeForPSC<long long> cht(0, 210000, 1LL<<60);
     for (long long i = 0; i < N; ++i) {
         auto func = [i, &a](long long x) -> long long { return (x - i) * (x - i) + a[i]; };
         cht.insert(func);
@@ -1168,7 +1184,7 @@ void ABC_480_G_CHT() {
     
     vector<int> start(N);
     for (int i = 0; i < N; i++) start[i] = i + 2;  // 辺 (i, i + 1) は禁止
-    auto res = MongeShortestPathByCHT<long long>(N, func, start);
+    auto res = PSCShortestPathByCHT<long long>(N, func, start);
     cout << res.back().first << endl;
 }
 

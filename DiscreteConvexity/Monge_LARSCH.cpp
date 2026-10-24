@@ -24,7 +24,8 @@ using namespace std;
 
 
 // LARSCH, in O(N)
-// vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 template<class VAL, class FUNC> struct LARSCH {
     struct RowReduce;
     struct ColReduce;
@@ -133,6 +134,8 @@ template<class VAL, class FUNC> struct LARSCH {
 };
 
 // Monge Shortest Path Wrapper
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 template<class VAL> struct MongeShortestPath {
     VAL INF = numeric_limits<VAL>::max() / 2;
     int CNT_INF = numeric_limits<int>::max() / 2;

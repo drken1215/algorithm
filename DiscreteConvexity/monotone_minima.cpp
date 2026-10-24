@@ -19,6 +19,7 @@ using namespace std;
 
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
 // f(i, j) must be monotone (argmin is not decreasing)
+// slide access OK
 template<class VAL, class FUNC> void MonotoneMinimaRec
 (int HL, int HR, int WL, int WR, const FUNC &f, vector<pair<VAL, int>> &res) {
     if (HR - HL <= 0) return;

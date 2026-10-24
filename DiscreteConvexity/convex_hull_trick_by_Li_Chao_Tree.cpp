@@ -1,5 +1,5 @@
 //
-// Convex Hull Trick
+// Convex Hull Trick (by Li Chao Tree)
 //
 // verified
 //   COLOCON 2018 Final C - スペースエクスプローラー高橋君
@@ -14,7 +14,7 @@
 using namespace std;
 
 
-// Convex Hull Trick
+// Convex Hull Trick (by Li Chao Tree)
 /*
     直線の傾きに単調性を仮定しない
     - MIN: クエリ x の取りうる最小値
@@ -24,7 +24,7 @@ using namespace std;
     - insert (a, b): add y = ax + b, O(log X)
     - query (x): min_i{ l_i->get(x) }, O(log X)
 */
-template<class T> struct CHT {
+template<class T> struct LiChaoTree {
     struct Line {
         T a, b;
         Line(T a = 0,T b = 0) : a(a), b(b) { }
@@ -42,7 +42,7 @@ template<class T> struct CHT {
     const T MIN, MAX, INF;
     Node* root;
     
-    CHT(T MIN, T MAX, T INF) : MIN(MIN), MAX(MAX), INF(INF), root(nullptr) { }
+    LiChaoTree(T MIN, T MAX, T INF) : MIN(MIN), MAX(MAX), INF(INF), root(nullptr) { }
     Node* insert(Node* p, T low, T high, Line& l){
         if(!p) return new Node(l);
         if (p->line.get(low) <= l.get(low) && p->line.get(high) <= l.get(high)) return p;
@@ -85,7 +85,7 @@ void COLOCON_2018_final_C() {
     cin >> N;
     vector<long long> a(N), res(N);
     for (int i = 0; i < N; ++i) cin >> a[i];
-    CHT<long long> cht(0, 210000, 1LL<<60);
+    LiChaoTree<long long> cht(0, 210000, 1LL<<60);
     for (long long i = 0; i < N; ++i) cht.insert(-2LL*i, a[i] + i*i);
     for (long long i = 0; i < N; ++i) res[i] = cht.query(i) + i*i;
     for (int i = 0; i < N; ++i) cout << res[i] << endl;
@@ -107,7 +107,7 @@ void EDPC_Z() {
     　　dp2[i] = min_j(-2 H[j] × H[i] + dp2[j]) + 2 H[i]² + C
     */
     dp2[0] = H[0] * H[0];
-    CHT<long long> cht(0, MAX, INF);
+    LiChaoTree<long long> cht(0, MAX, INF);
     cht.insert(-H[0] * 2, dp2[0]);
     for (int i = 1; i < N; i++) {
         long long val = cht.query(H[i]);

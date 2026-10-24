@@ -130,7 +130,8 @@ template<class VAL> struct AliensTrick {
 
 // noshi's simplified LARSCH
 // find shortest path from vertex 0 on DAG in O(N log N)
-// vertex: 0, 1, 2, ..., N, f(i, j) must be Monge
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 // slide access OK
 template<class VAL> struct SimpleLARSCH {
     VAL INF = numeric_limits<VAL>::max() / 2;
@@ -226,6 +227,8 @@ template<class VAL> struct SimpleLARSCH {
 };
 
 // Monge Shortest Path Wrapper
+// vertex: 0, 1, 2, ..., N
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
 template<class VAL> struct MongeShortestPath {
     VAL INF = numeric_limits<VAL>::max() / 2;
     int CNT_INF = numeric_limits<int>::max() / 2;

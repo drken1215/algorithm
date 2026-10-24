@@ -199,25 +199,32 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_all.cpp)
 - (★★★★) マトロイド 全部乗せ
 
-## 区分線形凸関数の活用 1 ： Convex Hull Trick
-
-- (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick.cpp)
-- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
-- (★★★★) 2D Line container (max(ax + by) クエリ)
-
-## 区分線形凸関数の活用 2 ： Slope Trick
+## 区分線形凸関数の活用 1： Slope Trick
 
 - (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/slope_trick.cpp)
 - (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/dual_slope_trick.cpp)
 - (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/super_slope_trick.cpp)
 
-## 区分線形凸関数の活用 3 ： Min Plus Convolution
+## 区分線形凸関数の活用 2： Min Plus Convolution
 
 - (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/min_plus_convolution_convex_convex.cpp)
 - (★★★★) Min Plus Convolution (凸と任意)
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
+
+## 区分線形凸関数の活用 3： Convex Hull Trick
+
+- (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_by_Li_Chao_Tree.cpp)
+- (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
+- (★★★★) 2D Line container (max(ax + by) クエリ)
+
+## Li Chao Tree (Pairwise Single Crossing な一般関数群に対して)
+
+- (★★★★) Li Chao Tree (PSC な一般関数群, in 挿入 O(log N), クエリ O(log N))
+- (★★★★) [Dynamic Li Chao Tree (PSC な一般関数群, in 挿入 O(log X), クエリ O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Li_Chao_tree_dynamic_to_psc.cpp)
+- (★★★★) Segment Li Chao Tree (PSC な一般関数群, in 挿入 O((log N)^2), クエリ O(log N))
+- (★★★★) Dynamic Segment Li Chao Tree (PSC な一般関数群, in 挿入 O((log X)^2), クエリ O(log X))
 
 ## 行最小値問題・単一始点最短路問題
 
@@ -243,7 +250,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_checker.cpp)
 - (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_min_plus_composition.cpp)
 - (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Knuth_Yao.cpp)
-- (★★★★) [Monge Convex Hull Trick (by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_convex_hull_trick.cpp)
 
 ## さまざまなマトロイド
 

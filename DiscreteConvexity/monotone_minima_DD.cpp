@@ -25,6 +25,7 @@ using namespace std;
 
 // find min_j f(i, j) for all i, by Monotone Minima, O(H + W log H)
 // f(i, j) must be monotone (argmin is not decreasing)
+// slide access OK
 template<class VAL, class FUNC> void MonotoneMinimaRec
 (int HL, int HR, int WL, int WR, const FUNC &f, vector<pair<VAL, int>> &res) {
     if (HR - HL <= 0) return;
@@ -43,9 +44,11 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MonotoneMinima(int H, int
     return res;
 }
 
-// find shortest path on DAG with monotone cost, by D&D Monotone Minima, O(N (log N)^2)
+// find shortest path on DAG by D&D Monotone Minima, O(N (log N)^2)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be monotone (argmin is not decreasing)
+// A(j, i) = dp[i] + f(i, j) must be monotone (argmin is not decreasing)
+// Attention: Even if f is monotone, A is not necessarily monotone
+// slide access OK
 template<class VAL, class FUNC> vector<pair<VAL, int>> DDMonotoneMinima(int N, const FUNC &f) {
     vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     res[0].first = VAL(0);

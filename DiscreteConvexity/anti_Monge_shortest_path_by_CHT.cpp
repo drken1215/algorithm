@@ -13,95 +13,10 @@
 using namespace std;
 
 
-//------------------------------//
-// Template
-//------------------------------//
-
-using ll = long long;
-using i128 = __int128_t;
-using u128 = __uint128_t;
-using pint = pair<int, int>;
-using pll = pair<long long, long long>;
-using tll = array<long long, 3>;
-using fll = array<long long, 4>;
-using vint = vector<int>;
-using vll = vector<long long>;
-using dint = deque<int>;
-using dll = deque<long long>;
-using vvint = vector<vector<int>>;
-using vvll = vector<vector<long long>>;
-using vpll = vector<pair<long long, long long>>;
-template<class T> using min_priority_queue = priority_queue<T, vector<T>, greater<T>>;
-
-template<class S, class T> inline bool chmax(S &a, T b) { return (a < b ? a = b, 1 : 0); }
-template<class S, class T> inline bool chmin(S &a, T b) { return (a > b ? a = b, 1 : 0); }
-template<class S, class T> inline auto maxll(S a, T b) { return max(ll(a), ll(b)); }
-template<class S, class T> inline auto minll(S a, T b) { return min(ll(a), ll(b)); }
-template<class T> auto max(const T &a) { return *max_element(a.begin(), a.end()); }
-template<class T> auto min(const T &a) { return *min_element(a.begin(), a.end()); }
-template<class T> auto argmax(const T &a) { return max_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto argmin(const T &a) { return min_element(a.begin(), a.end()) - a.begin(); }
-template<class T> auto accum(const vector<T> &a) { return accumulate(a.begin(), a.end(), T()); }
-template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a.end(), T()); }
-
-#define REP(i, a) for (long long i = 0; i < (long long)(a); i++)
-#define REP2(i, a, b) for (long long i = a; i < (long long)(b); i++)
-#define RREP(i, a) for (long long i = (a)-1; i >= (long long)(0); --i)
-#define RREP2(i, a, b) for (long long i = (b)-1; i >= (long long)(a); --i)
-#define EB emplace_back
-#define PF push_front
-#define PB push_back
-#define MP make_pair
-#define FI first
-#define SE second
-#define ALL(x) x.begin(), x.end()
-
-// input stream
-template<class T> istream& operator >> (istream &is, vector<T> &P)
-{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
-template<class T> istream& operator >> (istream &is, deque<T> &P)
-{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
-template<class T> istream& operator >> (istream &is, vector<vector<T>> &P)
-{ for (int i = 0; i < (int)P.size(); ++i) cin >> P[i]; return is; }
-
-// output stream
-#define COUT(x) cout << #x << " = " << (x) << " (L" << __LINE__ << ")" << endl
-template<class S, class T> ostream& operator << (ostream &s, const pair<S, T> &P)
-{ return s << '<' << P.first << ", " << P.second << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 2> &P)
-{ return s << '<' << P[0] << "," << P[1] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 3> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << '>'; }
-template<class T> ostream& operator << (ostream &s, const array<T, 4> &P)
-{ return s << '<' << P[0] << "," << P[1] << "," << P[2] << "," << P[3] << '>'; }
-template<class T> ostream& operator << (ostream &s, const vector<string> &P)
-{ for (int i = 0; i < P.size(); ++i) { s << P[i] << endl; } return s; }
-template<class T> ostream& operator << (ostream &s, const vector<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const deque<T> &P)
-{ for (int i = 0; i < P.size(); ++i) { if (i > 0) { s << " "; } s << P[i]; } return s; }
-template<class T> ostream& operator << (ostream &s, const vector<vector<T>> &P)
-{ for (int i = 0; i < P.size(); ++i) { s << endl << P[i]; } return s << endl; }
-template<class T> ostream& operator << (ostream &s, const set<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, const multiset<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class T> ostream& operator << (ostream &s, const unordered_set<T> &P)
-{ for (auto it : P) { s << "<" << it << "> "; } return s; }
-template<class S, class T> ostream& operator << (ostream &s, const map<S, T> &P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-template<class S, class T> ostream& operator << (ostream &s, const unordered_map<S, T> &P)
-{ for (auto it : P) { s << "<" << it.first << "->" << it.second << "> "; } return s; }
-
-
-//------------------------------//
-// Monge
-//------------------------------//
-
-// Convex Hull Trick
+// Dynamic Li Chao Tree for Pairwise Single Crossing Functions
 /*
-    Func: Monge 性を仮定
-    注意点：SMAWK や LARSCH とは異なり、i < j なる領域だけでなく、全領域での Monge 性が必要！！！
+    Func: Pairwise Single Crossing 性を仮定
+    注意点：i < j なる領域だけでなく、全領域での Pairwise Single Crossing 性が必要！！！
 
     - MIN: クエリ x の取りうる最小値
     - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
@@ -110,13 +25,13 @@ template<class S, class T> ostream& operator << (ostream &s, const unordered_map
     - insert (Func f_i): add f_i, O(log X)
     - query (x): min_i{ f_i(x) }, O(log X)
 */
-template<class T> struct MongeCHT {
-    using Func = function<T(T)>;
+template<class VAL> struct DynamicLiChaoTreeForPSC {
+    using Func = function<VAL(VAL)>;
     struct IndexedFunc {
         Func f;
         int id;
         IndexedFunc(Func f, int id) : f(std::move(f)), id(id) {}
-        T eval(T x) const { return f(x); };
+        VAL eval(VAL x) const { return f(x); };
     };
     struct Node {
         IndexedFunc func;
@@ -124,17 +39,17 @@ template<class T> struct MongeCHT {
         explicit Node(IndexedFunc f) : func(std::move(f)) {}
     };
     
-    const T MIN, MAX, INF = numeric_limits<T>::max() / 2;
+    const VAL MIN, MAX, INF = numeric_limits<VAL>::max() / 2;
     unique_ptr<Node> root;
     int next_id = 0;
     
-    MongeCHT() {}
-    MongeCHT(T MIN, T MAX, T INF = numeric_limits<T>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
+    DynamicLiChaoTreeForPSC() {}
+    DynamicLiChaoTreeForPSC(VAL MIN, VAL MAX, VAL INF = numeric_limits<VAL>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
         assert(MIN <= MAX);
     }
 
     // insert
-    void insert(unique_ptr<Node> &p, T low, T high, IndexedFunc &f) {
+    void insert(unique_ptr<Node> &p, VAL low, VAL high, IndexedFunc &f) {
         if (!p) {
             p = make_unique<Node>(std::move(f));
             return;
@@ -144,7 +59,7 @@ template<class T> struct MongeCHT {
             p->func = std::move(f);
             return;
         }
-        T mid = (low + high) / 2;
+        VAL mid = (low + high) / 2;
         if (p->func.eval(mid) > f.eval(mid)) swap(p->func, f);
         if (low == high) return;
         if (p->func.eval(low) >= f.eval(low)) insert(p->left, low, mid, f);
@@ -162,29 +77,34 @@ template<class T> struct MongeCHT {
     }
 
     // query
-    pair<T, int> query(const unique_ptr<Node>& p, T low, T high, T x) const {
+    pair<VAL, int> query(const unique_ptr<Node>& p, VAL low, VAL high, VAL x) const {
         if (!p) return {INF, -1};
-        pair<T, int> res = {p->func.eval(x), p->func.id};
+        pair<VAL, int> res = {p->func.eval(x), p->func.id};
         if (low == high) return res;
-        T mid = (low + high) / 2;
+        VAL mid = (low + high) / 2;
         if (x <= mid) return min(res, query(p->left, low, mid, x));
         else return min(res, query(p->right, mid + 1, high, x));
     }
-    pair<T, int> query(T x) const {
+    pair<VAL, int> query(VAL x) const {
         assert(MIN <= x && x <= MAX);
         return query(root, MIN, MAX, x);
     }
 };
 
-// find shortest path on DAG with Monge or anti-Monge cost, by Convex Hull Trick, O(N log N)
+// find shortest path on DAG with Pairwise Single Crossing cost, by Li Chao Tree, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be Monge or anti-Monge
-// domain: j >= start[i], start is non-decreasing
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
+// A(j, i) = dp[i] + f(i, j) must be Pairwise Single Crossing (must be in all 0 <= i, j <= N, including i >= j)
+// Attention: Even if f is Pairwise Single Crossing, A is not necessarily Pairwise Single Crossing
+// edges: (i, j), j >= start[i] (i + 1 <= start[i] <= N + 1), start is non-decreasing
+template<class VAL, class FUNC> vector<pair<VAL, int>> PSCShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
     assert((int)start.size() == N);
+    for (int i = 0; i < N; i++) {
+        assert(i + 1 <= start[i] && start[i] <= N + 1);
+        if (i > 0) assert(start[i - 1] <= start[i]);
+    }
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
-    MongeCHT<VAL> cht(1, N, INF);
+    DynamicLiChaoTreeForPSC<VAL> cht(1, N, INF);
     dp[0].first = 0;
     int i = 0;
     for (int j = 1; j <= N; j++) {
@@ -197,10 +117,10 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(in
     };
     return dp;
 }
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+template<class VAL, class FUNC> vector<pair<VAL, int>> PSCShortestPathByCHT(int N, const FUNC &f) {
     vector<int> start(N);
     for (int i = 0; i < N; i++) start[i] = i + 1;
-    return MongeShortestPathByCHT<VAL>(N, f, start);
+    return PSCShortestPathByCHT<VAL>(N, f, start);
 }
 
 
@@ -262,7 +182,7 @@ void ABC_480_G_CHT() {
     };
     vector<int> start(N);
     for (int i = 0; i < N; i++) start[i] = i + 2;  // 辺 (i, i + 1) は禁止
-    auto res = MongeShortestPathByCHT<long long>(N, func, start);
+    auto res = PSCShortestPathByCHT<long long>(N, func, start);
     cout << res.back().first << endl;
 }
 

@@ -67,9 +67,11 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> SMAWK(int H, int W, const
     return res;
 }
 
-// find shortest path on DAG with totally monotone cost, by D&D SMAWK, O(N log N)
+// find shortest path on DAG by D&D SMAWK, O(N log N)
 // vertex: 0, 1, 2, ..., N
-// f(i, j) must be totally monotone
+// A(j, i) = dp[i] + f(i, j) must be totally monotone
+// Attention: Even if f is totally monotone, A is not necessarily totally monotone
+// slide access NG
 template<class VAL, class FUNC> vector<pair<VAL, int>> DDSMAWK(int N, const FUNC &f) {
     vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     vector<pair<VAL, int>> tmp(N + 1);

@@ -59,7 +59,8 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> SMAWK(int H, int W, const
 
 // find the d-edges shortest path for d = 1, 2, ..., D, in O(ND)
 // vertex: 0, 1, 2, ..., N
-// you can choose SMAWK or Monotone Minima
+// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
+// you can choose SMAWK (random access) or Monotone Minima (slide access)
 template<class VAL> struct MongeShortestPathWithDEdges {
     VAL INF = numeric_limits<VAL>::max() / 2;
 
