@@ -44,9 +44,9 @@ template<class T> struct CHT {
     
     void insert(T a, T b) {
         Line l(a, b);
-        while (lines.size() >= 2
-               && check(lines[(int)lines.size()-2], lines[(int)lines.size()-1], l)) 
-            lines.pop_back();
+        while (lines.size() >= 2 && check(lines[(int)lines.size()-2], lines[(int)lines.size()-1], l)) {
+            lines.pop_back();  // 不要な直線を捨てる
+        }
         lines.push_back(l);
     }
     

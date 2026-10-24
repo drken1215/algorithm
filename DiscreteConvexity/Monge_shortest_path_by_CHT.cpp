@@ -25,6 +25,8 @@ using namespace std;
 // Convex Hull Trick
 /*
     Func：Monge 性を仮定
+    注意点：SMAWK や LARSCH とは異なり、i < j なる領域だけでなく、全領域での Monge 性が必要
+
     - MIN: クエリ x の取りうる最小値
     - MAX: クエリ x の取りうる最大値 (f_i(MAX) がオーバーフローしないように注意）
     - INF: 最大値

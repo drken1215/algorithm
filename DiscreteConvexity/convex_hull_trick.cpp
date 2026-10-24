@@ -21,8 +21,8 @@ using namespace std;
     - MAX: クエリ x の取りうる最大値 (a・MAX + b がオーバーフローしないように注意）
     - INF: 最大値
  
-    - insert (a, b): add y = ax + b, O(log N)
-    - query (x): min_i{ l_i->get(x) }, O(log N)
+    - insert (a, b): add y = ax + b, O(log X)
+    - query (x): min_i{ l_i->get(x) }, O(log X)
 */
 template<class T> struct CHT {
     struct Line {

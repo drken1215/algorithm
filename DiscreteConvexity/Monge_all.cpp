@@ -24,7 +24,7 @@
 //     2-solutions (slide access Monotone Minima + D-enum, slide access simple LARSCH + Alien DP)
 //     https://codeforces.com/contest/868/problem/F
 //
-//   ABC 480 G - Zonal Score Minimization (for anti-Monge D&D SMAWK)
+//   ABC 480 G - Zonal Score Minimization (for anti-Monge D&D SMAWK, Monge CHT)
 //     https://atcoder.jp/contests/abc480/tasks/abc480_g
 //
 
@@ -246,12 +246,11 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(in
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
     MongeCHT<VAL> cht(1, N, INF);
     dp[0].first = 0;
-    for (int i = 0; i < N; i++) {
-        auto f2 = [&, i](int j) -> long long {
-            return dp[i].first + f(i, j);
-        };
+    for (int j = 1; j <= N; j++) {
+        int i = j - 1;
+        auto f2 = [&, i](int j) -> long long { return dp[i].first + f(i, j); };
         cht.insert(f2);
-        dp[i + 1] = cht.query(i + 1);
+        dp[j] = cht.query(j);
     };
     return dp;
 }
@@ -1125,7 +1124,7 @@ template<class MeetSemiLattice> struct SparseTable {
         return OP(dat[height[b-a]][a], dat[height[b-a]][b-(1<<height[b-a])]);
     }
 };
-void ABC_480_G() {
+void ABC_480_G_SMAWK() {
     int N;
     cin >> N;
     vector<long long> A(N);
@@ -1140,6 +1139,33 @@ void ABC_480_G() {
     auto res = antiMongeDDSMAWK<long long>(N, func, 2);
     cout << res.back().first << endl;
 }
+void ABC_480_G_CHT() {
+    int N;
+    cin >> N;
+    long long INF = numeric_limits<long long>::max() / 2;
+    long long M = numeric_limits<long long>::max() / (N * 3);
+    vector<long long> A(N);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    SparseTable<long long> stmi(A);
+    SparseTable<long long> stma(A, [&](long long p, long long q){return max(p, q);});
+    auto func = [&](int l, int r) -> long long { 
+        if (r < l + 2) return -M * ((l + 1 - r) * 2 + 1);
+        else return stma.get(l, r) - stmi.get(l, r);
+    };
+    //assert(is_anti_monge(N + 1, N + 1, func));
+
+    vector<long long> dp(N + 1, INF);
+    MongeCHT<long long> cht(1, N, INF);
+    dp[0] = 0;
+    for (int j = 2; j <= N; j++) {
+        int i = j - 2;  // (i -> i + 1) は禁止なので、その部分の挿入は遅らせる
+        auto func2 = [&, i](int j) -> long long { return dp[i] + func(i, j); };
+        cht.insert(func2);
+        auto [val, id] = cht.query(j);
+        dp[j] = val;
+    }
+    cout << dp[N] << endl;
+}
 
 
 int main() {
@@ -1149,13 +1175,14 @@ int main() {
     //EDPC_Z("cht");
     //Codeforces_189_C("simple_larsch");
     //Codeforces_189_C("larsch");
-    //Codeforces_189_C("cht");
+    Codeforces_189_C("cht");
     //yukicoder_705("simple_larsch");
     //yukicoder_705("larsch");
-    yukicoder_705("cht");
+    //yukicoder_705("cht");
     //ABC_218_H();
     //yukicoder_952();
     //Codeforces438_F_enum();
     //Codeforces438_F_alien();
-    //ABC_480_G();
+    //ABC_480_G_SMAWK();
+    //ABC_480_G_CHT();
 }
