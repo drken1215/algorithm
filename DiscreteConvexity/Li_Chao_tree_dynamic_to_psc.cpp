@@ -1,5 +1,5 @@
 //
-// Li Chao Tree
+// Dynamic Li Chao Tree
 //   for Pairwise Single Crossing 性を満たす関数群 f_1, f_2, ..., f_N
 //
 // verified

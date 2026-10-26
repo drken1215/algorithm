@@ -215,16 +215,16 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 区分線形凸関数の活用 3： Convex Hull Trick
 
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_by_Li_Chao_Tree.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Dynamic Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_by_Li_Chao_Tree.cpp)
 - (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
-## Li Chao Tree (Pairwise Single Crossing な一般関数群に対して)
+## より高度な Li Chao Tree
 
-- (★★★★) Li Chao Tree (PSC な一般関数群, in 挿入 O(log N), クエリ O(log N))
-- (★★★★) [Dynamic Li Chao Tree (PSC な一般関数群, in 挿入 O(log X), クエリ O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Li_Chao_tree_dynamic_to_psc.cpp)
-- (★★★★) Segment Li Chao Tree (PSC な一般関数群, in 挿入 O((log N)^2), クエリ O(log N))
-- (★★★★) Dynamic Segment Li Chao Tree (PSC な一般関数群, in 挿入 O((log X)^2), クエリ O(log X))
+- (★★★★) 区間一次式加算・1 点取得 Li Chao Tree (in 挿入 O(log N), 区間挿入・加算 O((log N)^2), クエリ O(log N))
+- (★★★★) 区間定数加算・区間最小値取得 Li Chao Tree (in 挿入 O(log N), 区間挿入・加算 O((log N)^2), クエリ O(log N))
+- (★★★★) PSC 一般関数 Li Chao Tree (in 挿入 O(log N), 区間挿入 O((log N)^2), クエリ O(log N))
+- (★★★★) [Dynamic PSC 一般関数 Li Chao Tree (in 挿入 O(log X), 区間挿入 O((log X)^2), クエリ O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Li_Chao_tree_dynamic_to_psc.cpp)
 
 ## 行最小値問題・単一始点最短路問題
 
@@ -234,14 +234,12 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK_DD.cpp)
 - (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/shortest_path_sliding.cpp)
 
-## Monge 最短路問題
+## Monge 単一始点最短路問題
 
 - (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_shortest_path_by_CHT.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) / O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Alien_DP.cpp)
-- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_shortest_path_by_CHT.cpp)
 - (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_SMAWK_DD.cpp)
 
@@ -250,6 +248,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_checker.cpp)
 - (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_min_plus_composition.cpp)
 - (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Knuth_Yao.cpp)
+- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_enum_d_shortest_path.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Alien_DP.cpp)
 
 ## さまざまなマトロイド
 
