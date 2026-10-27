@@ -33,7 +33,7 @@ using namespace std;
     - insert (Func f_i): add f_i, O(log X)
     - query (x): min_i{ f_i(x) }, O(log X)
 */
-template<class VAL> struct DynamicLiChaoTreeForPSC {
+template<class VAL> struct DynamicPSCLiChaoTree {
     using Func = function<VAL(VAL)>;
     struct IndexedFunc {
         Func f;
@@ -51,8 +51,8 @@ template<class VAL> struct DynamicLiChaoTreeForPSC {
     unique_ptr<Node> root;
     int next_id = 0;
     
-    DynamicLiChaoTreeForPSC() {}
-    DynamicLiChaoTreeForPSC(VAL MIN, VAL MAX, VAL INF = numeric_limits<VAL>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
+    DynamicPSCLiChaoTree() {}
+    DynamicPSCLiChaoTree(VAL MIN, VAL MAX, VAL INF = numeric_limits<VAL>::max() / 2) : MIN(MIN), MAX(MAX), INF(INF) {
         assert(MIN <= MAX);
     }
 
@@ -112,7 +112,7 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> PSCShortestPathByCHT(int 
     }
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<pair<VAL, int>> dp(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
-    DynamicLiChaoTreeForPSC<VAL> cht(1, N, INF);
+    DynamicPSCLiChaoTree<VAL> cht(1, N, INF);
     dp[0].first = 0;
     int i = 0;
     for (int j = 1; j <= N; j++) {
