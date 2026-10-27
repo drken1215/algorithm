@@ -214,17 +214,18 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 区分線形凸関数の活用 3： Convex Hull Trick
 
-- (★★★☆) [Convex Hull Trick (直線：傾き単調, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Dynamic Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_by_Li_Chao_Tree.cpp)
+- (★★★☆) [Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_by_Li_Chao_Tree.cpp)
 - (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
+- (★★★★) 一般関数 Convex Hull Trick (関数挿入順：単調, by Deque, in O(log N))
 - (★★★★) 2D Line container (max(ax + by) クエリ)
 
-## より高度な Li Chao Tree
+## Li Chao Tree (一般関数は Pairwise Single Crossing 性を仮定)
 
-- (★★★★) 区間一次式加算・1 点取得 Li Chao Tree (in 挿入 O(log N), 区間挿入・加算 O((log N)^2), クエリ O(log N))
-- (★★★★) 区間定数加算・区間最小値取得 Li Chao Tree (in 挿入 O(log N), 区間挿入・加算 O((log N)^2), クエリ O(log N))
-- (★★★★) PSC 一般関数 Li Chao Tree (in 挿入 O(log N), 区間挿入 O((log N)^2), クエリ O(log N))
-- (★★★★) [Dynamic PSC 一般関数 Li Chao Tree (in 挿入 O(log X), 区間挿入 O((log X)^2), クエリ O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Li_Chao_tree_dynamic_to_psc.cpp)
+- (★★★★) Extended Li Chao Tree (線分挿入対応, 区間一次式加算対応)
+- (★★★★) Extended Li Chao Tree (線分挿入対応, 区間最小値取得対応)
+- (★★★★) [General Li Chao Tree (一般関数対応)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Li_Chao_tree_to_psc.cpp)
+- (★★★★) Extended General Li Chao Tree (単調な一般関数対応, 区間最小値取得対応)
 
 ## 行最小値問題・単一始点最短路問題
 
