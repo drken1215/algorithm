@@ -4,6 +4,7 @@
 .verify-helper/markdown/
 .verify-helper/cache/
 .verify-helper/_cache/
+.verify-helper/docs/index.md
 
 # Python
 __pycache__/
