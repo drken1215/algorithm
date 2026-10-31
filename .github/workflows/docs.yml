@@ -1,0 +1,75 @@
+
+name: Deploy Library Documentation
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install oj-helper
+        run: pip install online-judge-verify-helper==5.6.0
+
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install -y g++
+
+      - name: Sync README
+        run: |
+          mkdir -p .verify-helper/docs
+          cp README.md .verify-helper/docs/index.md
+
+      - name: Generate documentation
+        run: oj-verify docs -j 2
+
+      - name: Install Jekyll dependencies
+        working-directory: .verify-helper/markdown
+        run: |
+          bundle install
+          bundle update liquid
+
+      - name: Build website
+        working-directory: .verify-helper/markdown
+        run: bundle exec jekyll build --baseurl /algorithm
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .verify-helper/markdown/_site
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

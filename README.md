@@ -44,7 +44,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Union-Find
 
-- (★☆☆☆) [Union-Find (union by size)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_size.cpp)
+- (★☆☆☆) [Union-Find (union by size)](https://drken1215.github.io/algorithm/DataStructureBasic/union_find_size.hpp.html)
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_rank.cpp)
 - (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/weighted_union_find.cpp)
 - (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructureBasic/union_find_enumerable.cpp)

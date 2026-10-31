@@ -1,0 +1,10 @@
+.DS_Store
+
+# oj-helper generated files
+.verify-helper/markdown/
+.verify-helper/cache/
+.verify-helper/_cache/
+
+# Python
+__pycache__/
+*.pyc

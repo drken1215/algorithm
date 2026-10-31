@@ -1,11 +1,11 @@
 //
-// ¥¹¥é¥¤¥ÉºÇ¾®ÃÍ
+// ã‚¹ãƒ©ã‚¤ãƒ‰æœ€å°å€¤
 //
 // cf.
 //
 //
 // verified:
-//   AOJ 0613 ºâÊõ (JOI 2014 Í½Áª F)
+//   AOJ 0613 è²¡å® (JOI 2014 äºˆé¸ F)
 //     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0613
 //
 

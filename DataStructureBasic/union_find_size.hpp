@@ -18,10 +18,6 @@
 */
 
 
-#include <bits/stdc++.h>
-using namespace std;
-
-
 // Union-Find
 struct UnionFind {
     // core member
@@ -79,48 +75,3 @@ struct UnionFind {
         return s;
     }
 };
-
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-void YosupoUnionFind() {
-    int N, Q;
-    cin >> N >> Q;
-    UnionFind uf(N);
-    for (int q = 0; q < Q; ++q) {
-        int type, x, y;
-        cin >> type >> x >> y;
-        if (type == 0) uf.merge(x, y);
-        else {
-            if (uf.same(x, y)) cout << 1 << endl;
-            else cout << 0 << endl;
-        }
-        cout << uf << endl;
-    }
-}
-
-void AOJ_DSL_1_A() {
-    int N, Q;
-    cin >> N >> Q;
-    UnionFind uf(N);
-    for (int q = 0; q < Q; ++q) {
-        int com, x, y;
-        cin >> com >> x >> y;
-        if (com == 0) uf.merge(x, y);
-        else {
-            if (uf.same(x, y)) cout << 1 << endl;
-            else cout << 0 << endl;
-        }
-        //cout << uf << endl;
-    }
-}
-
-    
-int main() {
-    YosupoUnionFind();
-    //AOJ_DSL_1_A();
-}
-
