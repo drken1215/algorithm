@@ -6,6 +6,10 @@
 .verify-helper/_cache/
 .verify-helper/docs/index.md
 
+# each PC settings
+makefile.ITA-547bc9f1
+.verify-helper/config.toml
+
 # Python
 __pycache__/
 *.pyc
