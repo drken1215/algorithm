@@ -631,54 +631,54 @@ void yukicoder_3017() {
 }
 
 // AtCoder ABC 256 Ex - I like Query Problem
-#include "atcoder/lazysegtree.hpp"
-using ll = long long;
-using pl = pair<ll, ll>;
-pl ti() { return {0, 0}; }
-ll ei() { return -1; }
-pl f(pl a, pl b) { return pl{a.first + b.first, a.second + b.second}; }
-pl g(ll b, pl a) { return b == ei() ? a : pl{a.second * b, a.second}; }
-ll h(ll b, ll a) { return b == ei() ? a : b; }
-using segtree = atcoder::lazy_segtree<pl, f, ti, ll, g, h, ei>;
-void ABC_256_Ex() {
-    int N, Q, type, L, R, x, y;
-    cin >> N >> Q;
-    vector<int> A(N);
-    vector<pl> PA(N);
-    for (int i = 0; i < N; i++) scanf("%d", &A[i]), PA[i] = {A[i], 1};
-    segtree seg(PA);
-    IntervalSet<int, int> ins(A);
-    while (Q--) {
-        cin >> type;
-        if (type == 1) {
-            scanf("%d %d %d", &L, &R, &x);
-            L--;
-            for (int v = L; v < R;) {
-                auto it = ins.lower_bound(v);
-                if (it == ins.end()) break;
-                v = max(v, it->l);
-                if (v >= R) break;
-                int r = min(it->r, R);
-                int before = it->val;
-                int after = before / x;
-                if (after == 0) ins.erase(v, r);
-                else ins.update(v, r, after);
-                seg.apply(v, r, after);
-                v = r;
-            }
-        } else if (type == 2) {
-            scanf("%d %d %d", &L, &R, &y);
-            L--;
-            ins.update(L, R, y);
-            seg.apply(L, R, y);
-        } else {
-            scanf("%d %d", &L, &R);
-            L--;
-            ll res = seg.prod(L, R).first;
-            printf("%lld\n", res);
-        }
-    }
-}
+// #include "atcoder/lazysegtree.hpp"
+// using ll = long long;
+// using pl = pair<ll, ll>;
+// pl ti() { return {0, 0}; }
+// ll ei() { return -1; }
+// pl f(pl a, pl b) { return pl{a.first + b.first, a.second + b.second}; }
+// pl g(ll b, pl a) { return b == ei() ? a : pl{a.second * b, a.second}; }
+// ll h(ll b, ll a) { return b == ei() ? a : b; }
+// using segtree = atcoder::lazy_segtree<pl, f, ti, ll, g, h, ei>;
+// void ABC_256_Ex() {
+//     int N, Q, type, L, R, x, y;
+//     cin >> N >> Q;
+//     vector<int> A(N);
+//     vector<pl> PA(N);
+//     for (int i = 0; i < N; i++) scanf("%d", &A[i]), PA[i] = {A[i], 1};
+//     segtree seg(PA);
+//     IntervalSet<int, int> ins(A);
+//     while (Q--) {
+//         cin >> type;
+//         if (type == 1) {
+//             scanf("%d %d %d", &L, &R, &x);
+//             L--;
+//             for (int v = L; v < R;) {
+//                 auto it = ins.lower_bound(v);
+//                 if (it == ins.end()) break;
+//                 v = max(v, it->l);
+//                 if (v >= R) break;
+//                 int r = min(it->r, R);
+//                 int before = it->val;
+//                 int after = before / x;
+//                 if (after == 0) ins.erase(v, r);
+//                 else ins.update(v, r, after);
+//                 seg.apply(v, r, after);
+//                 v = r;
+//             }
+//         } else if (type == 2) {
+//             scanf("%d %d %d", &L, &R, &y);
+//             L--;
+//             ins.update(L, R, y);
+//             seg.apply(L, R, y);
+//         } else {
+//             scanf("%d %d", &L, &R);
+//             L--;
+//             ll res = seg.prod(L, R).first;
+//             printf("%lld\n", res);
+//         }
+//     }
+// }
 
 // KUPC 2018 I - League of Kyoto
 template<class Monoid, class Action> struct LazySegmentTree {
