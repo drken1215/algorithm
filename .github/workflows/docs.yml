@@ -51,6 +51,15 @@ jobs:
           mkdir -p .verify-helper/docs
           cp README.md .verify-helper/docs/index.md
 
+      - name: Configure oj-helper
+        run: |
+          mkdir -p .verify-helper
+          cat > .verify-helper/config.toml <<'EOF'
+          [[languages.cpp.environments]]
+          CXX = "g++"
+          CXXFLAGS = ["-std=c++20", "-O2", "-Iinclude"]
+          EOF
+
       - name: Verify libraries
         run: oj-verify run -j 2
 
