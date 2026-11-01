@@ -51,6 +51,9 @@ jobs:
           mkdir -p .verify-helper/docs
           cp README.md .verify-helper/docs/index.md
 
+      - name: Verify libraries
+        run: oj-verify run -j 2
+
       - name: Generate documentation
         run: oj-verify docs -j 2
 
