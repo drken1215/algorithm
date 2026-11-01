@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // Union-Find (union by size)
 //
