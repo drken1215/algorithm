@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "DataStructureBasic/union_find_size.hpp"
+#include "UnionFind.hpp"
     
 int main() {
     int N, Q;
