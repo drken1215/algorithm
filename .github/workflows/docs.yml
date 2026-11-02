@@ -53,12 +53,7 @@ jobs:
 
       - name: Configure oj-helper
         run: |
-          mkdir -p .verify-helper
-          cat > .verify-helper/config.toml <<'EOF'
-          [[languages.cpp.environments]]
-          CXX = "g++"
-          CXXFLAGS = ["-std=c++20", "-O2", "-Iinclude"]
-          EOF
+          python3 tools/setup_includes.py --cxx g++
 
       - name: Verify libraries
         run: oj-verify run -j 2
