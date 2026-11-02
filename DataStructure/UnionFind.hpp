@@ -1,14 +1,22 @@
 #pragma once
+#include <bits/stdc++.h>
+using namespace std;
 
 // Union-Find
 struct UnionFind {
     // core member
-    vector<int> par;
+    vector<int> par, nex;
 
     // constructor
     UnionFind() { }
-    UnionFind(int n) : par(n, -1) { }
-    void init(int n) { par.assign(n, -1); }
+    UnionFind(int N) : par(N, -1), nex(N) {
+        init(N);
+    }
+    void init(int N) {
+        par.assign(N, -1);
+        nex.resize(N);
+        for (int i = 0; i < N; ++i) nex[i] = i;
+    }
     
     // core methods
     int root(int x) {
@@ -26,6 +34,7 @@ struct UnionFind {
         if (par[x] > par[y]) swap(x, y); // merge technique
         par[x] += par[y];
         par[y] = x;
+        swap(nex[x], nex[y]);
         return true;
     }
     
@@ -33,7 +42,12 @@ struct UnionFind {
         return -par[root(x)];
     }
     
-    // get groups
+    // get group
+    vector<int> group(int x) {
+        vector<int> res({x});
+        while (nex[res.back()] != x) res.push_back(nex[res.back()]);
+        return res;
+    }
     vector<vector<int>> groups() {
         vector<vector<int>> member(par.size());
         for (int v = 0; v < (int)par.size(); ++v) {
