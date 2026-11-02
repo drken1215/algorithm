@@ -3,6 +3,9 @@
 <h1>Verification Status</h1>
 
 {% for category in page.data.libraryCategories %}
+  {% if category.name == "include" %}
+    {% continue %}
+  {% endif %}
   {% assign has_hpp = false %}
 
   {% for item in category.pages %}
