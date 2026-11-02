@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "UnionFind.hpp"
+#include "DataStructure/UnionFind.hpp"
     
 int main() {
     int N, Q;

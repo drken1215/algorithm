@@ -5,7 +5,7 @@
 using namespace std;
 
 #include "template.hpp"
-#include "binary_search.hpp"
+#include "Search/binary_search.hpp"
 
 int main() {
     long long N, L, K;
