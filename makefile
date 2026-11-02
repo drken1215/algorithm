@@ -8,7 +8,7 @@ VERIFY_JOBS ?= 2
 .PHONY: configure verify
 
 configure:
-	python3 tools/setup_includes.py --cxx "$(VERIFY_CXX)"
+	python3 .verify-helper/tools/setup_includes.py --cxx "$(VERIFY_CXX)"
 
 verify: configure
 	$(OJ_VERIFY) run -j $(VERIFY_JOBS) $(TEST)
