@@ -1,12 +1,13 @@
 ---
-title: neighbors
-documentation_of: ./neighbors.hpp
+title: io_for_contests
+documentation_of: ./io_for_contests.hpp
 ---
 
 ## 概要
 
-以下を圧縮してまとめたものである。
+たとえば `vector` 型の変数 `v` に対して
 
-- グリッドの上下左右 4 近傍 (最初の 4 要素)
-- グリッドの周囲 8 近傍 (全要素)
-- ハニカムの 6 近傍 (最初の 6 要素)
+- `cin >> v`
+- `cout << v << endl`
+
+といった書き方を可能としたもの。

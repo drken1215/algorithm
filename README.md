@@ -43,7 +43,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Union-Find
 
-- (★☆☆☆) [Union-Find (union by size)](https://drken1215.github.io/algorithm/DataStructure/UnionFind.hpp.html)
+- (★☆☆☆) [Union-Find (union by size)](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
 - (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_enumerable.cpp)
@@ -941,8 +941,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 典型処理
 
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍, ハニカムの 6 近傍](https://drken1215.github.io/algorithm/Others/neighbors.hpp.html)
-- (★☆☆☆) [負数にも対応した floor, ceil](https://github.com/drken1215/algorithm/blob/master/Others/floor_ceil.cpp)
-- (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/Others/kth_root.cpp)
+- (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/DataStructure/floor_ceil.hpp.html)
+- (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/DataStructure/kth_root.hpp.html)
 
 ## ソート
 

@@ -60,15 +60,6 @@ template<class T = long long> T get_ten(int n) {
     return res;
 }
 
-// floor, ceil
-template<class T> T floor(T a, T b) {
-    if (a % b == 0 || a >= 0) return a / b;
-    else return -((-a) / b) - 1;
-}
-template<class T> T ceil(T x, T y) {
-    return floor(x + y - 1, y);
-}
-
 // min non-negative i such that 2^i <= n
 template<class T> T floor_pow2(T n) {
     T i = 0;

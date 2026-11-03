@@ -36,6 +36,7 @@ def add_library(lib):
     hpp_content = (
         "#pragma once\n"
         "#include <bits/stdc++.h>\n"
+        "#include <cassert>\n"
         "using namespace std;\n"
     )
 
@@ -46,6 +47,7 @@ def add_library(lib):
         "---\n"
         "\n"
         "## 概要\n"
+        "\n"
     )
 
     hpp.write_text(hpp_content, encoding="utf-8")
