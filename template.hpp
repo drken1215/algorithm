@@ -43,6 +43,7 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 
 #include "io_for_contests.hpp"
 #include "neighbors.hpp"
+#include "floor_ceil.hpp"
 #include "binary_search.hpp"
 
 // power of ten
