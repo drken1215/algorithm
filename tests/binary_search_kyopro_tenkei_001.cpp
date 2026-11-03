@@ -4,7 +4,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "template.hpp"
 #include "Search/binary_search.hpp"
 
 int main() {

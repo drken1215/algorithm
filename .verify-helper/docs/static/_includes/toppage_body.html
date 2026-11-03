@@ -1,11 +1,14 @@
-<div style="margin-top: 5rem;"></div>
+
+<div style="margin-top: 3rem;"></div>
 
 <h1>Verification Status</h1>
 
 {% for category in page.data.libraryCategories %}
+
   {% if category.name == "include" %}
     {% continue %}
   {% endif %}
+
   {% assign has_hpp = false %}
 
   {% for item in category.pages %}
@@ -33,4 +36,5 @@
       {% endfor %}
     </ul>
   {% endif %}
+
 {% endfor %}
