@@ -59,7 +59,8 @@ jobs:
         run: oj-verify run -j 2
 
       - name: Generate documentation
-        run: oj-verify docs -j 2
+        run: |
+          python3 .verify-helper/tools/docs_with_includes.py --cxx g++ -j 2
 
       - name: Install Jekyll dependencies
         working-directory: .verify-helper/markdown

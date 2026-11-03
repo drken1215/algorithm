@@ -1,4 +1,3 @@
-
 {% comment %}
 Manual verification files:
   tests/*.cpp, excluding *.test.cpp
@@ -80,12 +79,9 @@ Manual verification files:
 
     {% for item in page.data._extendedVerifiedWith %}
       <li>
-        <a href="{{ item.path | absolute_url }}">
-          {{ item.icon }} {{ item.title }}
-          {% if item.title != item.path %}
-            <small>({{ item.path }})</small>
-          {% endif %}
-        </a>
+        <span style="display: inline-block; width: 2em; text-align: center;">
+          {{ item.icon }}
+        </span><a href="{{ item.path | absolute_url }}">{{ item.title }}{% if item.title != item.path %} <small>({{ item.path }})</small>{% endif %}</a>
       </li>
     {% endfor %}
 
@@ -103,9 +99,9 @@ Manual verification files:
 
       {% if is_manual %}
         <li>
-          <a href="{{ item.path | absolute_url }}">
-            ⚠️ {{ item.title }} (manual)
-          </a>
+          <span style="display: inline-block; width: 2em; text-align: center;">
+            ⚠️
+          </span><a href="{{ item.path | absolute_url }}">{{ item.title }} (manual)</a>
         </li>
       {% endif %}
     {% endfor %}

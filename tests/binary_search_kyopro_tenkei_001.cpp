@@ -1,10 +1,9 @@
 #define PROBLEM "https://atcoder.jp/contests/typical90/tasks/typical90_a"
-#define IGNORE
 
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "Search/binary_search.hpp"
+#include "binary_search.hpp"
 
 int main() {
     long long N, L, K;

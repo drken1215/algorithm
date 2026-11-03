@@ -83,9 +83,8 @@ void yes(bool a) { cout << (a ? "yes" : "no") << endl; }
 void YES(bool a) { cout << (a ? "YES" : "NO") << endl; }
 void Yes(bool a) { cout << (a ? "Yes" : "No") << endl; }
 
-// neighbors
-const vector<int> DX = {1, 0, -1, 0, 1, -1, 1, -1};
-const vector<int> DY = {0, 1, 0, -1, 1, -1, -1, 1};
+#include "neighbors.hpp"
+#include "binary_search.hpp"
 
 // power of ten
 const vector<i128> TEN = {

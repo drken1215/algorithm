@@ -1,10 +1,9 @@
 #define PROBLEM "https://atcoder.jp/contests/practice2/tasks/practice2_a"
-#define IGNORE
 
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "DataStructure/UnionFind.hpp"
+#include "union_find.hpp"
     
 int main() {
     int N, Q;

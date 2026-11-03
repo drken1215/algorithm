@@ -197,26 +197,26 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 離散凸性 (DISCRETE CONVEXITY)
 離散凸性に関するアルゴリズムです。
 
-- (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_all.cpp)
+- (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_all.cpp)
 - (★★★★) マトロイド 全部乗せ
 
 ## 区分線形凸関数の活用 1： Slope Trick
 
-- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/slope_trick.cpp)
-- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/dual_slope_trick.cpp)
-- (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/super_slope_trick.cpp)
+- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
+- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
+- (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/Optimization/super_slope_trick.cpp)
 
 ## 区分線形凸関数の活用 2： Min Plus Convolution
 
-- (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/min_plus_convolution_convex_convex.cpp)
+- (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/Optimization/min_plus_convolution_convex_convex.cpp)
 - (★★★★) Min Plus Convolution (凸と任意)
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
 
 ## 区分線形凸関数の活用 3： Convex Hull Trick
 
-- (★★★☆) [Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_slope_monotone.cpp)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/convex_hull_trick_by_Li_Chao_Tree.cpp)
+- (★★★☆) [Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_by_Li_Chao_Tree.cpp)
 - (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
 - (★★★★) 一般関数 Convex Hull Trick (関数挿入順：単調, by Deque, in O(log N))
 - (★★★★) 2D Line container (max(ax + by) クエリ)
@@ -225,33 +225,33 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★★) Extended Li Chao Tree (線分挿入対応, 区間一次式加算対応)
 - (★★★★) Extended Li Chao Tree (線分挿入対応, 区間最小値取得対応)
-- (★★★★) [General Li Chao Tree (一般関数対応)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Li_Chao_tree_to_psc.cpp)
+- (★★★★) [General Li Chao Tree (一般関数対応)](https://github.com/drken1215/algorithm/blob/master/Optimization/Li_Chao_tree_to_psc.cpp)
 - (★★★★) Extended General Li Chao Tree (単調な一般関数対応, 区間最小値取得対応)
 
 ## 行最小値問題・単一始点最短路問題
 
-- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/monotone_minima.cpp)
-- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/monotone_minima_DD.cpp)
-- (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK.cpp)
-- (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/SMAWK_DD.cpp)
-- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/shortest_path_sliding.cpp)
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
+- (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK.cpp)
+- (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/SMAWK_DD.cpp)
+- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
 
 ## Monge 単一始点最短路問題
 
-- (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_shortest_path_by_CHT.cpp)
-- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_sliding_noshi_LARSCH.cpp)
-- (★★★★) [anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_shortest_path_by_CHT.cpp)
-- (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/anti_Monge_SMAWK_DD.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_shortest_path_by_CHT.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
+- (★★★★) [anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/anti_Monge_shortest_path_by_CHT.cpp)
+- (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/anti_Monge_SMAWK_DD.cpp)
 
 ## その他 Monge 性, L 凸性
 
-- (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_checker.cpp)
-- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_min_plus_composition.cpp)
-- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Knuth_Yao.cpp)
-- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_enum_d_shortest_path.cpp)
-- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/DiscreteConvexity/Monge_Alien_DP.cpp)
+- (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_checker.cpp)
+- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_min_plus_composition.cpp)
+- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Knuth_Yao.cpp)
+- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 
 ## さまざまなマトロイド
 
@@ -768,32 +768,32 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな全探索法
 
-- (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Search/next_combination.cpp)
-- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Search/subset_enumeration.cpp)
+- (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/next_combination.cpp)
+- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
 - (★★☆☆) 上位集合の列挙
-- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Search/sudoku.cpp)
+- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Optimization/sudoku.cpp)
 
 ## さまざまな動的計画法
 
-- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Search/knapsack.cpp)
-- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Search/longest_increasing_sequence.cpp)
-- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/Search/lcs.cpp)
-- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Search/edit_distance.cpp)
-- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Search/largest_square_in_grid.cpp)
-- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Search/histogram.cpp)
+- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Optimization/knapsack.cpp)
+- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Optimization/longest_increasing_sequence.cpp)
+- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/Optimization/lcs.cpp)
+- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Optimization/edit_distance.cpp)
+- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Optimization/largest_square_in_grid.cpp)
+- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
 - (★★★★) 最適二分探索木 (Hu-Tucker 法, in O(N log N))
 
 ## さまざまな最適化技法
 
-- (★☆☆☆) [二分探索](https://drken1215.github.io/algorithm/Search/binary_search.hpp.html)
-- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Search/Lagrange_relaxation_Aliens.cpp)
-- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Search/simplex_method.cpp)
+- (★☆☆☆) [二分探索](https://drken1215.github.io/algorithm/Optimization/binary_search.hpp.html)
+- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp)
+- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
 - (★★★★) 分枝限定法
 
 ## SAT
 
-- (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/Search/two_sat.cpp)
+- (★★★☆) [2-SAT](https://github.com/drken1215/algorithm/blob/master/Optimization/two_sat.cpp)
 - (★★★★) SAT Solver
 
 ## ヒューリスティック探索
@@ -941,13 +941,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★★) [Fast IO](https://github.com/drken1215/algorithm/blob/master/Others/fast_io.cpp)
 
-## グリッド
+## 典型処理
 
-- (★☆☆☆) [グリッドの 4 近傍, 8 近傍](https://github.com/drken1215/algorithm/blob/master/Others/grid_neighbors.cpp)
-- (★☆☆☆) [ハニカムの 6 近傍](https://github.com/drken1215/algorithm/blob/master/Others/honeycomb_neighbors.cpp)
-
-## 不等式の処理
-
+- (★☆☆☆) [グリッドの 4 近傍, 8 近傍, ハニカムの 6 近傍](https://drken1215.github.io/algorithm/Others/neighbors.hpp.html)
 - (★☆☆☆) [負数にも対応した floor, ceil](https://github.com/drken1215/algorithm/blob/master/Others/floor_ceil.cpp)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://github.com/drken1215/algorithm/blob/master/Others/kth_root.cpp)
 
@@ -978,8 +974,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 # コードテンプレート
 
-- [AtCoder 用のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_atcoder.cpp)
-- [最小限のコードテンプレート](https://github.com/drken1215/algorithm/blob/master/template_minimum.cpp)
+- [AtCoder 用のコードテンプレート](https://drken1215.github.io/algorithm/template.hpp.html)
 
 
 　
