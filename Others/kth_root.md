@@ -5,12 +5,17 @@ documentation_of: ./kth_root.hpp
 
 ## 概要
 
-$x^K \leq N$ を満たす最大の整数 x を返す
+$x^K \leq N$ を満たす最大の整数 $x$ を返す
+
+## 使い方
+
+- `kth_root(N, K)`
 
 ## 制約
 
 - $N < 2^{64}$
 - $K \leq 64$
+- $N, K$ は整数
 
 ## 問題例
 

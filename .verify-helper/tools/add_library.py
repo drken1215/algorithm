@@ -48,6 +48,14 @@ def add_library(lib):
         "\n"
         "## 概要\n"
         "\n"
+        "## 使い方\n"
+        "\n"
+        "## 制約\n"
+        "\n"
+        "## 問題例\n"
+        "\n"
+        "## 参考文献\n"
+        "\n"
     )
 
     hpp.write_text(hpp_content, encoding="utf-8")

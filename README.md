@@ -15,9 +15,9 @@
 |**[FLOW](#flow)**|フローに関するアルゴリズム|Dinic 法など|
 |**[GEOMETRY](#ge)**|計算幾何アルゴリズム|円の交点など|
 |**[GRAPH](#gt)**|グラフに関するアルゴリズム|強連結成分分解など|
-|**[MATH:LINEAR ALGEBRA](#mla)**|線形代数のアルゴリズム|行列計算など|
-|**[MATH:COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
-|**[MATH:NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解など|
+|**[MATH : LINEAR ALGEBRA](#mla)**|線形代数のアルゴリズム|行列計算など|
+|**[MATH : COMBINATORICS](#mc)**|組合せ論的アルゴリズム|modint、Nim など|
+|**[MATH : NUMBER THEORY](#mmt)**|整数論的アルゴリズム|素因数分解など|
 |**[OPTIMIZATION : SEARCH](#search)**|探索ベースの最適化アルゴリズム|二分探索など|
 |**[OPTIMIZATION : CONVEXITY](#convex)**|離散凸性に関するアルゴリズム|slope trick など|
 |**[POLYNOMIAL](#fps)**|FPS や多項式のアルゴリズム|多項式補間、FPS 合成など|
@@ -32,7 +32,7 @@
 - (★★★☆)：中堅典型、NoviSteps グレード基準で 2D, 3D 相当
 - (★★★★)：高度典型、NoviSteps グレード基準で 4D 以上相当
 
-NoviSteps グレード基準：https://docs.google.com/spreadsheets/d/1GJbTRRBsoBaY-CXIr3dIXmxkwacV4nHOTOIMCmo__Ug
+[NoviSteps グレード基準](https://docs.google.com/spreadsheets/d/1GJbTRRBsoBaY-CXIr3dIXmxkwacV4nHOTOIMCmo__Ug)
 
 
 
@@ -43,10 +43,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Union-Find
 
-- (★☆☆☆) [Union-Find (union by size)](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)
+- (★☆☆☆) [Union-Find (union by size, 列挙可能)](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
 - (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
-- (★★★☆) [列挙可能 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_enumerable.cpp)
 - (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
 
