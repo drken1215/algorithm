@@ -1,6 +1,6 @@
 ---
-title: UnionFind
-documentation_of: ./UnionFind.hpp
+title: union_find
+documentation_of: ./union_find.hpp
 ---
 
 ## 概要
@@ -10,7 +10,7 @@ Union-Find
 - union by size + 経路圧縮による実装
 - `nex` を用いて、x を含むグループを取り出す関数 `group(x)` を備える (通称：列挙可能 Union-Find)
 
-## 使い方
+## 仕様
 
 - `same(x, y)`: x と y が同じグループにいるか, 計算量はならし O(α(N))
 - `merge(x, y)`: x と y を同じグループにする, 計算量はならし O(α(N))

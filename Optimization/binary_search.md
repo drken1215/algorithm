@@ -8,8 +8,6 @@ documentation_of: ./binary_search.hpp
 めぐる式二分探索ㅤ
 |ok - ng| = 1 となるような (ng, ok) を見つけて、そのときの ok を返す
 
-## 使い方
-
 - `binary_search_01(ng, ok, f)`
 - `binary_search_10(ok, ng, f)`
 
