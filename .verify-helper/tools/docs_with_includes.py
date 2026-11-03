@@ -52,10 +52,14 @@ def main():
     CPlusPlusLanguage.bundle = bundle_with_includes
 
     try:
+        # 検証状態の読み込みだけ逐次実行する
+        from onlinejudge_verify.marker import get_verification_marker
+        get_verification_marker(jobs=None)
+
+        # ドキュメント生成は従来どおり
         generate_docs(jobs=args.jobs)
     finally:
         CPlusPlusLanguage.bundle = original_bundle
-
 
 if __name__ == "__main__":
     main()

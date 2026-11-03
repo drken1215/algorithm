@@ -941,8 +941,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 典型処理
 
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍, ハニカムの 6 近傍](https://drken1215.github.io/algorithm/Others/neighbors.hpp.html)
-- (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/DataStructure/floor_ceil.hpp.html)
-- (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/DataStructure/kth_root.hpp.html)
+- (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/Others/floor_ceil.hpp.html)
+- (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/Others/kth_root.hpp.html)
 
 ## ソート
 
