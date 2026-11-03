@@ -100,7 +100,7 @@ Manual verification files:
       {% if is_manual %}
         <li>
           <span style="display: inline-block; width: 2em; text-align: center;">
-            ⚠️
+            {{ item.icon }}
           </span><a href="{{ item.path | absolute_url }}">{{ item.title }} (manual)</a>
         </li>
       {% endif %}
