@@ -56,6 +56,8 @@ jobs:
           python3 .verify-helper/tools/setup_includes.py --cxx g++
 
       - name: Verify libraries
+        env:
+          YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
         run: oj-verify run -j 2
 
       - name: Generate documentation

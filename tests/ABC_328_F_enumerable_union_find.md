@@ -3,8 +3,7 @@ title: 列挙可能 Union-Find の例 (ABC 328 F)
 documentation_of: ./ABC_328_F_enumerable_union_find.cpp
 ---
 
-## 列挙可能 Union-Find の概要
-
+## 概要
 「列挙可能 Union-Find」の使用例である。
 
 "[union_find.hpp](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)" に列挙機能を搭載している。
@@ -13,8 +12,8 @@ documentation_of: ./ABC_328_F_enumerable_union_find.cpp
 - `nex` を用いて、`x` を含むグループを取り出す関数 `group(x)` を備える (通称：列挙可能 Union-Find)
 
 
-## ABC 328 F の概要
-$𝑁$ 個の整数値 $𝑥_1,𝑥/2, \dots, 𝑥_𝑁$ に関する制約条件が $𝑄$ 個与えられる。
+## ABC 328 F の問題概要
+$𝑁$ 個の整数値 $𝑥_1, 𝑥_2, \dots, 𝑥_𝑁$ に関する制約条件が $𝑄$ 個与えられる。
 
 $𝑖$ 番目の制約条件では 3 つの整数の組 $(𝑎,𝑏,𝑑)$ が与えられ、$𝑥_𝑎 − 𝑥_𝑏 = 𝑑$ という形をしている。ここで、次のクエリに答えよ。
 

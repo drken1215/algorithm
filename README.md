@@ -686,7 +686,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★★★) Extended Li Chao Tree (線分挿入対応, 区間一次式加算対応)
 - (★★★★) Extended Li Chao Tree (線分挿入対応, 区間最小値取得対応)
-- (★★★★) [General Li Chao Tree (一般関数対応)](https://github.com/drken1215/algorithm/blob/master/Optimization/Li_Chao_tree_to_psc.cpp)
+- (★★★★) [General Li Chao Tree (一般関数対応)](https://drken1215.github.io/algorithm/Optimization/general_li_chao_tree.hpp.html)
 - (★★★★) Extended General Li Chao Tree (単調な一般関数対応, 区間最小値取得対応)
 
 ## 行最小値問題・単一始点最短路問題
@@ -699,7 +699,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Monge 単一始点最短路問題
 
-- (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_shortest_path_by_CHT.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/monge_shortest_path_by_cht.hpp.html)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_LARSCH.cpp)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)

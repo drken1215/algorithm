@@ -1,6 +1,5 @@
 #define PROBLEM "https://atcoder.jp/contests/past202203-open/tasks/past202203_h"
 
-#include "template.hpp"
 #include "union_find.hpp"
 
 int main() {
