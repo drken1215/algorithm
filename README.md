@@ -46,7 +46,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [Union-Find (union by size, 列挙可能)](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
 - (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
-- (★★☆☆) [列挙可能 Union-Find](https://drken1215.github.io/algorithm/tests/ABC_328_F.cpp)
+- (★★☆☆) [列挙可能 Union-Find](https://drken1215.github.io/algorithm/tests/ABC_328_F_enumerable_union_find.cpp)
 - (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
 
