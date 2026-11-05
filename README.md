@@ -932,17 +932,21 @@ Union-Find など、基礎的なデータ構造の実装です。
 # その他 (OTHERS)
 その他のアルゴリズムです
 
-## 入出力
+- (★★★☆) [AtCoder Library 全展開コード (ペースト用)](https://drken1215.github.io/algorithm/tests/acl.cpp)
 
-- (★☆☆☆) [STL コンテナの io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_containers_stream.hpp.html)
-- (★★★★) [Fast IO](https://drken1215.github.io/algorithm/Others/fast_io.hpp.html)
+## utility
 
-## 典型処理
-
+- (★☆☆☆) [競プロ用 便利マクロ](https://drken1215.github.io/algorithm/Others/macro.hpp.html)
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍, ハニカムの 6 近傍](https://drken1215.github.io/algorithm/Others/neighbors.hpp.html)
 - (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/Others/floor_ceil.hpp.html)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/Others/kth_root.hpp.html)
-- (★★☆☆) [128 ビット整数](https://drken1215.github.io/algorithm/Others/int128.hpp_html)
+- (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
+
+## 入出力
+
+- (★☆☆☆) [STL コンテナの io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_containers_stream.hpp.html)
+- (★★☆☆) [128 ビット整数の io ストリーム](https://drken1215.github.io/algorithm/Others/int128.hpp_html)
+- (★★★★) [Fast IO](https://drken1215.github.io/algorithm/Others/fast_io.hpp.html)
 
 ## ソート
 
@@ -959,9 +963,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他
 
-- (★★★★) [ACL](https://github.com/drken1215/algorithm/blob/master/Others/acl.cpp)
 - (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
-- (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
 - (★★☆☆) [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
 
