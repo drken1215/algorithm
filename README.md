@@ -946,16 +946,16 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## ソート
 
-- (★☆☆☆) [クイックソート](https://github.com/drken1215/algorithm/blob/master/Others/quick_sort.cpp)
-- (★☆☆☆) [マージソート](https://github.com/drken1215/algorithm/blob/master/Others/merge_sort.cpp)
-- (★☆☆☆) [ヒープソート](https://github.com/drken1215/algorithm/blob/master/Others/heap_sort.cpp)
-- (★☆☆☆) [計数ソート](https://github.com/drken1215/algorithm/blob/master/Others/counting_sort.cpp)
-- (★☆☆☆) [挿入ソート](https://github.com/drken1215/algorithm/blob/master/Others/insertion_sort.cpp)
-- (★☆☆☆) [選択ソート](https://github.com/drken1215/algorithm/blob/master/Others/selection_sort.cpp)
-- (★☆☆☆) [バブルソート](https://github.com/drken1215/algorithm/blob/master/Others/bubble_sort.cpp)
-- (★☆☆☆) [シェルソート](https://github.com/drken1215/algorithm/blob/master/Others/shell_sort.cpp)
-- (★☆☆☆) [コムソート](https://github.com/drken1215/algorithm/blob/master/Others/comb_sort.cpp)
-- (★☆☆☆) [ボゴソート](https://github.com/drken1215/algorithm/blob/master/Others/bogo_sort.cpp)
+- (★☆☆☆) [クイックソート](https://drken1215.github.io/algorithm/tests/Others/sort/quick_sort.cpp)
+- (★☆☆☆) [マージソート](https://drken1215.github.io/algorithm/tests/Others/sort/merge_sort.cpp)
+- (★☆☆☆) [ヒープソート](https://drken1215.github.io/algorithm/tests/Others/sort/heap_sort.cpp)
+- (★☆☆☆) [計数ソート](https://drken1215.github.io/algorithm/tests/Others/sort/counting_sort.cpp)
+- (★☆☆☆) [挿入ソート](https://drken1215.github.io/algorithm/tests/Others/sort/insertion_sort.cpp)
+- (★☆☆☆) [選択ソート](https://drken1215.github.io/algorithm/tests/Others/sort/selection_sort.cpp)
+- (★☆☆☆) [バブルソート](https://drken1215.github.io/algorithm/tests/Others/sort/bubble_sort.cpp)
+- (★☆☆☆) [シェルソート](https://drken1215.github.io/algorithm/tests/Others/sort/shell_sort.cpp)
+- (★☆☆☆) [コムソート](https://drken1215.github.io/algorithm/tests/Others/sort/comb_sort.cpp)
+- (★☆☆☆) [ボゴソート](https://drken1215.github.io/algorithm/tests/Others/sort/bogo_sort.cpp)
 
 ## その他
 

@@ -5,7 +5,7 @@ documentation_of: ./binary_search.hpp
 
 ## 概要
 
-めぐる式二分探索ㅤ
+めぐる式二分探索。ㅤ
 |ok - ng| = 1 となるような (ng, ok) を見つけて、そのときの ok を返す
 
 - `binary_search_01(ng, ok, f)`
