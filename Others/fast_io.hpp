@@ -1,25 +1,31 @@
-//
-// Fast IO
-//
-// references:
-//   maspy: [Library Checker] Many A + B
-//     https://maspypy.com/library-checker-many-a-b
-//
-//   Al.Cash: Fast and furious C++ I/O
-//     https://codeforces.com/blog/entry/45835
-//
-// verified:
-//   Yosupo Library Checker - Many A + B
-//     https://judge.yosupo.jp/problem/many_aplusb
-//
-
-
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
+#pragma once
 #include <bits/stdc++.h>
+#include <cassert>
 using namespace std;
 
+#include "int128.hpp"
 
+// 128 ビット整数に対応する
+template<class T>
+concept fast_unsigned_integral =
+    std::unsigned_integral<T> || std::is_same_v<T, __uint128_t>;
+
+template<class T>
+concept fast_signed_integral =
+    std::signed_integral<T> || std::is_same_v<T, __int128_t>;
+
+template<class T>
+struct fast_make_unsigned {
+    using type = std::make_unsigned_t<T>;
+};
+template<>
+struct fast_make_unsigned<__int128_t> {
+    using type = __uint128_t;
+};
+template<class T>
+using fast_make_unsigned_t = typename fast_make_unsigned<T>::type;
+
+// Reader
 struct FastRead {
     static constexpr int BUF_SIZE = 1 << 17;
 
@@ -40,7 +46,7 @@ private:
     }
     
     // parser
-    template<typename T> void parse(T &x) {
+    template<fast_unsigned_integral T> void parse(T &x) {
         common_type_t<T, uint64_t> x2 = 0;
         while (true) {
             uint64_t v;
@@ -94,15 +100,15 @@ public:
     FastRead &operator = (const FastRead&) = delete;
     
     // operators
-    template<unsigned_integral T> void operator () (T &x) {
+    template<fast_unsigned_integral T> void operator () (T &x) {
         skip_space();
         read<64>();
         parse(x);
     }
-    template<signed_integral T> void operator () (T &x) {
+    template<fast_signed_integral T> void operator () (T &x) {
         skip_space();
         read<64>();
-        make_unsigned_t<T> u;
+        fast_make_unsigned_t<T> u;
         if (*ptr_ == '-') {
             ++ptr_;
             parse(u);
@@ -134,6 +140,7 @@ public:
     template<class T> FastRead& operator >> (T &x) { (*this)(x); return *this; }
 };
 
+// Writer
 class FastWrite {
     static constexpr int BUF_SIZE = 1 << 17;
 
@@ -189,18 +196,18 @@ private:
             w4<N - 4>(x % POW10<uint64_t>[N - 4]);
         }
     }
-    template<int N> void write(uint64_t x) {
+    template<int N> void write_uint64(uint64_t x) {
         if constexpr (N < DIGITS<uint64_t>) {
             if (POW10<uint64_t>[N] <= x) {
-                write<N + 4>(x);
+                write_uint64<N + 4>(x);
                 return;
             }
         }
         le4(x / POW10<uint64_t>[N - 4]);
         w4<N - 4>(x % POW10<uint64_t>[N - 4]);
     }
-    template<typename T> void write(T x) {
-        write<4>(x);
+    template<fast_unsigned_integral T> void write(T x) {
+        write_uint64<4>(static_cast<uint64_t>(x));
     }
     void write(__uint128_t x) {
         if (x < POW10<__uint128_t>[16]) {
@@ -230,13 +237,13 @@ public:
     FastWrite& operator = (const FastWrite&) = delete;
     
     // operators
-    template<unsigned_integral T> void operator () (T x) {
+    template<fast_unsigned_integral T> void operator () (T x) {
         flush<DIGITS<T>>();
         write(x);
     }
-    template<signed_integral T> void operator () (T x) {
+    template<fast_signed_integral T> void operator () (T x) {
         flush<1 + DIGITS<T>>();
-        using U = make_unsigned_t<T>;
+        using U = fast_make_unsigned_t<T>;
         const U u = x;
         if (x < 0) {
             *ptr_++ = '-';
@@ -274,27 +281,3 @@ public:
     }
     template<class T> FastWrite& operator << (T x) { (*this)(x); return *this; }
 };
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-// Yosupo Library Checker - Many A + B
-void Yosupo_A_puls_B() {
-    FastRead Read;
-    FastWrite Write;
-    
-    int T;
-    Read(T);
-    for (int t = 0; t < T; ++t) {
-        long long a, b;
-        Read(a, b);
-        Write.ln(a + b);
-    }
-}
-
-
-int main() {
-    Yosupo_A_puls_B();
-}

@@ -1,6 +1,6 @@
 ---
-title: io_for_contests
-documentation_of: ./io_for_contests.hpp
+title: stl_containers_stream
+documentation_of: ./stl_containers_stream.hpp
 ---
 
 ## 概要

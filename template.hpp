@@ -41,11 +41,6 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 #define SE second
 #define ALL(x) x.begin(), x.end()
 
-#include "io_for_contests.hpp"
-#include "neighbors.hpp"
-#include "floor_ceil.hpp"
-#include "binary_search.hpp"
-
 // power of ten
 const vector<i128> TEN = {
     1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000,
@@ -111,3 +106,8 @@ vector<T> merge_and_unique(const vector<T> &a, const Ts &...z) {
     res.erase(unique(res.begin(), res.end()), res.end());
     return res;
 }
+
+#include "io_for_contests.hpp"
+#include "neighbors.hpp"
+#include "floor_ceil.hpp"
+#include "binary_search.hpp"

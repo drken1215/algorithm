@@ -579,7 +579,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 多倍長整数
 
-- (★★☆☆) [128 ビット整数](https://github.com/drken1215/algorithm/blob/master/Math/int128.cpp)
 - (★★★☆) [多倍長整数 (ナイーブ)](https://github.com/drken1215/algorithm/blob/master/Math/big_integer.cpp)
 - (★★★★) 多倍長整数 (高速)
 - (★★★★) 多倍長整数の分数
@@ -935,14 +934,15 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 入出力
 
-- (★☆☆☆) [各種 io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/io_for_contests.hpp.html)
-- (★★★★) [Fast IO](https://github.com/drken1215/algorithm/blob/master/Others/fast_io.cpp)
+- (★☆☆☆) [STL コンテナの io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_containers_stream.hpp.html)
+- (★★★★) [Fast IO](https://drken1215.github.io/algorithm/Others/fast_io.hpp.html)
 
 ## 典型処理
 
 - (★☆☆☆) [グリッドの 4 近傍, 8 近傍, ハニカムの 6 近傍](https://drken1215.github.io/algorithm/Others/neighbors.hpp.html)
 - (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/Others/floor_ceil.hpp.html)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/Others/kth_root.hpp.html)
+- (★★☆☆) [128 ビット整数](https://drken1215.github.io/algorithm/Others/int128.hpp_html)
 
 ## ソート
 

@@ -3,7 +3,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "template.hpp"
 #include "monge_shortest_path_by_cht.hpp"
 
 // yukicoder No.705 ゴミ拾い Hard
