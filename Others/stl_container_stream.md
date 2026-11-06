@@ -1,6 +1,6 @@
 ---
 title: stl_containers_stream
-documentation_of: ./stl_containers_stream.hpp
+documentation_of: ./stl_container_stream.hpp
 ---
 
 ## 概要
