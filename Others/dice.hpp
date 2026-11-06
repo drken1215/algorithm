@@ -3,8 +3,6 @@
 #include <cassert>
 using namespace std;
 
-#include "neighbor.hpp"
-
 #define roll_swap(x, a, b, c, d) swap(x.a, x.b), swap(x.b, x.c), swap(x.c, x.d);
 struct Dice {
     int top, front, right, left, back, bottom;
