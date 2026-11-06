@@ -1,5 +1,5 @@
 ---
-title: floor_ceil
+title: 負数にも対応した floor, ceil
 documentation_of: ./floor_ceil.hpp
 ---
 

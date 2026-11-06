@@ -1,5 +1,5 @@
 ---
-title: fast_io
+title: Fast IO
 documentation_of: ./fast_io.hpp
 ---
 

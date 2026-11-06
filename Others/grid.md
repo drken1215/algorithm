@@ -1,5 +1,5 @@
 ---
-title: grid
+title: 正方グリッドの 4 近傍, 8 近傍, ハニカムグリッドの 6 近傍
 documentation_of: ./grid.hpp
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: bit_utility
+title: ビット演算を用いたさまざまな処理群
 documentation_of: ./bit_utility.hpp
 ---
 

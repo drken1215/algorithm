@@ -1,12 +1,9 @@
 ---
-title: binary_search
+title: 二分探索法
 documentation_of: ./binary_search.hpp
 ---
 
 ## 概要
-
-めぐる式二分探索。
-
 |ok - ng| = 1 となるような (ng, ok) を見つけて、そのときの ok を返す
 
 - `binary_search_01(ng, ok, f)`

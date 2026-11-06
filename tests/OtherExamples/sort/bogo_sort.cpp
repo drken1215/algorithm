@@ -1,11 +1,3 @@
-//
-// ボゴソート
-//
-// cf.
-//   ソートを極める！ 〜 なぜソートを学ぶのか 〜
-//     https://qiita.com/drken/items/44c60118ab3703f7727f
-//
-
 #include <iostream>
 #include <vector>
 #include <cstdlib>

@@ -49,43 +49,23 @@ def find_sources():
 
 
 def parse_source_url(url):
-    """リンクからライブラリの相対パスを取得する。"""
+    """
+    URL のドメインやディレクトリ構成に関係なく、
+    最後のファイル名を使って検索する。
+    """
     parts = urlsplit(url)
-    base = f"{parts.scheme}://{parts.netloc}{parts.path}"
 
-    # oj-helper の GitHub Pages
-    if base.startswith(PAGES_BASE):
-        path = unquote(base[len(PAGES_BASE):])
+    path = unquote(parts.path)
 
-        # .html 付き・なしの両方に対応
-        if path.endswith(".html"):
-            path = path[:-5]
+    # oj-helper の .html ページにも対応
+    if path.endswith(".hpp.html") or path.endswith(".cpp.html"):
+        path = path[:-5]
 
-        return path
+    # .hpp / .cpp 以外のリンクは対象外
+    if not path.endswith((".hpp", ".cpp")):
+        return None
 
-    # GitHub のソースコード
-    if base.startswith(GITHUB_PREFIX):
-        path = base[len(GITHUB_PREFIX):]
-
-        if "/" not in path:
-            return None
-
-        branch, path = path.split("/", 1)
-
-        if branch not in ("master", "main"):
-            return None
-
-        return unquote(path)
-
-    # 相対パスのリンク
-    # 例: macro.hpp, Others/macro.hpp
-    if not parts.scheme and not parts.netloc:
-        if parts.path.startswith("/"):
-            return None
-        return unquote(parts.path)
-
-    # 外部サイトは変更しない
-    return None
+    return path
 
 
 def choose_path(old_path, index):
@@ -96,26 +76,21 @@ def choose_path(old_path, index):
     if not basename.endswith((".hpp", ".cpp")):
         return None, None
 
-    # 通常の .cpp は tests/ 以下だけ対象にする
-    if basename.endswith(".cpp") and not (
-        old_path.startswith("tests/")
-        or basename.endswith(".test.cpp")
-    ):
-        return None, None
-
     candidates = index.get(basename, [])
 
+    # 元のパスが現在も存在する場合
     if old_path in candidates:
         return old_path, None
 
+    # ファイル名が一意なら、そのファイルを使用
     if len(candidates) == 1:
         return candidates[0], None
 
+    # 同名ファイルが複数ある場合は変更しない
     if len(candidates) > 1:
         return None, f"Ambiguous: {old_path} -> {candidates}"
 
     return None, None
-
 
 
 def rewrite_url(url, index):

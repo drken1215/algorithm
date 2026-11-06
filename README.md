@@ -610,7 +610,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★☆☆) [next_combination (nCk 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/next_combination.hpp.html)
 - (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/prev_subset.hpp.html)
 - (★★☆☆) 上位集合の列挙
-- (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Optimization/sudoku.cpp)
 
 ## さまざまな動的計画法
 
@@ -940,14 +939,16 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [正方グリッドの 4 近傍, 8 近傍, ハニカムグリッドの 6 近傍](https://drken1215.github.io/algorithm/Others/grid.hpp.html)
 - (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/Others/floor_ceil.hpp.html)
 - (★☆☆☆) [座標圧縮](https://drken1215.github.io/algorithm/Others/coordinate_compression.hpp.html)
+- (★★☆☆) [10^n](https://drken1215.github.io/algorithm/Others/power_of_ten.hpp.html)
+- (★★☆☆) [ビット演算を用いたさまざまな処理群](https://drken1215.github.io/algorithm/Others/bit_utility.hpp.html)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/Others/kth_root.hpp.html)
 - (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
 - (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
 
 ## 入出力
 
-- (★☆☆☆) [STL コンテナの io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_containers_stream.hpp.html)
-- (★★☆☆) [128 ビット整数の io ストリーム](https://drken1215.github.io/algorithm/Others/int128.hpp_html)
+- (★☆☆☆) [STL コンテナの io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_container_stream.hpp.html)
+- (★★☆☆) [128 ビット整数の io ストリーム](https://drken1215.github.io/algorithm/Others/int128.hpp.html)
 - (★★★★) [Fast IO](https://drken1215.github.io/algorithm/Others/fast_io.hpp.html)
 
 ## ソート
@@ -967,7 +968,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★★☆☆) [サイコロ](https://drken1215.github.io/algorithm/Others/dice.hpp.html)
 - (★★☆☆) [曜日](https://drken1215.github.io/algorithm/Others/day_of_the_week.hpp.html)
-
+- (★★☆☆) [数独ソルバー](https://drken1215.github.io/algorithm/tests/OtherExamples/sudoku/sudoku.cpp)
 
 
 　

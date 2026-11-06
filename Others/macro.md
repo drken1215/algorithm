@@ -1,5 +1,5 @@
 ---
-title: macro
+title: 競プロ用 便利マクロ
 documentation_of: ./macro.hpp
 ---
 

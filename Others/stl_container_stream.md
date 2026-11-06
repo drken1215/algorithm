@@ -1,5 +1,5 @@
 ---
-title: stl_containers_stream
+title: STL コンテナの io ストリーム (vector, set など)]
 documentation_of: ./stl_container_stream.hpp
 ---
 

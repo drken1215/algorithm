@@ -1,5 +1,5 @@
 ---
-title: kth_root
+title: x^K <= N となる最大の整数 x
 documentation_of: ./kth_root.hpp
 ---
 

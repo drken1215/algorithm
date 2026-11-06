@@ -1,5 +1,5 @@
 ---
-title: union_find
+title: Union-Find
 documentation_of: ./union_find.hpp
 ---
 
