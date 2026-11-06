@@ -1,0 +1,23 @@
+---
+title: coordinate_compression
+documentation_of: ./coordinate_compression.hpp
+---
+
+## 概要
+たとえば、数列
+
+$A = (8, 100, 33, 12, 6, 33, 1211)$
+
+に対しては、
+
+$(1, 4, 3, 2, 0, 3, 5)$
+
+のように、小さい順に $0, 1, 2, \dots, $ を割り当てたものを返す。
+同じ値がある場合には、それらを「一つの順位を占めるもの」として考える。
+
+## 計算量
+$O(N \log N)$
+
+## 参考文献
+
+- けんちょん: [座標圧縮 (座圧)](https://drken1215.hatenablog.com/entry/2021/08/09/235400)

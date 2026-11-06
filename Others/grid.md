@@ -1,6 +1,6 @@
 ---
-title: neighbors
-documentation_of: ./neighbors.hpp
+title: grid
+documentation_of: ./grid.hpp
 ---
 
 ## 概要

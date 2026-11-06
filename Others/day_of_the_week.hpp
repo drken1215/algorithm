@@ -1,6 +1,7 @@
-#include <iostream>
+#pragma once
+#include <bits/stdc++.h>
+#include <cassert>
 using namespace std;
-
 
 // グレゴリオ歴を求める
 // グレゴリオ歴におけるユリウス日
@@ -21,14 +22,4 @@ int JulianDay(int y, int m, int d) {
 // グレゴリオ歴の下での曜日（日:1、月:2、火:3、水:4、木:5、金:6、土:0）
 int dayWeek(int y, int m, int d) {
     return (GregorianDay(y, m, d) + 5) % 7;
-}
-
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-int main() {
-    cout << dayWeek(2019, 11, 27) << endl;
 }

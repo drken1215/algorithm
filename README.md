@@ -46,7 +46,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [Union-Find (union by size, 列挙可能)](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)
 - (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
 - (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
-- (★★☆☆) [列挙可能 Union-Find](https://drken1215.github.io/algorithm/tests/ABC_328_F_enumerable_union_find.cpp)
+- (★★☆☆) [列挙可能 Union-Find](https://drken1215.github.io/algorithm/tests/AtCoder/ABC_328_F_enumerable_union_find.cpp)
 - (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
 - (★★★☆) [部分永続 Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/partially_persistent_union_find.cpp)
 
@@ -932,15 +932,17 @@ Union-Find など、基礎的なデータ構造の実装です。
 # その他 (OTHERS)
 その他のアルゴリズムです
 
-- (★★★☆) [AtCoder Library 全展開コード (ペースト用)](https://drken1215.github.io/algorithm/tests/acl.cpp)
+- (★★★☆) [AtCoder Library 全展開コード (ペースト用)](https://drken1215.github.io/algorithm/tests/OtherExamples/acl.cpp)
 
 ## utility
 
 - (★☆☆☆) [競プロ用 便利マクロ](https://drken1215.github.io/algorithm/Others/macro.hpp.html)
-- (★☆☆☆) [グリッドの 4 近傍, 8 近傍, ハニカムの 6 近傍](https://drken1215.github.io/algorithm/Others/neighbors.hpp.html)
+- (★☆☆☆) [正方グリッドの 4 近傍, 8 近傍, ハニカムグリッドの 6 近傍](https://drken1215.github.io/algorithm/Others/grid.hpp.html)
 - (★☆☆☆) [負数にも対応した floor, ceil](https://drken1215.github.io/algorithm/Others/floor_ceil.hpp.html)
+- (★☆☆☆) [座標圧縮](https://drken1215.github.io/algorithm/Others/coordinate_compression.hpp.html)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/Others/kth_root.hpp.html)
 - (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
+- (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
 
 ## 入出力
 
@@ -950,22 +952,21 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## ソート
 
-- (★☆☆☆) [クイックソート](https://drken1215.github.io/algorithm/tests/Others/sort/quick_sort.cpp)
-- (★☆☆☆) [マージソート](https://drken1215.github.io/algorithm/tests/Others/sort/merge_sort.cpp)
-- (★☆☆☆) [ヒープソート](https://drken1215.github.io/algorithm/tests/Others/sort/heap_sort.cpp)
-- (★☆☆☆) [計数ソート](https://drken1215.github.io/algorithm/tests/Others/sort/counting_sort.cpp)
-- (★☆☆☆) [挿入ソート](https://drken1215.github.io/algorithm/tests/Others/sort/insertion_sort.cpp)
-- (★☆☆☆) [選択ソート](https://drken1215.github.io/algorithm/tests/Others/sort/selection_sort.cpp)
-- (★☆☆☆) [バブルソート](https://drken1215.github.io/algorithm/tests/Others/sort/bubble_sort.cpp)
-- (★☆☆☆) [シェルソート](https://drken1215.github.io/algorithm/tests/Others/sort/shell_sort.cpp)
-- (★☆☆☆) [コムソート](https://drken1215.github.io/algorithm/tests/Others/sort/comb_sort.cpp)
-- (★☆☆☆) [ボゴソート](https://drken1215.github.io/algorithm/tests/Others/sort/bogo_sort.cpp)
+- (★☆☆☆) [クイックソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/quick_sort.cpp)
+- (★☆☆☆) [マージソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/merge_sort.cpp)
+- (★☆☆☆) [ヒープソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/heap_sort.cpp)
+- (★☆☆☆) [計数ソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/counting_sort.cpp)
+- (★☆☆☆) [挿入ソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/insertion_sort.cpp)
+- (★☆☆☆) [選択ソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/selection_sort.cpp)
+- (★☆☆☆) [バブルソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/bubble_sort.cpp)
+- (★☆☆☆) [シェルソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/shell_sort.cpp)
+- (★☆☆☆) [コムソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/comb_sort.cpp)
+- (★☆☆☆) [ボゴソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/bogo_sort.cpp)
 
 ## その他
 
-- (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
-- (★★☆☆) [サイコロ](https://github.com/drken1215/algorithm/blob/master/Others/dice.cpp)
-- (★★☆☆) [曜日](https://github.com/drken1215/algorithm/blob/master/Others/day_of_the_week.cpp)
+- (★★☆☆) [サイコロ](https://drken1215.github.io/algorithm/Others/dice.hpp.html)
+- (★★☆☆) [曜日](https://drken1215.github.io/algorithm/Others/day_of_the_week.hpp.html)
 
 
 
