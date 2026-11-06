@@ -5,8 +5,7 @@
 リンクが付いていないものは、実装予定であることを意味します。  
 アルゴリズム系の研究開発やプログラミングコンテストへの参加といった場面で、「実装例」「ライブラリ」として使用することを想定しています。
 
-　
-# 目次
+## 目次
 
 |分類|内容|具体例|
 |---|---|---|
@@ -608,8 +607,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな全探索法
 
-- (★★☆☆) [next_combination (nCk 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/next_combination.cpp)
-- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://github.com/drken1215/algorithm/blob/master/Optimization/subset_enumeration.cpp)
+- (★★☆☆) [next_combination (nCk 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/next_combination.hpp.html)
+- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/prev_subset.hpp.html)
 - (★★☆☆) 上位集合の列挙
 - (★★☆☆) [数独ソルバー](https://github.com/drken1215/algorithm/blob/master/Optimization/sudoku.cpp)
 

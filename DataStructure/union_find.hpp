@@ -10,12 +10,12 @@ struct UnionFind {
     // constructor
     UnionFind() { }
     UnionFind(int N) : par(N, -1), nex(N) {
-        init(N);
+        iota(nex.begin(), nex.end(), 0);
     }
     void init(int N) {
         par.assign(N, -1);
         nex.resize(N);
-        for (int i = 0; i < N; ++i) nex[i] = i;
+        iota(nex.begin(), nex.end(), 0);
     }
     
     // core methods
@@ -44,8 +44,14 @@ struct UnionFind {
     
     // get group
     vector<int> group(int x) {
-        vector<int> res({x});
-        while (nex[res.back()] != x) res.push_back(nex[res.back()]);
+        vector<int> res;
+        res.reserve(size(x));
+        int v = x;
+        do {
+            res.push_back(v);
+            v = nex[v];
+        } while (v != x);
+
         return res;
     }
     vector<vector<int>> groups() {
