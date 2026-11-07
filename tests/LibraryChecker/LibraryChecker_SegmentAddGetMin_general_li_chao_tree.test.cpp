@@ -17,13 +17,13 @@ int main() {
     cin >> N >> Q;
     for (int i = 0; i < N; i++) {
         cin >> l >> r >> a >> b;
-        cht.insert_segment(l, r, make_func(a, b));
+        cht.insert_segment(make_func(a, b), l, r);
     }
     while (Q--) {
         cin >> typ;
         if (typ == 0) {
             cin >> l >> r >> a >> b;
-            cht.insert_segment(l, r, make_func(a, b));
+            cht.insert_segment(make_func(a, b), l, r);
         } else {
             cin >> p;
             auto [res, id] = cht.query(p);
