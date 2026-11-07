@@ -1,0 +1,34 @@
+---
+title: Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))
+documentation_of: ./dd_monotone_minima.hpp
+---
+
+## 概要
+Monotone Minima 法に対して、オンライン・オフライン変換を施して得られる分割統治 Monotone Minima 法。単一始点最短路問題を解く。
+
+DP が
+
+`dp[j] = min_{i < j} (dp[i] + func(i, j))`
+
+の形で表されるとする。ここで、
+
+`g(j, i) = dp[i] + func(i, j)` 
+
+が Monotone であるならば、上記の DP が分割統治 Monotone Minima 法によって、$O(N \log^{2} N)$ の計算量で DP テーブルを求めることができる。
+
+## 注意点
+
+- `func(i, j)` が Monotone であっても、`g(j, i) = dp[i] + func(i, j)` が Monotone であるとは限らない
+- `func(i, j)` が Monge であるとき、`g(j, i) = dp[i] + func(i, j)` も Monge である
+
+上記のことから、多くの場合、コストが Monge 性を満たすときに適用できるアルゴリズムであるとされる。
+
+## 問題例
+
+- [AtCoder EDPC Z - Frog 3](https://atcoder.jp/contests/dp/tasks/dp_z)
+- [Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry](https://codeforces.com/contest/319/problem/C)
+- [yukicoder No.705 ゴミ拾い Hard](https://yukicoder.me/problems/no/705)
+
+## 参考文献
+
+- tatyam: [Monge の手引き書](https://speakerdeck.com/tatyam_prime/monge-noshou-yin-shu)

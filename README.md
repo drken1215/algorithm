@@ -689,11 +689,11 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 行最小値問題・単一始点最短路問題
 
-- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima.cpp)
-- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/monotone_minima_DD.cpp)
+- (★★★☆) [Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))](https://drken1215.github.io/algorithm/Optimization/monotone_minima.hpp.html)
+- (★★★☆) [Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))](https://drken1215.github.io/algorithm/Optimization/dd_monotone_minima.hpp.html)
 - (★★★☆) [TM 行最小値問題 (SMAWK 法, in O(H + W))](https://drken1215.github.io/algorithm/Optimization/smawk.hpp.html)
 - (★★★☆) [TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/dd_smawk.hpp.html)
-- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://github.com/drken1215/algorithm/blob/master/Optimization/shortest_path_sliding.cpp)
+- (★★★★) [辺コストのスライドアクセスへの対応 (Monotone Minima OK, SMAWK NG)](https://drken1215.github.io/algorithm/tests/Codeforces/Codeforces_Round_438_Div12_F_sliding_monotone_minima.cpp)
 
 ## Monge 単一始点最短路問題
 
@@ -709,7 +709,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [Monge 性の判定 (in O(HW))](https://drken1215.github.io/algorithm/Optimization/monge_checker.hpp.html)
 - (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_min_plus_composition.hpp.html)
 - (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_knuth_yao.hpp.html)
-- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
+- (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by Monotone Minima, SMAWK 法)](https://drken1215.github.io/algorithm/Optimization/monge_enum_d_shortest_paths.hpp.html)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 
 ## さまざまなマトロイド
