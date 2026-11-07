@@ -1,5 +1,5 @@
 ---
-title: general_li_chao_tree
+title: General Li Chao Tree (一般関数対応)
 documentation_of: ./general_li_chao_tree.hpp
 ---
 

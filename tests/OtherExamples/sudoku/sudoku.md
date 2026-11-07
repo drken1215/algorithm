@@ -8,7 +8,7 @@ documentation_of: ./sudoku.cpp
 
 数独は、3 × 3 ブロックに区切られた 9 × 9 の正方形の各マスに 1 から 9 までの数値を入れるペンシルパズルです。縦・横の各列および、太線で囲まれた 3 × 3 のブロック内には、同じ数値が複数入らないようにします。
 
-<img src=https://github.com/drken1215/sudoku/blob/master/sudoku_example.png width=500mm>
+<img src=https://drken1215.github.io/algorithm/tests/OtherExamples/sudoku/sudoku_example.png width=500mm>
 
 
 ## 仕様

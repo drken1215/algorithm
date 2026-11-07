@@ -1,5 +1,5 @@
 ---
-title: monge_shortest_path_by_cht
+title: Monge 単一始点最短路問題 (by Convex Hull Trick)
 documentation_of: ./monge_shortest_path_by_cht.hpp
 ---
 
