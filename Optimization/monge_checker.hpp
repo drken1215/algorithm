@@ -1,15 +1,7 @@
-//
-// N x M 行列 f が Monge / anti-Monge であるかを判定する
-//
-// verified
-//   ABC 254 B - Mongeness
-//     https://atcoder.jp/contests/abc224/tasks/abc224_b
-//
-
-
+#pragma once
 #include <bits/stdc++.h>
+#include <cassert>
 using namespace std;
-
 
 // check whether N x M matrix f is Monge or not, in O(NM)
 template<class FUNC> bool is_monge
@@ -53,25 +45,4 @@ template<class FUNC> bool is_anti_monge
         }
     }
     return true;
-}
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-// ABC 254 B - Mongeness
-void ABC_254_B() {
-    int H, W;
-    cin >> H >> W;
-    vector A(H, vector(W, 0LL));
-    for (int i = 0; i < H; i++) for (int j = 0; j < W; j++) cin >> A[i][j];
-    auto f = [&](int i, int j) -> long long { return A[i][j]; };
-    if (is_monge(H, W, f, false, false)) cout << "Yes" << endl;
-    else cout << "No" << endl;
-}
-
-
-int main() {
-    ABC_254_B();
 }

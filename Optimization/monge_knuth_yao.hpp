@@ -1,16 +1,7 @@
-//
-// f が Monge かつ区間単調性を満たすとき、以下の区間 DP を O(N^2) で実行
-//   dp[i][j] = min_{i <= k < j} (dp[i][k] + dp[k][j]) + f(i, j)
-//
-// verified
-//   KUPC 2012 J - 刺身
-//     https://atcoder.jp/contests/kupc2012/tasks/kupc2012_10
-//
-
-
+#pragma once
 #include <bits/stdc++.h>
+#include <cassert>
 using namespace std;
-
 
 // f: Monge, interval monotone ((N+1) x (N+1))
 // dp[i][j] = min_{i <= k < j} (dp[i][k] + dp[k][j]) + f(i, j), in O(N^2)
@@ -36,28 +27,4 @@ template<class VAL, class FUNC> VAL KnuthYao(int N, const FUNC &f) {
         }
     }
     return dp[0][N];
-}
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-// KUPC 2012 J - 刺身
-void KUPC_2012_J() {
-    int N;
-    cin >> N;
-    vector<long long> A(N), S(N+1, 0);
-    for (int i = 0; i < N; i++) cin >> A[i], S[i+1] = S[i] + A[i];
-    auto f = [&](int i, int j) -> long long { 
-        if (j - i <= 1) return 0;
-        else return S[j] - S[i];
-    };
-    auto res = KnuthYao<long long>(N, f);
-    cout << res << endl;
-}
-
-
-int main() {
-    KUPC_2012_J();
 }

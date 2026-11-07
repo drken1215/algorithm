@@ -706,9 +706,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他 Monge 性, L 凸性
 
-- (★☆☆☆) [Monge 性の判定 (in O(NM))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_checker.cpp)
-- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_min_plus_composition.cpp)
-- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Knuth_Yao.cpp)
+- (★☆☆☆) [Monge 性の判定 (in O(HW))](https://drken1215.github.io/algorithm/Optimization/monge_checker.hpp.html)
+- (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_min_plus_composition.hpp.html)
+- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_knuth_yao.hpp.html)
 - (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by SMAWK 法, in O(ND))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_enum_d_shortest_path.cpp)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
 
