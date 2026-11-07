@@ -43,7 +43,7 @@ template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChao
     }
 
     // insert(f), in O(log X)
-    void insert(unique_ptr<Node> &p, X left, X right, IndexedFunc f) {
+    void insert(IndexedFunc f, unique_ptr<Node> &p, X left, X right) {
         if (!p) p = make_unique<Node>();
         if (!p->func) {
             p->func.emplace(f);
@@ -62,35 +62,35 @@ template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChao
         if (mid_better) {
             IndexedFunc old = std::move(*p->func);
             p->func.emplace(f);
-            if (left_better != mid_better) insert(p->left, left, mid, old);
-            else insert(p->right, mid, right, old);
+            if (left_better != mid_better) insert(old, p->left, left, mid);
+            else insert(old, p->right, mid, right);
         } else {
-            if (left_better != mid_better) insert(p->left, left, mid, f);
-            else insert(p->right, mid, right, f);
+            if (left_better != mid_better) insert(f, p->left, left, mid);
+            else insert(f, p->right, mid, right);
         }
     }
     int insert(Func f) {
         int id = next_id++;
-        insert(root, XL, XR, IndexedFunc{std::move(f), id});
+        insert(IndexedFunc{std::move(f), id}, root, XL, XR);
         return id;
     }
 
     // insert_segment(l, r, f), in O(log^2 X)
-    void insert_segment(unique_ptr<Node> &p, X left, X right, X l, X r, const IndexedFunc &f) {
+    void insert_segment(const IndexedFunc &f, unique_ptr<Node> &p, X left, X right, X l, X r) {
         if (r <= left || right <= l) return;
         if (l <= left && right <= r) {
-            insert(p, left, right, f);
+            insert(f, p, left, right);
             return;
         }
         if (!p) p = make_unique<Node>();
         X mid = (left + right) / 2;
-        insert_segment(p->left, left, mid, l, r, f);
-        insert_segment(p->right, mid, right, l, r, f);
+        insert_segment(f, p->left, left, mid, l, r);
+        insert_segment(f, p->right, mid, right, l, r);
     }
-    int insert_segment(X l, X r, Func f) {
+    int insert_segment(Func f, X l, X r) {
         assert(XL <= l && l <= r && r <= XR);
         int id = next_id++;
-        if (l != r) insert_segment(root, XL, XR, l, r, IndexedFunc{std::move(f), id});
+        if (l != r) insert_segment(IndexedFunc{std::move(f), id}, root, XL, XR, l, r);
         return id;
     }
 
