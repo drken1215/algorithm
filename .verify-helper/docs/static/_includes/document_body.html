@@ -1,3 +1,4 @@
+
 {% comment %}
 Manual verification files:
   tests/*.cpp, excluding *.test.cpp
@@ -77,13 +78,23 @@ Manual verification files:
   <h2>Verified with</h2>
   <ul>
 
+    {% comment %}
+    Automatic verification:
+      Display the original file path.
+    {% endcomment %}
+
     {% for item in page.data._extendedVerifiedWith %}
       <li>
         <span style="display: inline-block; width: 2em; text-align: center;">
           {{ item.icon }}
-        </span><a href="{{ item.path | absolute_url }}">{{ item.title }}{% if item.title != item.path %} <small>({{ item.path }})</small>{% endif %}</a>
+        </span><a href="{{ item.path | absolute_url }}">{{ item.path }}</a>
       </li>
     {% endfor %}
+
+    {% comment %}
+    Manual verification:
+      Display the original file path with (manual).
+    {% endcomment %}
 
     {% for item in page.data._extendedRequiredBy %}
       {% assign prefix = item.path | slice: 0, 6 %}
@@ -101,7 +112,7 @@ Manual verification files:
         <li>
           <span style="display: inline-block; width: 2em; text-align: center;">
             {{ item.icon }}
-          </span><a href="{{ item.path | absolute_url }}">{{ item.title }} (manual)</a>
+          </span><a href="{{ item.path | absolute_url }}">{{ item.path }} (manual)</a>
         </li>
       {% endif %}
     {% endfor %}
