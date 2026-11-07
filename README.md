@@ -116,8 +116,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Sparse Table
 
-- (★★★☆) [Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/sparse_table.cpp)
-- (★★★★) [Disjoint Sparse Table](https://github.com/drken1215/algorithm/blob/master/DataStructure/disjoint_sparse_table.cpp)
+- (★★★☆) [Sparse Table](https://drken1215.github.io/algorithm/DataStructure/sparse_table.hpp.html)
+- (★★★★) [Disjoint Sparse Table](https://drken1215.github.io/algorithm/DataStructure/disjoint_sparse_table.hpp.html)
 - (★★★★) 二次元 Sparse Table
 
 ## ウェーブレット行列
