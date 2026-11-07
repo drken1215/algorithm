@@ -4,10 +4,20 @@ documentation_of: ./monge_shortest_path_by_cht.hpp
 ---
 
 ## 概要
-[General Li Chao Tree](https://drken1215.github.io/algorithm/Optimization/general_li_chao_tree.hpp.html) を用いた Monge 単一始点最短路アルゴリズム。
+Convex Hull Trick (General Li Chao Tree) を用いた単一始点最短路アルゴリズム。
 
-頂点数 $N + 1$ の DAG で、辺 $(l, r)$ ($0 \le l < r \le N$) のコスト $f(l, r)$ が Monge 性を満たすとき、Convex Hull Trick (Li Chao Tree) を用いて、頂点 0 から各頂点への最短路を求めることができる。
+DP が
 
+`dp[j] = min_{i < j} (dp[i] + func(i, j))`
+
+の形で表されるとする。ここで、
+
+`g(j, i) = dp[i] + func(i, j)` 
+
+が PSC (Pairwise Single Crossing) 性を満たすとき、Convex Hull Trick (General Li Chao Tree) を用いて、
+$O(N \log N)$ の計算量で DP テーブルを求めることができる。
+
+とくに、`func(l, r)` が $0 \le l, r \le N$ を満たすすべての $l, r$ に対して Monge 性、または anti-Monge 性を満たすとき、上記の仮定は満たされる。
 
 ## 仕様
 
@@ -18,13 +28,14 @@ documentation_of: ./monge_shortest_path_by_cht.hpp
 - `template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f, const vector<int> &start)`
   - コスト関数が $f$ であるような、次のグラフの単一始点最短路を求める
     - 頂点: $0, 1, 2, \dots, N$
-    - 辺: $(l, r)$ ($r \ge$ `start`[$l$]) (`start`[$l$] $\le l + 1$ でなければならない)
+    - 辺: $(l, r)$ ($0 \le l < r \le N$, $r \ge$ $\mathrm{start}[l]$) ($\mathrm{start}[l] \ge l + 1$ でなければならない)
 
 ## 計算量
 $O(N \log N)$
 
-## 制約
-問題設定におけるコスト関数 $f(l, r)$ の定義域は $0 \le l < r \le N$ であるが、$l \ge r$ を満たす $(l, r)$ に対しても定義され、全体で Monge 性を満たす必要がある
+## 注意点
+問題設定におけるコスト関数 $f(l, r)$ の定義域は $0 \le l < r \le N$ であるが、$l \ge r$ であるような $l, r$ に対しても定義されなければならない。
+その上で、`g(j, i) = dp[i] + func(i, j)` が PSC 性を満たすことを要請する。
 
 ## 問題例
 

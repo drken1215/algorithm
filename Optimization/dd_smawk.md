@@ -1,10 +1,10 @@
 ---
-title: TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N)
+title: TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))
 documentation_of: ./dd_smawk.hpp
 ---
 
 ## 概要
-SMAWK 法に対して、オンライン・オフライン変換を施して得られる分割統治 SMAWK 法。
+SMAWK 法に対して、オンライン・オフライン変換を施して得られる分割統治 SMAWK 法。単一始点最短路問題を解く。
 
 DP が
 
@@ -14,14 +14,14 @@ DP が
 
 `g(j, i) = dp[i] + func(i, j)` 
 
-が Totally Monotone であるならば、上記の DP が分割統治 SMAWK 法によって、$O(N \log N)$ の計算量で解ける。
+が Totally Monotone であるならば、上記の DP が分割統治 SMAWK 法によって、$O(N \log N)$ の計算量で DP テーブルを求めることができる。
 
 ## 注意点
 
 - `func(i, j)` が Totally Monotone であっても、`g(j, i) = dp[i] + func(i, j)` が Totally Monotone であるとは限らない
 - `func(i, j)` が Monge であるとき、`g(j, i) = dp[i] + func(i, j)` も Monge である
 
-上記のことから、多くの場合、コストが Monge 性を満たすときに適用できるアルゴリズムとみなされる。
+上記のことから、多くの場合、コストが Monge 性を満たすときに適用できるアルゴリズムであるとされる。
 
 ## 問題例
 

@@ -12,7 +12,7 @@ documentation_of: ./general_li_chao_tree.hpp
   - $x$ の範囲が `[xl, xr)` (この幅を $X$ とする)
 - 関数の挿入
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log X)$ 
-  - `insert_segment(l, r, f)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} X)$
+  - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} X)$
 - 1 点取得
   - `query(x)`: $\min_{i} f_{i}(x)$ を返す。計算量 $O(\log X)$
 
