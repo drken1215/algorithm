@@ -1,6 +1,6 @@
 #define PROBLEM "https://yukicoder.me/problems/no/705"
 
-#include "monge_shortest_path.hpp"
+#include "dd_smawk.hpp"
 
 // yukicoder No.705 ゴミ拾い Hard
 /*
@@ -21,7 +21,7 @@ int main() {
         long long dx = abs(A[j-1] - X[i]), dy = abs(Y[i]);
         return dx * dx * dx + dy * dy * dy;
     };
-    MongeShortestPath<long long> opt;
-    auto res = opt.solve(N, func, "smawk");
+    DDSMAWK<long long> opt;
+    auto res = opt.solve(N, func);
     cout << res[N].first << endl;
 }

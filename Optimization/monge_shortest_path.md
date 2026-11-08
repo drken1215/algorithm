@@ -23,6 +23,11 @@ DP が
 
 
 ## 仕様
+
+```cpp
+template<class VAL> struct MongeShortestPath;
+```
+
 構造体 `MongeShortestPath<VAL>` を宣言して、関数 `solve(N, f)` を適用する。
 
 - 関数 `solve()` の返り値: 受け取る変数を `res` として

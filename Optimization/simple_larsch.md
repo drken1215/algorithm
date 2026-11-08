@@ -34,6 +34,11 @@ noshi's 簡易 LARSCH 法は、LARSCH 法から "Reduce" Step を抜いたもの
 
 
 ## 仕様
+
+```cpp
+template<class VAL> struct SimpleLARSCH;
+```
+
 構造体 `SimpleLARSCH<VAL>` を宣言して、関数 `solve(N, f)` を適用する。
 
 - 関数 `solve()` の返り値: 受け取る変数を `res` として

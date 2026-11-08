@@ -698,8 +698,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## Monge 単一始点最短路問題
 
 - (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/monge_shortest_path_by_cht.hpp.html)
-- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_noshi_LARSCH.cpp)
-- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_LARSCH.cpp)
+- (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/simple_larsch.hpp.html)
+- (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://drken1215.github.io/algorithm/Optimization/larsch.hpp.html)
 - (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://drken1215.github.io/algorithm/tests/AtCoder/ABC_480_G_li_chao_tree_by_anti_monge_extension.cpp)
 - (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/anti_monge_dd_smawk.hpp.html)
