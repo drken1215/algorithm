@@ -26,14 +26,27 @@ DP が
 ## 仕様
 
 ```cpp
-template<class VAL, class FUNC> vector<pair<VAL, int>> DDMonotoneMinima(int N, const FUNC &f)
+template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f)
 ```
+
+構造体 `DDMonotoneMinima<VAL>` を宣言して、関数 `solve(N, f)` を呼び出す。
 
 - 整数 `N`: 頂点番号が $0, 1, 2, \dots, N$ であるとする (頂点数は $N + 1$)
 - 関数 `f(l, r)`: 辺 $(l, r)$ のコストを返す関数
-- 返り値: 受け取る変数を `dp` として
-  - `dp[v].first`: 頂点 $0$ から頂点 $v$ への最短路の重み
-  - `dp[v].second`: 頂点 $0$ から頂点 $v$ への最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
+- 返り値: 受け取る変数を `res` として
+  - `res[v].first`: 頂点 $0$ から頂点 $v$ への最短路の重み
+  - `res[v].second`: 頂点 $0$ から頂点 $v$ への最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
+- また、構造体のメンバ変数にも結果が格納される
+  - `dp[v]`: 頂点 $0$ から頂点 $v$ への最短路の重み
+  - `cnt[v]`: 頂点 $0$ から頂点 $v$ への最短路に含まれる辺の本数
+  - `prev[v]`: 頂点 $0$ から頂点 $v$ への最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
+
+
+```cpp
+vector<int> reconstruct()
+```
+
+- `solve(N, f)` 実行後に呼び出すことで、頂点 $0$ から頂点 $N$ への最短路が復元される
 
 
 ## 問題例

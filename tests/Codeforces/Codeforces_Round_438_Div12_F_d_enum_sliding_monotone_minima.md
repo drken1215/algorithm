@@ -1,6 +1,6 @@
 ---
 title: 分割統治 Monotone Minima 法において、辺コストをスライドアクセスで計算する例
-documentation_of: ./Codeforces_Round_438_Div12_F_sliding_monotone_minima.cpp
+documentation_of: ./Codeforces_Round_438_Div12_F_d_enum_sliding_monotone_minima.cpp
 ---
 
 ## 概要

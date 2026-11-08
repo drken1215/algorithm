@@ -17,6 +17,7 @@ int main() {
     auto func = [&](int i, int j) -> long long {
         return B[i] * A[j];
     };
-    auto res = DDSMAWK<long long>(N-1, func);
+    DDSMAWK<long long> opt;
+    auto res = opt.solve(N-1, func);
     cout << res[N-1].first << endl;
 }

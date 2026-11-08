@@ -19,60 +19,7 @@
 using namespace std;
 
 
-// noshi's simplified LARSCH
-// find shortest path from vertex 0 on DAG in O(N log N)
-// vertex: 0, 1, 2, ..., N
-// f(i, j) must be Monge (Then, A(j, i) = dp[i] + f(i, j) is also Monge)
-// slide access OK
-template<class VAL> struct SimpleLARSCH {
-    VAL INF = numeric_limits<VAL>::max() / 2;
-    int CNT_INF = numeric_limits<int>::max() / 2;
 
-    // results
-    vector<VAL> dp;
-    vector<int> cnt, prev;
-
-    // solver (random access ver)
-    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f, bool minimize_cnt = true) {
-        dp.assign(N + 1, INF);
-        cnt.assign(N + 1, CNT_INF);
-        prev.assign(N + 1, 0);
-        dp[0] = 0, cnt[0] = 0;
-
-        auto relax = [&](int l, int r) -> void {
-            VAL val = dp[l] + f(l, r);
-            int cn = cnt[l] + 1;
-            if (dp[r] > val || (dp[r] == val && (minimize_cnt ? cn < cnt[r] : cn > cnt[r]))) {
-                dp[r] = val;
-                cnt[r] = cn;
-                prev[r] = l;
-            }
-        };
-        auto rec = [&](auto &&rec, int l, int r) -> void {
-            if (r - l <= 1) return;
-            int m = (l + r) / 2;
-            for (int k = prev[l]; k <= prev[r]; k++) relax(k, m);
-            rec(rec, l, m);
-            for (int k = l + 1; k <= m; k++) relax(k, r);
-            rec(rec, m, r);
-        };
-
-        if (N > 0) relax(0, N), rec(rec, 0, N);
-        vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
-        res[0].first = VAL(0);
-        for (int i = 1; i <= N; i++) res[i] = {dp[i], prev[i]};
-        return res;
-    }
-
-    vector<int> reconstruct() {
-        int N = (int)dp.size() - 1;
-        vector<int> path;
-        for (int v = N; v > 0; v = prev[v]) path.emplace_back(v);
-        path.emplace_back(0);
-        reverse(path.begin(), path.end());
-        return path;
-    }
-};
 
 // Monge Shortest Path Wrapper
 // vertex: 0, 1, 2, ..., N

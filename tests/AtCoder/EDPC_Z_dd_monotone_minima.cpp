@@ -20,6 +20,7 @@ int main() {
     auto func = [&](int i, int j) -> long long {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
-    auto res = DDMonotoneMinima<long long>(N-1, func);
+    DDMonotoneMinima<long long> opt;
+    auto res = opt.solve(N-1, func);
     cout << res[N-1].first << endl;
 }

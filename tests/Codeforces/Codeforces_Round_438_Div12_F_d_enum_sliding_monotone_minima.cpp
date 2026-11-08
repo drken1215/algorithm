@@ -14,7 +14,7 @@ int main() {
     for (int i = 0; i < N; i++) cin >> A[i];
 
     vector<long long> nums(N + 1, 0);
-    long long left = 0, right = 0, score = 0;
+    long long score = 0;
     auto add = [&](int i) -> void {
         score += nums[A[i]];
         nums[A[i]]++;
@@ -23,14 +23,10 @@ int main() {
         nums[A[i]]--;
         score -= nums[A[i]];
     };
-    auto f = [&](int i, int j) -> long long {
-        while (left < i) del(left++);
-        while (i < left) add(--left);
-        while (right < j) add(right++);
-        while (j < right) del(--right);
+    auto get = [&]() -> long long {
         return score;
     };
     MongeShortestPathWithDEdges<long long> msp;
-    auto res = msp.solve(N, f, K, "monotone");  // we should use slide access
-    cout << res[K] << endl;
+    auto res = msp.solve(N, add, del, get, K, "monotone");  // we should use slide access
+    cout << res[N][K].first << endl;
 }
