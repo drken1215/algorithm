@@ -22,5 +22,5 @@ int main() {
     };
     MongeShortestPathWithDEdges<long long> msp;
     auto res = msp.solve(N + 1, f, N + 1);
-    for (int k = 1; k <= N; k++) cout << res[N + 1 - k] << endl;
+    for (int k = 1; k <= N; k++) cout << res[N + 1][N + 1 - k].first << endl;
 }
