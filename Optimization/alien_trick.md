@@ -11,7 +11,7 @@ $g(x)$ は $L$ 以上 $R$ 以下の整数値をとる関数とする。
 
 $K$ を $L \le K \le R$ を満たす正の整数として、次の最適化問題を考える。
 
-$\mathrm{min}_{x} f(x) \mathrm{ s.t. } g(x) = K$
+$\mathrm{min}_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
 
 $g(x) = p$ となる $x$ についての $f(x)$ の最小値を $h(p)$ とする。求めたい値は $h(K)$ である。ここで、次の仮定をおく。
 
@@ -23,7 +23,7 @@ $h(p)$ が $p$ について下に凸である
 このとき、ラグランジュ強双対性が成り立つことが知られている（下の参考文献を参照）。
 すなわち、ラグランジュ双対変数 $\lambda$ を整数として、次のラグランジュ緩和問題を考えると、この最適値はもとの最適化問題の最適値に一致する。
 
-$\mathrm{max}_{\lambda} \mathrm{min}_{x} (f(x) + \lambda(g(x) - K))$
+$\mathrm{max}_{\lambda}$ $\mathrm{min}_{x}$ $(f(x) + \lambda(g(x) - K))$
 
 
 ### ラグランジュ緩和問題の解き方
@@ -39,7 +39,7 @@ $k(\lambda)$ は $\lambda$ について広義単調減少となることが知�
 
 よって、二分探索法によって、
 
-$k(\lambda_{1}) \le K \le k(\lambda_{2})$ ($\lambda_{1} = \lambda{2} + 1$)
+$k(\lambda_{1}) \le K \le k(\lambda_{2})$ ($\lambda_{1} = \lambda_{2} + 1$)
 
 を満たすような $\lambda^{*}$ を求めることができる。
 このとき、$\lambda = \lambda_{1}, \lambda_{2}$ のいずれかについて、

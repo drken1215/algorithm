@@ -1,5 +1,5 @@
 ---
-title: monge_shortest_path
+title: Monge 単一始点最短路アルゴリズム群のラッパー
 documentation_of: ./monge_shortest_path.hpp
 ---
 
