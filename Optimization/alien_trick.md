@@ -11,7 +11,7 @@ $g(x)$ は $L$ 以上 $R$ 以下の整数値をとる関数とする。
 
 $K$ を $L \le K \le R$ を満たす正の整数として、次の最適化問題を考える。
 
-$\mathrm{min}_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
+$\min_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
 
 $g(x) = p$ となる $x$ についての $f(x)$ の最小値を $h(p)$ とする。求めたい値は $h(K)$ である。ここで、次の仮定をおく。
 
@@ -23,16 +23,16 @@ $h(p)$ が $p$ について下に凸である
 このとき、ラグランジュ強双対性が成り立つことが知られている（下の参考文献を参照）。
 すなわち、ラグランジュ双対変数 $\lambda$ を整数として、次のラグランジュ緩和問題を考えると、この最適値はもとの最適化問題の最適値に一致する。
 
-$\mathrm{max}_{\lambda}$ $\mathrm{min}_{x}$ $(f(x) + \lambda(g(x) - K))$
+$\max_{\lambda} \min_{x} (f(x) + \lambda(g(x) - K))$
 
 
 ### ラグランジュ緩和問題の解き方
 $\lambda$ を固定して、最適化問題
 
-$P(\lambda): \mathrm{min}_{x} (f(x) + \lambda g(x))$
+$P(\lambda): \min_{x} (f(x) + \lambda g(x))$
 
 を考える（最適値を $L(\lambda)$ とおく）。
-この最適化問題 $P(\lambda)$ の最適解の集合は、$\mathrm{min}_{x} (f(x) + \lambda(g(x) - K))$ の最適解の集合に一致する。
+この最適化問題 $P(\lambda)$ の最適解の集合は、$\min_{x} (f(x) + \lambda(g(x) - K))$ の最適解の集合に一致する。
 
 最適化問題 $P(\lambda)$ の最適解 $x^{\mathrm{opt}}$ を 1 つとり、$k(\lambda) = g(x^{\mathrm{opt}})$ とおくと、
 $k(\lambda)$ は $\lambda$ について広義単調減少となることが知られている（[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照）。
