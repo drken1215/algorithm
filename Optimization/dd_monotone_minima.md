@@ -23,6 +23,19 @@ DP が
 
 上記のことから、多くの場合、コストが Monge 性を満たすときに適用できるアルゴリズムであるとされる。
 
+## 仕様
+
+```cpp
+template<class VAL, class FUNC> vector<pair<VAL, int>> DDMonotoneMinima(int N, const FUNC &f)
+```
+
+- 整数 `N`: 頂点番号が $0, 1, 2, \dots, N$ であるとする (頂点数は $N + 1$)
+- 関数 `f(l, r)`: 辺 $(l, r)$ のコストを返す関数
+- 返り値: 受け取る変数を `dp` として
+  - `dp[v].first`: 頂点 $0$ から頂点 $v$ への最短路の重み
+  - `dp[v].second`: 頂点 $0$ から頂点 $v$ への最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
+
+
 ## 問題例
 
 - [AtCoder EDPC Z - Frog 3](https://atcoder.jp/contests/dp/tasks/dp_z)

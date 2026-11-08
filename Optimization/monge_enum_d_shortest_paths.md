@@ -10,7 +10,7 @@ documentation_of: ./monge_enum_d_shortest_paths.hpp
 
 であるような DAG を考える。$f(l, r)$ が Monge であるとする。
 
-このとき、$d = 1, 2, \dots, D$ に対して、頂点 $0$ から各頂点への最短パスのうち、パスに含まれる辺の本数がちょうど $d$ 本であるようなものを求める。
+このとき、$d = 1, 2, \dots, D$ に対して、頂点 $0$ から各頂点 $v$ への最短パスのうち、パスに含まれる辺の本数がちょうど $d$ 本であるようなものを求める。
 
 
 ### DP で解釈
@@ -29,8 +29,33 @@ documentation_of: ./monge_enum_d_shortest_paths.hpp
 
 ### ランダムアクセス版
 
+```cpp
+template<class FUNC> vector<vector<pair<VAL, int>>> solve(int N, const FUNC &f, int D, const string &solver = "smawk")
+```
+
+- 整数 `N`: 頂点番号が $0, 1, 2, \dots, N$ であるとする (頂点数は $N + 1$)
+- 関数 `f(l, r)`: 辺 $(l, r)$ のコストを返す関数
+- 文字列 `solver`: "smawk" (SMAWK 法を使用) か "monotone" (Monotone Minima 法を使用) を指定する
+- 返り値: 受け取る変数を `dp` として
+  - `dp[v][d].first`: 頂点 $0$ から頂点 $v$ への、ちょうど $d$ 本の辺を用いる最短路の重み
+  - `dp[v][d].second`: 頂点 $0$ から頂点 $v$ への、ちょうど $d$ 本の辺を用いる最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
+
 
 ### スライドアクセス版
+
+```cpp
+template<class ADD, class DEL, class GETCOST> vector<vector<pair<VAL, int>>> solve
+(int N, const ADD &add, const DEL &del, const GETCOST &get, int D, const string &solver = "monotone")
+```
+
+- 整数 `N`: 頂点番号が $0, 1, 2, \dots, N$ であるとする (頂点数は $N + 1$)
+- 関数 `add(i)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間に index $i$ の分を追加するときのコストの差分を記述する関数
+- 関数 `del(i)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間から index $i$ の分を削除するときのコストの差分を記述する関数
+- 関数 `get()`: 辺 $(l, r)$ のコストを返す関数
+- 文字列 `solver`: "monotone" (Monotone Minima 法を使用) を指定する ("smawk" は不可)
+- 返り値: 受け取る変数を `dp` として
+  - `dp[v][d].first`: 頂点 $0$ から頂点 $v$ への、ちょうど $d$ 本の辺を用いる最短路の重み
+  - `dp[v][d].second`: 頂点 $0$ から頂点 $v$ への、ちょうど $d$ 本の辺を用いる最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
 
 
 ## 問題例
