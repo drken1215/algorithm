@@ -76,6 +76,11 @@ template<class STATE, class ADD, class DEL, class GETCOST> vector<pair<VAL, int>
 - 関数 `get(st)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間の情報を表す `STATE` 型変数 `st` から辺コスト $f(l, r)$ を得るための関数
 
 
+区間ウィンドウ $[l, r)$ についての情報をまとめた構造体 `STATE` が必要になるのは、
+noshi's 簡易 LARSCH 法の内部では、2 つのウィンドウを管理するためである。
+内部で 2 つのウィンドウに対応する情報を複製して管理している。
+
+
 ## 問題例
 
 - [AtCoder EDPC Z - Frog 3](https://atcoder.jp/contests/dp/tasks/dp_z)

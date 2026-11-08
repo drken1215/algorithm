@@ -18,20 +18,23 @@ template<class VAL> struct DDMonotoneMinima {
     vector<VAL> dp;
     vector<int> cnt, prev;
 
-    // solver
+    // solver (random access ver)
     template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f) {
         dp.assign(N + 1, INF);
         cnt.assign(N + 1, CNT_INF);
         prev.assign(N + 1, 0);
         dp[0] = 0, cnt[0] = 0;
-        vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
+        vector<pair<VAL, int>> res(N + 1, make_pair(INF, -1));
+        vector<pair<VAL, int>> tmp(N + 1, make_pair(INF, -1));
         res[0].first = VAL(0);
         auto f2 = [&](int i, int j) -> VAL { return res[j].first + f(j, i); };
         auto rec = [&](auto &&rec, int left, int right) -> void {
             if (right - left <= 1) return;
             int mid = (left + right) / 2;
             rec(rec, left, mid);
-            MonotoneMinimaRec(mid, right, left, mid, f2, res);
+            for (int i = mid; i < right; i++) tmp[i] = {INF, -1};
+            MonotoneMinimaRec(mid, right, left, mid, f2, tmp);
+            for (int i = mid; i < right; i++) if (tmp[i].first < res[i].first) res[i] = tmp[i];
             rec(rec, mid, right);
         };
         rec(rec, 0, N + 1);
@@ -41,6 +44,21 @@ template<class VAL> struct DDMonotoneMinima {
             if (prev[r] != -1) cnt[r] = cnt[prev[r]] + 1;
         }
         return res;
+    }
+
+    // solver (slide access ver)
+    template<class ADD, class DEL, class GETCOST> vector<pair<VAL, int>> solve
+    (int N, const ADD &add, const DEL &del, const GETCOST &get) {
+        int left = 0, right = 0;
+        auto f = [&](int i, int j) -> long long {
+            while (left < i) del(left++);
+            while (i < left) add(--left);
+            while (right < j) add(right++);
+            while (j < right) del(--right);
+            return get();
+        };
+        auto f2 = [&](int i, int j) -> VAL { return (j < i ? dp[j] + f(j, i) : INF); };
+        return solve(N, f2);
     }
 
     // reconstruct the shortest path

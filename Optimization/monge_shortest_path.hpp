@@ -65,8 +65,7 @@ template<class VAL> struct MongeShortestPath {
                 while (j < right) del(st, --right);
                 return get(st);
             };
-            auto f2 = [&](int i, int j) -> VAL { return (j < i ? dp[j] + f(j, i) : INF); };   
-            res = opt.solve(N, f2);
+            res = opt.solve(N, f);
             dp = opt.dp, cnt = opt.cnt, prev = opt.prev;
         }else {
             cout << "no solver" << endl;

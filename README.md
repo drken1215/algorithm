@@ -624,7 +624,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## さまざまな最適化技法
 
 - (★☆☆☆) [二分探索](https://drken1215.github.io/algorithm/Optimization/binary_search.hpp.html)
-- (★★★★) [Alien's Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://github.com/drken1215/algorithm/blob/master/Optimization/Lagrange_relaxation_Aliens.cpp)
+- (★★★★) [Alien Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://drken1215.github.io/algorithm/Optimization/alien_trick.hpp.html)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
 - (★★★★) 分枝限定法
@@ -656,7 +656,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 離散凸性 (OPTIMIZATION : CONVEXITY)
 離散凸性に関するアルゴリズムです。
 
-- (★★★★) [Monge 全部乗せ](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_all.cpp)
+- (★★★★) [Monge 全部乗せ](https://drken1215.github.io/algorithm/Optimization/monge_all.hpp.html)
 - (★★★★) マトロイド 全部乗せ
 
 ## 区分線形凸関数の活用 1： Slope Trick
@@ -700,7 +700,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★★) [Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/monge_shortest_path_by_cht.hpp.html)
 - (★★★★) [Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/simple_larsch.hpp.html)
 - (★★★★) [Monge 単一始点最短路問題 (by LARSCH 法, in O(N))](https://drken1215.github.io/algorithm/Optimization/larsch.hpp.html)
-- (★★★★) [Monge 単一始点最短路問題 スライドアクセス版 (by noshi's 簡易 LARSCH 法, in O(N log N))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_sliding_noshi_LARSCH.cpp)
 - (★★★★) [anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))](https://drken1215.github.io/algorithm/tests/AtCoder/ABC_480_G_li_chao_tree_by_anti_monge_extension.cpp)
 - (★★★★) [anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))](https://drken1215.github.io/algorithm/Optimization/anti_monge_dd_smawk.hpp.html)
 
@@ -710,7 +709,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_min_plus_composition.hpp.html)
 - (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_knuth_yao.hpp.html)
 - (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by Monotone Minima, SMAWK 法)](https://drken1215.github.io/algorithm/Optimization/monge_enum_d_shortest_paths.hpp.html)
-- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://github.com/drken1215/algorithm/blob/master/Optimization/Monge_Alien_DP.cpp)
+- (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP, in O(N log N) or O(N (log N)^2))](https://drken1215.github.io/algorithm/Optimization/alien_dp.hpp.html)
 
 ## さまざまなマトロイド
 

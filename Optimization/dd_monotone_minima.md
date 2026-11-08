@@ -23,10 +23,11 @@ DP が
 
 上記のことから、多くの場合、コストが Monge 性を満たすときに適用できるアルゴリズムであるとされる。
 
+
 ## 仕様
 
 ```cpp
-template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f)
+template<class VAL> struct DDMonotoneMinima;
 ```
 
 構造体 `DDMonotoneMinima<VAL>` を宣言して、関数 `solve(N, f)` を呼び出す。
@@ -40,13 +41,30 @@ template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f)
   - `dp[v]`: 頂点 $0$ から頂点 $v$ への最短路の重み
   - `cnt[v]`: 頂点 $0$ から頂点 $v$ への最短路に含まれる辺の本数
   - `prev[v]`: 頂点 $0$ から頂点 $v$ への最短路において、$v$ に至る直前の頂点の番号 (存在しない場合は -1)
+- メンバ関数 `reconstruct()` を呼ぶことで、頂点 $0$ から頂点 $N$ への最短路が復元される
 
+
+### ランダムアクセス版
 
 ```cpp
-vector<int> reconstruct()
+template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &)
 ```
 
-- `solve(N, f)` 実行後に呼び出すことで、頂点 $0$ から頂点 $N$ への最短路が復元される
+- 整数 `N`: 頂点番号が $0, 1, 2, \dots, N$ であるとする (頂点数は $N + 1$)
+- 関数 `f(l, r)`: 辺 $(l, r)$ のコストを返す関数
+
+
+### スライドアクセス版
+
+```cpp
+template<class ADD, class DEL, class GETCOST> vector<vector<pair<VAL, int>>> solve
+(int N, const ADD &add, const DEL &del, const GETCOST &get)
+```
+
+- 整数 `N`: 頂点番号が $0, 1, 2, \dots, N$ であるとする (頂点数は $N + 1$)
+- 関数 `add(i)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間に index $i$ の分を追加するときのコストの差分を記述する関数
+- 関数 `del(i)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間から index $i$ の分を削除するときのコストの差分を記述する関数
+- 関数 `get()`: 辺 $(l, r)$ のコストを返す関数
 
 
 ## 問題例
