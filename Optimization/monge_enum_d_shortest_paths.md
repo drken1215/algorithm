@@ -29,7 +29,7 @@ documentation_of: ./monge_enum_d_shortest_paths.hpp
 
 - [yukicoder No.952 危険な火薬庫](https://yukicoder.me/problems/no/952)
 - [Monoxer Programming Contest for Engineers K - Coupon](https://mofecoder.com/contests/monoxercon_202508/tasks/monoxercon_202508_k)
-- [Codeforces Round 438 (Div. 1 + Div. 2 combined) F. Yet Another Minimization Problem](https://codeforces.com/contest/868/problem/F)
+- [Codeforces Round 438 (Div. 1 + Div. 2 combined) F. Yet Another Minimization Problem](https://codeforces.com/contest/868/problem/F) (スライドアクセス)
 
 ## 参考文献
 
