@@ -1,6 +1,6 @@
 #define PROBLEM "https://atcoder.jp/contests/dp/tasks/dp_z"
 
-#include "monge_shortest_path.hpp"
+#include "larsch.hpp"
 
 // AtCoder EDPC Z - Frog 3
 /*
@@ -17,7 +17,7 @@ int main() {
     auto func = [&](int i, int j) -> long long {
         return (H[j] - H[i]) * (H[j] - H[i]) + C;
     };
-    MongeShortestPath<long long> opt;
-    auto res = opt.solve(N-1, func, "simple_larsch");
+    LARSCH<long long> opt;
+    auto res = opt.solve(N-1, func);
     cout << res[N-1].first << endl;
 }

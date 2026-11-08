@@ -1,6 +1,6 @@
 #define PROBLEM "https://codeforces.com/contest/319/problem/C"
 
-#include "monge_shortest_path.hpp"
+#include "simple_larsch.hpp"
 
 // Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry
 /*
@@ -17,7 +17,7 @@ int main() {
     auto func = [&](int i, int j) -> long long {
         return B[i] * A[j];
     };
-    MongeShortestPath<long long> opt;
-    auto res = opt.solve(N-1, func, "simple_larsch");
+    SimpleLARSCH<long long> opt;
+    auto res = opt.solve(N-1, func);
     cout << res[N-1].first << endl;
 }
