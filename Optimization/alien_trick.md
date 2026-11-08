@@ -11,11 +11,14 @@ $g(x)$ は $L$ 以上 $R$ 以下の整数値をとる関数とする。
 
 $K$ を $L \le K \le R$ を満たす正の整数として、次の最適化問題を考える。
 
-$\mathrm{min}_{x} f(x) \mathrm{s.t.} g(x) = K$
+$\mathrm{min}_{x} f(x) \mathrm{ s.t. } g(x) = K$
 
 $g(x) = p$ となる $x$ についての $f(x)$ の最小値を $h(p)$ とする。求めたい値は $h(K)$ である。ここで、次の仮定をおく。
 
-- ** $h(p)$ が $p$ について下に凸である**
+----
+$h(p)$ が $p$ について下に凸である
+
+----
 
 このとき、ラグランジュ強双対性が成り立つことが知られている（下の参考文献を参照）。
 すなわち、ラグランジュ双対変数 $\lambda$ を整数として、次のラグランジュ緩和問題を考えると、この最適値はもとの最適化問題の最適値に一致する。
@@ -31,19 +34,19 @@ $P(\lambda): \mathrm{min}_{x} (f(x) + \lambda g(x))$
 を考える（最適値を $L(\lambda)$ とおく）。
 この最適化問題 $P(\lambda)$ の最適解の集合は、$\mathrm{min}_{x} (f(x) + \lambda(g(x) - K))$ の最適解の集合に一致する。
 
-最適化問題 $P(\lambda)$ の最適解 $x^{*}$ を 1 つとり、$k(\lambda) = g(x^{*})$ とおくと、
+最適化問題 $P(\lambda)$ の最適解 $x^{\mathrm{opt}}$ を 1 つとり、$k(\lambda) = g(x^{\mathrm{opt}})$ とおくと、
 $k(\lambda)$ は $\lambda$ について広義単調減少となることが知られている（[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照）。
 
 よって、二分探索法によって、
 
-$k(\lambda^{*} + 1) \le K \le k(\lambda^{*})$
+$k(\lambda_{1}) \le K \le k(\lambda_{2})$ ($\lambda_{1} = \lambda{2} + 1$)
 
 を満たすような $\lambda^{*}$ を求めることができる。
-このとき、$\lambda = \lambda^{*}, \lambda^{*} + 1$ のいずれかについて、
+このとき、$\lambda = \lambda_{1}, \lambda_{2}$ のいずれかについて、
 $g(x) = K$ であるような最適化問題 $P(\lambda)$ の最適解 $x$ が存在することが示せる。
 すなわち、
 
-$h(K) = \min(L(\lambda^{*}) - \lambda^{*}K, L(\lambda^{*} + 1) - (\lambda^{*} + 1)K)$
+$h(K) = \min(L(\lambda_{1}) - \lambda_{1} K, L(\lambda_{2}) - \lambda_{2} K)$
 
 が成立する。
 
@@ -54,7 +57,7 @@ $h(K) = \min(L(\lambda^{*}) - \lambda^{*}K, L(\lambda^{*} + 1) - (\lambda^{*} + 
 template<class FUNC> pair<VAL, VAL> solve(const FUNC &lag, VAL K)
 ```
 
-- `lag(λ)`: $x^{✳︎} = \mathrm{argmin}_{x} (f(x) + \lambda g(x))$ としたときのペア値 $(f(x^{✳︎}), g(x^{✳︎}))$ を返す関数
+- `lag(lambda)`: $x^{\mathrm{opt}} = \mathrm{argmin}_{x} (f(x) + \lambda g(x))$ としたときのペア値 $(f(x^{\mathrm{opt}}), g(x^{\mathrm{opt}}))$ を返す関数
 - 返り値: (元の最適化問題の最適値, そのときの $\lambda$)
 
 

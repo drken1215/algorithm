@@ -41,7 +41,7 @@ template<class STATE, class ADD, class DEL, class GETCOST> pair<VAL, int> solve
 - 関数 `del(st, i)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間から index $i$ の分を削除するときの `STATE` 型変数 `st` の変化を記述する関数
 - 関数 `get(st)`: 辺 $(l, r)$ のコストが、区間 $[l, r)$ についての値に対応するとして、区間の情報を表す `STATE` 型変数 `st` から辺コスト $f(l, r)$ を得るための関数
 - 整数 `D`: 含まれる辺数がちょうど $D$ 本であるパスを考える
-- 文字列 `solver`: "monotone", "smawk", "larsch", "simple_larsch" のいずれかを指定する
+- 文字列 `solver`: "monotone", "simple_larsch" のいずれかを指定する ("smawk", "larsch" は不可)
 - 返り値: (最短路長, ラグランジュ変数 $\lambda$ の値)
 
 
