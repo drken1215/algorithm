@@ -4,25 +4,62 @@ documentation_of: ./general_li_chao_tree.hpp
 ---
 
 ## 概要
-一般関数 (Pairwise Single Crossing) に対応した Li Chao Tree
+一般関数 (Pairwise Single Crossing) に対応した Li Chao Tree。
 
-### Dynamic 版 (座標圧縮しない)
+- Dynamic 版 (座標圧縮しない)
+- Static 版 (座標圧縮するか、定義域の範囲が小さい)
 
-- コンストラクタ: `DynamicGeneralLiChaoTree(X xl, X xr, VAL inf = numeric_limits<VAL>::max() / 2)`
-  - $x$ の範囲が `[xl, xr)` (この幅を $X$ とする)
-- 関数の挿入
-  - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log X)$ 
-  - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} X)$
-- 1 点取得
-  - `query(x)`: $\min_{i} f_{i}(x)$ を返す。計算量 $O(\log X)$
-
-### Static 版 (座標圧縮するか、定義域の範囲が小さい)
-
+を用意している。
 
 
 ## 制約
 
-- 一般関数 $f_1, f_2, \dots, f_N$ が Pairwise Single Crossing であること
+- 挿入する関数群 $f_1, f_2, \dots, f_N$ が Pairwise Single Crossing であること
+
+
+## Dynamic 版の仕様
+
+```cpp
+template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChaoTree;
+```
+
+- コンストラクタ: `DynamicGeneralLiChaoTree(X xl, X xr, VAL inf = numeric_limits<VAL>::max() / 2)`
+  - $x$ の範囲が `[xl, xr)` (この幅を $X$ とする)
+  - 無限大を表す値 `inf`
+- 関数の挿入
+  - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log X)$ 
+  - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} X)$
+- 1 点取得
+  - `query(x)`: $\min_{i} f_{i}(x)$ を返す ($x$ に対して定義された関数が存在しない場合は {INF, -1})。計算量 $O(\log X)$
+
+
+### 使用例
+以下のように、関数群を「ラムダ式関数を返すファクトリ」として定義するとスムーズに使える。
+
+```cpp
+// 関数群の定義
+auto make_func = [&](long long a, long long b) {
+    return [&, a, b](long long x) -> long long {
+        return a * x + b;
+    };
+};
+
+// Li Chao Tree の定義
+long long LX = -(1LL << 30), RX = 1LL << 30;
+DynamicGeneralLiChaoTree<long long, decltype(make_func(0, 0))> cht(LX, RX);
+
+// 区間挿入
+cht.insert_segment(make_func(a, b), l, r);
+
+// クエリ取得
+auto [res, id] = cht.query(p);
+```
+
+
+## Static 版の仕様
+
+
+
 
 ## 問題例
 

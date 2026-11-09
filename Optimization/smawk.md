@@ -26,3 +26,4 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> SMAWK(int H, int W, const
 ## 参考文献
 
 - tatyam: [Monge の手引き書](https://speakerdeck.com/tatyam_prime/monge-noshou-yin-shu)
+- 週刊 spaghetti_source: [Totally Monotone Matrix Searching (SMAWK algorithm)](https://topcoder-g-hatena-ne-jp.jag-icpc.org/spaghetti_source/20120923/1348327542.html)

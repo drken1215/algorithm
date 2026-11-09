@@ -624,7 +624,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## さまざまな最適化技法
 
 - (★☆☆☆) [二分探索](https://drken1215.github.io/algorithm/Optimization/binary_search.hpp.html)
-- (★★★★) [Alien Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://drken1215.github.io/algorithm/Optimization/alien_trick.hpp.html)
 - (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
 - (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
 - (★★★★) 分枝限定法
@@ -656,8 +655,13 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 離散凸性 (OPTIMIZATION : CONVEXITY)
 離散凸性に関するアルゴリズムです。
 
+- (★★★★) [Convex Hull Trick 全部乗せ](https://drken1215.github.io/algorithm/Optimization/convex_hull_trick_all.hpp.html)
 - (★★★★) [Monge 全部乗せ](https://drken1215.github.io/algorithm/Optimization/monge_all.hpp.html)
 - (★★★★) マトロイド 全部乗せ
+
+## 凸性を活かした最適化技法
+
+- (★★★★) [Alien Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://drken1215.github.io/algorithm/Optimization/alien_trick.hpp.html)
 
 ## 区分線形凸関数の活用 1： Slope Trick
 
@@ -707,7 +711,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★☆☆☆) [Monge 性の判定 (in O(HW))](https://drken1215.github.io/algorithm/Optimization/monge_checker.hpp.html)
 - (★★★☆) [Monge 行列の min-plus 合成 (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_min_plus_composition.hpp.html)
-- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/monge_knuth_yao.hpp.html)
+- (★★★☆) [Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))](https://drken1215.github.io/algorithm/Optimization/knuth_yao.hpp.html)
 - (★★★☆) [Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙 (by Monotone Minima, SMAWK 法)](https://drken1215.github.io/algorithm/Optimization/monge_enum_d_shortest_paths.hpp.html)
 - (★★★★) [Monge 単一始点 d-辺最短路問題 (by Alien DP)](https://drken1215.github.io/algorithm/Optimization/alien_dp.hpp.html)
 

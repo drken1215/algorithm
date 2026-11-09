@@ -4,118 +4,127 @@
 using namespace std;
 
 
-// Dynamic Li Chao Tree for Pairwise Single Crossing Functions
-/*
-    Func: Pairwise Single Crossing 性を仮定
-    注意点：i < j なる領域だけでなく、全領域での Pairwise Single Crossing 性が必要！！！
-
-    x 座標のとりうる値の範囲: [XL, XR)
-*/
+// Dynamic General Li-Chao Tree for Pairwise Single Crossing Functions
 template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChaoTree {
-    using Func = function<VAL(X)>;
-    struct IndexedFunc {
-        Func f;
-        int id;
-        VAL eval(X x) const { return f(x); };
-    };
     struct Node {
-        optional<IndexedFunc> func;
-        unique_ptr<Node> left, right;
+        int id = -1;  // function id
+        Node *left = nullptr, *right = nullptr;
     };
     
-    // inner values
+    // inner values using chunk-based memory pool
+    static constexpr int BLOCK = 4096;
+    vector<unique_ptr<Node[]>> blocks;
+    int used = BLOCK;
+    vector<FUNC> funcs;
+    Node *root = nullptr;
     X XL, XR;
     VAL INF = numeric_limits<VAL>::max() / 2;
-    int next_id = 0;
-    unique_ptr<Node> root;
     
     // constructors
-    DynamicGeneralLiChaoTree() {}
-    DynamicGeneralLiChaoTree(X xl, X xr, VAL inf = numeric_limits<VAL>::max() / 2) : XL(xl), XR(xr), INF(inf) {
+    explicit DynamicGeneralLiChaoTree(X xl, X xr, VAL inf = numeric_limits<VAL>::max() / 2)
+    : XL(xl), XR(xr), INF(inf) {
         assert(xl < xr);
     }
-    static bool better(const IndexedFunc &a, const IndexedFunc &b, X x) {
-        return make_pair(a.eval(x), a.id) < make_pair(b.eval(x), b.id);
+
+    // basic functions
+    void reserve_functions(size_t n) {
+        funcs.reserve(n);
+    }
+    Node *new_node() {
+        if (used == BLOCK) {
+            blocks.emplace_back(make_unique<Node[]>(BLOCK));
+            used = 0;
+        }
+        return &blocks.back()[used++];
+    }
+    VAL eval(int id, X x) const {
+        return funcs[id](x);
+    }
+    bool better(int fid, int gid, X x) const {
+        VAL a = eval(fid, x), b = eval(gid, x);
+        return (a < b) || (a == b && fid < gid);
     }
     void clear() {
-        root.reset();
-        next_id = 0;
+        funcs.clear();
+        blocks.clear();
+        used = BLOCK;
+        root = nullptr;
     }
 
     // insert(f), in O(log X)
-    void insert(IndexedFunc f, unique_ptr<Node> &p, X left, X right) {
-        if (!p) p = make_unique<Node>();
-        if (!p->func) {
-            p->func.emplace(f);
-            return;
-        }
-        X mid = (left + right) / 2;
-        bool left_better = better(f, *p->func, left);
-        bool right_better = better(f, *p->func, right - 1);
-
-        if (!left_better && !right_better) return;
-        if (left_better && right_better) {
-            p->func.emplace(f);
-            return;
-        }
-        bool mid_better = better(f, *p->func, mid);
-        if (mid_better) {
-            IndexedFunc old = std::move(*p->func);
-            p->func.emplace(f);
-            if (left_better != mid_better) insert(old, p->left, left, mid);
-            else insert(old, p->right, mid, right);
-        } else {
-            if (left_better != mid_better) insert(f, p->left, left, mid);
-            else insert(f, p->right, mid, right);
-        }
-    }
-    int insert(Func f) {
-        int id = next_id++;
-        insert(IndexedFunc{std::move(f), id}, root, XL, XR);
+    int insert(FUNC f) {
+        int id = (int)funcs.size();
+        funcs.push_back(std::move(f));
+        insert_at(root, XL, XR, id);
         return id;
     }
 
     // insert_segment(l, r, f), in O(log^2 X)
-    void insert_segment(const IndexedFunc &f, unique_ptr<Node> &p, X left, X right, X l, X r) {
-        if (r <= left || right <= l) return;
-        if (l <= left && right <= r) {
-            insert(f, p, left, right);
-            return;
-        }
-        if (!p) p = make_unique<Node>();
-        X mid = (left + right) / 2;
-        insert_segment(f, p->left, left, mid, l, r);
-        insert_segment(f, p->right, mid, right, l, r);
-    }
-    int insert_segment(Func f, X l, X r) {
+    int insert_segment(FUNC f, X l, X r) {
         assert(XL <= l && l <= r && r <= XR);
-        int id = next_id++;
-        if (l != r) insert_segment(IndexedFunc{std::move(f), id}, root, XL, XR, l, r);
+        int id = (int)funcs.size();
+        funcs.push_back(std::move(f));
+        if (l != r) insert_segment_at(root, XL, XR, l, r, id);
         return id;
     }
 
     // query(x), in O(log X)
     pair<VAL, int> query(X x) const {
         assert(XL <= x && x < XR);
-        pair<VAL, int> res{INF, -1};
-        const Node *p = root.get();
+        VAL best = INF;
+        int best_id = -1;
+        Node *p = root;
         X left = XL, right = XR;
         while (p) {
-            if (p->func) {
-                auto cur = make_pair(p->func->eval(x), p->func->id);
-                if (res.second == -1 || cur < res) res = cur;
+            if (p->id != -1) {
+                int fid = p->id;
+                VAL y = eval(fid, x);
+                if (best_id == -1 || y < best || (y == best && fid < best_id)) best = y, best_id = fid;
             }
             if (right - left == 1) break;
             X mid = (left + right) / 2;
-            if (x < mid) {
-                p = p->left.get();
-                right = mid;
-            } else {
-                p = p->right.get();
-                left = mid;
-            }
+            if (x < mid) p = p->left, right = mid;
+            else p = p->right, left = mid;
         }
-        return res;
+        return {best, best_id};
+    }
+
+private:
+    // inner insert
+    void insert_at(Node *&p, X left, X right, int fid) {
+        Node **cur = &p;
+        while (true) {
+            if (!*cur) *cur = new_node();
+            Node *v = *cur;
+            int gid = v->id;
+            if (gid == -1) {
+                v->id = fid;
+                return;
+            }
+            bool left_better = better(fid, gid, left), right_better = better(fid, gid, right - 1);
+            if (!left_better && !right_better) return;
+            if (left_better && right_better) {
+                v->id = fid;
+                return;
+            }
+            X mid = (left + right) / 2;
+            bool mid_better = better(fid, gid, mid);
+            if (mid_better) v->id = fid, fid = gid;
+            if (left_better != mid_better) cur = &v->left, right = mid;
+            else cur = &v->right, left = mid;
+        }
+    }
+
+    // inner insert_segment
+    void insert_segment_at(Node *&p, X left, X right, X l, X r, int fid) {
+        if (r <= left || right <= l) return;
+        if (l <= left && right <= r) {
+            insert_at(p, left, right, fid);
+            return;
+        }
+        if (!p) p = new_node();
+        X mid = (left + right) / 2;
+        if (l < mid) insert_segment_at(p->left, left, mid, l, r, fid);
+        if (mid < r) insert_segment_at(p->right, mid, right, l, r, fid);
     }
 };
-
