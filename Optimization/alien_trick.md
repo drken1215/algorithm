@@ -40,8 +40,8 @@ $h(k-1) + h(k+1) \ge 2h(k)$
 ### ラグランジュ緩和した問題
 上記の仮定の下で、ラグランジュ強双対性が成り立つことが知られている。
 
-- [Monge グラフ上の d-辺最短路長を計算するアルゴリズム](https://noshi91.github.io/algorithm-encyclopedia/d-edge-shortest-path-monge) では、ラグランジュ双対性を意識した証明
-- [Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) では、凸数列の凸共役性を意識した証明
+- [Monge グラフ上の d-辺最短路長を計算するアルゴリズム](https://noshi91.github.io/algorithm-encyclopedia/d-edge-shortest-path-monge) では、ラグランジュ双対性の言葉を意識した証明
+- [Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) では、凸数列の凸共役性の言葉を意識した証明
 
 を与えている。
 具体的には、ラグランジュ双対変数 $\lambda$ を整数として、ラグランジュ緩和した問題
@@ -126,8 +126,13 @@ template<class FUNC> pair<VAL, VAL> solve(const FUNC &lag, VAL K)
 template<class FUNC> pair<VAL, VAL> solve(const FUNC &lag, VAL L, VAL R) 
 ```
 
-インターフェースについては同上 (解法は [Aliens DP で辺の本数が区間で指定される場合](https://noshi91.hatenablog.com/entry/2022/01/13/001217) を参照)。
+インターフェースについては同上。
 
+
+## 使用例
+Alien Trick は、とくに Monge 単一始点 d-辺最短路問題への応用 (Alien DP) がよく問われる。以下のページに、Alien DP における使用例を載せている。
+
+- [Monge 単一始点 d-辺最短路問題 (by Alien DP)](https://drken1215.github.io/algorithm/Optimization/alien_dp.hpp.html)
 
 
 ## 問題例
