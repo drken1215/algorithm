@@ -7,16 +7,23 @@ documentation_of: ./alien_trick.hpp
 
 ### 問題設定
 変数 $x$ について、なんらかの「個数」を表す関数を $g(x)$ とおく（たとえば $x$ がグラフのパスを表し、$g(x)$ がパス中の辺の本数を表すなど）。
-$g(x)$ は $L$ 以上 $R$ 以下の整数値をとる関数とする。
+$g(x)$ は $L$ 以上 $R$ 以下の整数値をすべてとる関数とする。
 
-$K$ を $L \le K \le R$ を満たす正の整数として、次の最適化問題を考える。
+$K$ を $L \le K \le R$ を満たす正の整数として、次の最適化問題を考える ($f(x)$ は整数値をとる関数とする)。
 
 $\min_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
 
-$g(x) = k$ となる $x$ についての $f(x)$ の最小値を $h(k)$ とする。求めたい値は $h(K)$ である。ここで、次の仮定をおく。
+$g(x) = k$ となる $x$ についての $f(x)$ の最小値を $h(k)$ とする。
+$h(k)$ の定義域は $k = L, L+1, \dots, R$ であり、求めたい値は $h(K)$ である。
+ここで、次の仮定をおく。
 
 ----
-$h(k)$ が $k$ について下に凸である
+
+$h(k)$ が定義域内で下に凸であり、離散凸性を満たす。すなわち、
+
+$h(k-1) + h(k+1) \ge 2h(k)$
+
+を満たす。
 
 ----
 
@@ -71,7 +78,7 @@ $k(\lambda_{1}) \le K \le k(\lambda_{2})$ ($\lambda_{1} = \lambda_{2} + 1$)
 $g(x) = K$ であるような最適化問題 $P(\lambda)$ の最適解 $x$ が存在することが示せる。
 すなわち、
 
-$h(K) = \min(L(\lambda_{1}) - \lambda_{1} K, L(\lambda_{2}) - \lambda_{2} K)$
+$h(K) = \max(L(\lambda_{1}) - \lambda_{1} K, L(\lambda_{2}) - \lambda_{2} K)$
 
 が成立する。
 
@@ -95,11 +102,32 @@ $\min_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
 ## 仕様
 
 ```cpp
+template<class VAL> struct AlienTrick;
+```
+
+- `VAL` は符号付き整数型とする
+- オーバーフローに注意すること
+
+
+### 制約条件が g(x) = K の場合
+
+```cpp
 template<class FUNC> pair<VAL, VAL> solve(const FUNC &lag, VAL K)
 ```
 
 - `lag(lambda)`: $x^{\mathrm{opt}} = \mathrm{argmin}_{x} (f(x) + \lambda g(x))$ としたときのペア値 $(f(x^{\mathrm{opt}}), g(x^{\mathrm{opt}}))$ を返す関数
+  - 最大化問題の場合は $x^{\mathrm{opt}} = \mathrm{argmax}_{x} (f(x) + \lambda g(x))$ としたときのペア値 $(f(x^{\mathrm{opt}}), g(x^{\mathrm{opt}}))$ を返す関数
 - 返り値: (元の最適化問題の最適値, そのときの $\lambda$)
+
+
+### 制約条件が L <= g(x) <= R の場合
+
+```cpp
+template<class FUNC> pair<VAL, VAL> solve(const FUNC &lag, VAL L, VAL R) 
+```
+
+インターフェースについては同上 (解法は [Aliens DP で辺の本数が区間で指定される場合](https://noshi91.hatenablog.com/entry/2022/01/13/001217) を参照)。
+
 
 
 ## 問題例
