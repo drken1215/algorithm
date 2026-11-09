@@ -20,12 +20,21 @@ $h(p)$ が $p$ について下に凸である
 
 ----
 
-このとき、ラグランジュ強双対性が成り立つことが知られている（下の参考文献を参照）。
+この仮定を満たす具体的な状況については、[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照。
+
+
+### ラグランジュ緩和問題
+上記の仮定の下で、ラグランジュ強双対性が成り立つことが知られている。
 すなわち、ラグランジュ双対変数 $\lambda$ を整数として、次のラグランジュ緩和問題
 
 $\max_{\lambda} \min_{x} (f(x) + \lambda(g(x) - K))$
 
-の最適値は、もとの最適化問題の最適値に一致する。
+の最適値は、もとの最適化問題の最適値に一致する。補足として、ラグランジュ強双対性が成り立たなくても、以下のことが成り立つ。
+
+- 一般に、ラグランジュ緩和問題の最適解の値は、もとの最適化問題の下界を与える (弱双対性)
+- 一般に、$\min_{x} (f(x) + \lambda(g(x) - K))$ は $\lambda$ について上に凸であり、ラグランジュ緩和問題の最適解は三分探索によって求められる
+
+ここでは、三分探索法よりも高速な二分探索法を考える。
 
 
 ### ラグランジュ緩和問題の解き方
@@ -34,10 +43,11 @@ $\lambda$ を固定して、最適化問題
 $P(\lambda): \min_{x} (f(x) + \lambda g(x))$
 
 を考える（最適値を $L(\lambda)$ とおく）。
-この最適化問題 $P(\lambda)$ の最適解の集合は、$\min_{x} (f(x) + \lambda(g(x) - K))$ の最適解の集合に一致する。
+この最適化問題 $P(\lambda)$ は、$\min_{x} (f(x) + \lambda(g(x) - K))$ と等価であることに注意する。
+$g(x) = K$ となるように $\lambda$ をコントロールすることを考える。
 
 最適化問題 $P(\lambda)$ の最適解 $x^{\mathrm{opt}}$ を 1 つとり、$k(\lambda) = g(x^{\mathrm{opt}})$ とおくと、
-$k(\lambda)$ は $\lambda$ について広義単調減少となることが知られている（[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照）。
+$k(\lambda)$ は $\lambda$ について広義単調減少となる（[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照）。
 
 よって、二分探索法によって、
 
@@ -51,6 +61,22 @@ $g(x) = K$ であるような最適化問題 $P(\lambda)$ の最適解 $x$ が�
 $h(K) = \min(L(\lambda_{1}) - \lambda_{1} K, L(\lambda_{2}) - \lambda_{2} K)$
 
 が成立する。
+
+
+### 復元について
+$k(\lambda_{1}) \le K \le k(\lambda_{2})$ ($\lambda_{1} = \lambda_{2} + 1$)
+
+を満たすような $\lambda_{1}, \lambda_{2}$ を求めることができても、実際に
+
+$\min_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
+
+の最適解 $x$ を復元することは、一般には難しいと考えられる。ただし、以下に挙げるような、最適解に交換性があるような個別の場合については、最適解を復元できる場合がある。
+
+- 最小費用流問題で、流量を 1 ずつ増減できる場合 (Alien Trick ではないが、[ABC 373 G - Unevenness](https://atcoder.jp/contests/abc393/tasks/abc393_g) など)
+- マトロイドで、基の交換性を利用できる場合
+- DP の最適遷移を組み合わせて、選択肢を 1 ずつ変えられる場合
+
+これらの場合には、$g(x)$ が $K$ よりも大きい最適解と小さい最適解とから、最適性を保ちながら $g(x) = K$ であるような解を構成できる。
 
 
 ## 仕様
