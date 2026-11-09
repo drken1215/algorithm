@@ -13,14 +13,21 @@ $K$ を $L \le K \le R$ を満たす正の整数として、次の最適化問�
 
 $\min_{x} f(x)$ $\mathrm{s.t.}$ $g(x) = K$
 
-$g(x) = p$ となる $x$ についての $f(x)$ の最小値を $h(p)$ とする。求めたい値は $h(K)$ である。ここで、次の仮定をおく。
+$g(x) = k$ となる $x$ についての $f(x)$ の最小値を $h(k)$ とする。求めたい値は $h(K)$ である。ここで、次の仮定をおく。
 
 ----
-$h(p)$ が $p$ について下に凸である
+$h(k)$ が $k$ について下に凸である
 
 ----
 
-この仮定を満たす具体的な状況については、[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照。
+この仮定を満たす具体的な状況については、[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) で、
+
+- ソートして交互にとる
+- ネットワークフローとマッチング
+- Monge 性 (とくに、Alien DP と呼ばれる解法に繋がる)
+- マトロイド
+
+という 4 つの場面が紹介されている。
 
 
 ### ラグランジュ緩和問題
@@ -44,8 +51,9 @@ $P(\lambda): \min_{x} (f(x) + \lambda g(x))$
 
 を考える（最適値を $L(\lambda)$ とおく）。
 この最適化問題 $P(\lambda)$ は、$\min_{x} (f(x) + \lambda(g(x) - K))$ と等価であることに注意する。
-$g(x) = K$ となるように $\lambda$ をコントロールすることを考える。
+また、最適化問題 $P(\lambda)$ には、Fenchel 双共役性に基づく幾何学的解釈も存在する（[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照）。
 
+さて、$g(x) = K$ となるように $\lambda$ をコントロールすることを考える。
 最適化問題 $P(\lambda)$ の最適解 $x^{\mathrm{opt}}$ を 1 つとり、$k(\lambda) = g(x^{\mathrm{opt}})$ とおくと、
 $k(\lambda)$ は $\lambda$ について広義単調減少となる（[Alien Trick](https://info.atcoder.jp/entry/algorithm_lectures/alien_trick) を参照）。
 
