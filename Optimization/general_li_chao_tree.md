@@ -6,10 +6,10 @@ documentation_of: ./general_li_chao_tree.hpp
 ## 概要
 一般関数群 (Pairwise Single Crossing) に対応した Li Chao Tree。
 
-- Dynamic 版 (座標圧縮しない)
-- Static 版 (座標圧縮するか、定義域の範囲が小さい)
+- Dynamic 版 ($x$ 座標を座標圧縮せず、有効な定義域を与える)
+- 座標圧縮版 (クエリを呼び出す $x$ 座標を座標圧縮する)
 
-を用意している。
+を用意している。後者はクエリ先読みができることを前提としているが、前者よりも高速である。
 
 
 ## 制約
@@ -17,9 +17,7 @@ documentation_of: ./general_li_chao_tree.hpp
 - 挿入する関数群 $f_1, f_2, \dots, f_N$ が Pairwise Single Crossing であること
 
 
-## 仕様
-
-### Dynamic 版
+## 仕様 (Dynamic 版)
 
 ```cpp
 template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChaoTree;
@@ -58,7 +56,7 @@ auto [res, id] = cht.query(p);
 ```
 
 
-## Static 版の仕様
+## 仕様 (座標圧縮版)
 
 ```cpp
 template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
@@ -76,7 +74,7 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
   - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {INF, -1})。計算量 $O(\log N)$
 
 
-### Static 版の使用例
+### 座標圧縮版の使用例
 
 ```cpp
 // 関数群の定義
@@ -107,6 +105,7 @@ auto [res, id] = cht.query(p);
 - [Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry](https://codeforces.com/contest/319/problem/C) (Monge 単一始点最短路)
 - [yukicoder No.705 ゴミ拾い Hard](https://yukicoder.me/problems/no/705) (Monge 単一始点最短路)
 - [AtCoder ABC 480 G - Zonal Score Minimization](https://atcoder.jp/contests/abc480/tasks/abc480_g) (anti-Monge 単一始点最短路, 全域 anti-Monge 性格長をしても、区間挿入を使っても解ける)
+
 
 ## 参考文献
 

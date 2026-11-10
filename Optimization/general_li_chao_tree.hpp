@@ -10,8 +10,8 @@ template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChao
         Node *left = nullptr, *right = nullptr;
     };
     
-    // inner values
-    vector<unique_ptr<Node[]>> blocks;  // chunk-based memory pool
+    // inner values using chunk-based memory pool
+    vector<unique_ptr<Node[]>> blocks;
     vector<FUNC> funcs;
     Node *root = nullptr;
     X XL, XR;
@@ -132,10 +132,10 @@ private:
     }
 };
 
-// General Li-Chao Tree (Static ver.) for Pairwise Single Crossing Functions
+// General Li-Chao Tree (static ver.) for Pairwise Single Crossing Functions
 template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
     // inner values
-    int N;
+    int N, siz;
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<X> xs;
     vector<int> ids;
@@ -149,7 +149,9 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
             xs.erase(unique(xs.begin(), xs.end()), xs.end());
         }
         N = (int)xs.size();
-        ids.assign(max(1, N * 4), -1);
+        siz = 1;
+        while (siz < N) siz <<= 1;
+        ids.assign(siz << 1, -1);
     }
 
     // basic functions
@@ -181,10 +183,29 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
         assert(l <= r);
         int id = (int)funcs.size();
         funcs.push_back(std::move(f));
-        if (!N || l == r) return id;
+        if (N == 0 || l == r) return id;
         int L = int(lower_bound(xs.begin(), xs.end(), l) - xs.begin());
         int R = int(lower_bound(xs.begin(), xs.end(), r) - xs.begin());
-        if (L < R) insert_segment_at(1, 0, N, L, R, id);
+        if (L == R) return id;
+
+        int a = L + siz, b = R + siz;
+        while (a < b) {
+            if (a & 1) {
+                int v = a++;
+                int depth = 31 - __builtin_clz((unsigned)v);
+                int length = siz >> depth;
+                int left = (v - (1 << depth)) * length;
+                insert_at(v, left, left + length, id);
+            }
+            if (b & 1) {
+                int v = --b;
+                int depth = 31 - __builtin_clz((unsigned)v);
+                int length = siz >> depth;
+                int left = (v - (1 << depth)) * length;
+                insert_at(v, left, left + length, id);
+            }
+            a >>= 1, b >>= 1;
+        }
         return id;
     }
 
@@ -195,8 +216,8 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
         int pos = int(it - xs.begin());
         VAL best = INF;
         int best_id = -1;
-        int v = 1, left = 0, right = N;
-        while (true) {
+        int v = (int)(it - xs.begin()) + siz;
+        while (v) {
             int fid = ids[v];
             if (fid != -1) {
                 VAL y = eval(fid, x);
@@ -204,10 +225,7 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
                     best = y, best_id = fid;
                 }
             }
-            if (right - left == 1) break;
-            int mid = (left + right) / 2;
-            if (pos < mid) v *= 2, right = mid;
-            else v = v * 2 + 1, left = mid;
+            v >>= 1;
         }
         return {best, best_id};
     }
@@ -215,36 +233,30 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
 private:
     // inner insert
     void insert_at(int v, int left, int right, int fid) {
+        auto coord = [&](int i) -> X { return xs[min(i, N - 1)]; };
         while (true) {
             int gid = ids[v];
             if (gid == -1) {
                 ids[v] = fid;
                 return;
             }
-            bool left_better = better(fid, gid, xs[left]);
-            bool right_better = better(fid, gid, xs[right - 1]);
+            bool left_better = better(fid, gid, coord(left));
+            bool right_better = better(fid, gid, coord(right - 1));
             if (!left_better && !right_better) return;
             if (left_better && right_better) {
                 ids[v] = fid;
                 return;
             }
-            int mid = (left + right) / 2;
-            bool mid_better = better(fid, gid, xs[mid]);
+            X mid = (left + right) / 2;
+            bool mid_better = better(fid, gid, coord(mid));
             if (mid_better) ids[v] = fid, fid = gid;
-            if (left_better != mid_better) v *= 2, right = mid;
-            else v = v * 2 + 1, left = mid;
+            if (left_better != mid_better) {
+                v <<= 1;
+                right = mid;
+            } else {
+                v = v << 1 | 1;
+                left = mid;
+            }
         }
-    }
-
-    // inner insert_segment
-    void insert_segment_at(int v, int left, int right, int l, int r, int fid) {
-        if (r <= left || right <= l) return;
-        if (l <= left && right <= r) {
-            insert_at(v, left, right, fid);
-            return;
-        }
-        int mid = left + (right - left) / 2;
-        if (l < mid) insert_segment_at(v * 2, left, mid, l, r, fid);
-        if (mid < r) insert_segment_at(v * 2 + 1, mid, right, l, r, fid);
     }
 };
