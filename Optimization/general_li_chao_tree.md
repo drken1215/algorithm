@@ -36,7 +36,7 @@ template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChao
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log X)$ 
   - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} X)$
 - 1 点取得
-  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {$\inrgy$, $-1$})。計算量 $O(\log X)$
+  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {$\infty$, $-1$})。計算量 $O(\log X)$
 
 
 ### Dynamic 版の使用例
@@ -84,7 +84,7 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log N)$ 
   - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} N)$
 - 1 点取得
-  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {$\inrgy$, $-1$})。計算量 $O(\log N)$
+  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {$\infty$, $-1$})。計算量 $O(\log N)$
 
 
 ### 座標圧縮版の使用例
