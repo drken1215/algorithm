@@ -6,10 +6,10 @@ documentation_of: ./general_li_chao_tree.hpp
 ## 概要
 一般関数群 (Pairwise Single Crossing) に対応した Li Chao Tree。
 
-- Dynamic 版 ($x$ 座標を座標圧縮せず、有効な定義域を与える)
+- Dynamic 版 ($x$ 座標を座標圧縮せず、有効な定義域を与える。$x$ 座標は $10^{9}$ や $-10^{9}$ などでも構わない)
 - 座標圧縮版 (クエリを呼び出す $x$ 座標を座標圧縮する)
 
-を用意している。後者はクエリ先読みができることを前提としているが、前者よりも高速である。
+を用意している。後者はクエリ先読みができることを前提としているが、基本的には前者よりも高速である。
 
 
 ## 制約
@@ -24,7 +24,7 @@ template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChao
 ```
 
 - コンストラクタ: `DynamicGeneralLiChaoTree(X xl, X xr, VAL inf = numeric_limits<VAL>::max() / 2)`
-  - $x$ の範囲が `[xl, xr)` (この幅を $X$ とする)
+  - `[xl, xr)`: $x$ の範囲 (この幅を $X$ とする)
   - `inf`: 無限大を表す値
 - 関数の挿入
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log X)$ 
@@ -67,8 +67,8 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
     - 区間挿入 `insert_segment(f, l, r)` の端点 $l, r$ については、`xs` に含まれている必要はない
   - `inf`: 無限大を表す値
   - `sorted`: `xs` がソート済みであるかどうかを表すフラグ変数
-- コンストラクタ 2: `GeneralLiChaoTree(int n, VAL inf = numeric_limits<VAL>::max() / 2)`
-  - `n`: `query(x)` の対象となる $x$ を $0$ 以上 $n$ 未満の整数とする
+- コンストラクタ 2: `GeneralLiChaoTree(int xl, int xr, VAL inf = numeric_limits<VAL>::max() / 2)`
+  - `[xl, xr)`: $x$ の範囲 ($N = \mathrm{xr} - \mathrm{xl}$ とする) 
   - `inf`: 無限大を表す値
 - 関数の挿入
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log N)$ 
