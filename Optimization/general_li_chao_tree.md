@@ -62,11 +62,14 @@ auto [res, id] = cht.query(p);
 template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
 ```
 
-- コンストラクタ: `GeneralLiChaoTree(const vector<X>& xs, VAL inf = numeric_limits<VAL>::max() / 2, bool sorted = true)`
+- コンストラクタ 1: `GeneralLiChaoTree(const vector<X>& xs, VAL inf = numeric_limits<VAL>::max() / 2, bool sorted = true)`
   - `xs`: `query(x)` の対象となる $x$ を重複なく小さい順に格納したもの (この値の個数を $N$ とする)
     - 区間挿入 `insert_segment(f, l, r)` の端点 $l, r$ については、`xs` に含まれている必要はない
   - `inf`: 無限大を表す値
   - `sorted`: `xs` がソート済みであるかどうかを表すフラグ変数
+- コンストラクタ 2: `GeneralLiChaoTree(int n, VAL inf = numeric_limits<VAL>::max() / 2)`
+  - `n`: `query(x)` の対象となる $x$ を $0$ 以上 $n$ 未満の整数とする
+  - `inf`: 無限大を表す値
 - 関数の挿入
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log N)$ 
   - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} N)$

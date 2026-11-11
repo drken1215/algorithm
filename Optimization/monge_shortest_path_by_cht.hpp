@@ -21,7 +21,7 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(in
     auto make_func = [&](int i) {
         return [&, i](long long j) -> VAL { return dp[i].first + f(i, j); };
     };
-    DynamicGeneralLiChaoTree<VAL, decltype(make_func(0))> cht(1, N + 1, INF);
+    GeneralLiChaoTree<VAL, decltype(make_func(0))> cht(1, N + 1, INF);
     dp[0].first = 0;
     int i = 0;
     for (int j = 1; j <= N; j++) {

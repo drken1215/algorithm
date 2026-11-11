@@ -135,7 +135,8 @@ private:
 // General Li-Chao Tree (static ver.) for Pairwise Single Crossing Functions
 template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
     // inner values
-    int N, siz;
+    int N, XL, SIZ;
+    bool compressed = true;
     VAL INF = numeric_limits<VAL>::max() / 2;
     vector<X> xs;
     vector<int> ids;
@@ -143,15 +144,19 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
 
     // constructors
     explicit GeneralLiChaoTree(vector<X> xs_, VAL inf = numeric_limits<VAL>::max() / 2, bool sorted = true) 
-    : xs(std::move(xs_)), INF(inf) {
+    : N((int)xs_.size()), XL(0), SIZ(1), compressed(true), INF(inf), xs(std::move(xs_)) {
         if (!sorted) {
             sort(xs.begin(), xs.end());
             xs.erase(unique(xs.begin(), xs.end()), xs.end());
         }
-        N = (int)xs.size();
-        siz = 1;
-        while (siz < N) siz <<= 1;
-        ids.assign(siz << 1, -1);
+        while (SIZ < N) SIZ <<= 1;
+        ids.assign(SIZ << 1, -1);
+    }
+    explicit GeneralLiChaoTree(int xl, int xr, VAL inf = numeric_limits<VAL>::max() / 2) 
+    : N(xr - xl), XL(xl), SIZ(1), compressed(false), INF(inf) {
+        assert(N >= 0);
+        while (SIZ < N) SIZ <<= 1;
+        ids.assign(SIZ << 1, -1);
     }
 
     // basic functions
@@ -174,7 +179,7 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
     int insert(FUNC f) {
         int id = (int)funcs.size();
         funcs.push_back(std::move(f));
-        if (N) insert_at(1, 0, N, id);
+        if (N) insert_at(1, 0, SIZ, id);
         return id;
     }
 
@@ -184,23 +189,22 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
         int id = (int)funcs.size();
         funcs.push_back(std::move(f));
         if (N == 0 || l == r) return id;
-        int L = int(lower_bound(xs.begin(), xs.end(), l) - xs.begin());
-        int R = int(lower_bound(xs.begin(), xs.end(), r) - xs.begin());
+        int L = lower_bound_index(l);
+        int R = lower_bound_index(r);
         if (L == R) return id;
-
-        int a = L + siz, b = R + siz;
+        int a = L + SIZ, b = R + SIZ;
         while (a < b) {
             if (a & 1) {
                 int v = a++;
                 int depth = 31 - __builtin_clz((unsigned)v);
-                int length = siz >> depth;
+                int length = SIZ >> depth;
                 int left = (v - (1 << depth)) * length;
                 insert_at(v, left, left + length, id);
             }
             if (b & 1) {
                 int v = --b;
                 int depth = 31 - __builtin_clz((unsigned)v);
-                int length = siz >> depth;
+                int length = SIZ >> depth;
                 int left = (v - (1 << depth)) * length;
                 insert_at(v, left, left + length, id);
             }
@@ -211,12 +215,18 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
 
     // query(x), x must be in xs, in O(log N)
     pair<VAL, int> query(X x) const {
-        auto it = lower_bound(xs.begin(), xs.end(), x);
-        assert(it != xs.end() && *it == x);
-        int pos = int(it - xs.begin());
+        int pos = 0;
+        if (compressed) {
+            auto it = lower_bound(xs.begin(), xs.end(), x);
+            assert(it != xs.end() && *it == x);
+            pos = int(it - xs.begin());
+        } else {
+            assert(X(XL) <= x && x < X(XL + N));
+            pos = int(x - XL);
+        }
         VAL best = INF;
         int best_id = -1;
-        int v = (int)(it - xs.begin()) + siz;
+        int v = pos + SIZ;
         while (v) {
             int fid = ids[v];
             if (fid != -1) {
@@ -231,9 +241,23 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
     }
 
 private:
+    // coordinate compression
+    int lower_bound_index(X x) const {
+        if (compressed) {
+            return int(std::lower_bound(xs.begin(), xs.end(), x) - xs.begin());
+        } else {
+            if (x <= X(XL)) return 0;
+            else if (x >= X(XL) + X(N)) return N;
+            else return int(x - X(XL));
+        }
+    }
+
     // inner insert
     void insert_at(int v, int left, int right, int fid) {
-        auto coord = [&](int i) -> X { return xs[min(i, N - 1)]; };
+        auto coord = [&](int i) -> X { 
+            i = min(i, N - 1);
+            return (compressed ? xs[i] : X(i) + X(XL));
+        };
         while (true) {
             int gid = ids[v];
             if (gid == -1) {
