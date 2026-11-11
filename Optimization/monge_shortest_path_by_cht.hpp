@@ -10,7 +10,8 @@ using namespace std;
 // A(j, i) = dp[i] + f(i, j) must be Pairwise Single Crossing (must be in all 0 <= i, j <= N, including i >= j)
 // Attention: Even if f is Pairwise Single Crossing, A is not necessarily Pairwise Single Crossing
 // edges: (i, j), j >= start[i] (i + 1 <= start[i] <= N + 1), start is non-decreasing
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f, const vector<int> &start) {
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT
+(int N, const FUNC &f, const vector<int> &start, bool use_segment_insertion = true) {
     assert((int)start.size() == N);
     for (int i = 0; i < N; i++) {
         assert(i + 1 <= start[i] && start[i] <= N + 1);
@@ -26,14 +27,21 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(in
     int i = 0;
     for (int j = 1; j <= N; j++) {
         while (i < N && j >= start[i]) {
-            cht.insert(make_func(i));
+            if (use_segment_insertion) {
+                // 挿入する関数群が j >= start[i] の領域でのみ PSC であるとき、use_segment_insertion = true にする
+                cht.insert_segment(make_func(i), start[i], N + 1);
+            } else {
+                // 挿入する関数群が全ての i, j に対して PSC であるとき、use_segment_insertion = false にする
+                cht.insert(make_func(i));
+            }
             i++;
         }
         dp[j] = cht.query(j);
     };
     return dp;
 }
-template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT(int N, const FUNC &f) {
+template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT
+(int N, const FUNC &f, bool use_segment_insertion = true) {
     vector<int> start(N);
     for (int i = 0; i < N; i++) start[i] = i + 1;
     return MongeShortestPathByCHT<VAL>(N, f, start);

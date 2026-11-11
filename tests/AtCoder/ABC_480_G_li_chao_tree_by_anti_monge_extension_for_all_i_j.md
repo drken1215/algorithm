@@ -1,6 +1,6 @@
 ---
-title: anti-Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))
-documentation_of: ./ABC_480_G_li_chao_tree_by_anti_monge_extension.cpp
+title: anti-Monge 単一始点最短路問題の解法例 (by Convex Hull Trick, in O(N log N))
+documentation_of: ./ABC_480_G_li_chao_tree_by_anti_monge_extension_for_all_i_j.cpp
 ---
 
 ## 概要

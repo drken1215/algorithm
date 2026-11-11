@@ -12,6 +12,7 @@ documentation_of: ./general_li_chao_tree.hpp
 を用意している。後者はクエリ先読みができることを前提としているが、基本的には前者よりも高速である。
 
 
+
 ## 制約
 
 - 挿入する関数群 $f_1, f_2, \dots, f_N$ が Pairwise Single Crossing であること
@@ -23,6 +24,10 @@ documentation_of: ./general_li_chao_tree.hpp
 template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChaoTree;
 ```
 
+- テンプレート引数:
+  - `VAL`: 関数の $f(x)$ の値の型
+  - `FUNC`: 関数の型 (具体的な指定方法は使用例を参照)
+  - `X`: $x$ 座標の型
 - コンストラクタ: `DynamicGeneralLiChaoTree(X xl, X xr, VAL inf = numeric_limits<VAL>::max() / 2)`
   - `[xl, xr)`: $x$ の範囲 (この幅を $X$ とする)
   - `inf`: 無限大を表す値
@@ -62,6 +67,10 @@ auto [res, id] = cht.query(p);
 template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
 ```
 
+- テンプレート引数:
+  - `VAL`: 関数の $f(x)$ の値の型
+  - `FUNC`: 関数の型 (具体的な指定方法は使用例を参照)
+  - `X`: $x$ 座標の型
 - コンストラクタ 1: `GeneralLiChaoTree(const vector<X>& xs, VAL inf = numeric_limits<VAL>::max() / 2, bool sorted = true)`
   - `xs`: `query(x)` の対象となる $x$ を重複なく小さい順に格納したもの (この値の個数を $N$ とする)
     - 区間挿入 `insert_segment(f, l, r)` の端点 $l, r$ については、`xs` に含まれている必要はない
@@ -102,12 +111,12 @@ auto [res, id] = cht.query(p);
 ## 問題例
 
 - [Library Checker - Line Add Get Min](https://judge.yosupo.jp/problem/line_add_get_min) (直線を管理)
-- [Library Checker - Segment Add Get Min](https://judge.yosupo.jp/problem/segment_add_get_min) (直線を管理, 区間挿入あり)
+- [Library Checker - Segment Add Get Min](https://judge.yosupo.jp/problem/segment_add_get_min) (直線を管理。区間挿入あり)
 - [COLOCON 2018 Final C - スペースエクスプローラー高橋君](https://beta.atcoder.jp/contests/colopl2018-final-open/tasks/colopl2018_final_c) (一般関数)
 - [AtCoder EDPC Z - Frog 3](https://atcoder.jp/contests/dp/tasks/dp_z) (Monge 単一始点最短路)
 - [Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry](https://codeforces.com/contest/319/problem/C) (Monge 単一始点最短路)
 - [yukicoder No.705 ゴミ拾い Hard](https://yukicoder.me/problems/no/705) (Monge 単一始点最短路)
-- [AtCoder ABC 480 G - Zonal Score Minimization](https://atcoder.jp/contests/abc480/tasks/abc480_g) (anti-Monge 単一始点最短路, 全域 anti-Monge 性格長をしても、区間挿入を使っても解ける)
+- [AtCoder ABC 480 G - Zonal Score Minimization](https://atcoder.jp/contests/abc480/tasks/abc480_g) (anti-Monge 単一始点最短路。定義域全体に anti-Monge 性を拡張する方針でも、区間挿入を使っても解ける)
 
 
 ## 参考文献

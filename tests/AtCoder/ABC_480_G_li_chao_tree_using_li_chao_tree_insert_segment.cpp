@@ -4,6 +4,7 @@
 #include "sparse_table.hpp"
 #include "general_li_chao_tree.hpp"
 
+// Li-Chao Tree の「区間挿入」を用いる O(N log^2 N) 解法
 int main() {
     int N;
     cin >> N;
