@@ -12,10 +12,11 @@ documentation_of: ./general_li_chao_tree.hpp
 を用意している。後者はクエリ先読みができることを前提としているが、基本的には前者よりも高速である。
 
 
-
 ## 制約
 
 - 挿入する関数群 $f_1, f_2, \dots, f_N$ が Pairwise Single Crossing であること
+  - 「$f_1, f_2, \dots, f_N$ を適切に並び替えると **Monge** になること」は十分条件である
+  - 「$f_1, f_2, \dots, f_N$ を適切に並び替えると **anti-Monge** になること」も十分条件である
 
 
 ## 仕様 (Dynamic 版)

@@ -686,10 +686,10 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Li Chao Tree (一般関数は Pairwise Single Crossing 性を仮定)
 
-- (★★★★) Extended Li Chao Tree (線分挿入対応, 区間一次式加算対応)
-- (★★★★) Extended Li Chao Tree (線分挿入対応, 区間最小値取得対応)
-- (★★★★) [General Li Chao Tree (一般関数対応)](https://drken1215.github.io/algorithm/Optimization/general_li_chao_tree.hpp.html)
-- (★★★★) Extended General Li Chao Tree (単調な一般関数対応, 区間最小値取得対応)
+- (★★★★) Extended Li Chao Tree (直線のみ対応, 区間挿入対応, 区間一次式加算対応)
+- (★★★★) Extended Li Chao Tree (直線のみ対応, 区間挿入対応, 区間最小値取得対応)
+- (★★★★) [General Li Chao Tree (一般関数対応, 区間挿入対応)](https://drken1215.github.io/algorithm/Optimization/general_li_chao_tree.hpp.html)
+- (★★★★) Extended General Li Chao Tree (単調な一般関数対応, 区間挿入対応, 区間最小値取得対応)
 
 ## 行最小値問題・単一始点最短路問題
 

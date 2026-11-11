@@ -16,7 +16,7 @@ documentation_of: ./monge_enum_d_shortest_paths.hpp
 ### DP で解釈
 次の DP を高速化するアルゴリズムであるとも言える。
 
-`dp[j][d] = min_{j < i} (dp[i][d - 1] + f(i, j))`
+`dp[j][d] = min_{i < j} (dp[i][d - 1] + f(i, j))`
 
 これは通常 $O(N^2 D)$ の計算量を要するが、$f$ が Monge ならば高速に実行できる。
 

@@ -132,7 +132,7 @@ private:
     }
 };
 
-// General Li-Chao Tree (static ver.) for Pairwise Single Crossing Functions
+// General Li-Chao Tree (Coordinate Compression ver.) for Pairwise Single Crossing Functions
 template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree {
     // inner values
     int N, XL, SIZ;

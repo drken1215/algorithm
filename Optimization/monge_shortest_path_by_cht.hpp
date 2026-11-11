@@ -44,5 +44,5 @@ template<class VAL, class FUNC> vector<pair<VAL, int>> MongeShortestPathByCHT
 (int N, const FUNC &f, bool use_segment_insertion = true) {
     vector<int> start(N);
     for (int i = 0; i < N; i++) start[i] = i + 1;
-    return MongeShortestPathByCHT<VAL>(N, f, start);
+    return MongeShortestPathByCHT<VAL>(N, f, start, use_segment_insertion);
 }
