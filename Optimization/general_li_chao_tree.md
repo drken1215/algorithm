@@ -4,7 +4,7 @@ documentation_of: ./general_li_chao_tree.hpp
 ---
 
 ## 概要
-一般関数群 (Pairwise Single Crossing) に対応した Li Chao Tree。
+一般関数群 (**Pairwise Single Crossing**) に対応した Li Chao Tree。
 
 - Dynamic 版 ($x$ 座標を座標圧縮せず、有効な定義域を与える。$x$ 座標は $10^{9}$ や $-10^{9}$ などでも構わない)
 - 座標圧縮版 (クエリを呼び出す $x$ 座標を座標圧縮する)
@@ -36,7 +36,7 @@ template<class VAL, class FUNC, class X = long long> struct DynamicGeneralLiChao
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log X)$ 
   - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} X)$
 - 1 点取得
-  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {INF, -1})。計算量 $O(\log X)$
+  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {$\inrgy$, $-1$})。計算量 $O(\log X)$
 
 
 ### Dynamic 版の使用例
@@ -84,7 +84,7 @@ template<class VAL, class FUNC, class X = long long> struct GeneralLiChaoTree;
   - `insert(f)`: 関数 $f$ を挿入する。計算量 $O(\log N)$ 
   - `insert_segment(f, l, r)`: 関数 $f$ を区間 $[l, r)$ の範囲内で挿入する。計算量 $O(\log^{2} N)$
 - 1 点取得
-  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {INF, -1})。計算量 $O(\log N)$
+  - `query(x)`: {$\min_{i} f_{i}(x)$, 最小を達成する $i$} を返す ($x$ に対して定義された関数が存在しない場合は {$\inrgy$, $-1$})。計算量 $O(\log N)$
 
 
 ### 座標圧縮版の使用例
@@ -117,6 +117,7 @@ auto [res, id] = cht.query(p);
 - [AtCoder EDPC Z - Frog 3](https://atcoder.jp/contests/dp/tasks/dp_z) (Monge 単一始点最短路)
 - [Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry](https://codeforces.com/contest/319/problem/C) (Monge 単一始点最短路)
 - [yukicoder No.705 ゴミ拾い Hard](https://yukicoder.me/problems/no/705) (Monge 単一始点最短路)
+- [yukicoder No. 2404 Vertical Throw Up](https://yukicoder.me/problems/no/2404) (オンラインクエリ, 並び替えないと Monge にならないもの)
 - [AtCoder ABC 480 G - Zonal Score Minimization](https://atcoder.jp/contests/abc480/tasks/abc480_g) (anti-Monge 単一始点最短路。定義域全体に anti-Monge 性を拡張する方針でも、区間挿入を使っても解ける)
 
 
