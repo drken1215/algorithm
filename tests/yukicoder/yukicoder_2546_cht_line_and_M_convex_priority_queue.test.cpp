@@ -23,7 +23,7 @@ int main() {
     vll plus(M+1, -INF), minus(M+1, -INF);
     auto make_func = [&](ll a, ll d) {
         return [&, a, d](ll m) -> ll {
-            return -d * (m - 1) - a * 2;
+            return (-d * (m - 1) - a * 2);
         };
     };
     GeneralLiChaoTree<ll, decltype(make_func(0, 0))> cht(0, M+1);

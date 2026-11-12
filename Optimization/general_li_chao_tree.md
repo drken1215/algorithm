@@ -115,10 +115,12 @@ auto [res, id] = cht.query(p);
 - [Library Checker - Segment Add Get Min](https://judge.yosupo.jp/problem/segment_add_get_min) (直線を管理。区間挿入あり)
 - [COLOCON 2018 Final C - スペースエクスプローラー高橋君](https://beta.atcoder.jp/contests/colopl2018-final-open/tasks/colopl2018_final_c) (一般関数)
 - [AtCoder EDPC Z - Frog 3](https://atcoder.jp/contests/dp/tasks/dp_z) (Monge 単一始点最短路)
+- [AtCoder ABC 480 G - Zonal Score Minimization](https://atcoder.jp/contests/abc480/tasks/abc480_g) (anti-Monge 単一始点最短路。定義域全体に anti-Monge 性を拡張する方針でも、区間挿入を使っても解ける)
 - [Codeforces Round 189 (Div. 1) C. Kalila and Dimna in the Logging Industry](https://codeforces.com/contest/319/problem/C) (Monge 単一始点最短路)
 - [yukicoder No.705 ゴミ拾い Hard](https://yukicoder.me/problems/no/705) (Monge 単一始点最短路)
-- [yukicoder No. 2404 Vertical Throw Up](https://yukicoder.me/problems/no/2404) (オンラインクエリ, 並び替えないと Monge にならないもの)
-- [AtCoder ABC 480 G - Zonal Score Minimization](https://atcoder.jp/contests/abc480/tasks/abc480_g) (anti-Monge 単一始点最短路。定義域全体に anti-Monge 性を拡張する方針でも、区間挿入を使っても解ける)
+- [yukicoder No. 2404 Vertical Throw Up](https://yukicoder.me/problems/no/2404) (オンラインクエリ, PSC だが、並び替えないと Monge にならないもの)
+- [yukicoder No. No.2458 Line Up Charged Balls](https://yukicoder.me/problems/no/2458) (Monge ではない単一始点最短路, 結局直線 CHT に帰着できる)
+- [yukicoder No.2546 Many Arithmetic Sequences](https://yukicoder.me/problems/no/2546) (交差が正の部分では $x > 0$ の領域に限り PSC, Monge ではない)
 
 
 ## 参考文献
