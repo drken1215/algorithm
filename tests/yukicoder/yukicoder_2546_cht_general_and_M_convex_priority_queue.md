@@ -1,6 +1,6 @@
 ---
 title: yukicoder No.2546 Many Arithmetic Sequences
-documentation_of: ./yukicoder_2546_cht_and_M_convex_priority_queue.test.cpp
+documentation_of: ./yukicoder_2546_cht_general_and_M_convex_priority_queue.test.cpp
 ---
 
 ## 問題概要
