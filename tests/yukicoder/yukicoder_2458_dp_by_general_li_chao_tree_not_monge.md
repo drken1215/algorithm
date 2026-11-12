@@ -16,7 +16,7 @@ $q_1 q_2 + q_2 q_3 + \dots + q_{K-1} q_{K}$
 ### 制約
 
 - $3 \le N \le 3 \times 10^{5}$
-- $|Q_{i}| \le 10^{5}$
+- $-10^{5} \le Q_{i} \le 10^{5}$
 
 
 ## 解法メモ
@@ -32,4 +32,4 @@ $f(i, j) = Q_{i} Q_{j}$
 - $g_{i}(j) = Q_{i}Q_{j} + \mathrm{dp[i]}$ とおいたとき、関数群 $g_1, g_2, \dots$ は Pairwise Single Crossing でもない
 - しかし、$g_{i}(x) = Q_{i}x + \mathrm{dp[i]}$ とおいたとき、関数群 $g_1, g_2, \dots$ は Pairwise Single Crossing である
 
-よって、$x = Q_{j}$ を代入する格好で、Convex Hull Trick (Li Chao Tree) によって解くことができる。
+よって、Convex Hull Trick (Li Chao Tree) によって解くことができる。

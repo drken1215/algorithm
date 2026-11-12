@@ -19,7 +19,6 @@ $a$ は正の定数とする。以下の $Q$ 個のクエリに答えよ。
 クエリタイプ 1 で挿入される関数を、挿入順に番号をつけて $f_1(x), f_2(x), \dots$ とする。
 
 - 関数群 $f_1(x), f_2(x), \dots$ は Monge ではない
-- 関数群 $f_1(x), f_2(x), \dots$ は Pairwise Single Crossing ではある
+- しかし、関数群 $f_1(x), f_2(x), \dots$ は Pairwise Single Crossing ではある
 
-よって、Convex Hull Trick (General Li Chao Tree) で解ける。
-
+よって、Monge 性を活かす系の解法では解けないが、Convex Hull Trick (General Li Chao Tree) によって解ける。
