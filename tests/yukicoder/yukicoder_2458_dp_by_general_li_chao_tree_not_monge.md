@@ -1,6 +1,6 @@
 ---
 title: yukicoder No.2458 Line Up Charged Balls
-documentation_of: ./yukicoder_2458_dp_by_general_li_chao_tree_not_monge.cpp
+documentation_of: ./yukicoder_2458_dp_by_general_li_chao_tree_not_monge.test.cpp
 ---
 
 ## 問題概要
