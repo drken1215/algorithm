@@ -38,7 +38,7 @@ $\min_{i} (D_{i} x + 2A_{i} - D_{i})$
 
 を求めることができればよいことがわかる。これは一次関数群なので Convex Hull Trick (Li Chao Tree) で求めることができる。
 
-あるいは後述するように、$x > 0$ の領域に限定すると、関数群 $f_1, f_2, \dots$ は Pairwise Single Crossing であるので、General Li Chao Tree で解ける。
+あるいは後述するように、$x > 0$ の領域に限定すると、関数群 $f_1, f_2, \dots$ は Pairwise Single Crossing であるので、General Li Chao Tree で解ける。本コードはこの解法である。
 
 
 ### 関数群 $f_1, f_2, \dots$ の性質

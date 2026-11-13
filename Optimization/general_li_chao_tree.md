@@ -4,7 +4,16 @@ documentation_of: ./general_li_chao_tree.hpp
 ---
 
 ## 概要
-一般関数群 (**Pairwise Single Crossing**) に対応した Li Chao Tree。
+一般関数群 (**Pairwise Single Crossing**) に対応した Li Chao Tree を実装している。General Li Chao Tree は次のクエリに答えるデータ構造である。
+
+----
+
+- 【挿入】：関数 $f_{i}(x)$ を挿入する
+- 【取得】：$x$ 座標が与えられて、$\min_{i}f_{i}(x)$ の値を出力する
+
+----
+
+なお、
 
 - Dynamic 版 ($x$ 座標を座標圧縮せず、有効な定義域を与える。$x$ 座標は $10^{9}$ や $-10^{9}$ などでも構わない)
 - 座標圧縮版 (クエリを呼び出す $x$ 座標を座標圧縮する)

@@ -343,7 +343,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## グラフ
 
-- (★☆☆☆) [グラフテンプレート](https://github.com/drken1215/algorithm/blob/master/Graph/graph_template.cpp)
+- (★☆☆☆) [グラフテンプレート](https://drken1215.github.io/algorithm/Graph/graph.hpp.html)
 - (★★★☆) ランダムツリー生成
 - (★★★☆) ランダムグラフ生成
 
