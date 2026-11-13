@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -54,6 +56,16 @@ jobs:
       - name: Configure oj-helper
         run: |
           python3 .verify-helper/tools/setup_includes.py --cxx g++
+
+      - name: Restore verification cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .verify-helper/timestamps.remote.json
+            .verify-helper/cache/
+          key: oj-verify-${{ runner.os }}-v1-${{ github.sha }}
+          restore-keys: |
+            oj-verify-${{ runner.os }}-v1-
 
       - name: Verify libraries
         env:
