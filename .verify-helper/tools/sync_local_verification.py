@@ -16,9 +16,7 @@ MANIFEST = ROOT / ".verify-helper/verified-local.json"
 
 
 def test_files():
-    return sorted(
-        pathlib.Path("tests/yukicoder").rglob("*.test.cpp")
-    )
+    return sorted(pathlib.Path("tests").rglob("*.test.cpp"))
 
 
 def file_hash(path):
@@ -31,24 +29,18 @@ def dependencies(test):
         raise RuntimeError(f"Unsupported language: {test}")
 
     result = {}
-
-    for dep in language.list_dependencies(
-        test, basedir=ROOT
-    ):
+    for dep in language.list_dependencies(test, basedir=ROOT):
         absolute = dep.resolve(strict=True)
-
         try:
             relative = absolute.relative_to(ROOT)
         except ValueError:
             raise RuntimeError(
                 f"Dependency outside repository: {absolute}"
             )
-
         result[relative.as_posix()] = file_hash(absolute)
 
     # テスト本体も必ず記録する
     result[test.as_posix()] = file_hash(ROOT / test)
-
     return dict(sorted(result.items()))
 
 
@@ -62,55 +54,47 @@ def export_local():
     local_marker = marker.VerificationMarker(
         json_path=LOCAL,
         use_git_timestamp=False,
-        jobs=2,
+        jobs=None,
     )
 
     data = {}
     missing = []
 
     for test in test_files():
+        name = test.as_posix()
         if not local_marker.is_verified(test):
-            missing.append(test.as_posix())
+            missing.append(name)
             continue
 
-        data[test.as_posix()] = dependencies(test)
+        data[name] = dependencies(test)
 
     if missing:
         raise RuntimeError(
-            "Run make verify for these files:\n"
+            "Local verification is missing or outdated:\n"
             + "\n".join(missing)
+            + "\nRun make verify again."
         )
 
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2)
-        + "\n",
+        json.dumps(data, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-
-    print(f"Exported {len(data)} yukicoder verifications.")
+    print(f"Exported {len(data)} local verifications.")
 
 
 def import_remote():
     if not MANIFEST.exists():
         raise RuntimeError(
             "Missing verified-local.json. "
-            "Run make verify and make docs locally."
+            "Run make verify locally and commit "
+            ".verify-helper/verified-local.json."
         )
 
     saved = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
+    # Actions 側の検証履歴はローカル結果のみから再構築
     remote_data = {}
-    if REMOTE.exists():
-        remote_data = json.loads(
-            REMOTE.read_text(encoding="utf-8")
-        )
-
-    # キャッシュに残る古い yukicoder の結果は破棄
-    for name in list(remote_data):
-        if name.startswith("tests/yukicoder/"):
-            del remote_data[name]
-
     missing = []
 
     for test in test_files():
@@ -124,7 +108,7 @@ def import_remote():
         try:
             actual = dependencies(test)
         except Exception as e:
-            print(f"Dependency error in {name}: {e}")
+            print(f"Dependency error in {name}: {e}", file=sys.stderr)
             missing.append(name)
             continue
 
@@ -134,7 +118,6 @@ def import_remote():
 
         # GitHub Actions 側のコミット日時を使用
         timestamp = marker.get_last_commit_time_to_verify(test)
-
         remote_data[name] = timestamp.strftime(
             "%Y-%m-%d %H:%M:%S %z"
         )
@@ -143,18 +126,36 @@ def import_remote():
         raise RuntimeError(
             "Local verification is missing or outdated:\n"
             + "\n".join(missing)
-            + "\nRe-run make verify and make docs locally."
+            + "\nRe-run make verify locally and commit "
+              ".verify-helper/verified-local.json."
         )
 
     REMOTE.parent.mkdir(parents=True, exist_ok=True)
     REMOTE.write_text(
-        json.dumps(remote_data, indent=2, sort_keys=True)
-        + "\n",
+        json.dumps(remote_data, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
 
-    print(f"Imported {len(list(test_files()))} "
-          "yukicoder verifications.")
+    # GitHub Actions と同じ判定方式で全件を確認
+    remote_marker = marker.VerificationMarker(
+        json_path=REMOTE,
+        use_git_timestamp=True,
+        jobs=None,
+    )
+
+    unverified = [
+        test.as_posix()
+        for test in test_files()
+        if not remote_marker.is_verified(test)
+    ]
+
+    if unverified:
+        raise RuntimeError(
+            "Remote verification status is not verified:\n"
+            + "\n".join(unverified)
+        )
+
+    print(f"Imported {len(remote_data)} local verifications.")
 
 
 if __name__ == "__main__":

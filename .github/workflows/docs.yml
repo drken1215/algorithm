@@ -57,24 +57,9 @@ jobs:
         run: |
           python3 .verify-helper/tools/setup_includes.py --cxx g++
 
-      - name: Restore verification cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .verify-helper/timestamps.remote.json
-            .verify-helper/cache/
-          key: oj-verify-${{ runner.os }}-v1-${{ github.sha }}
-          restore-keys: |
-            oj-verify-${{ runner.os }}-v1-
-
-      - name: Import local verification results
+      - name: Import and validate local verifications
         run: |
           python3 .verify-helper/tools/sync_local_verification.py import
-
-      - name: Verify libraries
-        env:
-          YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
-        run: oj-verify run -j 2
 
       - name: Generate documentation
         run: |

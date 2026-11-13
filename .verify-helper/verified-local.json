@@ -1,4 +1,33 @@
 {
+  "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": {
+    "Others/kth_root.hpp": "d4995bde36fad95a09f4f99cf38447d9b388636071b133ca47e191620156a3f6",
+    "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": "c1f3e2a2300089e9526cdec67408eac49ac08063d14de916d1534f9809c6382d"
+  },
+  "tests/LibraryChecker/LibraryChecker_LineAddGetMin_general_li_chao_tree.test.cpp": {
+    "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
+    "tests/LibraryChecker/LibraryChecker_LineAddGetMin_general_li_chao_tree.test.cpp": "a4a5bdc816a47e889bf112bf920816b6ade5c6a2cfd6dd431713192373dabe9b"
+  },
+  "tests/LibraryChecker/LibraryChecker_Many_A_plus_B_128_bit.test.cpp": {
+    "Others/fast_io.hpp": "5a860486866e7972596b3947cdd3e740462be22ba3b24d24c706cf9aa58be481",
+    "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
+    "tests/LibraryChecker/LibraryChecker_Many_A_plus_B_128_bit.test.cpp": "7ac725247e0952903de646069d774ebaad113c0e1d4d1032a3e76a531dafc7a8"
+  },
+  "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_dynamic_general_li_chao_tree.test.cpp": {
+    "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
+    "Others/fast_io.hpp": "5a860486866e7972596b3947cdd3e740462be22ba3b24d24c706cf9aa58be481",
+    "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
+    "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_dynamic_general_li_chao_tree.test.cpp": "121cadd277b192cefc7338aa092aedfcd9ba25fd4eaa2236ccab3b8a65d5a728"
+  },
+  "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_general_li_chao_tree.test.cpp": {
+    "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
+    "Others/fast_io.hpp": "5a860486866e7972596b3947cdd3e740462be22ba3b24d24c706cf9aa58be481",
+    "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
+    "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_general_li_chao_tree.test.cpp": "45f90ba5e2b5dd7381a1c040081264948c882ad7cf5912457310ec1858b17011"
+  },
+  "tests/LibraryChecker/LibraryChecker_Unionfind.test.cpp": {
+    "DataStructure/union_find.hpp": "36e3ab816de3607691a41a6ae4a6ae097550f8628cb43133516f0c631b050328",
+    "tests/LibraryChecker/LibraryChecker_Unionfind.test.cpp": "d408cf452a2e1b92bc38c53061ca9155c3e398e3e4a11947d997d5847d034a00"
+  },
   "tests/yukicoder/yukicoder_0409_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Optimization/monge_shortest_path_by_cht.hpp": "505545a09d66193caf49fda28f985d5ff4a60d080f6993e43c8cfbf115ddb265",
