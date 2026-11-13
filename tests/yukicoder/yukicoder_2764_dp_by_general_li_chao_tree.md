@@ -1,6 +1,6 @@
 ---
 title: yukicoder No.2764 Warp Drive Spacecraft
-documentation_of: ./yukicoder_2764_dp_by_general_li_chao_tree_not_monge.test.cpp
+documentation_of: ./yukicoder_2764_dp_by_general_li_chao_tree.test.cpp
 ---
 
 ## 問題概要
