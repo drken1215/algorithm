@@ -67,6 +67,10 @@ jobs:
           restore-keys: |
             oj-verify-${{ runner.os }}-v1-
 
+      - name: Import local verification results
+        run: |
+          python3 .verify-helper/tools/sync_local_verification.py import
+
       - name: Verify libraries
         env:
           YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}

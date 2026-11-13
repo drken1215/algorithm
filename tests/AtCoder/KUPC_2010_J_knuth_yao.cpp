@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "monge_knuth_yao.hpp"
+#include "knuth_yao.hpp"
 
 int main() {
     int N;
