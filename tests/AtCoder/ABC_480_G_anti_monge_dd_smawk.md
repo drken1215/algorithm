@@ -1,5 +1,5 @@
 ---
-title: AtCoder ABC 480 G - Zonal Score Minimization (分割統治 SMAWK 法を用いる解法)
+title: AtCoder ABC 480 G - Zonal Score Minimization (分割統治 SMAWK 法を用いる解法) (NoviSteps 3D+)
 documentation_of: ./ABC_480_G_anti_monge_dd_smawk.cpp
 ---
 

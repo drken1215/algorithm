@@ -1,5 +1,5 @@
 ---
-title: COLOCON -Colopl programming contest 2018- Final C - スペースエクスプローラー高橋君 (単調 Convex Hull Trick を用いる方法) (NoviSteps 3D)
+title: CCOLOCON 2018 Final C - スペースエクスプローラー高橋君 (単調 Convex Hull Trick を用いる方法) (NoviSteps 3D)
 documentation_of: colopl2018-final_C_monotone_convex_hull_trick.cpp
 ---
 

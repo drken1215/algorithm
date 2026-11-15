@@ -1,5 +1,5 @@
 ---
-title: AtCoder ABC 480 G - Zonal Score Minimization (Li Chao Tree に区間挿入する方法)
+title: AtCoder ABC 480 G - Zonal Score Minimization (Li Chao Tree に区間挿入する方法) (NoviSteps 3D+)
 documentation_of: ./ABC_480_G_li_chao_tree_using_li_chao_tree_insert_segment.cpp
 ---
 

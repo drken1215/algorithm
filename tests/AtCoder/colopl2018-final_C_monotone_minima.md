@@ -1,5 +1,5 @@
 ---
-title: COLOCON -Colopl programming contest 2018- Final C - スペースエクスプローラー高橋君 (Monotone Minima による方法) (NoviSteps 3D)
+title: COLOCON 2018 Final C - スペースエクスプローラー高橋君 (Monotone Minima による方法) (NoviSteps 3D)
 documentation_of: colopl2018-final_C_monotone_minima.cpp
 ---
 

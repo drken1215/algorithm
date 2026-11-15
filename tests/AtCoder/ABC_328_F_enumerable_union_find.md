@@ -1,5 +1,5 @@
 ---
-title: AtCoder ABC 328 F - Good Set Query (列挙可能 Union-Find の例)
+title: AtCoder ABC 328 F - Good Set Query (列挙可能 Union-Find の例) (NoviSteps 1D+)
 documentation_of: ./ABC_328_F_enumerable_union_find.cpp
 ---
 

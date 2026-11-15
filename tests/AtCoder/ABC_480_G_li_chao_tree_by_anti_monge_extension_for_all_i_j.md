@@ -1,5 +1,5 @@
 ---
-title: AtCoder ABC 480 G - Zonal Score Minimization (全域 anti-Monge 拡張方法)
+title: AtCoder ABC 480 G - Zonal Score Minimization (全域 anti-Monge 拡張方法) (NoviSteps 3D+)
 documentation_of: ./ABC_480_G_li_chao_tree_by_anti_monge_extension_for_all_i_j.cpp
 ---
 
