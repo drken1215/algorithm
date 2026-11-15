@@ -1,12 +1,12 @@
 ---
-title: 列挙可能 Union-Find の例 (ABC 328 F)
+title: AtCoder ABC 328 F - Good Set Query (列挙可能 Union-Find の例)
 documentation_of: ./ABC_328_F_enumerable_union_find.cpp
 ---
 
 ## 概要
 「列挙可能 Union-Find」の使用例である。
 
-"[union_find.hpp](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)" に列挙機能を搭載している。
+"[union_find.hpp](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)" に示す Union-Find は、列挙機能も搭載している。
 
 - union by size + 経路圧縮による実装
 - `nex` を用いて、`x` を含むグループを取り出す関数 `group(x)` を備える (通称：列挙可能 Union-Find)

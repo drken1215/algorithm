@@ -23,5 +23,3 @@ readme: configure
 docs: readme
 	cp README.md .verify-helper/docs/index.md
 	python3 .verify-helper/tools/docs_with_includes.py --cxx "$(VERIFY_CXX)" -j $(VERIFY_JOBS)
-
-

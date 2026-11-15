@@ -100,6 +100,11 @@
     "Optimization/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
     "tests/yukicoder/yukicoder_0952_monge_d_enum_shortest_path.test.cpp": "0dbb23b8f89c5a8be47ce93b1d36520738d87626d321b12e3db354512cf40490"
   },
+  "tests/yukicoder/yukicoder_0952_monotone_convex_hull_trick.test.cpp": {
+    "Optimization/monotone_convex_hull_trick.hpp": "e11c12fe328a59c6eb42fbf6deb7a2984ab1b21307af20196dd0601eea4a99d9",
+    "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
+    "tests/yukicoder/yukicoder_0952_monotone_convex_hull_trick.test.cpp": "61b17c381807acd4d27e3004ba78f83f2b5b96c10df81917ec1baaa80405c1a4"
+  },
   "tests/yukicoder/yukicoder_2078_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Optimization/monge_shortest_path_by_cht.hpp": "505545a09d66193caf49fda28f985d5ff4a60d080f6993e43c8cfbf115ddb265",
@@ -150,7 +155,7 @@
     "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": "d78ea1a9e67dd7eed0beedc22632f77b00105c26f89f02b16c52aca9684d889c"
   },
   "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": {
-    "Graph/graph.hpp": "98934af5ddc0b918810d83b22a7efa8b88a8ecca19c94dbef8fc1a649fcfad8d",
+    "Graph/graph.hpp": "21f8513cf8f28a62a66775cae25f39ded943c3352bafc2653464045ae93ff753",
     "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Others/macro.hpp": "5f207c05163426fa52d449e2129f56f54824f40025fc6b0ab149dec7363aa64f",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",

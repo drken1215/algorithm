@@ -678,7 +678,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 区分線形凸関数の活用 3： Convex Hull Trick
 
-- (★★★☆) [Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_slope_monotone.cpp)
+- (★★★☆) [Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))](https://drken1215.github.io/algorithm/Optimization/monotone_convex_hull_trick.hpp.html)
 - (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_by_Li_Chao_Tree.cpp)
 - (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
 - (★★★★) 一般関数 Convex Hull Trick (関数挿入順：単調, by Deque, in O(log N))
