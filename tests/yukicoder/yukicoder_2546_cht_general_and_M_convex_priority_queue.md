@@ -1,5 +1,5 @@
 ---
-title: yukicoder No.2546 Many Arithmetic Sequences
+title: yukicoder No.2546 Many Arithmetic Sequences (General Li Chao Tree 解法) (NoviSteps 4D+)
 documentation_of: ./yukicoder_2546_cht_general_and_M_convex_priority_queue.test.cpp
 ---
 
@@ -31,10 +31,10 @@ $N$ 個の等差数列がある。等差数列 $i$ は初項 $A_i$、交差 $D_i
 
 $f_{i}(x) = \frac{x}{2}(D_{i} x + 2A_{i} - D_{i})$
 
-を考えて、$x = 0, 1, 2, \dots, m$ について $\min_{i}f_{i}(x)$ を求める問題である。いわゆる行最小値問題である。
+を考えて、$x = 0, 1, 2, \dots, m$ について $\max_{i}f_{i}(x)$ を求める問題である。いわゆる行最小値問題である。
 $x$ を固定したときに、
 
-$\min_{i} (D_{i} x + 2A_{i} - D_{i})$
+$\min_{i} (-D_{i} x + D_{i} - 2A_{i})$
 
 を求めることができればよいことがわかる。これは一次関数群なので Convex Hull Trick (Li Chao Tree) で求めることができる。
 

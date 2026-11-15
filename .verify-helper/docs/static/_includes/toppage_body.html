@@ -1,37 +1,143 @@
-
 <div style="margin-top: 4rem;"></div>
 
-<h1>Verification Status</h1>
+<style>
+  .file-list-toggle {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
 
-{% for category in page.data.libraryCategories %}
+  .file-list-toggle > summary {
+    cursor: pointer;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+  }
 
-  {% if category.name == "include" %}
-    {% continue %}
-  {% endif %}
+  .file-list-content {
+    margin-top: 1.5rem;
+  }
+</style>
 
-  {% assign has_hpp = false %}
 
-  {% for item in category.pages %}
-    {% assign ext = item.path | slice: -4, 4 %}
-    {% if ext == ".hpp" %}
-      {% assign has_hpp = true %}
-    {% endif %}
-  {% endfor %}
+{% comment %}
+Library Files
+{% endcomment %}
 
-  {% if has_hpp %}
-    <h2>{{ category.name }}</h2>
-    <ul>
+<details class="file-list-toggle">
+  <summary>Library Files</summary>
+
+  <div class="file-list-content">
+
+    {% for category in page.data.libraryCategories %}
+
+      {% if category.name == "include" %}
+        {% continue %}
+      {% endif %}
+
+      {% assign has_hpp = false %}
+
       {% for item in category.pages %}
         {% assign ext = item.path | slice: -4, 4 %}
         {% if ext == ".hpp" %}
-          <li>
-            <a href="{{ item.path | absolute_url }}">
-              {{ item.icon }} {{ item.path }}
-            </a>
-          </li>
+          {% assign has_hpp = true %}
         {% endif %}
       {% endfor %}
-    </ul>
-  {% endif %}
 
-{% endfor %}
+      {% if has_hpp %}
+        <h2>{{ category.name }}</h2>
+        <ul>
+          {% for item in category.pages %}
+            {% assign ext = item.path | slice: -4, 4 %}
+
+            {% if ext == ".hpp" %}
+              <li>
+                <a href="{{ item.path | absolute_url }}">
+                  {{ item.icon }} {{ item.path }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+    {% endfor %}
+
+  </div>
+</details>
+
+
+{% comment %}
+Verification Files
+{% endcomment %}
+
+<details class="file-list-toggle">
+  <summary>Verification Files</summary>
+
+  <div class="file-list-content">
+
+    {% comment %}
+    Automatic verification files
+    {% endcomment %}
+
+    {% for category in page.data.verificationCategories %}
+
+      <h2>{{ category.name }}</h2>
+      <ul>
+        {% for item in category.pages %}
+          <li>
+            <a href="{{ item.path | absolute_url }}">
+              {{ item.icon }} {{ item.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+
+    {% endfor %}
+
+
+    {% comment %}
+    Manual verification files
+    {% endcomment %}
+
+    {% for category in page.data.libraryCategories %}
+
+      {% assign has_manual = false %}
+
+      {% for item in category.pages %}
+        {% assign prefix = item.path | slice: 0, 6 %}
+        {% assign ext = item.path | slice: -4, 4 %}
+
+        {% unless item.path contains ".test.cpp" %}
+          {% if prefix == "tests/" and ext == ".cpp" %}
+            {% assign has_manual = true %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+
+      {% if has_manual %}
+        <h2>{{ category.name }} (manual)</h2>
+        <ul>
+
+          {% for item in category.pages %}
+            {% assign prefix = item.path | slice: 0, 6 %}
+            {% assign ext = item.path | slice: -4, 4 %}
+
+            {% unless item.path contains ".test.cpp" %}
+              {% if prefix == "tests/" and ext == ".cpp" %}
+                <li>
+                  <a href="{{ item.path | absolute_url }}">
+                    {{ item.icon }} {{ item.title }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endunless %}
+
+          {% endfor %}
+
+        </ul>
+      {% endif %}
+
+    {% endfor %}
+
+  </div>
+</details>

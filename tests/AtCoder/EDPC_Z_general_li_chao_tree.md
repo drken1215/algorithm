@@ -1,5 +1,5 @@
 ---
-title: EDPC Z - Frog 3 (NoviSteps 3D+)
+title: EDPC Z - Frog 3 (General Li Chao Tree 解法) (NoviSteps 3D+)
 documentation_of: EDPC_Z_general_li_chao_tree.cpp
 ---
 

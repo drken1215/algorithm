@@ -1,5 +1,5 @@
 ---
-title: yukicoder No.2764 Warp Drive Spacecraft
+title: yukicoder No.2764 Warp Drive Spacecraft (General Li Chao Tree 解法) (NoviSteps 4D)
 documentation_of: ./yukicoder_2764_dp_by_general_li_chao_tree.test.cpp
 ---
 

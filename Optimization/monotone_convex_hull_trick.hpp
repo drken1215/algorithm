@@ -29,7 +29,14 @@ template<class T> struct MonotoneConvexHullTrick {
     }
     
     void insert(T a, T b) {
+        assert(lines.empty() || lines.back().first >= a);
         Line l(a, b);
+
+        if (!lines.empty() && lines.back().first == a) {
+            // 傾きが等しい場合には切片が小さい直線だけを残す
+            if (lines.back().second <= b) return;
+            lines.pop_back();
+        }
         while (lines.size() >= 2 && check(lines[(int)lines.size()-2], lines[(int)lines.size()-1], l)) {
             lines.pop_back();  // 不要な直線を捨てる
         }

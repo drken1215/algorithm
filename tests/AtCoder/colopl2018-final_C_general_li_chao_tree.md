@@ -1,5 +1,5 @@
 ---
-title: COLOCON -Colopl programming contest 2018- Final C - スペースエクスプローラー高橋君 (NoviSteps 3D)
+title: COLOCON -Colopl programming contest 2018- Final C - スペースエクスプローラー高橋君 (General Li Chao Tree を用いる方法) (NoviSteps 3D)
 documentation_of: colopl2018-final_C_general_li_chao_tree.cpp
 ---
 

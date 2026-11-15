@@ -1,5 +1,5 @@
 ---
-title: yukicoder No.2458 Line Up Charged Balls
+title: yukicoder No.2458 Line Up Charged Balls (General Li Chao Tree 解法) (NoviSteps 4D)
 documentation_of: ./yukicoder_2458_dp_by_general_li_chao_tree_not_monge.test.cpp
 ---
 

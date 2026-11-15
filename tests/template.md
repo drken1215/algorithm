@@ -1,6 +1,6 @@
 ---
 title: 
-documentation_of: ./.test.cpp
+documentation_of: .cpp
 ---
 
 ## 問題概要

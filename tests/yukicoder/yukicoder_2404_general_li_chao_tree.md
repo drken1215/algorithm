@@ -1,5 +1,5 @@
 ---
-title: yukicoder No.2404 Vertical Throw Up
+title: yukicoder No.2404 Vertical Throw Up (General Li Chao Tree 解法) (NoviSteps 4D)
 documentation_of: ./yukicoder_2404_general_li_chao_tree.test.cpp
 ---
 

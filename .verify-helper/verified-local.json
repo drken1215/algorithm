@@ -101,7 +101,7 @@
     "tests/yukicoder/yukicoder_0952_monge_d_enum_shortest_path.test.cpp": "0dbb23b8f89c5a8be47ce93b1d36520738d87626d321b12e3db354512cf40490"
   },
   "tests/yukicoder/yukicoder_0952_monotone_convex_hull_trick.test.cpp": {
-    "Optimization/monotone_convex_hull_trick.hpp": "e11c12fe328a59c6eb42fbf6deb7a2984ab1b21307af20196dd0601eea4a99d9",
+    "Optimization/monotone_convex_hull_trick.hpp": "38e60fbde5325e46e71f73446920fe2e0a6d63a72ee7eec253b6b88e70db3842",
     "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
     "tests/yukicoder/yukicoder_0952_monotone_convex_hull_trick.test.cpp": "61b17c381807acd4d27e3004ba78f83f2b5b96c10df81917ec1baaa80405c1a4"
   },
@@ -148,11 +148,11 @@
     "tests/yukicoder/yukicoder_2546_cht_general_and_M_convex_priority_queue.test.cpp": "09c921a9df9739badb66f984311db918fd77505a9ce3b8f68617cf94c5dfad59"
   },
   "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": {
-    "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
+    "Optimization/monotone_convex_hull_trick.hpp": "38e60fbde5325e46e71f73446920fe2e0a6d63a72ee7eec253b6b88e70db3842",
     "Others/macro.hpp": "5f207c05163426fa52d449e2129f56f54824f40025fc6b0ab149dec7363aa64f",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": "d78ea1a9e67dd7eed0beedc22632f77b00105c26f89f02b16c52aca9684d889c"
+    "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": "8d3614cdac2da7c261853b63532b127ce2e8e35aaa8bab6445ecca8252efb587"
   },
   "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": {
     "Graph/graph.hpp": "21f8513cf8f28a62a66775cae25f39ded943c3352bafc2653464045ae93ff753",

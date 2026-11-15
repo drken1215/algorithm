@@ -1,5 +1,5 @@
 ---
-title: AtCoder ABC 218 H - Red and Blue Lamps (NoviSteps 4D+)
+title: AtCoder ABC 218 H - Red and Blue Lamps (Alien DP 解法) (NoviSteps 4D+)
 documentation_of: ABC_218_H_alien_dp.cpp
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: AtCoder ABC 480 G - Zonal Score Minimization (Li Chao Tree に区間挿入する方法)
+title: AtCoder ABC 480 G - Zonal Score Minimization (anti-Monge 単一始点最短路ライブラリを用いる)
 documentation_of: ./ABC_480_G_li_chao_tree_by_anti_monge_shortest_path_using_insert_segment.cpp
 ---
 

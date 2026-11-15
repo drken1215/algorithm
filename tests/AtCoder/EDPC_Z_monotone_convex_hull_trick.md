@@ -1,5 +1,5 @@
 ---
-title: EDPC Z - Frog 3 (NoviSteps 3D+)
+title: EDPC Z - Frog 3 (単調 Convex Hull Trick を用いる解法) (NoviSteps 3D+)
 documentation_of: EDPC_Z_monotone_convex_hull_trick.cpp
 ---
 

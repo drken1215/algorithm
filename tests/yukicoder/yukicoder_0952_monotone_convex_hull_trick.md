@@ -1,5 +1,5 @@
 ---
-title: yukicoder No.952 危険な火薬庫 (NoviSteps 3D+)
+title: yukicoder No.952 危険な火薬庫 (単調 Convex Hull Trick による解法) (NoviSteps 3D+)
 documentation_of: ./yukicoder_0952_monotone_convex_hull_trick.test.cpp
 ---
 

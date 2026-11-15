@@ -1,5 +1,5 @@
 ---
-title: yukicoder No.952 危険な火薬庫 (NoviSteps 3D+)
+title: yukicoder No.952 危険な火薬庫 (Monge $d$-辺最短路の $d$ 列挙解法) (NoviSteps 3D+)
 documentation_of: ./yukicoder_0952_monge_d_enum_shortest_path.test.cpp
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 分割統治 Monotone Minima 法において、辺コストをスライドアクセスで計算する例
+title: Codeforces Round 438 (Div. 1 + Div. 2 combined) F. Yet Another Minimization Problem (by スライドアクセス版の分割統治 Monotone Minima 法) (NoviSteps 4D)
 documentation_of: ./Codeforces_Round_438_Div12_F_d_enum_sliding_monotone_minima.cpp
 ---
 
