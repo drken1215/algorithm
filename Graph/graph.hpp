@@ -51,13 +51,27 @@ template<class VAL = long long> struct Graph {
     }
     Graph(const Graph&) = default;
     Graph& operator = (const Graph&) = default;
+    void resize(int n) { 
+        V = n;
+        list.resize(n);
+    }
+    void assign(int n) {
+        V = n;
+        list.assign(n, vector<Edge<VAL>>());
+    }
+    void clear() {
+        V = 0;
+        list.clear();
+    }
+    void clear(int v) {
+        assert(v >= 0 && v < (int)list.size());
+        list[v].clear();
+    }
 
     // getters
     vector<Edge<VAL>> &operator [] (int i) { return list[i]; }
     const vector<Edge<VAL>> &operator [] (int i) const { return list[i]; }
-    constexpr size_t size() const { return list.size(); }
-    constexpr void clear() { V = 0, list.clear(); }
-    constexpr void resize(int n) { V = n, list.resize(n); }
+    size_t size() const { return list.size(); }
     Edge<VAL> &get_edge(int u, int v) {
         assert(record_edge_index);
         assert(u >= 0 && u < (int)list.size() && v >= 0 && v < (int)list.size());

@@ -1,7 +1,7 @@
 {
   "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": {
-    "Graph/dijkstra.hpp": "99f107d03f2579b477725964282f1818bae86150627933d6e592e5d667c3bbc7",
-    "Graph/graph.hpp": "627b32ef3cf11a6bc238fbbfdd55b78e75facc9762e36cecf35ea9695f513f44",
+    "Graph/dijkstra.hpp": "577e40bbf7b78d9778d975bfc99be0c787dc19f285cf36802ecf9bc3ddb4c212",
+    "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
     "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": "8e6c81286e5c19a7de73b3de261f605fda88a0dc7592d3dd9ed31e56e749402a"
   },
   "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": {
@@ -32,6 +32,11 @@
   "tests/LibraryChecker/LibraryChecker_Unionfind.test.cpp": {
     "DataStructure/union_find.hpp": "36e3ab816de3607691a41a6ae4a6ae097550f8628cb43133516f0c631b050328",
     "tests/LibraryChecker/LibraryChecker_Unionfind.test.cpp": "d408cf452a2e1b92bc38c53061ca9155c3e398e3e4a11947d997d5847d034a00"
+  },
+  "tests/LibraryChecker/LibraryChecker_shortest_path.test.cpp": {
+    "Graph/dijkstra.hpp": "577e40bbf7b78d9778d975bfc99be0c787dc19f285cf36802ecf9bc3ddb4c212",
+    "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
+    "tests/LibraryChecker/LibraryChecker_shortest_path.test.cpp": "5a50bd343241950890b06b2a908d1900c9bbabe083cf31dbf5823a3e564aa0ce"
   },
   "tests/yukicoder/yukicoder_0409_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
@@ -160,8 +165,8 @@
     "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": "8d3614cdac2da7c261853b63532b127ce2e8e35aaa8bab6445ecca8252efb587"
   },
   "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": {
-    "Graph/dijkstra.hpp": "99f107d03f2579b477725964282f1818bae86150627933d6e592e5d667c3bbc7",
-    "Graph/graph.hpp": "627b32ef3cf11a6bc238fbbfdd55b78e75facc9762e36cecf35ea9695f513f44",
+    "Graph/dijkstra.hpp": "577e40bbf7b78d9778d975bfc99be0c787dc19f285cf36802ecf9bc3ddb4c212",
+    "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
     "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Others/macro.hpp": "5f207c05163426fa52d449e2129f56f54824f40025fc6b0ab149dec7363aa64f",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
