@@ -1,4 +1,9 @@
 {
+  "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": {
+    "Graph/dijkstra.hpp": "99f107d03f2579b477725964282f1818bae86150627933d6e592e5d667c3bbc7",
+    "Graph/graph.hpp": "627b32ef3cf11a6bc238fbbfdd55b78e75facc9762e36cecf35ea9695f513f44",
+    "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": "8e6c81286e5c19a7de73b3de261f605fda88a0dc7592d3dd9ed31e56e749402a"
+  },
   "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": {
     "Others/kth_root.hpp": "d4995bde36fad95a09f4f99cf38447d9b388636071b133ca47e191620156a3f6",
     "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": "c1f3e2a2300089e9526cdec67408eac49ac08063d14de916d1534f9809c6382d"

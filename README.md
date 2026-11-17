@@ -369,7 +369,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★☆☆☆) [重みなしグラフの最短路 (by BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bfs.cpp)
 - (★☆☆☆) [重みが 0, 1 のみのグラフの最短路 (by 0-1 BFS, in O(E))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_01bfs.cpp)
-- (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, in O(V + E log V))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_dijkstra.cpp)
+- (★☆☆☆) [単一始点最短路 (Dijkstra 法, 正辺のみ, in O(V + E log V))](https://drken1215.github.io/algorithm/Graph/dijkstra.hpp.html)
 - (★☆☆☆) [単一始点最短路 (Bellman-Ford 法, 負辺対応, in O(VE))](https://github.com/drken1215/algorithm/blob/master/Graph/shortest_path_bellman_ford.cpp)
 - (★☆☆☆) [全頂点対間最短路 (Floyd-Warshall 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Graph/floyd_warshall.cpp)
 - (★★★☆) [全頂点対間最短路 (Johnson 法, in O(EV log V))](https://github.com/drken1215/algorithm/blob/master/Graph/johnson.cpp)

@@ -102,20 +102,7 @@ void Yosupo_Shortest_Path() {
 }
 
 void AOJ_Single_Source_Shortest_Path() {
-    const long long INF = 1LL<<60;
-    int N, M, s;
-    cin >> N >> M >> s;
-    Graph<long long> G(N);
-    for (int i = 0; i < M; ++i) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        G[a].emplace_back(b, c);
-    }
-    const auto [dp, prev] = Dijkstra(G, s);
-    for (int v = 0; v < N; ++v) {
-        if (dp[v] < INF) cout << dp[v] << endl;
-        else cout << "INF" << endl;
-    }
+
 }
 
 
