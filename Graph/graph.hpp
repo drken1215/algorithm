@@ -4,23 +4,39 @@
 using namespace std;
 
 // Edge Class
-template<class T = long long> struct Edge {
+template<class VAL = long long> struct Edge {
+    using value_type = VAL;
+
+    // inner values
     int from, to;
-    T val;
+    VAL val;
+
+    // constructors
     Edge() : from(-1), to(-1) { }
-    Edge(int f, int t, T v = 1) : from(f), to(t), val(v) {}
+    Edge(int f, int t, VAL v = 1) : from(f), to(t), val(v) {}
     Edge(const Edge&) = default;
     Edge& operator = (const Edge&) = default;
+
+    // getters
+    VAL get_val() const { return val; }
+    VAL get_cost() const { return val; }
+    VAL get_weight() const { return val; }
+
+    // output
     friend ostream& operator << (ostream& s, const Edge& e) {
         return s << e.from << "->" << e.to << "(" << e.val << ")";
     }
 };
 
 // graph class
-template<class T = long long> struct Graph {
+template<class VAL = long long> struct Graph {
+    using value_type = VAL;
+    using edge_type = Edge<VAL>;
+
+    // inner values
     int V;
     bool record_edge_index = false;
-    vector<vector<Edge<T>>> list;
+    vector<vector<Edge<VAL>>> list;
     vector<unordered_map<int, int>> id;  // id[v][w] := the index of node w in G[v]
 
     // constructors
@@ -28,40 +44,41 @@ template<class T = long long> struct Graph {
         init(n, rei);
     }
     void init(int n = 0, bool rei = false) {
-        V = n, record_edge_index = rei;
-        list.assign(n, vector<Edge<T>>());
+        V = n;
+        record_edge_index = rei;
+        list.assign(n, vector<Edge<VAL>>());
         if (record_edge_index) id.assign(n, unordered_map<int, int>());
     }
     Graph(const Graph&) = default;
     Graph& operator = (const Graph&) = default;
 
     // getters
-    vector<Edge<T>> &operator [] (int i) { return list[i]; }
-    const vector<Edge<T>> &operator [] (int i) const { return list[i]; }
+    vector<Edge<VAL>> &operator [] (int i) { return list[i]; }
+    const vector<Edge<VAL>> &operator [] (int i) const { return list[i]; }
     constexpr size_t size() const { return list.size(); }
-    constexpr void clear() { V = 0; list.clear(); }
-    constexpr void resize(int n) { V = n; list.resize(n); }
-    Edge<T> &get_edge(int u, int v) {
+    constexpr void clear() { V = 0, list.clear(); }
+    constexpr void resize(int n) { V = n, list.resize(n); }
+    Edge<VAL> &get_edge(int u, int v) {
         assert(record_edge_index);
-        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
-        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < list[u].size());
+        assert(u >= 0 && u < (int)list.size() && v >= 0 && v < (int)list.size());
+        assert(id[u].count(v) && id[u][v] >= 0 && id[u][v] < (int)list[u].size());
         return list[u][id[u][v]];
     }
-    const Edge<T> &get_edge(int u, int v) const {
+    const Edge<VAL> &get_edge(int u, int v) const {
         assert(record_edge_index);
-        assert(u >= 0 && u < list.size() && v >= 0 && v < list.size());
-        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < list[u].size());
+        assert(u >= 0 && u < (int)list.size() && v >= 0 && v < (int)list.size());
+        assert(id[u].count(v) && id[u].at(v) >= 0 && id[u].at(v) < (int)list[u].size());
         return list[u][id[u].at(v)];
     }
 
     // add edge
-    void add_edge(int from, int to, T val = 1) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+    void add_edge(int from, int to, VAL val = 1) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         if (record_edge_index) id[from][to] = (int)list[from].size(); 
         list[from].push_back(Edge(from, to, val));
     }
-    void add_bidirected_edge(int from, int to, T val = 1) {
-        assert(0 <= from && from < list.size() && 0 <= to && to < list.size());
+    void add_bidirected_edge(int from, int to, VAL val = 1) {
+        assert(0 <= from && from < (int)list.size() && 0 <= to && to < (int)list.size());
         if (record_edge_index) id[from][to] = (int)list[from].size();
         list[from].push_back(Edge(from, to, val));
         if (from != to) {

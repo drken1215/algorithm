@@ -39,7 +39,7 @@
     "Optimization/dd_monotone_minima.hpp": "0a54a3b8f9263181fc59fba769d31e61e4eb92fe9efa2effa898697864459b49",
     "Optimization/dd_smawk.hpp": "82c306579f087330d6806889629e6eb7c7ca5426b95d5ad795edbfbbae7ce33d",
     "Optimization/larsch.hpp": "04fe26b652453c658c7b0c6c09c75c98076d5520fd8f6e2f4540e01dac8054f7",
-    "Optimization/monge_shortest_path.hpp": "7d5dbd24edab1583b4d3ff35c518984dd50dd5e5bcc0bbebe2b41520af2b1155",
+    "Optimization/monge_shortest_path.hpp": "57d6ce7703451b0753b5060af38cf15e7d2f94496d712d4f3b5209c35bcba9f2",
     "Optimization/monotone_minima.hpp": "528f042cae0ce3fcda0d70440da77f2b9a323202d58cbb84f6f687136894820c",
     "Optimization/simple_larsch.hpp": "a0378d3234d27702e02d0b21dc80e1ba00385cf6ff33e986bc8a4f9a84c4fa78",
     "Optimization/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
@@ -79,7 +79,7 @@
     "Optimization/dd_monotone_minima.hpp": "0a54a3b8f9263181fc59fba769d31e61e4eb92fe9efa2effa898697864459b49",
     "Optimization/dd_smawk.hpp": "82c306579f087330d6806889629e6eb7c7ca5426b95d5ad795edbfbbae7ce33d",
     "Optimization/larsch.hpp": "04fe26b652453c658c7b0c6c09c75c98076d5520fd8f6e2f4540e01dac8054f7",
-    "Optimization/monge_shortest_path.hpp": "7d5dbd24edab1583b4d3ff35c518984dd50dd5e5bcc0bbebe2b41520af2b1155",
+    "Optimization/monge_shortest_path.hpp": "57d6ce7703451b0753b5060af38cf15e7d2f94496d712d4f3b5209c35bcba9f2",
     "Optimization/monotone_minima.hpp": "528f042cae0ce3fcda0d70440da77f2b9a323202d58cbb84f6f687136894820c",
     "Optimization/simple_larsch.hpp": "a0378d3234d27702e02d0b21dc80e1ba00385cf6ff33e986bc8a4f9a84c4fa78",
     "Optimization/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
@@ -117,7 +117,7 @@
     "Optimization/dd_monotone_minima.hpp": "0a54a3b8f9263181fc59fba769d31e61e4eb92fe9efa2effa898697864459b49",
     "Optimization/dd_smawk.hpp": "82c306579f087330d6806889629e6eb7c7ca5426b95d5ad795edbfbbae7ce33d",
     "Optimization/larsch.hpp": "04fe26b652453c658c7b0c6c09c75c98076d5520fd8f6e2f4540e01dac8054f7",
-    "Optimization/monge_shortest_path.hpp": "7d5dbd24edab1583b4d3ff35c518984dd50dd5e5bcc0bbebe2b41520af2b1155",
+    "Optimization/monge_shortest_path.hpp": "57d6ce7703451b0753b5060af38cf15e7d2f94496d712d4f3b5209c35bcba9f2",
     "Optimization/monotone_minima.hpp": "528f042cae0ce3fcda0d70440da77f2b9a323202d58cbb84f6f687136894820c",
     "Optimization/simple_larsch.hpp": "a0378d3234d27702e02d0b21dc80e1ba00385cf6ff33e986bc8a4f9a84c4fa78",
     "Optimization/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
@@ -155,11 +155,12 @@
     "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": "8d3614cdac2da7c261853b63532b127ce2e8e35aaa8bab6445ecca8252efb587"
   },
   "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": {
-    "Graph/graph.hpp": "21f8513cf8f28a62a66775cae25f39ded943c3352bafc2653464045ae93ff753",
+    "Graph/dijkstra.hpp": "99f107d03f2579b477725964282f1818bae86150627933d6e592e5d667c3bbc7",
+    "Graph/graph.hpp": "627b32ef3cf11a6bc238fbbfdd55b78e75facc9762e36cecf35ea9695f513f44",
     "Optimization/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Others/macro.hpp": "5f207c05163426fa52d449e2129f56f54824f40025fc6b0ab149dec7363aa64f",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": "38f66520f4d44a6a8b7bc00d6d293bbbd3ba248fcb9ec817d56647efa8791d8a"
+    "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": "3bce4fb8290ac3d86659bc51ca66c4f48ac952860da7d2d1ceaff7fedf1a5ba1"
   }
 }

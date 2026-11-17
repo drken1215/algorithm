@@ -20,8 +20,7 @@ template<class VAL> struct MongeShortestPath {
     vector<int> cnt, prev;
 
     // solver (random access ver)
-    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f
-    , const string solver = "simple_larsch") {
+    template<class FUNC> vector<pair<VAL, int>> solve(int N, const FUNC &f, const string solver = "simple_larsch") {
         vector<pair<VAL, int>> res(N + 1, make_pair(numeric_limits<VAL>::max() / 2, -1));
         if (solver == "simple_larsch") {
             SimpleLARSCH<VAL> opt;

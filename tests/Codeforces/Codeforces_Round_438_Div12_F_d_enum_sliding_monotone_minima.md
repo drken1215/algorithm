@@ -1,5 +1,5 @@
 ---
-title: Codeforces Round 438 (Div. 1 + Div. 2 combined) F. Yet Another Minimization Problem (by スライドアクセス版の分割統治 Monotone Minima 法) (NoviSteps 4D)
+title: Codeforces Round 438 (Div. 1 + Div. 2) F. Yet Another Minimization Problem (by スライドアクセス対応 Monotone Minima) (NoviSteps 4D)
 documentation_of: ./Codeforces_Round_438_Div12_F_d_enum_sliding_monotone_minima.cpp
 ---
 
