@@ -1,5 +1,5 @@
 ---
-title: Monotone 単一始点最短路問題 (D&D Monotone Minima, in O(N (log N)^2))
+title: Monotone 単一始点最短路問題 (D&D Monotone Minima, in $O(N \log^{2} N)$)
 documentation_of: ./dd_monotone_minima.hpp
 ---
 

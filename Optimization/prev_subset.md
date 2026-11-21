@@ -1,5 +1,5 @@
 ---
-title: 下位集合の列挙 (3^N 通りの全探索)
+title: 下位集合の列挙 ($3^{N}$ 通りの全探索)
 documentation_of: ./prev_subset.hpp
 ---
 

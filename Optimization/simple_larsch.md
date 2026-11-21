@@ -1,5 +1,5 @@
 ---
-title: Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in O(N log N))
+title: Monge 単一始点最短路問題 (by noshi's 簡易 LARSCH 法, in $O(N \log N)$)
 documentation_of: ./simple_larsch.hpp
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 10^n
+title: $10^n$
 documentation_of: ./power_of_ten.hpp
 ---
 

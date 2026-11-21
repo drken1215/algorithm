@@ -1,5 +1,5 @@
 ---
-title: Monge 単一始点最短路問題 (by Convex Hull Trick, in O(N log N))
+title: Monge 単一始点最短路問題 (by Convex Hull Trick, in $O(N \log N)$)
 documentation_of: ./monge_shortest_path_by_cht.hpp
 ---
 

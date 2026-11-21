@@ -44,7 +44,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## Union-Find
 
 - (★☆☆☆) [Union-Find (union by size, 列挙可能)](https://drken1215.github.io/algorithm/DataStructure/union_find.hpp.html)
-- (★☆☆☆) [Union-Find (union by rank)](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_rank.cpp)
+- (★☆☆☆) [Union-Find (union by rank)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/DataStructure/union_find_rank.cpp)
 - (★★☆☆) [ポテンシャル付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/weighted_union_find.cpp)
 - (★★☆☆) [列挙可能 Union-Find](https://drken1215.github.io/algorithm/tests/AtCoder/ABC_328_F_enumerable_union_find.cpp)
 - (★★★☆) [undo 付き Union-Find](https://github.com/drken1215/algorithm/blob/master/DataStructure/union_find_can_undo.cpp)
@@ -64,7 +64,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 順序付き集合
 
-- (★★☆☆) [順序付き集合 (by std::set)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_set.cpp)
+- (★★☆☆) [順序付き集合 (by std::set)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/DataStructure/predecessor_set.cpp)
 - (★★☆☆) [N 以下の非負整数の順序付き集合 (by BIT)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_bit.cpp)
 - (★★★☆) [N 以下の非負整数の順序付き集合 (by 64 分木)](https://github.com/drken1215/algorithm/blob/master/DataStructure/predecessor_64_tree.cpp)
 - (★★★☆) [Binary Trie](https://github.com/drken1215/algorithm/blob/master/DataStructure/binary_trie.cpp)
@@ -73,7 +73,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他
 
-- (★☆☆☆) [累積和](https://github.com/drken1215/algorithm/blob/master/DataStructure/cumulative_sum.cpp)
+- (★☆☆☆) [累積和](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/DataStructure/cumulative_sum.cpp)
 - (★☆☆☆) [二次元累積和](https://github.com/drken1215/algorithm/blob/master/DataStructure/cumulative_sum_2D.cpp)
 - (★★★☆) [スライド最小値](https://github.com/drken1215/algorithm/blob/master/DataStructure/sliding_minimum.cpp)
 - (★★★☆) [SWAG](https://github.com/drken1215/algorithm/blob/master/DataStructure/swag.cpp)
@@ -934,7 +934,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 # その他 (OTHERS)
 その他のアルゴリズムです
 
-- (★★★☆) [AtCoder Library 全展開コード (ペースト用)](https://drken1215.github.io/algorithm/tests/OtherExamples/acl.cpp)
+- (★★★☆) [AtCoder Library 全展開コード (ペースト用)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/acl.cpp)
 
 ## utility
 
@@ -956,22 +956,22 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## ソート
 
-- (★☆☆☆) [クイックソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/quick_sort.cpp)
-- (★☆☆☆) [マージソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/merge_sort.cpp)
-- (★☆☆☆) [ヒープソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/heap_sort.cpp)
-- (★☆☆☆) [計数ソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/counting_sort.cpp)
-- (★☆☆☆) [挿入ソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/insertion_sort.cpp)
-- (★☆☆☆) [選択ソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/selection_sort.cpp)
-- (★☆☆☆) [バブルソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/bubble_sort.cpp)
-- (★☆☆☆) [シェルソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/shell_sort.cpp)
-- (★☆☆☆) [コムソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/comb_sort.cpp)
-- (★☆☆☆) [ボゴソート](https://drken1215.github.io/algorithm/tests/OtherExamples/sort/bogo_sort.cpp)
+- (★☆☆☆) [クイックソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/quick_sort.cpp)
+- (★☆☆☆) [マージソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/merge_sort.cpp)
+- (★☆☆☆) [ヒープソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/heap_sort.cpp)
+- (★☆☆☆) [計数ソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/counting_sort.cpp)
+- (★☆☆☆) [挿入ソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/insertion_sort.cpp)
+- (★☆☆☆) [選択ソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/selection_sort.cpp)
+- (★☆☆☆) [バブルソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/bubble_sort.cpp)
+- (★☆☆☆) [シェルソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/shell_sort.cpp)
+- (★☆☆☆) [コムソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/comb_sort.cpp)
+- (★☆☆☆) [ボゴソート](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/bogo_sort.cpp)
 
 ## その他
 
 - (★★☆☆) [サイコロ](https://drken1215.github.io/algorithm/Others/dice.hpp.html)
 - (★★☆☆) [曜日](https://drken1215.github.io/algorithm/Others/day_of_the_week.hpp.html)
-- (★★☆☆) [数独ソルバー](https://drken1215.github.io/algorithm/tests/OtherExamples/sudoku/sudoku.cpp)
+- (★★☆☆) [数独ソルバー](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/sudoku/sudoku.cpp)
 
 
 　

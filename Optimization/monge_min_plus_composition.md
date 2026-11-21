@@ -1,5 +1,5 @@
 ---
-title: Monge 行列の min-plus 合成 (in O(N^2))
+title: Monge 行列の min-plus 合成 (in $O(N^2)$)
 documentation_of: ./monge_min_plus_composition.hpp
 ---
 

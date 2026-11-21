@@ -1,5 +1,5 @@
 ---
-title: Monotone 行最小値問題 (Monotone Minima, in O(H + W log H))
+title: Monotone 行最小値問題 (Monotone Minima, in $O(H + W \log H)$)
 documentation_of: ./monotone_minima.hpp
 ---
 

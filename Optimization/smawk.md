@@ -1,5 +1,5 @@
 ---
-title: TM 行最小値問題 (SMAWK 法, in O(H + W))
+title: TM 行最小値問題 (SMAWK 法, in $O(H + W)$)
 documentation_of: ./smawk.hpp
 ---
 

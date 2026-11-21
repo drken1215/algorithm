@@ -1,5 +1,5 @@
 ---
-title: Monge 単一始点最短路問題 (by LARSCH 法, in O(N))
+title: Monge 単一始点最短路問題 (by LARSCH 法, in $O(N)$)
 documentation_of: ./larsch.hpp
 ---
 

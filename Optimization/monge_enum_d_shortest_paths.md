@@ -1,5 +1,5 @@
 ---
-title: Monge 単一始点 d-辺最短路の d = 1, 2, ..., D における列挙
+title: Monge 単一始点 $d$-辺最短路の $d = 1, 2, \dots , D$ における列挙
 documentation_of: ./monge_enum_d_shortest_paths.hpp
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: anti-Monge 単一始点最短路問題 (by D&D SMAWK 法, in O(N log N))
+title: anti-Monge 単一始点最短路問題 (by 分割統治 SMAWK 法, in $O(N \log N)$)
 documentation_of: ./anti_monge_dd_smawk.hpp
 ---
 

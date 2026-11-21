@@ -1,5 +1,5 @@
 ---
-title: Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in O(N^2))
+title: Monge 性 & 単調性を満たす区間 DP の Knuth-Yao Speedup (in $O(N^{2})$)
 documentation_of: ./knuth_yao.hpp
 ---
 

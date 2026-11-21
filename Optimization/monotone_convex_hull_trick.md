@@ -1,5 +1,5 @@
 ---
-title: Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))
+title: Convex Hull Trick (直線：傾き単調, by Deque, in $O(\log N)$) (クエリも単調なら $O(1)$)
 documentation_of: ./monotone_convex_hull_trick.hpp
 ---
 

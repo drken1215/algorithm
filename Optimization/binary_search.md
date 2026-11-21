@@ -9,6 +9,8 @@ documentation_of: ./binary_search.hpp
 - `binary_search_01(ng, ok, f)`
 - `binary_search_10(ok, ng, f)`
 
+計算量は `ok` と `ng` の差を $L$ として $O(F \log L)$ ($F$ は $f$ の評価に要する計算量)。
+
 ## 制約
 
 - `f(ng)` = False

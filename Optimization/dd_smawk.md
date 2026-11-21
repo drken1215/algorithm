@@ -1,5 +1,5 @@
 ---
-title: TM 単一始点最短路問題 (D&D SMAWK 法, in O(N log N))
+title: TM 単一始点最短路問題 (分割統治 SMAWK 法, in $O(N \log N)$)
 documentation_of: ./dd_smawk.hpp
 ---
 

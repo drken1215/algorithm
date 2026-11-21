@@ -1,5 +1,5 @@
 ---
-title: Alien Trick --- min f(x) s.t. g(x) = K (by ラグランジュ緩和)
+title: Alien Trick --- min $f(x)$ s.t. $g(x) = K$ (by ラグランジュ緩和)
 documentation_of: ./alien_trick.hpp
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: Monge 性・anti-Monge 性の判定 (in O(HW))
+title: Monge 性・anti-Monge 性の判定 (in $O(HW)$)
 documentation_of: ./monge_checker.hpp
 ---
 
