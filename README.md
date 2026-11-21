@@ -207,7 +207,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 最小カット
 
-- (★★★☆) [最小カットの復元 (残余グラフから)](https://github.com/drken1215/algorithm/blob/master/Flow/min_cut.cpp)
+- (★★★☆) [最小カットの復元 (残余グラフから)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Flow/min_cut.cpp)
 - (★★★☆) 最小カットの構造の解明 (by 残余グラフの SCC)
 - (★★★★) [全域最小カット (Stoer-Wanger 法, in O(V^3))](https://github.com/drken1215/algorithm/blob/master/Flow/stoer_wagner.cpp)
 - (★★★★) [Gomory-Hu 木](https://github.com/drken1215/algorithm/blob/master/Flow/gomory_hu_tree.cpp)
@@ -239,14 +239,14 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 二部マッチングの応用
 
-- (★★★☆) [二部グラフの最大独立集合](https://github.com/drken1215/algorithm/blob/master/Flow/max_independent_set_of_bipartite_graph.cpp)
-- (★★★☆) [二部グラフの最小点被覆](https://github.com/drken1215/algorithm/blob/master/Flow/min_vertex_cover_of_bipartite_graph.cpp)
-- (★★★☆) [二部グラフの最小辺被覆](https://github.com/drken1215/algorithm/blob/master/Flow/min_edge_cover_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最大独立集合](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Flow/max_independent_set_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小点被覆](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Flow/min_vertex_cover_of_bipartite_graph.cpp)
+- (★★★☆) [二部グラフの最小辺被覆](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Flow/min_edge_cover_of_bipartite_graph.cpp)
 - (★★★☆) [DAG の最小パス被覆](https://github.com/drken1215/algorithm/blob/master/Flow/dag_path_cover.cpp)
 
 ## 劣モジュラ関数のグラフ表現
 
-- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://github.com/drken1215/algorithm/blob/master/Flow/project_selection_problem.cpp)
+- (★★★☆) [Project Selection Problem (俗称：燃やす埋める)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Flow/project_selection_problem.cpp)
 - (★★★★) [3 変数以下 2 値の劣モジュラ関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/Flow/three_variable_submodular_optimization.cpp)
 - (★★★★) [2 変数以下 K 値の Monge 関数の和の最小化](https://github.com/drken1215/algorithm/blob/master/Flow/two_variable_monge_optimization.cpp)
 
@@ -504,7 +504,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## ゲーム
 
-- (★★☆☆) [Nim](https://github.com/drken1215/algorithm/blob/master/Math/nim.cpp)
+- (★★☆☆) [Nim](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/nim.cpp)
 - (★★☆☆) Grundy 数
 - (★★★★) Nim Product
 - (★★★★) Grundy 数と多項式環の変換
@@ -524,11 +524,13 @@ Union-Find など、基礎的なデータ構造の実装です。
 # 整数論 (MATH : NUMBER THEORY)
 整数論的アルゴリズムです。
 
-## 約数, 倍数
+## 整数論的アルゴリズムの基礎
 
-- (★☆☆☆) [約数列挙](https://github.com/drken1215/algorithm/blob/master/Math/divisor.cpp)
-- (★☆☆☆) [最大公約数 (Euclid の互除法)](https://github.com/drken1215/algorithm/blob/master/Math/GCD.cpp)
-- (★☆☆☆) [最小公倍数](https://github.com/drken1215/algorithm/blob/master/Math/LCM.cpp)
+- (★☆☆☆) [約数列挙](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/divisor_naive.cpp)
+- (★☆☆☆) [素数判定](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/is_prime_naive.cpp)
+- (★☆☆☆) [素因数分解](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/prime_factorization_naive.cpp)
+- (★☆☆☆) [最大公約数 (Euclid の互除法)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/gcd_naive.cpp)
+- (★☆☆☆) [最小公倍数 (Euclid の互除法)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/lcm_naive.cpp)
 
 ## modpow, modinv
 
@@ -537,8 +539,6 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 素数
 
-- (★☆☆☆) [素数判定](https://github.com/drken1215/algorithm/blob/master/Math/is_prime.cpp)
-- (★☆☆☆) [素因数分解](https://github.com/drken1215/algorithm/blob/master/Math/prime_factorization.cpp)
 - (★★★☆) [確率的な高速素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/Math/is_prime_Miller_Rabin.cpp)
 - (★★★☆) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/Math/pollard_rho.cpp)
 
@@ -593,7 +593,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## その他
 
-- (★☆☆☆) [平衡三進法展開](https://github.com/drken1215/algorithm/blob/master/Math/power_of_three.cpp)
+- (★☆☆☆) [平衡三進法展開](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/power_of_three.cpp)
 - (★★★☆) [floor sum](https://github.com/drken1215/algorithm/blob/master/Math/floor_sum.cpp)
 - (★★★★) [ガウス整数](https://github.com/drken1215/algorithm/blob/master/Math/gauss_integer.cpp)
 
@@ -602,7 +602,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 　
 <a name="search"></a>
-# 探索・最適化 (OPTIMIZATION : SEARCH)
+# 探索・最適化 (OPTIMIZATION : SEARCH)knapsack_dp_example
 探索や最適化に関するアルゴリズムです。
 
 ## さまざまな全探索法
@@ -613,9 +613,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな動的計画法
 
-- (★☆☆☆) [ナップサック問題](https://github.com/drken1215/algorithm/blob/master/Optimization/knapsack.cpp)
-- (★☆☆☆) [LIS](https://github.com/drken1215/algorithm/blob/master/Optimization/longest_increasing_sequence.cpp)
-- (★☆☆☆) [LCS](https://github.com/drken1215/algorithm/blob/master/Optimization/lcs.cpp)
+- (★☆☆☆) [ナップサック問題](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Optimization/knapsack_dp_example.cpp)
+- (★☆☆☆) [LIS](https://drken1215.github.io/algorithm/Optimization/longest_increasing_subsequence.hpp.html)
+- (★☆☆☆) [LCS](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Optimization/lcs.cpp)
 - (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Optimization/edit_distance.cpp)
 - (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Optimization/largest_square_in_grid.cpp)
 - (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
@@ -665,13 +665,13 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 区分線形凸関数の活用 1： Slope Trick
 
-- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/slope_trick.cpp)
-- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://github.com/drken1215/algorithm/blob/master/Optimization/dual_slope_trick.cpp)
-- (★★★★) [Super Slope Trick (by Splay 木)](https://github.com/drken1215/algorithm/blob/master/Optimization/super_slope_trick.cpp)
+- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://drken1215.github.io/algorithm/Optimization/slope_trick.hpp.html)
+- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://drken1215.github.io/algorithm/Optimization/dual_slope_trick.hpp.html)
+- (★★★★) [Super Slope Trick (by Splay 木)](https://drken1215.github.io/algorithm/Optimization/super_slope_trick.hpp.html)
 
 ## 区分線形凸関数の活用 2： Min Plus Convolution
 
-- (★★★☆) [Min Plus Convolution (凸と凸)](https://github.com/drken1215/algorithm/blob/master/Optimization/min_plus_convolution_convex_convex.cpp)
+- (★★★☆) [Min Plus Convolution (凸と凸)](https://drken1215.github.io/algorithm/Optimization/min_plus_convolution_convex_convex.hpp.html)
 - (★★★★) Min Plus Convolution (凸と任意)
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
@@ -679,7 +679,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## 区分線形凸関数の活用 3： Convex Hull Trick
 
 - (★★★☆) [Convex Hull Trick (直線：傾き単調, by Deque, in O(log N)) (クエリも単調なら O(1))](https://drken1215.github.io/algorithm/Optimization/monotone_convex_hull_trick.hpp.html)
-- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://github.com/drken1215/algorithm/blob/master/Optimization/convex_hull_trick_by_Li_Chao_Tree.cpp)
+- (★★★★) [Convex Hull Trick (直線：傾き単調でなくてよい, by Li Chao Tree, in O(log X))](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Optimization/convex_hull_trick_by_li_chao_tree.cpp)
 - (★★★★) Convex Hull Trick (直線：傾き単調でなくてよい, by Line Container, in O(log N))
 - (★★★★) 一般関数 Convex Hull Trick (関数挿入順：単調, by Deque, in O(log N))
 - (★★★★) 2D Line container (max(ax + by) クエリ)
