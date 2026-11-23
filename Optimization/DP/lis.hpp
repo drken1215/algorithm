@@ -4,7 +4,7 @@
 using namespace std;
 
 // dp[i] := 長さが i の増加部分列として最後尾の要素のとりうる最小値
-template<class T> int LIS(vector<T> a,  bool is_strong = true) {
+template<class T> int find_lis(vector<T> a,  bool is_strong = true) {
     const T INF = numeric_limits<T>::max() / 2;
     int n = (int)a.size();
     vector<T> dp(n, INF);

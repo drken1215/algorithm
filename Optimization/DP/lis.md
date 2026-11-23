@@ -1,6 +1,6 @@
 ---
-title: longest_increasing_subsequence
-documentation_of: ./longest_increasing_subsequence.hpp
+title: LIS (Longest Increasing Subsequence) (in $O(N \log N)$)
+documentation_of: ./lis.hpp
 ---
 
 ## 概要
