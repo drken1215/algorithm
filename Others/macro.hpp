@@ -41,3 +41,6 @@ template<class T> auto accum(const deque<T> &a) { return accumulate(a.begin(), a
 #define FI first
 #define SE second
 #define ALL(x) x.begin(), x.end()
+
+constexpr int INT_INF = numeric_limits<int>::max() / 2;
+constexpr long long LL_INF = numeric_limits<long long>::max() / 2;

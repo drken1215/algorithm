@@ -38,4 +38,4 @@ $f$ は Monge であるから、さまざまな解法で解くことができる
 + Convex Hull Trick を用いる方法 ($h$ の単調性を用いる) (計算量 $O(N))
 + General Li Chao Tree を用いる方法 ($h$ の単調性がなくても解ける方法) (計算量 $O(N \log N))
 
-本ページのコードは、General Li Chao Tree を用いている。
+本ページのコードは、General Li Chao Tree を用いた方法を実装している。
