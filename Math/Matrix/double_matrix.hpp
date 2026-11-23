@@ -1,21 +1,7 @@
-//
-// 実数行列 (行列累乗と、掃き出し法)
-//
-// verified:
-//   AOJ 2171 Strange Couple (for gauss-jordan)
-//     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2171
-//
-//   AOJ 1328 Find the Outlier (for gauss-jordan)
-//     https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1328
-//
-//   数学アルゴ本 100 - Simulation of Chemicals (for pow)
-//     https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_bv
-//
-
-
+#pragma once
 #include <bits/stdc++.h>
+#include <cassert>
 using namespace std;
-
 
 // double matrix
 template<class DD> struct DoubleMatrix {
@@ -41,12 +27,17 @@ template<class DD> struct DoubleMatrix {
         val.resize(h);
         for (int i = 0; i < h; ++i) val[i].resize(w);
     }
+    void resize(int h) {
+        H = h;
+        val.resize(h);
+    }
     constexpr DD get_eps() { return EPS; }
     constexpr void set_eps(DD eps) { EPS = eps; }
     
     // getter and debugger
     constexpr int height() const { return H; }
     constexpr int width() const { return W; }
+    constexpr int size() const { return height(); }
     constexpr bool empty() const { return height() == 0; }
     vector<DD>& operator [] (int i) { return val[i]; }
     const vector<DD>& operator [] (int i) const { return val[i]; }
@@ -319,159 +310,3 @@ template<class DD> struct DoubleMatrix {
         return mat.inv();
     }
 };
-
-
-
-//------------------------------//
-// Examples
-//------------------------------//
-
-// AOJ 2171 Strange Couple
-void AOJ_2171() {
-    int N, s, t;
-    while (cin >> N >> s >> t, N) {
-        --s, --t;
-        vector<int> q(N);
-        vector<vector<int>> a(N, vector<int>(N));
-        for (int i = 0; i < N; ++i) cin >> q[i];
-        for (int i = 0; i < N; ++i) for (int j = 0; j < N; ++j) cin >> a[i][j];
-
-        // Dijkstra
-        const int INF = 1<<29;
-        vector<int> dist(N, INF);
-        vector<bool> seen(N, 0);
-        dist[t] = 0;
-        for (int iter = 0; iter < N; ++iter) {
-            int curd = INF;
-            int v = -1;
-            for (int i = 0; i < N; ++i) {
-                if (seen[i]) continue;
-                if (curd > dist[i]) {
-                    curd = dist[i];
-                    v = i;
-                }
-            }
-            if (v == -1) break;
-            for (int w = 0; w < N; ++w) {
-                if (w == v) continue;
-                if (a[v][w] == 0) continue;
-                dist[w] = min(dist[w], curd + a[v][w]);
-            }
-            seen[v] = true;
-        }
-        if (dist[s] >= INF) {
-            cout << "impossible" << endl;
-            return;
-        }
-
-        // 連立一次方程式を作る
-        DoubleMatrix<double> A(N, N, 0);
-        vector<double> b(N, 0);
-        for (int v = 0; v < N; ++v) {
-            if (v == t) {
-                A[v][v] = 1;
-                b[v] = 0;
-            }
-            else {
-                vector<int> neigbor;
-                for (int w = 0; w < N; ++w) {
-                    if (a[v][w] == 0) continue;
-                    if (q[v] == 1 && dist[w] + a[v][w] != dist[v]) continue;
-                    neigbor.push_back(w);
-                }
-                int K = neigbor.size();
-                for (auto w : neigbor) {
-                    A[v][w] -= 1;
-                    b[v] += a[v][w];
-                }
-                A[v][v] += K;
-            }
-        }
-          
-        // 解く
-        vector<double> res;
-        auto rank = linear_equation(A, b, res);
-        if (res.empty()) cout << "impossible" << endl;
-        else cout << fixed << setprecision(15) << res[s] << endl;
-    }
-}
-
-// AOJ 1328 Find the Outlier
-void AOJ_1328() {
-    using D = long double;
-    
-    auto dpow = [&](D a, int n) -> D {
-        D res = 1.0;
-        for (int i = 0; i < n; ++i) res *= a;
-        return res;
-    };
-    auto func = [&](const vector<D> &coef, int i) -> D {
-        D res = 0.0;
-        for (int p = 0; p < (int)coef.size(); ++p)
-            res += coef[p] * pow(i, p);
-        return res;
-    };
-    
-    int d;
-    while (cin >> d, d) {
-        vector<D> v(d + 3);
-        for (int i = 0; i < d + 3; ++i) cin >> v[i];
-
-        bool finish = false;
-        int res = 0;
-        for (int i = 0; i < d + 3 && !finish; ++i) {
-            for (int j = i + 1; j < d + 3 && !finish; ++j) {
-                DoubleMatrix<D> A(d + 1, d + 1);
-                A.set_eps(1e-5);
-                vector<D> b(d + 1);
-                for (int k = 0, iter = 0; k < d+3; ++k) {
-                    if (k == i || k == j) continue;
-                    for (int p = 0; p < d + 1; ++p) {
-                        A[iter][p] = pow(k, p);
-                        b[iter] = v[k];
-                    }
-                    ++iter;
-                }
-                vector<D> ans;
-                auto rank = linear_equation(A, b, ans);
-                if (ans.empty()) continue;
-                D vi = func(ans, i), vj = func(ans, j);
-                int num = 0;
-                if (fabs(vi - v[i]) > A.EPS) res = i, ++num;
-                if (fabs(vj - v[j]) > A.EPS) res = j, ++num;
-                if (num == 1) goto end;
-            }
-        }
-        end:
-        cout << res << endl;
-    }
-}
-
-// 数学アルゴ本 100 - Simulation of Chemicals
-void MathAlgo100() {
-    using DD = long double;
-    int Q;
-    cin >> Q;
-    while (Q--) {
-        DD X, Y, Z;
-        long long T;
-        cin >> X >> Y >> Z >> T;
-
-        DoubleMatrix<DD> A(3, 3, 0);
-        A[0][0] = 1.0 - X, A[0][1] = Y;
-        A[1][1] = 1.0 - Y, A[1][2] = Z;
-        A[2][2] = 1.0 - Z, A[2][0] = X;
-        auto P = A.pow(T);
-        vector<DD> ini({1, 1, 1});
-        auto res = P * ini;
-        cout << fixed << setprecision(10);
-        cout << res[0] << " " << res[1] << " " << res[2] << endl;
-    }
-}
-
-
-int main() {
-    AOJ_2171();
-    //AOJ_1328();
-    //MathAlgo100();
-}

@@ -20,10 +20,6 @@ Sparse Table は本来は「交叉半束」上で動作するが、Disjoint Spar
   - 群: 半群 + 単位元 + 逆元
 - 交叉半束: さらに「べき等則 (a + a = a)」「可換則 (a + b = b + a)」を満たす必要がある
 
-## 問題例
-
-- [Codechef Product on the segment by modulo](https://www.codechef.com/problems/SEGPROD)
-
 ## 参考文献
 
 - noshi: [Disjoint Sparse Table と セグ木に関するポエム](http://noshi91.hatenablog.com/entry/2018/05/08/183946)

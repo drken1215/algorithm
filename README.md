@@ -415,7 +415,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 体上の行列
 
-- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/Math/matrix_double.cpp)
+- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://drken1215.github.io/algorithm/Math/Matrix/matrix_double.hpp.html)
 - (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/Math/matrix_modp.cpp)
 - (★★★☆) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/Math/matrix_field.cpp)
 
@@ -607,8 +607,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな全探索法
 
-- (★★☆☆) [next_combination (nCk 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/next_combination.hpp.html)
-- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/prev_subset.hpp.html)
+- (★★☆☆) [next_combination (nCk 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/Search/next_combination.hpp.html)
+- (★★☆☆) [下位集合の列挙 (3^N 通りの全探索)](https://drken1215.github.io/algorithm/Optimization/Search/prev_subset.hpp.html)
 - (★★☆☆) 上位集合の列挙
 
 ## さまざまな動的計画法
@@ -623,8 +623,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## さまざまな最適化技法
 
-- (★☆☆☆) [二分探索](https://drken1215.github.io/algorithm/Optimization/binary_search.hpp.html)
-- (★★★★) [単体法 (二段階単体法)](https://github.com/drken1215/algorithm/blob/master/Optimization/simplex_method.cpp)
+- (★☆☆☆) [二分探索](https://drken1215.github.io/algorithm/Optimization/Search/binary_search.hpp.html)
+- (★★★★) [単体法 (二段階単体法)](https://drken1215.github.io/algorithm/Optimization/simplex_method.hpp.html)
 - (★★★★) min: Σ_{i}Σ_{j} f[i](x[i][j]) s.t. Σ_{i}Σ_{j} x[i][j] = C
 - (★★★★) 分枝限定法
 
@@ -661,17 +661,17 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 凸性を活かした最適化技法
 
-- (★★★★) [Alien Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://drken1215.github.io/algorithm/Optimization/alien_trick.hpp.html)
+- (★★★★) [Alien Trick --- min: f(x) s.t. g(x) = K (by ラグランジュ緩和)](https://drken1215.github.io/algorithm/Optimization/Convex/alien_trick.hpp.html)
 
 ## 区分線形凸関数の活用 1： Slope Trick
 
-- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://drken1215.github.io/algorithm/Optimization/slope_trick.hpp.html)
-- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://drken1215.github.io/algorithm/Optimization/dual_slope_trick.hpp.html)
-- (★★★★) [Super Slope Trick (by Splay 木)](https://drken1215.github.io/algorithm/Optimization/super_slope_trick.hpp.html)
+- (★★★☆) [Slope Trick (傾きの変化点を管理 by priority queue)](https://drken1215.github.io/algorithm/Optimization/Convex/slope_trick.hpp.html)
+- (★★★★) [Dual Slope Trick (各区間の傾きを管理 by priority queue)](https://drken1215.github.io/algorithm/Optimization/Convex/dual_slope_trick.hpp.html)
+- (★★★★) [Super Slope Trick (by Splay 木)](https://drken1215.github.io/algorithm/Optimization/Convex/super_slope_trick.hpp.html)
 
 ## 区分線形凸関数の活用 2： Min Plus Convolution
 
-- (★★★☆) [Min Plus Convolution (凸と凸)](https://drken1215.github.io/algorithm/Optimization/min_plus_convolution_convex_convex.hpp.html)
+- (★★★☆) [Min Plus Convolution (凸と凸)](https://drken1215.github.io/algorithm/Optimization/Convex/min_plus_convolution_convex_convex.hpp.html)
 - (★★★★) Min Plus Convolution (凸と任意)
 - (★★★★) Min Plus Convolution (凹と任意)
 - (★★★★) Axiotis-Tzamos Knapsack
