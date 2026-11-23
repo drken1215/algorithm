@@ -1,5 +1,5 @@
 ---
-title: timer
+title: タイマー
 documentation_of: ./timer.hpp
 ---
 

@@ -1,10 +1,10 @@
 {
   "tests/AOJ/AOJ_1328_matrix_double.test.cpp": {
-    "Math/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
+    "Math/LinearAlgebra/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
     "tests/AOJ/AOJ_1328_matrix_double.test.cpp": "ec14dd9878cfe8122e0c645b21f77ed32d8d5e63988a9bf9c1fbdbceb31af4e3"
   },
   "tests/AOJ/AOJ_2171_matrix_double.test.cpp": {
-    "Math/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
+    "Math/LinearAlgebra/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
     "tests/AOJ/AOJ_2171_matrix_double.test.cpp": "7140edb77edc577434b8f13b78a09b88ccb19fa51ecc2dc49258f07d962e6e67"
   },
   "tests/AOJ/AOJ_2865_dual_slope_trick.test.cpp": {
@@ -62,8 +62,12 @@
     "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
     "tests/LibraryChecker/LibraryChecker_shortest_path.test.cpp": "5a50bd343241950890b06b2a908d1900c9bbabe083cf31dbf5823a3e564aa0ce"
   },
+  "tests/MyTests/mytest_modint.test.cpp": {
+    "Math/Combinatorics/modint.hpp": "553be5f8e5e6d0958c65b988926ef2d3f67f5872507612ebf2d6d8e22d89fc3f",
+    "tests/MyTests/mytest_modint.test.cpp": "ae9ea5ff574ebd30d91deee4e3dc928d4ffdf89cce84720b7d7757750fc461b4"
+  },
   "tests/MyTests/mytest_simplex_method.test.cpp": {
-    "Math/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
+    "Math/LinearAlgebra/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
     "Optimization/Search/Programming/simplex_method.hpp": "59c5117813e9698609b9b88728d5bb242d46d7d578cff291d040783bef24e6c3",
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",

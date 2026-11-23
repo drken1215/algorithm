@@ -415,7 +415,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 体上の行列
 
-- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://drken1215.github.io/algorithm/Math/Matrix/double_matrix.hpp.html)
+- (★★★☆) [実数体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://drken1215.github.io/algorithm/Math/LinearAlgebra/Matrix/double_matrix.hpp.html)
 - (★★★☆) [Fp 体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/Math/matrix_modp.cpp)
 - (★★★☆) [一般の可換体上の行列 (加法・減法・乗法, 行列累乗, 行列式 (in O(N^3)), 逆行列 (in O(N^3)))](https://github.com/drken1215/algorithm/blob/master/Math/matrix_field.cpp)
 
@@ -465,7 +465,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## Modint
 
-- (★☆☆☆) [Modint](https://github.com/drken1215/algorithm/blob/master/Math/modint.cpp)
+- (★☆☆☆) [Modint](https://drken1215.github.io/algorithm/Math/Combinatorics/modint.hpp.html)
 - (★★☆☆) [実行時に法が決まる Modint](https://github.com/drken1215/algorithm/blob/master/Math/modint_runtime.cpp)
 - (★★★☆) [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/Math/modint_montgomery.cpp)
 
@@ -532,21 +532,18 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [最大公約数 (Euclid の互除法)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/gcd_naive.cpp)
 - (★☆☆☆) [最小公倍数 (Euclid の互除法)](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Math/lcm_naive.cpp)
 
-## modpow, modinv
+## modpow, modinv, 離散対数
 
 - (★☆☆☆) [拡張 Euclid の互除法](https://github.com/drken1215/algorithm/blob/master/Math/extended_GCD.cpp)
 - (★☆☆☆) [a^n, a^{-1} (mod m)](https://github.com/drken1215/algorithm/blob/master/Math/mod_pow_inv.cpp)
+- (★★★☆) [離散対数](https://github.com/drken1215/algorithm/blob/master/Math/mod_log.cpp)
 
 ## 素数
 
 - (★★★☆) [確率的な高速素数判定 (Miller-Rabin 法)](https://github.com/drken1215/algorithm/blob/master/Math/is_prime_Miller_Rabin.cpp)
 - (★★★☆) [確率的な高速素因数分解 (Pollard のロー法)](https://github.com/drken1215/algorithm/blob/master/Math/pollard_rho.cpp)
-
-## 原始根, 位数, 離散対数
-
 - (★★★☆) [原始根](https://github.com/drken1215/algorithm/blob/master/Math/primitive_root.cpp)
 - (★★★☆) [位数 (a^x ≡ 1 (mod p) となる最小の x)](https://github.com/drken1215/algorithm/blob/master/Math/order.cpp)
-- (★★★☆) [離散対数](https://github.com/drken1215/algorithm/blob/master/Math/mod_log.cpp)
 
 ## エラトステネスの篩
 
@@ -950,8 +947,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 ## 入出力
 
-- (★☆☆☆) [STL コンテナの io ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_container_stream.hpp.html)
-- (★★☆☆) [128 ビット整数の io ストリーム](https://drken1215.github.io/algorithm/Others/int128.hpp.html)
+- (★☆☆☆) [STL コンテナの IO ストリーム (vector, set など)](https://drken1215.github.io/algorithm/Others/stl_container_stream.hpp.html)
+- (★★☆☆) [128 ビット整数の IO ストリーム](https://drken1215.github.io/algorithm/Others/int128.hpp.html)
 - (★★★★) [Fast IO](https://drken1215.github.io/algorithm/Others/fast_io.hpp.html)
 
 ## ソート
