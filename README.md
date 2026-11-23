@@ -945,8 +945,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★☆☆) [10^n](https://drken1215.github.io/algorithm/Others/power_of_ten.hpp.html)
 - (★★☆☆) [ビット演算を用いたさまざまな処理群](https://drken1215.github.io/algorithm/Others/bit_utility.hpp.html)
 - (★★☆☆) [x^K <= N となる最大の整数 x](https://drken1215.github.io/algorithm/Others/kth_root.hpp.html)
-- (★★☆☆) [タイマー](https://github.com/drken1215/algorithm/blob/master/Others/timer.cpp)
-- (★★☆☆) [XorShift, ランダムシャッフル](https://github.com/drken1215/algorithm/blob/master/Others/xorshift.cpp)
+- (★★☆☆) [タイマー](https://drken1215.github.io/algorithm/Others/timer.hpp.html)
+- (★★☆☆) [XorShift, ランダムシャッフル](https://drken1215.github.io/algorithm/Others/xorshift.hpp.html)
 
 ## 入出力
 

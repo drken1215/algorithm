@@ -70,6 +70,17 @@
     "template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
     "tests/MyTests/mytest_simplex_method.test.cpp": "56b5b8d00645bb09b3f7820c7470d500e359676bfa8321b47c16c1a409419152"
   },
+  "tests/MyTests/mytest_timer.test.cpp": {
+    "Others/timer.hpp": "8fa7630b8296580911e087dc231a193fddf76d3788eaa4da9a92c30be2ba0e82",
+    "tests/MyTests/mytest_timer.test.cpp": "d9dbe7b2e8448ec5e4689c9da2031520a7869f945e85cc36ce220de871ecb6e3"
+  },
+  "tests/MyTests/mytest_xorshift.test.cpp": {
+    "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
+    "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
+    "Others/xorshift.hpp": "bdf28358c7826742952e34dd21f231948e7b27ee28ce5c28083815586ad98b45",
+    "template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
+    "tests/MyTests/mytest_xorshift.test.cpp": "31de0b6a5d2d0073b30409013f513da9bd164590c34211498b292e88f0768c5a"
+  },
   "tests/MyTests/template.test.cpp": {
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",

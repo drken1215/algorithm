@@ -14,27 +14,7 @@
 using namespace std;
 
 
-// xor128による乱数生成、周期は2^128-1
-unsigned int rand_int() {
-    static unsigned int tx = 123456789, ty=362436069, tz=521288629, tw=88675123;
-    unsigned int tt = (tx^(tx<<11));
-    tx = ty; ty = tz; tz = tw;
-    return ( tw=(tw^(tw>>19))^(tt^(tt>>8)) );
-}
-int rand_int(int minv, int maxv) {
-    return rand_int() % (maxv - minv + 1) + minv;
-}
-long long rand_ll(long long minv, long long maxv) {
-    long long a = rand_int(), b = rand_int();
-    return (a * (1LL<<29) + b) % (maxv - minv + 1) + minv;
-}
-template<class T> void shuffle(vector<T>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
-        int k = rand_int() % (i + 1);
-        swap(vec[i], vec[k]);
-    }
-}
+
 
 
 //------------------------------//
