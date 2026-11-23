@@ -614,8 +614,8 @@ Union-Find など、基礎的なデータ構造の実装です。
 ## さまざまな動的計画法
 
 - (★☆☆☆) [ナップサック問題](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Optimization/knapsack_dp_example.cpp)
-- (★☆☆☆) [LIS](https://drken1215.github.io/algorithm/Optimization/lis.hpp.html)
-- (★☆☆☆) [LCS](https://drken1215.github.io/algorithm/Optimization/lcs.hpp.html)
+- (★☆☆☆) [LIS](https://drken1215.github.io/algorithm/Optimization/DP/lis.hpp.html)
+- (★☆☆☆) [LCS](https://drken1215.github.io/algorithm/Optimization/DP/lcs.hpp.html)
 - (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Optimization/edit_distance.cpp)
 - (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Optimization/largest_square_in_grid.cpp)
 - (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
