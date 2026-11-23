@@ -19,8 +19,9 @@ struct xorshift {
         return rand_int() % (right - left) + left;
     }
     long long rand_ll(long long left, long long right) {
+        assert(left < right);
         long long a = rand_int(), b = rand_int();
-        return (a * numeric_limits<unsigned int>::max() + b) % (right - left) + left;
+        return (a * (numeric_limits<int>::max() / 2) + b) % (right - left) + left;
     }
 
     // double
