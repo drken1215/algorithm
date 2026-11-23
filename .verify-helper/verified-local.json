@@ -8,6 +8,14 @@
     "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
     "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": "8e6c81286e5c19a7de73b3de261f605fda88a0dc7592d3dd9ed31e56e749402a"
   },
+  "tests/AOJ/AOJ_course_DPL_3_B.test.cpp": {
+    "Optimization/DP/histogram.hpp": "09ab6fe48bfe079b2a19c127fbfe4425a0eff05fdaeea081abf02e5dfd4d5860",
+    "tests/AOJ/AOJ_course_DPL_3_B.test.cpp": "453ca54465b68871b40c6502328f23a156a1f03510b15c1ff3901f9dc7fd5180"
+  },
+  "tests/AOJ/AOJ_course_DPL_3_C.test.cpp": {
+    "Optimization/DP/histogram.hpp": "09ab6fe48bfe079b2a19c127fbfe4425a0eff05fdaeea081abf02e5dfd4d5860",
+    "tests/AOJ/AOJ_course_DPL_3_C.test.cpp": "01aea84610fb66f78600138fb8f651044f40da33ad09117a75c8a5f8b7b12002"
+  },
   "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": {
     "Others/kth_root.hpp": "d4995bde36fad95a09f4f99cf38447d9b388636071b133ca47e191620156a3f6",
     "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": "c1f3e2a2300089e9526cdec67408eac49ac08063d14de916d1534f9809c6382d"

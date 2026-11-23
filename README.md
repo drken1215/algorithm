@@ -616,9 +616,9 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★☆☆☆) [ナップサック問題](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Optimization/knapsack_dp_example.cpp)
 - (★☆☆☆) [LIS](https://drken1215.github.io/algorithm/Optimization/DP/lis.hpp.html)
 - (★☆☆☆) [LCS](https://drken1215.github.io/algorithm/Optimization/DP/lcs.hpp.html)
-- (★☆☆☆) [編集距離](https://github.com/drken1215/algorithm/blob/master/Optimization/edit_distance.cpp)
-- (★★☆☆) [グリッドに含まれる最大正方形](https://github.com/drken1215/algorithm/blob/master/Optimization/largest_square_in_grid.cpp)
-- (★★★☆) [ヒストグラム長方形面積最大化](https://github.com/drken1215/algorithm/blob/master/Optimization/histogram.cpp)
+- (★☆☆☆) [編集距離](https://drken1215.github.io/algorithm/Optimization/DP/edit_distance.hpp.html)
+- (★★☆☆) [グリッドに含まれる最大正方形](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Optimization/largest_square_in_grid.cpp)
+- (★★★☆) [ヒストグラム長方形面積最大化](https://drken1215.github.io/algorithm/Optimization/DP/histogram.hpp.html)
 - (★★★★) 最適二分探索木 (Hu-Tucker 法, in O(N log N))
 
 ## さまざまな最適化技法
