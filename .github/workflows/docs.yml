@@ -83,6 +83,9 @@ jobs:
         with:
           path: .verify-helper/markdown/_site
 
+      - name: Wait before deployment
+        run: sleep 15
+
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
