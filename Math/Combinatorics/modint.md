@@ -1,5 +1,5 @@
 ---
-title: modint
+title: 素数 $p$ についての有限体 $\mathbb{F}_p$ を表す構造体 modint
 documentation_of: ./modint.hpp
 ---
 

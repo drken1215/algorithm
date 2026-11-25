@@ -1,5 +1,5 @@
 ---
-title: dynamic_modint
+title: 実行時に法が決まる modint
 documentation_of: ./dynamic_modint.hpp
 ---
 
