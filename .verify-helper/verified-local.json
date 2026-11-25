@@ -24,6 +24,11 @@
     "Optimization/Search/DP/histogram.hpp": "09ab6fe48bfe079b2a19c127fbfe4425a0eff05fdaeea081abf02e5dfd4d5860",
     "tests/AOJ/AOJ_course_DPL_3_C.test.cpp": "01aea84610fb66f78600138fb8f651044f40da33ad09117a75c8a5f8b7b12002"
   },
+  "tests/LibraryChecker/LibraryChecker_Binomial_Coefficient_Prime_Mod.test.cpp": {
+    "Math/Combinatorics/bicoef.hpp": "b3f5626b9b24e2988734260507a41fc921eff6a880eac01916bfff561ebfb4c8",
+    "Math/Combinatorics/dynamic_modint.hpp": "864caf10dc1e13bd1a5a1b71557816fd20839a916905729b1c91a7b344629cd3",
+    "tests/LibraryChecker/LibraryChecker_Binomial_Coefficient_Prime_Mod.test.cpp": "fc495e8551118e1332c62df3633dda2bd839cf15c0c1f8dc2adad65338faed21"
+  },
   "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": {
     "Others/kth_root.hpp": "d4995bde36fad95a09f4f99cf38447d9b388636071b133ca47e191620156a3f6",
     "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": "c1f3e2a2300089e9526cdec67408eac49ac08063d14de916d1534f9809c6382d"
