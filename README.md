@@ -467,7 +467,7 @@ Union-Find など、基礎的なデータ構造の実装です。
 
 - (★☆☆☆) [Modint](https://drken1215.github.io/algorithm/Math/Combinatorics/modint.hpp.html)
 - (★★☆☆) [実行時に法が決まる Modint](https://drken1215.github.io/algorithm/Math/Combinatorics/dynamic_modint.hpp.html)
-- (★★★☆) [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://github.com/drken1215/algorithm/blob/master/Math/modint_montgomery.cpp)
+- (★★★☆) [モンゴメリ乗算を用いた Modint (mod は 2^62 未満の奇数)](https://drken1215.github.io/algorithm/Math/Combinatorics/mongomery_modint.hpp.html)
 
 ## 二項係数
 

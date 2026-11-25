@@ -24,6 +24,10 @@
     "Optimization/Search/DP/histogram.hpp": "09ab6fe48bfe079b2a19c127fbfe4425a0eff05fdaeea081abf02e5dfd4d5860",
     "tests/AOJ/AOJ_course_DPL_3_C.test.cpp": "01aea84610fb66f78600138fb8f651044f40da33ad09117a75c8a5f8b7b12002"
   },
+  "tests/AOJ/OUPC_2012_D_mongomery_modint.test.cpp": {
+    "Math/Combinatorics/mongomery_modint.hpp": "e76bdd5306f2264ff3d6dcbb7315d3f13cc162f37272ccac557034eb68eaeb4f",
+    "tests/AOJ/OUPC_2012_D_mongomery_modint.test.cpp": "b613d24031e0993673e9dd5074dcc7c441c6448dc753201dfed2660ce60d2196"
+  },
   "tests/LibraryChecker/LibraryChecker_Binomial_Coefficient_Prime_Mod.test.cpp": {
     "Math/Combinatorics/bicoef.hpp": "fb979070ca6fc12d6605d5d9b44e1b356b2ddd6999b689498844a72779ba74a5",
     "Math/Combinatorics/dynamic_modint.hpp": "864caf10dc1e13bd1a5a1b71557816fd20839a916905729b1c91a7b344629cd3",
