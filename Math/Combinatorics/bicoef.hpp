@@ -3,6 +3,8 @@
 #include <cassert>
 using namespace std;
 
+#include "modint.hpp"
+
 // Binomial coefficient
 template<class mint> struct BiCoef {
     vector<mint> fact_, inv_, finv_;
