@@ -23,7 +23,7 @@ documentation_of: ./modint.hpp
 
 - $6 + 9 = 2$
 - $6 - 9 = 10$
-- $6 \times 9 = 12$
+- $6 \times 9 = 2$
 - $6 \div 9 = 5$ ($5 \times 9 = 6$ であり、「割り算は掛け算の逆」であることから $6 \div 9 = 5$ が導かれる)
 
 
@@ -52,4 +52,4 @@ int main() {
 
 ## 参考文献
 
-- drken: [998244353 で割ったあまり」の求め方を総特集！ ～ 逆元から離散対数まで ～](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
+- drken: [「998244353 で割ったあまり」の求め方を総特集！ ～ 逆元から離散対数まで ～](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
