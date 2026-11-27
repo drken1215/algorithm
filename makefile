@@ -1,36 +1,36 @@
 PC := $(shell hostname -s)
--include Makefile.$(PC)
+-include makefile.$(PC)
+
+OJ_BUNDLE ?= oj-bundle
+BUNDLE_CXX ?= g++
+TEST_CXXFLAGS ?= -std=c++20 -O2 -I .
+LIBRARY := $(CURDIR)
+
+CASE ?=
+FILE ?= test
+PRO ?= pro
+DATA = $(CASE).in
+
+ifeq ($(strip $(CASE)),)
+CMD = ./$(PRO)
+else
+CMD = ./$(PRO) < ./$(DATA)
+endif
 
 OJ_VERIFY ?= oj-verify
 VERIFY_CXX ?= g++
 VERIFY_JOBS ?= 2
 
-.PHONY: configure readme docs verify add add_atcoder add_yukicoder add_aoj add_codeforces add_library_checker add_mytest add_test
+.PHONY: test configure readme docs verify add_lib add_atcoder add_yukicoder add_aoj add_codeforces add_library_checker add_mytest add_test
 
-add_atcoder: TEST_DIR = tests/AtCoder
-add_atcoder: TEST_EXT = .cpp
-add_atcoder: add_test
-
-add_yukicoder: TEST_DIR = tests/yukicoder
-add_yukicoder: TEST_EXT = .test.cpp
-add_yukicoder: add_test
-
-add_aoj: TEST_DIR = tests/AOJ
-add_aoj: TEST_EXT = .test.cpp
-add_aoj: add_test
-
-add_codeforces: TEST_DIR = tests/Codeforces
-add_codeforces: TEST_EXT = .cpp
-add_codeforces: add_test
-
-add_library_checker: TEST_DIR = tests/LibraryChecker
-add_library_checker: TEST_EXT = .test.cpp
-add_library_checker: add_test
-
-add_mytest: TEST_DIR = tests/MyTests
-add_mytest: TEST_EXT = .test.cpp
-add_mytest: TEST_TYPE = mytest
-add_mytest: add_test
+test:
+	@set -e; \
+	flags="$$(python3 $(LIBRARY)/.verify-helper/tools/setup_includes.py --bundle-flags)"; \
+	CXX="$(BUNDLE_CXX)" $(OJ_BUNDLE) $$flags "$(FILE).cpp" > submit.cpp.tmp; \
+	python3 $(LIBRARY)/.verify-helper/tools/rewrite_bundle_lines.py submit.cpp.tmp --library "$(LIBRARY)"; \
+	mv submit.cpp.tmp submit.cpp; \
+	"$(BUNDLE_CXX)" $(TEST_CXXFLAGS) submit.cpp -o "$(PRO)"; \
+	$(CMD)
 
 configure:
 	python3 .verify-helper/tools/setup_includes.py --cxx "$(VERIFY_CXX)"
@@ -46,8 +46,8 @@ verify: configure
 	$(OJ_VERIFY) run -j $(VERIFY_JOBS) $(TEST)
 	python3 .verify-helper/tools/sync_local_verification.py export
 
-add:
-	python3 .verify-helper/tools/add_library.py --lib "$(LIB)"
+add_lib:
+	python3 .verify-helper/tools/add_library.py --lib "$(TITLE)"
 
 add_test:
 	@if [ -z "$(TITLE)" ]; then \
@@ -102,19 +102,14 @@ add_test:
 			'}' \
 			> "$$cpp"; \
 	fi; \
-	if [ "$(TEST_TYPE)" = "mytest" ]; then \
+	printf '%s\n' \
+		'---' \
+		'title: ' \
+		'documentation_of: $(TITLE)$(TEST_EXT)' \
+		'---' \
+		> "$$md"; \
+	if [ "$(TEST_TYPE)" != "mytest" ]; then \
 		printf '%s\n' \
-			'---' \
-			'title: ' \
-			'documentation_of: $(TITLE)$(TEST_EXT)' \
-			'---' \
-			> "$$md"; \
-	else \
-		printf '%s\n' \
-			'---' \
-			'title: ' \
-			'documentation_of: $(TITLE)$(TEST_EXT)' \
-			'---' \
 			'' \
 			'## 問題概要' \
 			'' \
@@ -122,7 +117,32 @@ add_test:
 			'' \
 			'## 解法メモ' \
 			'' \
-			> "$$md"; \
+			>> "$$md"; \
 	fi; \
 	echo "Created: $$cpp"; \
 	echo "Created: $$md"
+
+add_atcoder: TEST_DIR = tests/AtCoder
+add_atcoder: TEST_EXT = .cpp
+add_atcoder: add_test
+
+add_yukicoder: TEST_DIR = tests/yukicoder
+add_yukicoder: TEST_EXT = .test.cpp
+add_yukicoder: add_test
+
+add_aoj: TEST_DIR = tests/AOJ
+add_aoj: TEST_EXT = .test.cpp
+add_aoj: add_test
+
+add_codeforces: TEST_DIR = tests/Codeforces
+add_codeforces: TEST_EXT = .cpp
+add_codeforces: add_test
+
+add_library_checker: TEST_DIR = tests/LibraryChecker
+add_library_checker: TEST_EXT = .test.cpp
+add_library_checker: add_test
+
+add_mytest: TEST_DIR = tests/MyTests
+add_mytest: TEST_EXT = .test.cpp
+add_mytest: TEST_TYPE = mytest
+add_mytest: add_test

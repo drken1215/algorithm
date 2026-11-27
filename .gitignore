@@ -1,5 +1,11 @@
 .DS_Store
 
+# program files
+pro
+submit.cpp
+submit.cpp.tmp
+atcoder/
+
 # oj-helper generated files
 .verify-helper/markdown/
 .verify-helper/cache/
