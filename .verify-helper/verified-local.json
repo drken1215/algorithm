@@ -1,96 +1,96 @@
 {
   "tests/AOJ/AOJ_1328_matrix_double.test.cpp": {
     "Math/LinearAlgebra/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/AOJ_1328_matrix_double.test.cpp": "ec14dd9878cfe8122e0c645b21f77ed32d8d5e63988a9bf9c1fbdbceb31af4e3"
   },
   "tests/AOJ/AOJ_2171_matrix_double.test.cpp": {
     "Math/LinearAlgebra/Matrix/double_matrix.hpp": "1e2b40c850e6c0aab9bb331a4631102edc2fa35de5a87bb9e6bdd6320df355f5",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/AOJ_2171_matrix_double.test.cpp": "7140edb77edc577434b8f13b78a09b88ccb19fa51ecc2dc49258f07d962e6e67"
   },
   "tests/AOJ/AOJ_2865_dual_slope_trick.test.cpp": {
     "Optimization/Convexity/PiecewiseLinearConvexity/dual_slope_trick.hpp": "30ef71f88a003ec31cc70e9d59e84b0ee43904f6c3197021168b7bfadf662ff6",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/AOJ_2865_dual_slope_trick.test.cpp": "a7406ff445ac2ce772ea7d8b4717847a3d240d6636fc3943be7e85455e9cafb3"
   },
   "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": {
     "Graph/dijkstra.hpp": "577e40bbf7b78d9778d975bfc99be0c787dc19f285cf36802ecf9bc3ddb4c212",
     "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/AOJ_course_ALDS1_12_C.test.cpp": "8e6c81286e5c19a7de73b3de261f605fda88a0dc7592d3dd9ed31e56e749402a"
   },
   "tests/AOJ/AOJ_course_DPL_3_B.test.cpp": {
     "Optimization/Search/DP/histogram.hpp": "09ab6fe48bfe079b2a19c127fbfe4425a0eff05fdaeea081abf02e5dfd4d5860",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/AOJ_course_DPL_3_B.test.cpp": "453ca54465b68871b40c6502328f23a156a1f03510b15c1ff3901f9dc7fd5180"
   },
   "tests/AOJ/AOJ_course_DPL_3_C.test.cpp": {
     "Optimization/Search/DP/histogram.hpp": "09ab6fe48bfe079b2a19c127fbfe4425a0eff05fdaeea081abf02e5dfd4d5860",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/AOJ_course_DPL_3_C.test.cpp": "01aea84610fb66f78600138fb8f651044f40da33ad09117a75c8a5f8b7b12002"
   },
   "tests/AOJ/OUPC_2012_D_mongomery_modint.test.cpp": {
     "Math/Combinatorics/mongomery_modint.hpp": "e76bdd5306f2264ff3d6dcbb7315d3f13cc162f37272ccac557034eb68eaeb4f",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/AOJ/OUPC_2012_D_mongomery_modint.test.cpp": "b613d24031e0993673e9dd5074dcc7c441c6448dc753201dfed2660ce60d2196"
   },
   "tests/LibraryChecker/LibraryChecker_Binomial_Coefficient_Prime_Mod.test.cpp": {
     "Math/Combinatorics/bicoef.hpp": "fb979070ca6fc12d6605d5d9b44e1b356b2ddd6999b689498844a72779ba74a5",
     "Math/Combinatorics/dynamic_modint.hpp": "864caf10dc1e13bd1a5a1b71557816fd20839a916905729b1c91a7b344629cd3",
     "Math/Combinatorics/modint.hpp": "553be5f8e5e6d0958c65b988926ef2d3f67f5872507612ebf2d6d8e22d89fc3f",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_Binomial_Coefficient_Prime_Mod.test.cpp": "fc495e8551118e1332c62df3633dda2bd839cf15c0c1f8dc2adad65338faed21"
   },
   "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": {
     "Others/kth_root.hpp": "d4995bde36fad95a09f4f99cf38447d9b388636071b133ca47e191620156a3f6",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_Kth_root.test.cpp": "c1f3e2a2300089e9526cdec67408eac49ac08063d14de916d1534f9809c6382d"
   },
   "tests/LibraryChecker/LibraryChecker_LineAddGetMin_general_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_LineAddGetMin_general_li_chao_tree.test.cpp": "a4a5bdc816a47e889bf112bf920816b6ade5c6a2cfd6dd431713192373dabe9b"
   },
   "tests/LibraryChecker/LibraryChecker_Many_A_plus_B_128_bit.test.cpp": {
     "Others/fast_io.hpp": "5a860486866e7972596b3947cdd3e740462be22ba3b24d24c706cf9aa58be481",
     "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_Many_A_plus_B_128_bit.test.cpp": "7ac725247e0952903de646069d774ebaad113c0e1d4d1032a3e76a531dafc7a8"
   },
   "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_dynamic_general_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Others/fast_io.hpp": "5a860486866e7972596b3947cdd3e740462be22ba3b24d24c706cf9aa58be481",
     "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_dynamic_general_li_chao_tree.test.cpp": "121cadd277b192cefc7338aa092aedfcd9ba25fd4eaa2236ccab3b8a65d5a728"
   },
   "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_general_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Others/fast_io.hpp": "5a860486866e7972596b3947cdd3e740462be22ba3b24d24c706cf9aa58be481",
     "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_SegmentAddGetMin_general_li_chao_tree.test.cpp": "45f90ba5e2b5dd7381a1c040081264948c882ad7cf5912457310ec1858b17011"
   },
   "tests/LibraryChecker/LibraryChecker_Unionfind.test.cpp": {
     "DataStructure/union_find.hpp": "36e3ab816de3607691a41a6ae4a6ae097550f8628cb43133516f0c631b050328",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_Unionfind.test.cpp": "d408cf452a2e1b92bc38c53061ca9155c3e398e3e4a11947d997d5847d034a00"
   },
   "tests/LibraryChecker/LibraryChecker_min_plus_convolution_convex_convex.test.cpp": {
     "Optimization/Convexity/PiecewiseLinearConvexity/min_plus_convolution_convex_convex.hpp": "c6b1b6a880bc8e7d6cb7825a0e5ab2bd3d3c55a7b753634b421c0e313a1e07ac",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_min_plus_convolution_convex_convex.test.cpp": "f9b7daf5c888f3d40fac931fb15dd47f8b8a720ba03daa117f7e371742db2412"
   },
   "tests/LibraryChecker/LibraryChecker_shortest_path.test.cpp": {
     "Graph/dijkstra.hpp": "577e40bbf7b78d9778d975bfc99be0c787dc19f285cf36802ecf9bc3ddb4c212",
     "Graph/graph.hpp": "6d0badf3268ae36727d7e3b997095383cfe7e348a6390fa2480447805b2b3454",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/LibraryChecker/LibraryChecker_shortest_path.test.cpp": "5a50bd343241950890b06b2a908d1900c9bbabe083cf31dbf5823a3e564aa0ce"
   },
   "tests/MyTests/mytest_modint.test.cpp": {
     "Math/Combinatorics/modint.hpp": "553be5f8e5e6d0958c65b988926ef2d3f67f5872507612ebf2d6d8e22d89fc3f",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/MyTests/mytest_modint.test.cpp": "ae9ea5ff574ebd30d91deee4e3dc928d4ffdf89cce84720b7d7757750fc461b4"
   },
   "tests/MyTests/mytest_simplex_method.test.cpp": {
@@ -99,12 +99,12 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/MyTests/mytest_simplex_method.test.cpp": "56b5b8d00645bb09b3f7820c7470d500e359676bfa8321b47c16c1a409419152"
   },
   "tests/MyTests/mytest_timer.test.cpp": {
     "Others/timer.hpp": "8fa7630b8296580911e087dc231a193fddf76d3788eaa4da9a92c30be2ba0e82",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/MyTests/mytest_timer.test.cpp": "d9dbe7b2e8448ec5e4689c9da2031520a7869f945e85cc36ce220de871ecb6e3"
   },
   "tests/MyTests/mytest_xorshift.test.cpp": {
@@ -112,22 +112,15 @@
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
     "Others/xorshift.hpp": "0d22b13a51efc829c6023b213b796481b16fa8498ae2e71f71cdee9f51aa9263",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/MyTests/mytest_xorshift.test.cpp": "31de0b6a5d2d0073b30409013f513da9bd164590c34211498b292e88f0768c5a"
-  },
-  "tests/MyTests/template.test.cpp": {
-    "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
-    "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
-    "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
-    "tests/MyTests/template.test.cpp": "dbc9b59a5c8abbb1b40fdf58e92aa6b4f645ba10bf543b767414becb164e60f8"
   },
   "tests/yukicoder/yukicoder_0409_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Optimization/Convexity/Monge/monge_shortest_path_by_cht.hpp": "505545a09d66193caf49fda28f985d5ff4a60d080f6993e43c8cfbf115ddb265",
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0409_monge_shortest_path_by_li_chao_tree.test.cpp": "1d3637e76a3b43a417fa6c23f555b8aaca4f9244e93c4af98d624058a0e8aec1"
   },
   "tests/yukicoder/yukicoder_0409_monge_shortest_path_simple_larsch.test.cpp": {
@@ -140,41 +133,41 @@
     "Optimization/Convexity/Monge/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0409_monge_shortest_path_simple_larsch.test.cpp": "22eb1b504d58268a17c7e1f6d81381b8991a1c7a44434e5bb99562c1d4d44041"
   },
   "tests/yukicoder/yukicoder_0703_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Optimization/Convexity/Monge/monge_shortest_path_by_cht.hpp": "505545a09d66193caf49fda28f985d5ff4a60d080f6993e43c8cfbf115ddb265",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0703_monge_shortest_path_by_li_chao_tree.test.cpp": "a804e13bf5fbfbbd68976d2f06db844a2831e4c5d3b4b76515beba205a6d64fd"
   },
   "tests/yukicoder/yukicoder_0704_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Optimization/Convexity/Monge/monge_shortest_path_by_cht.hpp": "505545a09d66193caf49fda28f985d5ff4a60d080f6993e43c8cfbf115ddb265",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0704_monge_shortest_path_by_li_chao_tree.test.cpp": "acd8c604bd858489a167381712c7f7cea89325562ee08df65fc73917068ba416"
   },
   "tests/yukicoder/yukicoder_0705_dd_monotone_minima.test.cpp": {
     "Optimization/Convexity/Monge/dd_monotone_minima.hpp": "0a54a3b8f9263181fc59fba769d31e61e4eb92fe9efa2effa898697864459b49",
     "Optimization/Convexity/Monge/monotone_minima.hpp": "528f042cae0ce3fcda0d70440da77f2b9a323202d58cbb84f6f687136894820c",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_dd_monotone_minima.test.cpp": "7636811c09d45500ae0d9c5754aa09443719967c35b09c3d3977e6336f8e6d6e"
   },
   "tests/yukicoder/yukicoder_0705_dd_smawk.test.cpp": {
     "Optimization/Convexity/Monge/dd_smawk.hpp": "82c306579f087330d6806889629e6eb7c7ca5426b95d5ad795edbfbbae7ce33d",
     "Optimization/Convexity/Monge/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_dd_smawk.test.cpp": "8669775ca33214ea9ecd682e73cf9c002a9e64b749ad81fe6e88d840ef27dd4c"
   },
   "tests/yukicoder/yukicoder_0705_dp_by_general_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_dp_by_general_li_chao_tree.test.cpp": "93e62f5c77aa71c527f3feeab26de7f01084c7ce58e95cf9d4c6165d0bccb5a3"
   },
   "tests/yukicoder/yukicoder_0705_larsch.test.cpp": {
     "Optimization/Convexity/Monge/larsch.hpp": "04fe26b652453c658c7b0c6c09c75c98076d5520fd8f6e2f4540e01dac8054f7",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_larsch.test.cpp": "ad9cd9cb06694218d3794bd4c357560b37ce7344f5a738cd20396c6aaedded11"
   },
   "tests/yukicoder/yukicoder_0705_monge_shortest_path.test.cpp": {
@@ -185,31 +178,31 @@
     "Optimization/Convexity/Monge/monotone_minima.hpp": "528f042cae0ce3fcda0d70440da77f2b9a323202d58cbb84f6f687136894820c",
     "Optimization/Convexity/Monge/simple_larsch.hpp": "a0378d3234d27702e02d0b21dc80e1ba00385cf6ff33e986bc8a4f9a84c4fa78",
     "Optimization/Convexity/Monge/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_monge_shortest_path.test.cpp": "a0c9dbb971be5ae8aa57d4db7d00afa5d19990975d2bb656fec8d9df57dd9a00"
   },
   "tests/yukicoder/yukicoder_0705_monge_shortest_path_by_li_chao_tree.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/general_li_chao_tree.hpp": "3b8087506a23b84fecd9aeab1266d2740eeab2f44f50a3b0ff8c4e1d79cd6b63",
     "Optimization/Convexity/Monge/monge_shortest_path_by_cht.hpp": "505545a09d66193caf49fda28f985d5ff4a60d080f6993e43c8cfbf115ddb265",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_monge_shortest_path_by_li_chao_tree.test.cpp": "14cd25a82776f24ad42af5debf362b148fa01d603e84af3e888030f828ccd8a9"
   },
   "tests/yukicoder/yukicoder_0705_simple_larsch.test.cpp": {
     "Optimization/Convexity/Monge/simple_larsch.hpp": "a0378d3234d27702e02d0b21dc80e1ba00385cf6ff33e986bc8a4f9a84c4fa78",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0705_simple_larsch.test.cpp": "231993274f16fe3154dba1716655ca3a471101a508df522d04c9d0299b0c0f5f"
   },
   "tests/yukicoder/yukicoder_0952_monge_d_enum_shortest_path.test.cpp": {
     "Optimization/Convexity/Monge/monge_enum_d_shortest_paths.hpp": "ab353e594c30493390d313ec8afa005cc557acec96c696d85fe84707dc3c4865",
     "Optimization/Convexity/Monge/monotone_minima.hpp": "528f042cae0ce3fcda0d70440da77f2b9a323202d58cbb84f6f687136894820c",
     "Optimization/Convexity/Monge/smawk.hpp": "645e9d60bb3d687a67713f9a88b074ee8331182a059e58eacd60ba8b40ec1b0d",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0952_monge_d_enum_shortest_path.test.cpp": "0dbb23b8f89c5a8be47ce93b1d36520738d87626d321b12e3db354512cf40490"
   },
   "tests/yukicoder/yukicoder_0952_monotone_convex_hull_trick.test.cpp": {
     "Optimization/Convexity/ConvexHullTrick/monotone_convex_hull_trick.hpp": "38e60fbde5325e46e71f73446920fe2e0a6d63a72ee7eec253b6b88e70db3842",
     "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_0952_monotone_convex_hull_trick.test.cpp": "61b17c381807acd4d27e3004ba78f83f2b5b96c10df81917ec1baaa80405c1a4"
   },
   "tests/yukicoder/yukicoder_2078_monge_shortest_path_by_li_chao_tree.test.cpp": {
@@ -218,7 +211,7 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2078_monge_shortest_path_by_li_chao_tree.test.cpp": "a6b30e13583e7a6e45afee01368d31c743a8591386ff9beb0c2eefe7b5b95178"
   },
   "tests/yukicoder/yukicoder_2078_monge_shortest_path_simple_larsch.test.cpp": {
@@ -232,13 +225,13 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2078_monge_shortest_path_simple_larsch.test.cpp": "e45d16a2c19c09d7303483f103d87bf5042a9c3ac150bedc03e9bba309a3a416"
   },
   "tests/yukicoder/yukicoder_2114_dual_slope_trick.test.cpp": {
     "Optimization/Convexity/PiecewiseLinearConvexity/dual_slope_trick.hpp": "30ef71f88a003ec31cc70e9d59e84b0ee43904f6c3197021168b7bfadf662ff6",
     "Others/int128.hpp": "f9e2ba488953718d5c2a51c3e79de13f46c749f81b6030d161a26dfb2bd6332b",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2114_dual_slope_trick.test.cpp": "ba644ce42321b0867799aa2b81ee147bcacb534b2e1f54284fee1a1529448ec3"
   },
   "tests/yukicoder/yukicoder_2404_general_li_chao_tree.test.cpp": {
@@ -246,7 +239,7 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2404_general_li_chao_tree.test.cpp": "f7af8f690ab7155d5169bde897f8b4b54cddad801cfedacf1ea8fb1900cb0ee8"
   },
   "tests/yukicoder/yukicoder_2458_dp_by_general_li_chao_tree_not_monge.test.cpp": {
@@ -254,7 +247,7 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2458_dp_by_general_li_chao_tree_not_monge.test.cpp": "39738cb0a1e477c0c03b1e81353499e3d88032e80c2d5fce0bc280875af80ad5"
   },
   "tests/yukicoder/yukicoder_2546_cht_general_and_M_convex_priority_queue.test.cpp": {
@@ -262,7 +255,7 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2546_cht_general_and_M_convex_priority_queue.test.cpp": "09c921a9df9739badb66f984311db918fd77505a9ce3b8f68617cf94c5dfad59"
   },
   "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": {
@@ -270,7 +263,7 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2546_cht_line_and_M_convex_priority_queue.test.cpp": "8d3614cdac2da7c261853b63532b127ce2e8e35aaa8bab6445ecca8252efb587"
   },
   "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": {
@@ -280,7 +273,7 @@
     "Others/macro.hpp": "0c8d3e119fe8ce03c6456c6ba5389db21cd70aa695c8da6282484a3703ea92e7",
     "Others/stl_container_stream.hpp": "b80dd1236f19d137f9eb5f4976f57b7f2309d6f90f5a89f3aa1d7841f13e21dd",
     "Others/template.hpp": "d6cea4ca2705b546efdb75b9a18c73318d8a795a46dbd624ec8e306fbe04bae9",
-    "bits/stdc++.h": "f83fb9a8649763dec06e5f553b2d66412a4977d8d0641da2135b6fb076cca233",
+    "bits/stdc++.h": "aa5752083cf5c816e9606cdcdad608d467074840a6d7c1bfe8c15aede0bab547",
     "tests/yukicoder/yukicoder_2764_dp_by_general_li_chao_tree.test.cpp": "3bce4fb8290ac3d86659bc51ca66c4f48ac952860da7d2d1ceaff7fedf1a5ba1"
   }
 }
