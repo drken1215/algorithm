@@ -1,29 +1,9 @@
-//
-// Super Slope Trick
-//
-// reference:
-//   maspy: slope_super (in github)
-//     https://maspypy.github.io/library/alg/monoid/add_pair.hpp
-//
-// verified
-//   ABC 275 Ex - Monster
-//     https://atcoder.jp/contests/abc275/tasks/abc275_h
-//
-
-
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
+#define PROBLEM "https://atcoder.jp/contests/abc275/tasks/abc275_h"
 
 #include <bits/stdc++.h>
 using namespace std;
 
-
-
-
-
-//------------------------------//
-// Examples
-//------------------------------//
+#include "super_slope_trick.hpp"
 
 // ABC 275 Ex - Monster
 /*
@@ -39,7 +19,7 @@ using namespace std;
 　答え
 　eval(dp[root], 0)
 */
-void ABC_275_Ex() {
+int main() {
     long long N;
     cin >> N;
     vector<long long> A(N), B(N);
@@ -94,9 +74,4 @@ void ABC_275_Ex() {
         //COUT(v); ST.dump(dp[v]);
     }
     cout << ST.eval(dp[root], 0) << "\n";                       // 答えは eval(・, 0)
-}
-
-
-int main() {
-    ABC_275_Ex();
 }

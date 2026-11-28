@@ -27,21 +27,33 @@ Manual verification files:
 {% endfor %}
 
 
-{% if page.data.dependsOn.size != 0 %}
+
+{% assign depends_count = 0 %}
+
+{% for item in page.data._extendedDependsOn %}
+  {% unless item.path == "bits/stdc++.h" %}
+    {% assign depends_count = depends_count | plus: 1 %}
+  {% endunless %}
+{% endfor %}
+
+{% if depends_count > 0 %}
   <h2>Depends on</h2>
   <ul>
     {% for item in page.data._extendedDependsOn %}
-      <li>
-        <a href="{{ item.path | absolute_url }}">
-          {{ item.icon }} {{ item.title }}
-          {% if item.title != item.path %}
-            <small>({{ item.path }})</small>
-          {% endif %}
-        </a>
-      </li>
+      {% unless item.path == "bits/stdc++.h" %}
+        <li>
+          <a href="{{ item.path | absolute_url }}">
+            {{ item.icon }} {{ item.title }}
+            {% if item.title != item.path %}
+              <small>({{ item.path }})</small>
+            {% endif %}
+          </a>
+        </li>
+      {% endunless %}
     {% endfor %}
   </ul>
 {% endif %}
+
 
 
 {% if required_count > 0 %}

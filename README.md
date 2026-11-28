@@ -5,8 +5,9 @@
 リンクが付いていないものは、実装予定であることを意味します。  
 アルゴリズム系の研究開発やプログラミングコンテストへの参加といった場面で、「実装例」「ライブラリ」として使用することを想定しています。
 
-→ [本アルゴリズム集の環境構築方法 (macOS)](#setup)
+→ [本アルゴリズム集を動かすための環境構築方法 (mac OS)](#setup)
 
+ㅤ
 ## 目次
 
 |分類|内容|具体例|
@@ -27,7 +28,7 @@
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアーなど|
 |**[OTHERS](#ot)**|その他|サイコロなど|
 
-
+ㅤ
 ## 難易度表記の目安
 
 - (★☆☆☆)：一般教養、NoviSteps グレード基準で 2Q 以下相当
@@ -35,7 +36,7 @@
 - (★★★☆)：中堅典型、NoviSteps グレード基準で 2D, 3D 相当
 - (★★★★)：高度典型、NoviSteps グレード基準で 4D 以上相当
 
-→ [NoviSteps グレード基準](https://docs.google.com/spreadsheets/d/1GJbTRRBsoBaY-CXIr3dIXmxkwacV4nHOTOIMCmo__Ug)
+→ [NoviSteps グレード基準](https://docs.google.com/spreadsheets/d/1s16tFRvwbzUkp0EccO3f0R69ABQbMi4Hh1T_dr3ndjg)
 
 
 
@@ -1004,7 +1005,7 @@ ulimit -Ss "$(ulimit -Hs)"
 
 YUKICODER_TOKEN もこれとは別に設定します
 
-## Usage
+## 使い方
 
 - `make`: test.cpp に書かれたコードを実行します
   - このとき生成される submit.cpp ファイルを各種オンラインジャッジに提出します
