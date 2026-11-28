@@ -88,6 +88,92 @@ def write_config(dirs, cxx):
     print(f"Include directories: {len(dirs)}")
 
 
+def write_vscode_config(dirs, cxx):
+    """VS Code IntelliSense 用の設定を生成する。"""
+    import platform
+    import shutil
+
+    # コンパイラの絶対パスを取得
+    compiler = shutil.which(cxx)
+    if compiler is None:
+        raise RuntimeError(f"Compiler not found: {cxx}")
+
+    # include パスを生成
+    include_paths = []
+
+    for directory in dirs:
+        relative = directory.relative_to(ROOT)
+
+        if relative == Path("."):
+            include_paths.append("${workspaceFolder}")
+        else:
+            include_paths.append(
+                "${workspaceFolder}/" + relative.as_posix()
+            )
+
+    # OS と CPU アーキテクチャを判定
+    system = platform.system()
+    machine = platform.machine()
+
+    if system == "Darwin":
+        os_name = "macos"
+    elif system == "Linux":
+        os_name = "linux"
+    else:
+        raise RuntimeError(f"Unsupported OS: {system}")
+
+    if machine in ("arm64", "aarch64"):
+        arch = "arm64"
+    elif machine in ("x86_64", "AMD64"):
+        arch = "x64"
+    else:
+        raise RuntimeError(f"Unsupported architecture: {machine}")
+
+    # VS Code 設定ファイル
+    path = ROOT / ".vscode" / "c_cpp_properties.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    if path.exists():
+        config = json.loads(path.read_text(encoding="utf-8"))
+    else:
+        config = {
+            "configurations": [],
+            "version": 4,
+        }
+
+    # 管理対象の設定
+    name = "Mac" if system == "Darwin" else "Linux"
+    settings = {
+        "name": name,
+        "includePath": include_paths,
+        "compilerPath": compiler,
+        "cStandard": "c17",
+        "cppStandard": "c++20",
+        "intelliSenseMode": f"{os_name}-gcc-{arch}",
+    }
+
+    # 既存の設定を更新する
+    configurations = config.setdefault("configurations", [])
+
+    for entry in configurations:
+        if entry.get("name") == name:
+            entry.update(settings)
+            break
+    else:
+        configurations.append(settings)
+
+    config["version"] = 4
+
+    path.write_text(
+        json.dumps(config, indent=4, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+    print(f"Generated: {path.relative_to(ROOT)}")
+    print(f"Compiler: {compiler}")
+    print(f"Include directories: {len(dirs)}")
+
+
 def print_bundle_flags(dirs):
     """コンテスト用 Makefile で使う -I オプションを出力する。"""
     print(" ".join(
@@ -108,12 +194,19 @@ def main():
         action="store_true",
         help="Print include flags for oj-bundle",
     )
+    parser.add_argument(
+        "--vscode",
+        action="store_true",
+        help="Generate VS Code IntelliSense configuration",
+    )
     args = parser.parse_args()
 
     dirs = find_include_dirs()
 
     if args.bundle_flags:
         print_bundle_flags(dirs)
+    elif args.vscode:
+        write_vscode_config(dirs, args.cxx)
     else:
         write_config(dirs, args.cxx)
 

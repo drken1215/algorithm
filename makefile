@@ -21,7 +21,7 @@ OJ_VERIFY ?= oj-verify
 VERIFY_CXX ?= g++
 VERIFY_JOBS ?= 2
 
-.PHONY: test configure readme docs verify add_lib add_atcoder add_yukicoder add_aoj add_codeforces add_library_checker add_mytest add_test setup
+.PHONY: test configure readme docs verify add_lib add_atcoder add_yukicoder add_aoj add_codeforces add_library_checker add_mytest add_test vscode setup
 
 test:
 	@set -e; \
@@ -33,7 +33,10 @@ test:
 	echo "$(CMD)"; \
 	$(CMD)
 
-configure:
+vscode:
+	python3 .verify-helper/tools/setup_includes.py --vscode --cxx "$(BUNDLE_CXX)"
+
+configure: vscode
 	python3 .verify-helper/tools/setup_includes.py --cxx "$(VERIFY_CXX)"
 
 readme: configure

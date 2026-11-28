@@ -5,7 +5,7 @@
 リンクが付いていないものは、実装予定であることを意味します。  
 アルゴリズム系の研究開発やプログラミングコンテストへの参加といった場面で、「実装例」「ライブラリ」として使用することを想定しています。
 
-[環境構築方法 (macOS)](#setup)
+→ [本アルゴリズム集の環境構築方法 (macOS)](#setup)
 
 ## 目次
 
@@ -35,7 +35,7 @@
 - (★★★☆)：中堅典型、NoviSteps グレード基準で 2D, 3D 相当
 - (★★★★)：高度典型、NoviSteps グレード基準で 4D 以上相当
 
-[NoviSteps グレード基準](https://docs.google.com/spreadsheets/d/1GJbTRRBsoBaY-CXIr3dIXmxkwacV4nHOTOIMCmo__Ug)
+→ [NoviSteps グレード基準](https://docs.google.com/spreadsheets/d/1GJbTRRBsoBaY-CXIr3dIXmxkwacV4nHOTOIMCmo__Ug)
 
 
 

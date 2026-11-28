@@ -103,40 +103,9 @@ fi
 # Generate VS Code settings
 echo "=== VS Code settings ==="
 
-mkdir -p .vscode
-
-if [[ "$(uname -m)" == "arm64" ]]; then
-    INTELLISENSE="macos-gcc-arm64"
-else
-    INTELLISENSE="macos-gcc-x64"
-fi
-
-VSCODE=".vscode/c_cpp_properties.json"
-
-if [[ -e "$VSCODE" ]]; then
-    echo "Already exists: $VSCODE (skipped)"
-else
-    cat > "$VSCODE" <<EOF
-{
-    "configurations": [
-        {
-            "name": "Mac",
-            "includePath": [
-                "\${workspaceFolder}/**"
-            ],
-            "defines": [],
-            "compilerPath": "$CXX",
-            "cStandard": "c17",
-            "cppStandard": "c++20",
-            "intelliSenseMode": "$INTELLISENSE"
-        }
-    ],
-    "version": 4
-}
-EOF
-
-    echo "Generated: $VSCODE"
-fi
+"$VENV/bin/python3" \
+    "$TOOLS/setup_includes.py" \
+    --vscode --cxx "$CXX"
 
 # Final checks
 echo "=== Environment check ==="
