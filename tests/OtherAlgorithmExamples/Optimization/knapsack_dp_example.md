@@ -1,6 +1,6 @@
 ---
 title: ナップサック問題を解く DP の実装例
-documentation_of: knapsack_dp_example.cpp
+documentation_of: ./knapsack_dp_example.cpp
 ---
 
 ## 参考文献

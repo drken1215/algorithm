@@ -1,6 +1,6 @@
 ---
 title: EDPC Z - Frog 3 (分割統治 SMAWK 解法) (NoviSteps 3D+)
-documentation_of: EDPC_Z_dd_smawk.cpp
+documentation_of: ./EDPC_Z_dd_smawk.cpp
 ---
 
 ## 問題概要

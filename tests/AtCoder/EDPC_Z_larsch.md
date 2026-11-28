@@ -1,6 +1,6 @@
 ---
 title: EDPC Z - Frog 3 (LARSCH 法解法) (NoviSteps 3D+)
-documentation_of: EDPC_Z_larsch.cpp
+documentation_of: ./EDPC_Z_larsch.cpp
 ---
 
 ## 問題概要

@@ -59,7 +59,7 @@ def main():
             updated.splitlines(),
         ) if a != b
     )
-    print(f"Rewritten #line directives: {count}")
+    #print(f"Rewritten #line directives: {count}")
 
 
 if __name__ == "__main__":

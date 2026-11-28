@@ -1,6 +1,6 @@
 ---
 title: 二部グラフの最大安定集合の実装例
-documentation_of: max_independent_set_of_bipartite_graph.cpp
+documentation_of: ./max_independent_set_of_bipartite_graph.cpp
 ---
 
 ## 参考文献

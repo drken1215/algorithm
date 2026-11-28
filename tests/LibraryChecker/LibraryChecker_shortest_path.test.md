@@ -1,6 +1,6 @@
 ---
 title: Library Checker - Shortest Path（NoviSteps 2Q+）
-documentation_of: LibraryChecker_shortest_path.test.cpp
+documentation_of: ./LibraryChecker_shortest_path.test.cpp
 ---
 
 ## 問題概要

@@ -1,6 +1,6 @@
 ---
 title: 最小公倍数を求める Euclid の互助法の実装
-documentation_of: lcm_naive.cpp
+documentation_of: ./lcm_naive.cpp
 ---
 
 ## 参考文献

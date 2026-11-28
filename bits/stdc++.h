@@ -35,7 +35,7 @@
 #include <cctype>
 #include <cerrno>
 #include <cfloat>
-#include <ciso646>
+//#include <ciso646>  // C++17 で非推奨になったヘッダ
 #include <climits>
 #include <clocale>
 #include <cmath>
@@ -49,12 +49,12 @@
 #include <ctime>
 
 #if __cplusplus >= 201103L
-#include <ccomplex>
+//#include <ccomplex>  // C++17 で非推奨になったヘッダ
 #include <cfenv>
 #include <cinttypes>
-#include <cstdbool>
+//#include <cstdbool>  // C++17 で非推奨になったヘッダ
 #include <cstdint>
-#include <ctgmath>
+//#include <ctgmath>  // C++17 で非推奨になったヘッダ
 #include <cwchar>
 #include <cwctype>
 #endif

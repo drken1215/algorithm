@@ -15,6 +15,7 @@ atcoder/
 # each PC settings
 makefile.*
 .verify-helper/config.toml
+/.vscode/
 
 # Python
 __pycache__/

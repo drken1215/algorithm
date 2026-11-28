@@ -1,6 +1,6 @@
 ---
 title: COLOCON 2018 Final C - スペースエクスプローラー高橋君 (Dynamic General Li Chao Tree を用いる方法) (NoviSteps 3D)
-documentation_of: colopl2018-final_C_dynamic_general_li_chao_tree.cpp
+documentation_of: ./colopl2018-final_C_dynamic_general_li_chao_tree.cpp
 ---
 
 ## 問題概要

@@ -1,6 +1,6 @@
 ---
 title: AtCoder ABC 328 E - Modulo MST (NoviSteps 1Q+)
-documentation_of: ABC_328_E_next_combination.cpp
+documentation_of: ./ABC_328_E_next_combination.cpp
 ---
 
 ## 参考文献

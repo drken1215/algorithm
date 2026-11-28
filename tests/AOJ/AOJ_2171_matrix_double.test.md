@@ -1,6 +1,6 @@
 ---
 title: JAG 夏合宿 2009 day3 G - Strange Couple (実数行列を用いた連立方程式) (AOJ 2171, NoviSteps 3D-)
-documentation_of: AOJ_2171_matrix_double.test.cpp
+documentation_of: ./AOJ_2171_matrix_double.test.cpp
 ---
 
 ## 問題概要

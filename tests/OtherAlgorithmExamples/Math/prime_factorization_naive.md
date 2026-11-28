@@ -1,6 +1,6 @@
 ---
 title: 単純な素因数分解の実装 (in $O(\sqrt{N})$)
-documentation_of: prime_factorization_naive.cpp
+documentation_of: ./prime_factorization_naive.cpp
 ---
 
 ## 参考文献

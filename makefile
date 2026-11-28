@@ -106,7 +106,7 @@ add_test:
 	printf '%s\n' \
 		'---' \
 		'title: ' \
-		'documentation_of: $(TITLE)$(TEST_EXT)' \
+		'documentation_of: ./$(TITLE)$(TEST_EXT)' \
 		'---' \
 		> "$$md"; \
 	if [ "$(TEST_TYPE)" != "mytest" ]; then \

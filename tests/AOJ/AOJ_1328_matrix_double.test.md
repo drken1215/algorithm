@@ -1,6 +1,6 @@
 ---
 title: ICPC アジア 2012 D - Find the Outlier (実数行列を用いた連立方程式) (AOJ 1328, NoviSteps 2D+)
-documentation_of: AOJ_1328_matrix_double.test.cpp
+documentation_of: ./AOJ_1328_matrix_double.test.cpp
 ---
 
 ## 問題概要

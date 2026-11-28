@@ -1,6 +1,6 @@
 ---
 title: 二項係数 (愚直計算, $n \le 10^{9}, r \le 10^{7}, p \le 10^{9}$)
-documentation_of: mod_binomial_coefficient_naive.cpp
+documentation_of: ./mod_binomial_coefficient_naive.cpp
 ---
 
 ## 概要

@@ -1,6 +1,6 @@
 ---
 title: 単純な素数判定の実装 (in $O(\sqrt{N})$)
-documentation_of: is_prime_naive.cpp
+documentation_of: ./is_prime_naive.cpp
 ---
 
 ## 参考文献

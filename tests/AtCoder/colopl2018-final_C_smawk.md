@@ -1,6 +1,6 @@
 ---
 title: COLOCON 2018 Final C - スペースエクスプローラー高橋君 (SMAWK 法による方法) (NoviSteps 3D)
-documentation_of: colopl2018-final_C_smawk.cpp
+documentation_of: ./colopl2018-final_C_smawk.cpp
 ---
 
 ## 問題概要

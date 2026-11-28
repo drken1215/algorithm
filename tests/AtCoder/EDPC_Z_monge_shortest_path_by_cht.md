@@ -1,6 +1,6 @@
 ---
 title: EDPC Z - Frog 3 (CHT を用いた Monge 単一始点最短路解法) (NoviSteps 3D+)
-documentation_of: EDPC_Z_monge_shortest_path_by_cht.cpp
+documentation_of: ./EDPC_Z_monge_shortest_path_by_cht.cpp
 ---
 
 ## 問題概要

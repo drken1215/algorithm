@@ -1,6 +1,6 @@
 ---
 title: 二部グラフの最小辺被覆の実装例
-documentation_of: min_edge_cover_of_bipartite_graph.cpp
+documentation_of: ./min_edge_cover_of_bipartite_graph.cpp
 ---
 
 ## 参考文献

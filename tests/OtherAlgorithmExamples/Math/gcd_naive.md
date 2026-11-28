@@ -1,6 +1,6 @@
 ---
 title: 最大公約数を求める Euclid の互助法の実装
-documentation_of: gcd_naive.cpp
+documentation_of: ./gcd_naive.cpp
 ---
 
 ## 参考文献

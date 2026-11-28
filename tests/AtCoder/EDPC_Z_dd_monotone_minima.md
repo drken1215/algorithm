@@ -1,6 +1,6 @@
 ---
 title: EDPC Z - Frog 3 (分割統治 Monotone Minima 解法) (NoviSteps 3D+)
-documentation_of: EDPC_Z_dd_monotone_minima.cpp
+documentation_of: ./EDPC_Z_dd_monotone_minima.cpp
 ---
 
 ## 問題概要

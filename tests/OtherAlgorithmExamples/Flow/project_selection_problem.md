@@ -1,6 +1,6 @@
 ---
 title: プロジェクト選択問題ソルバーの使用例
-documentation_of: project_selection_problem.cpp
+documentation_of: ./project_selection_problem.cpp
 ---
 
 ## 参考文献
