@@ -1,0 +1,3 @@
+setuptools==80.8.0
+online-judge-tools==11.5.1
+online-judge-verify-helper @ git+https://github.com/adamant-pwn/verification-helper.git@18e01f6

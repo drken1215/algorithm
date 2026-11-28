@@ -5,6 +5,8 @@
 リンクが付いていないものは、実装予定であることを意味します。  
 アルゴリズム系の研究開発やプログラミングコンテストへの参加といった場面で、「実装例」「ライブラリ」として使用することを想定しています。
 
+[環境構築方法 (macOS)](#setup)
+
 ## 目次
 
 |分類|内容|具体例|
@@ -25,6 +27,7 @@
 |**[TREE](#tr)**|木上のデータ構造とアルゴリズム|Euler ツアーなど|
 |**[OTHERS](#ot)**|その他|サイコロなど|
 
+
 ## 難易度表記の目安
 
 - (★☆☆☆)：一般教養、NoviSteps グレード基準で 2Q 以下相当
@@ -33,6 +36,7 @@
 - (★★★★)：高度典型、NoviSteps グレード基準で 4D 以上相当
 
 [NoviSteps グレード基準](https://docs.google.com/spreadsheets/d/1GJbTRRBsoBaY-CXIr3dIXmxkwacV4nHOTOIMCmo__Ug)
+
 
 
 
@@ -969,6 +973,45 @@ Union-Find など、基礎的なデータ構造の実装です。
 - (★★☆☆) [サイコロ](https://drken1215.github.io/algorithm/Others/dice.hpp.html)
 - (★★☆☆) [曜日](https://drken1215.github.io/algorithm/Others/day_of_the_week.hpp.html)
 - (★★☆☆) [数独ソルバー](https://drken1215.github.io/algorithm/tests/OtherAlgorithmExamples/Others/sudoku/sudoku.cpp)
+
+
+
+ㅤ
+<a name="setup"></a>
+# 本アルゴリズム集の環境構築方法 (macOS)
+
+## 必要なもの
+
+- Xcode Command Line Tools
+- Homebrew
+- Git / GitHub SSH authentication
+
+## セットアップ手順
+
+```
+git clone git@github.com:drken1215/algorithm.git
+cd algorithm
+make setup
+```
+
+## Shell の設定 (~/.zshrc)
+
+```
+typeset -U path PATH
+export PATH="$HOME/.venvs/oj-helper-py312/bin:$PATH"
+ulimit -Ss "$(ulimit -Hs)"
+```
+
+YUKICODER_TOKEN もこれとは別に設定します
+
+## Usage
+
+- `make`: test.cpp に書かれたコードを実行します
+  - このとき生成される submit.cpp ファイルを各種オンラインジャッジに提出します
+- `make verify`: 本レポジトリの tests/ 以下に書かれたすべての .test.cpp ファイルのテストを実行します
+  - 未変更の検証済みファイルはスキップします
+- `make docs`: oj-verify によるライブラリのドキュメントを生成します
+
 
 
 　

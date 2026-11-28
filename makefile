@@ -21,7 +21,7 @@ OJ_VERIFY ?= oj-verify
 VERIFY_CXX ?= g++
 VERIFY_JOBS ?= 2
 
-.PHONY: test configure readme docs verify add_lib add_atcoder add_yukicoder add_aoj add_codeforces add_library_checker add_mytest add_test
+.PHONY: test configure readme docs verify add_lib add_atcoder add_yukicoder add_aoj add_codeforces add_library_checker add_mytest add_test setup
 
 test:
 	@set -e; \
@@ -147,3 +147,6 @@ add_mytest: TEST_DIR = tests/MyTests
 add_mytest: TEST_EXT = .test.cpp
 add_mytest: TEST_TYPE = mytest
 add_mytest: add_test
+
+setup:
+	bash .verify-helper/tools/setup_environment.sh
