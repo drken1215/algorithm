@@ -30,6 +30,7 @@ test:
 	python3 $(LIBRARY)/.verify-helper/tools/rewrite_bundle_lines.py submit.cpp.tmp --library "$(LIBRARY)"; \
 	mv submit.cpp.tmp submit.cpp; \
 	"$(BUNDLE_CXX)" $(TEST_CXXFLAGS) submit.cpp -o "$(PRO)"; \
+	echo "$(CMD)"; \
 	$(CMD)
 
 configure:
